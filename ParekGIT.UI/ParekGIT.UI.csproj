@@ -18,9 +18,5 @@
   <ItemGroup>
     <PackageReference Include="Photino.NET" Version="3.2.3" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="wwwroot\assets\" />
-  </ItemGroup>
 
 </Project>

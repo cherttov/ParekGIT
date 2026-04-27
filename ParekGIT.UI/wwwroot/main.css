@@ -8,30 +8,83 @@ body, html {
     flex-direction: column;
 }
 
+/* TOPBAR */
 .topbar {
     width: 100%;
     height: 32px;
     background-color: #181825;
 }
 
+/* APP CONTAINER */
 .app-container {
     display: flex;
     flex-direction: row;
     flex: 1;
 }
 
+/* LEFT SIDEBAR */
 .left-sidebar {
     width: 48px;
     background-color: #181825;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     justify-content: flex-end;
 }
 
+.left-sidebar-btn {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+.btn-icon {
+    width: 24px;
+    height: 24px;
+
+    background-color: #6c7086;
+
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+
+    transition: background-color 0.1s ease;
+}
+
+.left-sidebar-btn:hover .btn-icon {
+    background-color: #b4befe;
+}
+
+.icon-file {
+    mask-image: url('assets/icons/materials_file_copy.svg');
+}
+
+.icon-branches {
+    mask-image: url('assets/icons/materials_alt_route.svg');
+}
+
+.icon-analytics {
+    mask-image: url('assets/icons/materials_bar_chart.svg');
+}
+
+.icon-todo {
+    mask-image: url('assets/icons/materials_assignment.svg');
+}
+
+/* MAIN CONTENT */
 .main-content {
     flex: 1;
 }
 
+/* RIGHT SIDEBAR */
 .right-sidebar {
     width: 256px;
     background-color: #313244;
