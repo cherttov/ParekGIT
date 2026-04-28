@@ -6,6 +6,7 @@ body, html {
     color: #cdd6f4;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* TOPBAR */
@@ -27,6 +28,7 @@ body, html {
     width: 48px;
     background-color: #181825;
     display: flex;
+    flex-shrink: 0;
     flex-direction: column-reverse;
     justify-content: flex-end;
 }
@@ -64,7 +66,7 @@ body, html {
 }
 
 .icon-file {
-    mask-image: url('assets/icons/materials_file_copy.svg');
+    mask-image: url('assets/icons/materials_file_copy.svg'); 
 }
 
 .icon-branches {
@@ -79,13 +81,28 @@ body, html {
     mask-image: url('assets/icons/materials_assignment.svg');
 }
 
+/* SPLIT CONTAINER */
+.split-container{
+    display: flex;
+    flex: 1;
+}
+
 /* MAIN CONTENT */
 .main-content {
-    flex: 1;
+    min-width: 360px;
+    flex-grow: 1;
 }
 
 /* RIGHT SIDEBAR */
 .right-sidebar {
     width: 256px;
+    min-width: 192px;
     background-color: #313244;
+}
+
+/* RESIZER */
+.resizer {
+    width: 6px;
+    cursor: ew-resize;
+    background-color: transparent;
 }
