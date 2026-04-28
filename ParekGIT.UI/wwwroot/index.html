@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="main.css"/>
+    <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
     <div class="topbar">
@@ -37,8 +37,19 @@
             <div class="resizer" id="resizer"></div>
 
             <div class="right-sidebar" id="right-sidebar">
+                <div class="right-sidebar-bottom">
+                    <input type="text" class="commit-input message-input" placeholder="Message (required)"/>
+
+                    <textarea class="commit-input description-input" placeholder="Description"></textarea>
+
+                    <button class="commit-btn">
+                        Commit X files to <strong>[branch]</strong>
+                    </button>
+
+                </div>
 
             </div>
+
         </div>
 
     </div>
