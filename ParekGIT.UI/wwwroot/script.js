@@ -1,5 +1,10 @@
+const topbar = document.getElementById("topbar");
+const branchesDropdown = document.getElementById("branches-dropdown");
+
 const leftSidebar = document.getElementById("left-sidebar");
+
 const mainContent = document.getElementById("main-content");
+
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
 
@@ -28,6 +33,7 @@ function resize(event) {
         let targetWidth = window.innerWidth - event.clientX;
         let newWidth = Math.max(minRightWidth, Math.min(targetWidth, maxRightWidth));
         rightSidebar.style.width = `${newWidth}px`;
+        branchesDropdown.style.width = `${newWidth}px`;
     }
 }
 

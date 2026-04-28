@@ -5,7 +5,37 @@
     <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-    <div class="topbar">
+    <div class="topbar" id="topbar">
+        <div class="topbar-dropdown-container" id="repositories-dropdown">
+            <button class="topbar-btn">
+                <div class="btn-text-group">
+                    <span class="topbar-dropdown btn-label">Current repository: </span>
+                    <span class="topbar-dropdown btn-value">[repository]</span>
+                </div>
+                <div class="btn-arrow"></div>
+            </button>
+            
+
+            <div class="dropdown-panel" id="branch-dropdown-panel">
+
+            </div>
+
+        </div>
+
+        <div class="topbar-dropdown-container" id="branches-dropdown">
+            <button class="topbar-btn">
+                <div class="btn-text-group">
+                    <span class="topbar-dropdown btn-label">Current branch: </span>
+                    <span class="topbar-dropdown btn-value">[branch]</span>
+                </div>
+                <div class="btn-arrow"></div>
+            </button>
+
+            <div class="dropdown-panel" id="branch-dropdown-panel">
+
+            </div>
+
+        </div>
 
     </div>
 

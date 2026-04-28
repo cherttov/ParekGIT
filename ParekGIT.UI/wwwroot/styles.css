@@ -20,6 +20,80 @@ body, html {
     width: 100%;
     height: 32px;
     background-color: #11111b;
+    display: flex;
+}
+
+.topbar-dropdown-container {
+    position: relative;
+    height: 100%;
+}
+
+.topbar-btn {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    color: #cdd6f4;
+
+    font-family: inherit;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    transition: background-color 0.1s ease
+}
+
+.topbar-btn:hover {
+    background-color: #cba6f7;
+}
+
+.topbar-btn .btn-label {
+    color: #9399b2;
+    transition: color 0.1s ease;
+}
+
+.topbar-btn:hover .btn-label {
+    color: #181825;
+}
+
+.topbar-btn .btn-value {
+    color: #cdd6f4;
+    transition: color 0.1s ease;
+    font-weight: 500;
+}
+
+.topbar-btn:hover .btn-value {
+    color: #11111b;
+}
+
+.btn-arrow {
+    flex-shrink: 0;
+
+    width: 20px;
+    height: 20px;
+
+    background-color: #cdd6f4;
+    transition: background-color 0.1s ease;
+
+    mask-image: url('assets/icons/materials_arrow_drop_down.svg');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
+.topbar-btn:hover .btn-arrow {
+    background-color: #11111b;
+}
+
+#repositories-dropdown {
+    flex: 1;
+    min-width: 0;
+}
+
+#branches-dropdown {
+    width: 256px;
+    flex-shrink: 0;
 }
 
 /* APP CONTAINER */
@@ -159,7 +233,7 @@ body, html {
     font-family: inherit;
     font-size: 13px;
     font-weight: 500;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.1s ease;
 }
 
 .commit-btn:hover {
