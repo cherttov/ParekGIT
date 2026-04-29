@@ -21,6 +21,8 @@ body, html {
     height: 32px;
     background-color: #11111b;
     display: flex;
+    z-index: 1000;
+    overflow: visible;
 }
 
 .topbar-dropdown-container {
@@ -36,6 +38,7 @@ body, html {
     color: #cdd6f4;
 
     font-family: inherit;
+    user-select: none;
 
     display: flex;
     align-items: center;
@@ -82,6 +85,41 @@ body, html {
     mask-position: center;
 }
 
+.dropdown-backdrop {
+    visibility: hidden;
+    opacity: 0;
+
+    position: fixed;
+    top: 32px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 500;
+
+    transition: visibility 0.2s, opacity 0.2s ease-in;
+}
+
+.dropdown-backdrop.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.dropdown-panel {
+    display: none;
+    position: fixed;
+    top: 32px;
+    bottom: 0;
+    background-color: #1e1e2e;
+    z-index: 1000;
+    flex-direction: column;
+    user-select: none;
+}
+
+.dropdown-panel.show {
+    display: flex;
+}
+
 .topbar-btn:hover .btn-arrow {
     background-color: #11111b;
 }
@@ -89,11 +127,21 @@ body, html {
 #repositories-dropdown {
     flex: 1;
     min-width: 0;
+    margin-left: 48px; /* TEMPORARY - PAREKGIT ICON LATER */
+}
+
+#repositories-dropdown .dropdown-panel {
+    left: 48px;
+    width: calc(100% - 256px - 48px);
 }
 
 #branches-dropdown {
     width: 256px;
     flex-shrink: 0;
+}
+
+#branches-dropdown .dropdown-panel {
+    right: 0;
 }
 
 /* APP CONTAINER */
@@ -204,6 +252,7 @@ body, html {
     padding: 4px;
     outline: none;
     transition: border-color 0.1s ease;
+    user-select: none;
 }
 
 .commit-input::placeholder {
@@ -234,6 +283,7 @@ body, html {
     font-size: 13px;
     font-weight: 500;
     transition: background-color 0.1s ease;
+    user-select: none;
 }
 
 .commit-btn:hover {
