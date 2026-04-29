@@ -6,7 +6,7 @@
 </head>
 <body>
     <div class="topbar" id="topbar">
-        <label class="topbar-logo">P.GIT</label>
+        <div class="topbar-logo">P.GIT</div>
 
         <div class="topbar-dropdown-container" id="repositories-container">
             <button class="topbar-btn">
@@ -17,8 +17,14 @@
                 <div class="btn-arrow"></div>
             </button>
 
-
             <div class="dropdown-panel" id="repository-dropdown-panel">
+                <div class="filter-container" id="repositories-filter">
+                    <div class="icon-filter"></div>
+                    <input type="text" class="filter-input" placeholder="Search"/>
+
+                    <button class="topbar-filter-btn btn-add">Add</button>
+                </div>
+
                 <div class="dropdown-item">my-web-app</div>
             </div>
 
@@ -34,6 +40,13 @@
             </button>
 
             <div class="dropdown-panel" id="branch-dropdown-panel">
+                <div class="filter-container" id="branches-filter">
+                    <div class="icon-filter"></div>
+                    <input type="text" class="filter-input" placeholder="Search"/>
+
+                    <button class="topbar-filter-btn btn-new">New</button>
+                </div>
+
                 <div class="dropdown-item">main</div>
             </div>
 
@@ -76,7 +89,7 @@
 
             <div class="right-sidebar" id="right-sidebar">
                 <div class="right-sidebar-bottom">
-                    <input type="text" class="commit-input message-input" placeholder="Message (required)" />
+                    <input type="text" class="commit-input message-input" placeholder="Message (required)"/>
 
                     <textarea class="commit-input description-input" placeholder="Description"></textarea>
 

@@ -30,7 +30,7 @@ body, html {
     flex-shrink: 0;
 
     font-family: 'FiraCode', sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
 
     display: flex;
@@ -158,6 +158,84 @@ body, html {
 
 #branches-container .dropdown-panel {
     right: 0;
+}
+
+.filter-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px;
+
+    box-sizing: border-box;
+    gap: 8px;
+}
+
+.icon-filter {
+    position: absolute;
+    left: 14px;
+    width: 18px;
+    height: 18px;
+
+    background-color: #6c7086;
+
+    mask-image: url('assets/icons/materials_search.svg');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+
+    pointer-events: none;
+}
+
+.filter-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 4px 4px 26px;
+
+    color: #cdd6f4;
+    background-color: #11111b;
+    border: 1px solid #313244;
+    border-radius: 4px;
+    border-color: #11111b;
+
+    font-family: 'FiraCode', sans-serif;
+    font-size: 13px;
+
+    transition: border-color 0.1s ease;
+
+    user-select: none;
+    outline: none;
+}
+
+.filter-input:focus {
+    border-color: #cba6f7;
+}
+
+.filter-input::placeholder {
+    color: #6c7086;
+}
+
+.topbar-filter-btn {
+    flex-shrink: 0;
+    padding: 4px 12px;
+
+    color: #10101a;
+    background-color: #cba6f7;
+    border: none;
+    border-radius: 4px;
+
+    font-family: 'FiraCode', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: color 0.1s ease;
+
+    user-select: none;
+    outline: none;
+}
+
+.topbar-filter-btn:hover {
+    background-color: #dec7fa;
 }
 
 /* APP CONTAINER */
@@ -296,13 +374,13 @@ body, html {
 
 .commit-btn {
     background-color: #cba6f7;
-    color: #11111b;
+    color: #10101a;
     border: none;
     border-radius: 4px;
     padding: 4px;
     font-family: inherit;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     transition: background-color 0.1s ease;
     user-select: none;
 }
