@@ -51,6 +51,7 @@ body, html {
     color: #cdd6f4;
 
     font-family: inherit;
+    font-weight: 500;
     user-select: none;
 
     display: flex;
@@ -219,7 +220,7 @@ body, html {
     flex-shrink: 0;
     padding: 4px 12px;
 
-    color: #10101a;
+    color: #11111b;
     background-color: #cba6f7;
     border: none;
     border-radius: 4px;
@@ -235,7 +236,34 @@ body, html {
 }
 
 .topbar-filter-btn:hover {
+    color: #10101a;
     background-color: #dec7fa;
+}
+
+.dropdown-item {
+    padding: 2px 8px;
+
+    color: #cdd6f4;
+    font-family: 'FiraCode', sand-serif;
+    font-size: 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    transition: background-color 0.1s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #313244;
+}
+
+.dropdown-item.active {
+    background-color: #45475a;
+}
+
+.dropdown-item.active:hover {
+    background-color: #313244;
 }
 
 /* APP CONTAINER */
@@ -374,7 +402,7 @@ body, html {
 
 .commit-btn {
     background-color: #cba6f7;
-    color: #10101a;
+    color: #11111b;
     border: none;
     border-radius: 4px;
     padding: 4px;
@@ -386,6 +414,7 @@ body, html {
 }
 
 .commit-btn:hover {
+    color: #10101a;
     background-color: #dec7fa;
 }
 
