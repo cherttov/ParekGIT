@@ -135,7 +135,7 @@ body, html {
     width: calc(100% - 256px - 48px);
 }
 
-#branches-dropdown {
+#branches-container {
     width: 256px;
     flex-shrink: 0;
 }

@@ -26,23 +26,23 @@ const updatePanelWidths = () => {
     repoPanel.style.width = `${repoContainer.offsetWidth}px`;
     repoPanel.style.left = `${repoContainer.offsetLeft}px`;
     branchPanel.style.width = window.getComputedStyle(rightSidebar).width;
-}
+};
 
 // Close everything
 const closeDropdowns = () => {
     repoPanel.classList.remove('show');
     branchPanel.classList.remove('show');
     backdrop.classList.remove('show');
-}
+};
 
 const toggleDropdown = (toShow, toHide, event) => {
     event.stopPropagation();
-    updatePanelWidths;
+    updatePanelWidths();
     toHide.classList.remove('show');
 
     const isOpening = toShow.classList.toggle('show');
     backdrop.classList.toggle('show', isOpening);
-}
+};
 
 // ----- DROPDOWN EVENTS -----
 // Initial setup
@@ -55,7 +55,6 @@ branchBtn.addEventListener('click', (event) => toggleDropdown(branchPanel, repoP
 // Close triggers
 backdrop.addEventListener('click', closeDropdowns);
 window.addEventListener('click', closeDropdowns);
-window.addEventListener('resize', updatePanelWidths); //???
 
 // Prevent closing when inside
 document.querySelectorAll('.dropdown-panel').forEach(panel => {
@@ -63,6 +62,8 @@ document.querySelectorAll('.dropdown-panel').forEach(panel => {
 });
 
 // ----- RESIZER LOGIC -----
+window.addEventListener('resize', updatePanelWidths);
+
 resizer.addEventListener("mousedown", (event) => {
     isResizing = true;
 
