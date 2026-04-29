@@ -17,6 +17,13 @@ const mainContent = document.getElementById("main-content");
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
 
+// ----- APP SETUP -----
+document.addEventListener('wheel', (event) => {
+    if (event.ctrlKey || event.metaKey) {
+        event.preventDefault();
+    }
+}, { passive: false });
+
 // ----- HELPERS -----
 let minRightWidth = 0, maxRightWidth = 0;
 let isResizing = false;
