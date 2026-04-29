@@ -124,13 +124,13 @@ body, html {
     background-color: #11111b;
 }
 
-#repositories-dropdown {
+#repositories-container {
     flex: 1;
     min-width: 0;
     margin-left: 48px; /* TEMPORARY - PAREKGIT ICON LATER */
 }
 
-#repositories-dropdown .dropdown-panel {
+#repositories-container .dropdown-panel {
     left: 48px;
     width: calc(100% - 256px - 48px);
 }
@@ -140,7 +140,7 @@ body, html {
     flex-shrink: 0;
 }
 
-#branches-dropdown .dropdown-panel {
+#branches-container .dropdown-panel {
     right: 0;
 }
 

@@ -1,6 +1,15 @@
-const topbar = document.getElementById("topbar");
-const branchDropdown = document.getElementById("branches-dropdown");
+// Topbar & it's children
+const repoContainer = document.getElementById("repositories-container");
+const repoBtn = document.querySelector("#repositories-container .topbar-btn");
+const repoPanel = document.querySelector("#repositories-container .dropdown-panel");
 
+const branchContainer = document.getElementById("branches-container");
+const branchBtn = document.querySelector("#branches-container .topbar-btn");
+const branchPanel = document.querySelector("#branches-container .dropdown-panel");
+
+const backdrop = document.getElementById("dropdown-backdrop");
+
+// The rest
 const leftSidebar = document.getElementById("left-sidebar");
 
 const mainContent = document.getElementById("main-content");
@@ -8,81 +17,60 @@ const mainContent = document.getElementById("main-content");
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
 
-let minRightWidth, maxRightWidth;
+// ----- HELPERS -----
+let minRightWidth = 0, maxRightWidth = 0;
 let isResizing = false;
 
-// Topbar Dropdown Panel
-document.addEventListener('DOMContentLoaded', () => {
-    const repoBtn = document.querySelector("#repositories-dropdown .topbar-btn");
-    const repoContainer = document.getElementById("repositories-dropdown");
-    const repoPanel = document.querySelector("#repositories-dropdown .dropdown-panel");
+// Keep panel widths in sync (match their parents)
+const updatePanelWidths = () => {
+    repoPanel.style.width = `${repoContainer.offsetWidth}px`;
+    repoPanel.style.left = `${repoContainer.offsetLeft}px`;
+    branchPanel.style.width = window.getComputedStyle(rightSidebar).width;
+}
 
-    const branchBtn = document.querySelector("#branches-dropdown .topbar-btn");
-    const branchPanel = document.querySelector("#branches-dropdown .dropdown-panel");
+// Close everything
+const closeDropdowns = () => {
+    repoPanel.classList.remove('show');
+    branchPanel.classList.remove('show');
+    backdrop.classList.remove('show');
+}
 
-    const rightSidebar = document.getElementById("right-sidebar");
+const toggleDropdown = (toShow, toHide, event) => {
+    event.stopPropagation();
+    updatePanelWidths;
+    toHide.classList.remove('show');
 
-    const backdrop = document.getElementById("dropdown-backdrop");
+    const isOpening = toShow.classList.toggle('show');
+    backdrop.classList.toggle('show', isOpening);
+}
 
-    // Close everything
-    const closeDropdowns = () => {
-        repoPanel.classList.remove('show');
-        branchPanel.classList.remove('show');
-        backdrop.classList.remove('show');
-    }
+// ----- DROPDOWN EVENTS -----
+// Initial setup
+updatePanelWidths();
 
-    // Keep widths in sync
-    const updatePanelWidths = () => {
-        repoPanel.style.width = `${repoContainer.offsetWidth}px`;
-        repoPanel.style.left = `${repoContainer.offsetLeft}px`;
-        branchPanel.style.width = window.getComputedStyle(rightSidebar).width;
-    }
+// Toggles
+repoBtn.addEventListener('click', (event) => toggleDropdown(repoPanel, branchPanel, event));
+branchBtn.addEventListener('click', (event) => toggleDropdown(branchPanel, repoPanel, event));
 
-    // Initial sync
-    updatePanelWidths();
-    window.addEventListener('resize', updatePanelWidths);
-    
-    // Toggle repos
-    repoBtn.addEventListener('click', (event) => {
-        event.stopPropagation();
-        updatePanelWidths();
-        branchPanel.classList.remove('show');
+// Close triggers
+backdrop.addEventListener('click', closeDropdowns);
+window.addEventListener('click', closeDropdowns);
+window.addEventListener('resize', updatePanelWidths); //???
 
-        const isOpening = repoPanel.classList.toggle('show');
-        if (isOpening) backdrop.classList.add('show');
-        else backdrop.classList.remove('show');
-    });
-
-    // Toggle branches
-    branchBtn.addEventListener('click', (event) => {
-        event.stopPropagation();
-        updatePanelWidths();
-        repoPanel.classList.remove('show');
-
-        const isOpening = branchPanel.classList.toggle('show');
-        if (isOpening) backdrop.classList.add('show');
-        else backdrop.classList.remove('show');
-    });
-
-    // Close when clicking outside
-    backdrop.addEventListener('click', closeDropdowns);
-    window.addEventListener('click', closeDropdowns);
-
-    // Prevent closing when insidie
-    document.querySelectorAll('.dropdown-panel').forEach(panel => {
-        panel.addEventListener('click', (event) => event.stopPropagation());
-    });
+// Prevent closing when inside
+document.querySelectorAll('.dropdown-panel').forEach(panel => {
+    panel.addEventListener('click', (event) => event.stopPropagation());
 });
 
-// Split Container
+// ----- RESIZER LOGIC -----
 resizer.addEventListener("mousedown", (event) => {
     isResizing = true;
 
-    let rightCSS = window.getComputedStyle(rightSidebar);
-    let mainCSS = window.getComputedStyle(mainContent);
+    const rightCSS = window.getComputedStyle(rightSidebar);
+    const mainCSS = window.getComputedStyle(mainContent);
 
     minRightWidth = parseInt(rightCSS.minWidth) || 192;
-    let minMainWidth = parseInt(mainCSS.minWidth) || 360;
+    const minMainWidth = parseInt(mainCSS.minWidth) || 360;
 
     maxRightWidth = window.innerWidth - leftSidebar.offsetWidth - minMainWidth - resizer.offsetWidth;
 
@@ -97,17 +85,11 @@ function resize(event) {
         let newWidth = Math.max(minRightWidth, Math.min(targetWidth, maxRightWidth));
 
         rightSidebar.style.width = `${newWidth}px`;
-        branchDropdown.style.width = `${newWidth}px`;
+        branchContainer.style.width = `${newWidth}px`;
+        branchPanel.style.width = `${newWidth}px`;
 
-        const branchPanel = document.querySelector("#branches-dropdown .dropdown-panel");
-        const repoPanel = document.querySelector("#repositories-dropdown .dropdown-panel");
-        const repoContainer = document.getElementById("repositories-dropdown");
-
-        if (branchPanel) branchPanel.style.width = `${newWidth}px`;
-        if (repoPanel) {
-            repoPanel.style.width = `${repoContainer.offsetWidth}px`;
-            repoPanel.style.left = `${repoContainer.offsetLeft}px`;
-        }
+        repoPanel.style.width = `${repoContainer.offsetWidth}px`;
+        repoPanel.style.left = `${repoContainer.offsetLeft}px`;
     }
 }
 
