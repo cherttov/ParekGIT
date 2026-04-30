@@ -131,7 +131,8 @@ body, html {
     display: none;
     position: fixed;
     top: 32px;
-    bottom: 0;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
     background-color: #1e1e2e;
     z-index: 1000;
     flex-direction: column;
