@@ -140,7 +140,7 @@ body, html {
 }
 
 .dropdown-panel.show {
-    display: flex;
+    display: flex; 
 }
 
 #repositories-container {
