@@ -2,9 +2,9 @@
 
 namespace ParekGIT.Core.Interfaces
 {
-    internal interface IRepositoryStore
+    public interface IRepositoryStore
     {
-        Task<IEnumerable<GitRepository>> GetallRepositoriesAsync();
+        Task<IEnumerable<GitRepository>> GetAllRepositoriesAsync();
         Task UpsertRepositoryAsync(GitRepository repository); // Update || Insert
         Task DeleteRepositoryAsync(Guid id);
     }

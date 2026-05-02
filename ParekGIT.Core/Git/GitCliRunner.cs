@@ -1,10 +1,12 @@
 ﻿using CliWrap;
 using CliWrap.Buffered;
+using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
+using ParekGIT.Core.Models;
 
 namespace ParekGIT.Core.Git
 {
-    internal class GitCliRunner : IGitRunner
+    public class GitCliRunner : IGitRunner
     {
         public async Task<string> ExecuteCommandAsync(string repositoryPath, string arguments)
         {
@@ -27,6 +29,13 @@ namespace ParekGIT.Core.Git
             {
                 throw new Exception($"Failed to run git command: {ex.Message}");
             }
+        }
+
+        public async Task<List<GitFileStatus>> GetStatusAsync(string repositoryPath)
+        {
+            string rawOutput = await ExecuteCommandAsync(repositoryPath, "status --porcelain");
+
+            return GitStatusParser.ParsePorcelain(rawOutput);
         }
     }
 }

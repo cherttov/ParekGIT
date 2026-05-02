@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36616.10 d17.14
+VisualStudioVersion = 17.14.36616.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B8A1A4AB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analytics", "Analytics", "{995ACED0-80B2-47A4-825A-083A8C5C3DC3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParekGIT.Test", "ParekGIT.Test\ParekGIT.Test.csproj", "{C4A2F56C-3D2C-4603-B58C-D50390DB3FAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{687C1F98-3AAC-4AAA-B4CA-2C5430A5ECD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{687C1F98-3AAC-4AAA-B4CA-2C5430A5ECD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{687C1F98-3AAC-4AAA-B4CA-2C5430A5ECD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4A2F56C-3D2C-4603-B58C-D50390DB3FAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4A2F56C-3D2C-4603-B58C-D50390DB3FAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4A2F56C-3D2C-4603-B58C-D50390DB3FAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4A2F56C-3D2C-4603-B58C-D50390DB3FAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,6 +47,7 @@ Global
 		{3EC3DA31-38A9-4B84-9D1D-22964572A10D} = {0969305F-EDE7-4126-B1D7-D72D8A980026}
 		{687C1F98-3AAC-4AAA-B4CA-2C5430A5ECD6} = {7454B3A4-56A9-45BB-9459-FFD328A08932}
 		{995ACED0-80B2-47A4-825A-083A8C5C3DC3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C4A2F56C-3D2C-4603-B58C-D50390DB3FAE} = {B8A1A4AB-F7A1-4CE9-BDD3-62A3183FAA8A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7F21CA89-A380-4408-B4CC-228BC91F1687}

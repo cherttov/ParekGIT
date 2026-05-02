@@ -1,7 +1,10 @@
-﻿namespace ParekGIT.Core.Interfaces
+﻿using ParekGIT.Core.Models;
+
+namespace ParekGIT.Core.Interfaces
 {
-    internal interface IGitRunner
+    public interface IGitRunner
     {
         Task<string> ExecuteCommandAsync(string repositoryPath, string arguments);
+        Task<List<GitFileStatus>> GetStatusAsync(string repositoryPath);
     }
 }

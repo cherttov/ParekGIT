@@ -4,7 +4,7 @@ using LiteDB;
 
 namespace ParekGIT.Core.Data
 {
-    internal class LiteDbStore : IRepositoryStore
+    public class LiteDbStore : IRepositoryStore
     {
         private readonly string _dbPath;
         private const string CollectionName = "repositories";
@@ -19,19 +19,45 @@ namespace ParekGIT.Core.Data
             _dbPath = Path.Combine(appDataPath, "data.db");
         }
 
-        public Task<IEnumerable<GitRepository>> GetallRepositoriesAsync()
+        public Task<IEnumerable<GitRepository>> GetAllRepositoriesAsync()
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(_dbPath))
+                {
+                    var collection = db.GetCollection<GitRepository>(CollectionName);
+
+                    return (IEnumerable<GitRepository>)collection.Query()
+                        .OrderByDescending(entry => entry.LastAccessed)
+                        .ToList();
+                }
+            });
         }
 
         public Task UpsertRepositoryAsync(GitRepository repository)
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(_dbPath))
+                {
+                    var collection = db.GetCollection<GitRepository>(CollectionName);
+
+                    collection.Upsert(repository);
+                }
+            });
         }
 
         public Task DeleteRepositoryAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(_dbPath))
+                {
+                    var collection = db.GetCollection<GitRepository>(CollectionName);
+
+                    collection.Delete(id);
+                }
+            });
         }
     }
 }
