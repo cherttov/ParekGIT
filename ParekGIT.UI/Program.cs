@@ -1,6 +1,9 @@
-﻿using Photino.NET;
+﻿using ParekGIT.Core.Data;
+using Photino.NET;
 using System.Drawing;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace ParekGIT.UI
 {
@@ -9,6 +12,10 @@ namespace ParekGIT.UI
         [STAThread]
         static void Main(string[] args)
         {
+            // Database
+            var dbStore = new LiteDbStore();
+
+            // Window
             var window = new PhotinoWindow()
                 .SetTitle("ParekGIT")
                 .SetUseOsDefaultSize(false)

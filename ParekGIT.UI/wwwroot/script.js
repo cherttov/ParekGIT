@@ -1,9 +1,11 @@
 // Topbar & it's children
 const repoContainer = document.getElementById("repositories-container");
+const repoDropdown = document.getElementById("repository-dropdown-panel");
 const repoBtn = document.querySelector("#repositories-container .topbar-btn");
 const repoPanel = document.querySelector("#repositories-container .dropdown-panel");
 
 const branchContainer = document.getElementById("branches-container");
+const branchDropdown = document.getElementById("branch-dropdown-panel");
 const branchBtn = document.querySelector("#branches-container .topbar-btn");
 const branchPanel = document.querySelector("#branches-container .dropdown-panel");
 
@@ -155,3 +157,28 @@ const setupSelection = (panelSelector, btnValueSelector) => {
 
 setupSelection('#repository-dropdown-panel', '#repositories-container .btn-value');
 setupSelection('#branch-dropdown-panel', '#branches-container .btn-value');
+
+// ----- C# CALLABLES -----
+function loadRepositoriesIntoDropdown(repositoriesJson) {
+    const repositories = JSON.parse(repositoriesJson);
+
+    const existingItems = repoDropdown.querySelectorAll('.dropdown-item');
+    existingItems.forEach(item => item.remove());
+
+    if (repositories.length === 0) { return; }
+
+    repositories.forEach(repo => {
+        const item = document.createElement("div");
+        item.className = "dropdown-item";
+
+        item.dataset.path = repo.AbsolutePath;
+
+        item.innerHTML = `${repo.Name}`;
+
+        item.addEventListener("click", () => {
+            console.log("Tell C# to load status for: ", repo.AbsolutePath);
+        });
+
+        repoDropdown.appendChild(item);
+    })
+}
