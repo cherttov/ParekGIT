@@ -19,12 +19,39 @@ const mainContent = document.getElementById("main-content");
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
 
+// ----- C# COMMS -----
+const sendIpcMessage = (action, payload = {}) => {
+    const envelope = {
+        Action: action,
+        Payload: payload
+    };
+    window.external.sendMessage(JSON.stringify(envelope));
+};
+
+window.external.receiveMessage(message => {
+    const data = JSON.parse(message);
+
+    switch (data.Action) {
+        case "LOAD_REPOSITORIES":
+            loadRepositoriesIntoDropdown(data.Payload);
+            break;
+
+        default:
+            console.warn("Unknown action received received: ", data.Action);
+    }
+})
+
 // ----- APP SETUP -----
 document.addEventListener('wheel', (event) => {
     if (event.ctrlKey || event.metaKey) {
         event.preventDefault();
     }
 }, { passive: false });
+
+window.addEventListener('DOMContentLoaded', () => {
+    sendIpcMessage("APP_READY");
+});
+
 
 // ----- HELPERS -----
 let minRightWidth = 0, maxRightWidth = 0;
@@ -159,9 +186,7 @@ setupSelection('#repository-dropdown-panel', '#repositories-container .btn-value
 setupSelection('#branch-dropdown-panel', '#branches-container .btn-value');
 
 // ----- C# CALLABLES -----
-function loadRepositoriesIntoDropdown(repositoriesJson) {
-    const repositories = JSON.parse(repositoriesJson);
-
+function loadRepositoriesIntoDropdown(repositories) {
     const existingItems = repoDropdown.querySelectorAll('.dropdown-item');
     existingItems.forEach(item => item.remove());
 
