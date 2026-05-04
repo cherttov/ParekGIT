@@ -1,4 +1,5 @@
-// Topbar & it's children
+// ------- DOM ELEMENTS -------
+// Topbar
 const repoContainer = document.getElementById("repositories-container");
 const repoDropdown = document.getElementById("repository-dropdown-panel");
 const repoBtn = document.querySelector("#repositories-container .topbar-btn");
@@ -11,15 +12,17 @@ const branchPanel = document.querySelector("#branches-container .dropdown-panel"
 
 const backdrop = document.getElementById("dropdown-backdrop");
 
-// The rest
+// Left Sidebar
 const leftSidebar = document.getElementById("left-sidebar");
 
+// Main Content
 const mainContent = document.getElementById("main-content");
 
+// Right Sidebar + SplitContainer
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
 
-// ----- C# COMMS -----
+// ------- IPC COMMUNICATION -------
 const sendIpcMessage = (action, payload = {}) => {
     const envelope = {
         Action: action,
@@ -41,19 +44,7 @@ window.external.receiveMessage(message => {
     }
 })
 
-// ----- APP SETUP -----
-document.addEventListener('wheel', (event) => {
-    if (event.ctrlKey || event.metaKey) {
-        event.preventDefault();
-    }
-}, { passive: false });
-
-window.addEventListener('DOMContentLoaded', () => {
-    sendIpcMessage("APP_READY");
-});
-
-
-// ----- HELPERS -----
+// ------- UI FUNCTIONS & HELPERS -------
 let minRightWidth = 0, maxRightWidth = 0;
 let isResizing = false;
 
@@ -80,11 +71,38 @@ const toggleDropdown = (toShow, toHide, event) => {
     backdrop.classList.toggle('show', isOpening);
 };
 
-// ----- DROPDOWN EVENTS -----
-// Initial setup
-updatePanelWidths();
+// C# - Load repositories
+function loadRepositoriesIntoDropdown(repositories) {
+    const existingItems = repoDropdown.querySelectorAll('.dropdown-item');
+    existingItems.forEach(item => item.remove());
 
-// Toggles
+    if (repositories.length === 0) { return; }
+
+    repositories.forEach(repo => {
+        const item = document.createElement("div");
+        item.className = "dropdown-item";
+
+        item.dataset.path = repo.AbsolutePath;
+
+        item.innerHTML = `${repo.Name}`;
+
+        item.addEventListener("click", () => {
+            sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
+        });
+
+        repoDropdown.appendChild(item);
+    })
+}
+
+// ------- EVENT LISTENERS -------
+// Global overrides
+document.addEventListener('wheel', (event) => {
+    if (event.ctrlKey || event.metaKey) {
+        event.preventDefault();
+    }
+}, { passive: false });
+
+// Dropdown toggles
 repoBtn.addEventListener('click', (event) => toggleDropdown(repoPanel, branchPanel, event));
 branchBtn.addEventListener('click', (event) => toggleDropdown(branchPanel, repoPanel, event));
 
@@ -97,7 +115,7 @@ document.querySelectorAll('.dropdown-panel').forEach(panel => {
     panel.addEventListener('click', (event) => event.stopPropagation());
 });
 
-// ----- RESIZER LOGIC -----
+// Resizer logic
 window.addEventListener('resize', updatePanelWidths);
 
 resizer.addEventListener("mousedown", (event) => {
@@ -137,13 +155,14 @@ function stopResize() {
     document.body.style.userSelect = "";
 }
 
-// ----- SEARCH LOGIC -----
+// Search & Selection Setup
 const setupFilter = (inputSelector, panelSelector) => {
     const searchInput = document.querySelector(inputSelector);
-    const dropdownItems = document.querySelectorAll(`${panelSelector} .dropdown-item`);
 
     searchInput.addEventListener('input', (event) => {
         const searchTerm = event.target.value.toLowerCase();
+
+        const dropdownItems = document.querySelectorAll(`${panelSelector} .dropdown-item`);
 
         dropdownItems.forEach(item => {
             const itemText = item.textContent.toLowerCase();
@@ -157,10 +176,6 @@ const setupFilter = (inputSelector, panelSelector) => {
     });
 };
 
-setupFilter('#repositories-filter .filter-input', '#repository-dropdown-panel');
-setupFilter('#branches-filter .filter-input', '#branch-dropdown-panel');
-
-// ----- SELECTION LOGIC -----
 const setupSelection = (panelSelector, btnValueSelector) => {
     const panel = document.querySelector(panelSelector);
     const valueDisplay = document.querySelector(btnValueSelector);
@@ -182,28 +197,15 @@ const setupSelection = (panelSelector, btnValueSelector) => {
     });
 };
 
+setupFilter('#repositories-filter .filter-input', '#repository-dropdown-panel');
+setupFilter('#branches-filter .filter-input', '#branch-dropdown-panel');
+
 setupSelection('#repository-dropdown-panel', '#repositories-container .btn-value');
 setupSelection('#branch-dropdown-panel', '#branches-container .btn-value');
 
-// ----- C# CALLABLES -----
-function loadRepositoriesIntoDropdown(repositories) {
-    const existingItems = repoDropdown.querySelectorAll('.dropdown-item');
-    existingItems.forEach(item => item.remove());
+// ------- APP INIT -------
+updatePanelWidths();
 
-    if (repositories.length === 0) { return; }
-
-    repositories.forEach(repo => {
-        const item = document.createElement("div");
-        item.className = "dropdown-item";
-
-        item.dataset.path = repo.AbsolutePath;
-
-        item.innerHTML = `${repo.Name}`;
-
-        item.addEventListener("click", () => {
-            console.log("Tell C# to load status for: ", repo.AbsolutePath);
-        });
-
-        repoDropdown.appendChild(item);
-    })
-}
+window.addEventListener('DOMContentLoaded', () => {
+    sendIpcMessage("APP_READY");
+});

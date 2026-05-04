@@ -1,5 +1,7 @@
 ﻿using ParekGIT.Core.Data;
 using ParekGIT.UI.Data;
+using ParekGIT.UI.Handlers;
+using ParekGIT.UI.Ipc;
 using Photino.NET;
 using System.Drawing;
 using System.Net.NetworkInformation;
@@ -27,34 +29,15 @@ namespace ParekGIT.UI
                 .Center()
                 .SetContextMenuEnabled(true) // later false
                 .SetDevToolsEnabled(true) // later false
-                .Load("wwwroot/index.html")
-                .RegisterWebMessageReceivedHandler(async (object sender, string message) =>
-                {
-                    var window = (PhotinoWindow)sender;
+                .Load("wwwroot/index.html");
 
-                    try
-                    {
-                        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                        var ipcMessage = JsonSerializer.Deserialize<IpcMessage>(message, options);
+            // Setup IPC router
+            var router = new IpcRouter();
 
-                        if (ipcMessage == null) return;
+            router.RegisterHandler(new AppReadyHandler(window, dbStore));
+            router.RegisterHandler(new RepoSelectedHandler(window, dbStore));
 
-                        switch (ipcMessage.Action)
-                        {
-                            case "APP_READY":
-                                await HandleAppReady(window, dbStore);
-                                break;
-
-                            default:
-                                Console.WriteLine($"Unknown action: {ipcMessage.Action}");
-                                break;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Failed to parse IPC Message: {ex.Message}");
-                    }
-                });
+            window.RegisterWebMessageReceivedHandler(router.HandleMessage);
 
             window.WaitForClose();
         }
@@ -73,7 +56,11 @@ namespace ParekGIT.UI
             string jsonString = JsonSerializer.Serialize(response);
 
             window.SendWebMessage(jsonString);
-                
+        }
+
+        private static async Task HandleRepoSelected(PhotinoWindow window, LiteDbStore dbStore, string absolutePath)
+        {
+            Console.WriteLine($"Selected repo: {absolutePath}");
         }
     }
 }

@@ -14,34 +14,34 @@ namespace ParekGIT.Test
 
             var testRepo = new GitRepository
             {
-                Name = "My Test Repository",
-                AbsolutePath = @"C:\Users\Tymofii Chertov\Nevim\Programming\MyTestRepository",
+                Name = "RayCastingSimulator",
+                AbsolutePath = @"C:\Users\Tymofii Chertov\Nevim\Programming\python\RayCastingSimulator",
                 LastAccessed = DateTime.Now
             };
 
             await dbStore.UpsertRepositoryAsync(testRepo);
-            try
-            {
-                var statusList = await gitRunner.GetStatusAsync(testRepo.AbsolutePath);
-                if (statusList.Count == 0)
-                {
-                    Console.WriteLine("Status is empty");
-                }
-                else
-                {
-                    Console.WriteLine($"Found {statusList.Count} changed files");
+            //try
+            //{
+            //    var statusList = await gitRunner.GetStatusAsync(testRepo.AbsolutePath);
+            //    if (statusList.Count == 0)
+            //    {
+            //        Console.WriteLine("Status is empty");
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine($"Found {statusList.Count} changed files");
 
-                    foreach (var file in statusList)
-                    {
-                        Console.WriteLine($"[{file.StatusDescription}] ({file.StatusCode})");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("ERROR" + ex);
-            }
-            Console.ReadLine();
+            //        foreach (var file in statusList)
+            //        {
+            //            Console.WriteLine($"[{file.StatusDescription}] ({file.StatusCode})");
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine("ERROR" + ex);
+            //}
+            //Console.ReadLine();
         }
     }
 }
