@@ -41,26 +41,5 @@ namespace ParekGIT.UI
 
             window.WaitForClose();
         }
-
-        // Individual handlers
-        private static async Task HandleAppReady(PhotinoWindow window, LiteDbStore dbStore)
-        {
-            var repos = await dbStore.GetAllRepositoriesAsync();
-
-            var response = new IpcMessage
-            {
-                Action = "LOAD_REPOSITORIES",
-                Payload = JsonSerializer.SerializeToElement(repos)
-            };
-
-            string jsonString = JsonSerializer.Serialize(response);
-
-            window.SendWebMessage(jsonString);
-        }
-
-        private static async Task HandleRepoSelected(PhotinoWindow window, LiteDbStore dbStore, string absolutePath)
-        {
-            Console.WriteLine($"Selected repo: {absolutePath}");
-        }
     }
 }
