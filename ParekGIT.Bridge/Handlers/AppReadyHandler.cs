@@ -1,12 +1,12 @@
-﻿using ParekGIT.Core.Data;
-using ParekGIT.UI.Data;
-using ParekGIT.UI.Interfaces;
+﻿using ParekGIT.Bridge.Data;
+using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Data.Data;
 using Photino.NET;
 using System.Text.Json;
 
-namespace ParekGIT.UI.Handlers
+namespace ParekGIT.Bridge.Handlers
 {
-    internal class AppReadyHandler : IMessageHandler
+    public class AppReadyHandler : IMessageHandler
     {
         private readonly PhotinoWindow _window;
         private readonly LiteDbStore _dbStore;

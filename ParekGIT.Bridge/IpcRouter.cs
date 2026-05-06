@@ -1,11 +1,11 @@
-﻿using ParekGIT.UI.Data;
-using ParekGIT.UI.Interfaces;
+﻿using ParekGIT.Bridge.Data;
+using ParekGIT.Bridge.Interfaces;
 using Photino.NET;
 using System.Text.Json;
 
-namespace ParekGIT.UI.Ipc
+namespace ParekGIT.Bridge.Ipc
 {
-    internal class IpcRouter
+    public class IpcRouter
     {
         private readonly Dictionary<string, IMessageHandler> _handlers = new();
 

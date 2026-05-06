@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 
-namespace ParekGIT.UI.Interfaces
+namespace ParekGIT.Bridge.Interfaces
 {
-    internal interface IMessageHandler
+    public interface IMessageHandler
     {
         string Action { get; }
         Task ExecuteAsync(JsonElement payload);

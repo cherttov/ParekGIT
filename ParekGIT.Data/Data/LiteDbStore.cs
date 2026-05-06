@@ -1,8 +1,8 @@
-﻿using ParekGIT.Core.Interfaces;
-using ParekGIT.Core.Models;
+﻿using ParekGIT.Core.Models;
 using LiteDB;
+using ParekGIT.Data.Interfaces;
 
-namespace ParekGIT.Core.Data
+namespace ParekGIT.Data.Data
 {
     public class LiteDbStore : IRepositoryStore
     {

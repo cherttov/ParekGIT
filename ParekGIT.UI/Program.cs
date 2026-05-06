@@ -1,14 +1,8 @@
-﻿using ParekGIT.Core.Data;
-using ParekGIT.UI.Data;
-using ParekGIT.UI.Handlers;
-using ParekGIT.UI.Ipc;
+﻿using ParekGIT.Data.Data;
 using Photino.NET;
 using System.Drawing;
-using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+using ParekGIT.Bridge.Ipc;
+using ParekGIT.Bridge.Handlers;
 
 namespace ParekGIT.UI
 {

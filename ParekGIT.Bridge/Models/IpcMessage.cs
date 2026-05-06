@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace ParekGIT.UI.Data
+namespace ParekGIT.Bridge.Data
 {
     internal class IpcMessage
     {

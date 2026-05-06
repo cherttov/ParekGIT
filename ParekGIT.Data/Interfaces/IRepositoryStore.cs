@@ -1,6 +1,6 @@
 ﻿using ParekGIT.Core.Models;
 
-namespace ParekGIT.Core.Interfaces
+namespace ParekGIT.Data.Interfaces
 {
     public interface IRepositoryStore
     {
