@@ -20,6 +20,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\ParekGIT.Core\ParekGIT.Core.csproj" />
     <ProjectReference Include="..\ParekGIT.Data\ParekGIT.Data.csproj" />
     <ProjectReference Include="..\ParekGIT.Bridge\ParekGIT.Bridge.csproj" />
   </ItemGroup>

@@ -3,6 +3,7 @@ using Photino.NET;
 using System.Drawing;
 using ParekGIT.Bridge.Ipc;
 using ParekGIT.Bridge.Handlers;
+using ParekGIT.Core.Git;
 
 namespace ParekGIT.UI
 {
@@ -13,6 +14,9 @@ namespace ParekGIT.UI
         {
             // Database
             var dbStore = new LiteDbStore();
+
+            // Core runner
+            var gitRunner = new GitCliRunner();
 
             // Window
             var window = new PhotinoWindow()
@@ -29,7 +33,7 @@ namespace ParekGIT.UI
             var router = new IpcRouter();
 
             router.RegisterHandler(new AppReadyHandler(window, dbStore));
-            router.RegisterHandler(new RepoSelectedHandler(window, dbStore));
+            router.RegisterHandler(new RepoSelectedHandler(window, dbStore, gitRunner));
 
             window.RegisterWebMessageReceivedHandler(router.HandleMessage);
 

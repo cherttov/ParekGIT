@@ -39,6 +39,10 @@ window.external.receiveMessage(message => {
             loadRepositoriesIntoDropdown(data.Payload);
             break;
 
+        case "BRANCHES_LOADED":
+            loadBranchesIntoDropdown(data.Payload);
+            break;
+
         default:
             console.warn("Unknown action received received: ", data.Action);
     }
@@ -91,7 +95,28 @@ function loadRepositoriesIntoDropdown(repositories) {
         });
 
         repoDropdown.appendChild(item);
-    })
+    });
+}
+
+// C# - Load branches
+function loadBranchesIntoDropdown(branches) {
+    const existingItems = branchDropdown.querySelectorAll('.dropdown-item');
+    existingItems.forEach(item => item.remove());
+
+    if (branches.length === 0) { return; }
+
+    branches.forEach(branch => {
+        const item = document.createElement("div");
+        item.className = "dropdown-item";
+
+        item.innerHTML = `${branch.Name}`;
+
+        //item.addEventListener("click", () => {
+        //    sendIpcMessage("BRANCH_SELECTED", {})
+        //});
+
+        branchDropdown.appendChild(item);
+    });
 }
 
 // ------- EVENT LISTENERS -------
