@@ -11,4 +11,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ParekGIT.Core\ParekGIT.Core.csproj" />
+    <ProjectReference Include="..\ParekGIT.Data\ParekGIT.Data.csproj" />
+  </ItemGroup>
+
 </Project>

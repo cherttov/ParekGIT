@@ -3,6 +3,7 @@ using CliWrap.Buffered;
 using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
+using System.Diagnostics;
 
 namespace ParekGIT.Core.Git
 {
@@ -31,11 +32,14 @@ namespace ParekGIT.Core.Git
             }
         }
 
-        public async Task<List<GitFileStatus>> GetStatusAsync(string repositoryPath)
+        // Parsers
+        public async Task<IEnumerable<GitBranch>> GetBranchesAsync(string repositoryPath)
         {
-            string rawOutput = await ExecuteCommandAsync(repositoryPath, "status --porcelain");
+            string arguments = "branch --all --format=\"%(refname:short)|%(HEAD)|%(upstream:short)|%(objectname)\"";
 
-            return GitStatusParser.ParsePorcelain(rawOutput);
+            string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
+
+            return GitBranchParser.Parse(rawOutput);
         }
     }
 }
