@@ -22,6 +22,9 @@ const mainContent = document.getElementById("main-content");
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
 
+// ------- APP STATE -------
+let currentRepoPath = "";
+
 // ------- IPC COMMUNICATION -------
 const sendIpcMessage = (action, payload = {}) => {
     const envelope = {
@@ -91,6 +94,7 @@ function loadRepositoriesIntoDropdown(repositories) {
         item.innerHTML = `${repo.Name}`;
 
         item.addEventListener("click", () => {
+            currentRepoPath = repo.AbsolutePath;
             sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
         });
 
@@ -103,20 +107,39 @@ function loadBranchesIntoDropdown(branches) {
     const existingItems = branchDropdown.querySelectorAll('.dropdown-item');
     existingItems.forEach(item => item.remove());
 
-    if (branches.length === 0) { return; }
+    const branchBtnValue = document.querySelector('#branches-container .btn-value');
+
+    if (branches.length === 0) {
+        branchBtnValue.textContent = "No branches";
+        return;
+    }
+
+    let currentBranchName = "None";
 
     branches.forEach(branch => {
         const item = document.createElement("div");
-        item.className = "dropdown-item";
+
+        if (branch.IsCurrent) {
+            item.className = "dropdown-item active";
+            currentBranchName = branch.Name;
+        }
+        else {
+            item.className = "dropdown-item";
+        }
 
         item.innerHTML = `${branch.Name}`;
 
-        //item.addEventListener("click", () => {
-        //    sendIpcMessage("BRANCH_SELECTED", {})
-        //});
+        item.addEventListener("click", () => {
+            sendIpcMessage("BRANCH_SELECTED", {
+                absolutePath: currentRepoPath,
+                branchName: branch.Name
+            });
+        });
 
         branchDropdown.appendChild(item);
     });
+
+    branchBtnValue.textContent = currentBranchName;
 }
 
 // ------- EVENT LISTENERS -------
