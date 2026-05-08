@@ -35,12 +35,15 @@ namespace ParekGIT.Bridge.Handlers
             // Change branch in git
             await _gitRunner.CheckoutBranchAsync(repoPath, branchName, isRemote);
 
+            // Update displayed list
+            var branches = await _gitRunner.GetBranchesAsync(repoPath);
+
             // Send text data (later)
 
             var response = new IpcMessage
             {
                 Action = "BRANCH_LOADED",
-                Payload = JsonSerializer.SerializeToElement("null")
+                Payload = JsonSerializer.SerializeToElement(branches)
             };
 
             _window.SendWebMessage(JsonSerializer.Serialize(response));

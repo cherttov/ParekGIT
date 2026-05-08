@@ -36,7 +36,30 @@ namespace ParekGIT.Core.Git.Parsers
                 });
             }
 
-            return branches;
+            // Clean up 'origin/example' etc.
+            var localBranchNames = branches
+                .Where(b => !b.IsRemote)
+                .Select(b => b.Name)
+                .ToHashSet();
+
+            var cleanBranchList = new List<GitBranch>();
+
+            foreach (var branch in branches)
+            {
+                if (branch.IsRemote)
+                {
+                    string shortName = branch.Name.Substring(branch.Name.IndexOf('/') + 1);
+
+                    if (localBranchNames.Contains(shortName))
+                    {
+                        continue;
+                    }
+                }
+
+                cleanBranchList.Add(branch);
+            }
+
+            return cleanBranchList;
         }
     }
 }

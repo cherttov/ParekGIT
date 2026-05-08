@@ -46,6 +46,10 @@ window.external.receiveMessage(message => {
             loadBranchesIntoDropdown(data.Payload);
             break;
 
+        case "BRANCH_LOADED":
+            loadBranchesIntoDropdown(data.Payload); // temporary
+            break;
+
         default:
             console.warn("Unknown action received received: ", data.Action);
     }

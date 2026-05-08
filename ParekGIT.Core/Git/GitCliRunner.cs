@@ -3,7 +3,6 @@ using CliWrap.Buffered;
 using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
-using System.Diagnostics;
 
 namespace ParekGIT.Core.Git
 {
@@ -42,7 +41,7 @@ namespace ParekGIT.Core.Git
             return GitBranchParser.Parse(rawOutput);
         }
 
-        // 
+        // Commands
         public async Task CheckoutBranchAsync(string repositoryPath, string branchName, bool isRemote)
         {
             string arguments = isRemote
