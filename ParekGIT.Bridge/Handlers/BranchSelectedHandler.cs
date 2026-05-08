@@ -22,15 +22,25 @@ namespace ParekGIT.Bridge.Handlers
             _gitRunner = gitRunner;
         }
 
-        public Task ExecuteAsync(JsonElement payload)
+        public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("absolutePath").GetString()
                               ?? throw new ArgumentNullException("absolutePath");
 
+            string branchName = payload.GetProperty("branchName").GetString()
+                                ?? throw new ArgumentNullException("branchName");
+
+            bool isRemote = payload.GetProperty("isRemote").GetBoolean();
+
+            // Change branch in git
+            await _gitRunner.CheckoutBranchAsync(repoPath, branchName, isRemote);
+
+            // Send text data (later)
+
             var response = new IpcMessage
             {
                 Action = "BRANCH_LOADED",
-                Payload = JsonSerializer.SerializeToElement(null)
+                Payload = JsonSerializer.SerializeToElement("null")
             };
 
             _window.SendWebMessage(JsonSerializer.Serialize(response));

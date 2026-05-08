@@ -10,6 +10,17 @@ namespace ParekGIT.Test
         {
             var dbStore = new LiteDbStore();
             var gitRunner = new GitCliRunner();
+
+            var idk = await dbStore.GetAllRepositoriesAsync();
+
+            foreach (var l in idk)
+            {
+                Console.WriteLine(l.Id);
+                Console.WriteLine(l.Name);
+                Console.WriteLine(l.AbsolutePath);
+                Console.WriteLine(l.LastAccessed);
+                Console.WriteLine("-------------------");
+            }
         }
     }
 }

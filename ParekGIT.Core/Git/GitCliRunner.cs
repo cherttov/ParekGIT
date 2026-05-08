@@ -41,5 +41,15 @@ namespace ParekGIT.Core.Git
 
             return GitBranchParser.Parse(rawOutput);
         }
+
+        // 
+        public async Task CheckoutBranchAsync(string repositoryPath, string branchName, bool isRemote)
+        {
+            string arguments = isRemote
+                ? $"checkout -t \"{branchName}\""
+                : $"checkout \"{branchName}\"";
+
+            await ExecuteCommandAsync(repositoryPath, arguments);
+        }
     }
 }

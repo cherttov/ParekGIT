@@ -16,10 +16,11 @@ namespace ParekGIT.Core.Git.Parsers
             foreach (var line in lines)
             {
                 var parts = line.Split('|');
-
                 if (parts.Length != 4) continue;
 
                 string name = parts[0].Trim();
+                if (name == "origin") continue;
+
                 bool isCurrent = parts[1].Trim() == "*";
                 bool isRemote = name.Contains('/') && !isCurrent;
                 string targetCommitHash = parts[3].Trim();

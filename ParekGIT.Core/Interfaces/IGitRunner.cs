@@ -6,5 +6,6 @@ namespace ParekGIT.Core.Interfaces
     {
         Task<string> ExecuteCommandAsync(string repositoryPath, string arguments);
         Task<IEnumerable<GitBranch>> GetBranchesAsync(string repositoryPath);
+        Task CheckoutBranchAsync(string repositoryPath, string branchName, bool isRemote);
     }
 }

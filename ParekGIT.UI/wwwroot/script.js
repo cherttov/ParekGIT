@@ -132,7 +132,8 @@ function loadBranchesIntoDropdown(branches) {
         item.addEventListener("click", () => {
             sendIpcMessage("BRANCH_SELECTED", {
                 absolutePath: currentRepoPath,
-                branchName: branch.Name
+                branchName: branch.Name,
+                isRemote: branch.IsRemote
             });
         });
 
