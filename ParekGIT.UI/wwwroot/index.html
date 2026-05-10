@@ -63,6 +63,26 @@
 
     <div class="dropdown-backdrop" id="dropdown-backdrop"></div>
 
+    <div class="modal-backdrop show" id="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add new repository</h3>
+                <button id="close-modal-icon">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <input type="text" id="modal-input" placeholder="New branch name"/>
+            </div>
+
+            <div class="modal-footer"> 
+                <button id="confirm-modal-btn">Confirm</button>
+                <button id="cancel-modal-btn">Cancel</button>
+            </div>
+
+        </div>
+
+    </div>
+
     <div class="app-container">
         <div class="left-sidebar" id="left-sidebar">
             <button class="left-sidebar-btn btn-file">

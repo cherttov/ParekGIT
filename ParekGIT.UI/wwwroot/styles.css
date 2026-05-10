@@ -425,3 +425,136 @@ body, html {
     cursor: ew-resize;
     background-color: transparent;
 }
+
+/* MODAL BACKDROPS */
+.modal-backdrop {
+    visibility: hidden;
+    opacity: 0;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1500;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: visibility 0.2s, opacity 0.2s ease-in;
+}
+
+.modal-backdrop.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: #1e1e2e;
+    border-radius: 4px;
+    width: 400px;
+    padding: 16px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.modal-backdrop.show .modal-content {
+    transform: scale(1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-family: 'FiraCode', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+#close-modal-icon {
+    background: transparent;
+    border: none;
+    color: #6c7086;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.1s ease;
+}
+
+#close-modal-icon:hover {
+    color: #cba6f7;
+}
+
+#modal-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+
+    color: #cdd6f4;
+    background-color: #11111b;
+    border: 1px solid #313244;
+    border-radius: 4px;
+    border-color: #11111b;
+
+    font-family: 'FiraCode', sans-serif;
+    font-size: 13px;
+
+    transition: border-color 0.1s ease;
+
+    user-select: none;
+    outline: none;
+}
+
+#modal-input:focus {
+    border-color: #cba6f7
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    user-select: none;
+}
+
+.modal-footer button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.1s ease;
+}
+
+#cancel-modal-btn {
+    background-color: transparent;
+    color: #cdd6f4;
+    border: 2px solid #313244;
+}
+
+#cancel-modal-btn:hover {
+    background-color: #313244;
+}
+
+#confirm-modal-btn {
+    background-color: #cba6f7;
+    color: #11111b;
+}
+
+#confirm-modal-btn:hover {
+    background-color: #dec7fa;
+}
