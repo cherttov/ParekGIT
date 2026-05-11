@@ -442,7 +442,7 @@ body, html {
     right: 0;
     bottom: 0;
 
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.4);
     z-index: 1500;
 
     display: flex;
@@ -468,7 +468,7 @@ body, html {
     gap: 16px;
 
     transform: scale(0.95);
-    transition: transform 0.2s ease;
+    transition: transform 0.1s ease-in;
 }
 
 .modal-backdrop.show .modal-content {
@@ -489,7 +489,7 @@ body, html {
     font-weight: 600;
 }
 
-#close-modal-icon {
+.close-modal-icon {
     background: transparent;
     border: none;
     color: #6c7086;
@@ -500,11 +500,17 @@ body, html {
     transition: color 0.1s ease;
 }
 
-#close-modal-icon:hover {
+.close-modal-icon:hover {
     color: #cba6f7;
 }
 
-#modal-input {
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-input {
     width: 100%;
     box-sizing: border-box;
     padding: 4px;
@@ -524,7 +530,7 @@ body, html {
     outline: none;
 }
 
-#modal-input:focus {
+.modal-input:focus {
     border-color: #cba6f7
 }
 
@@ -545,21 +551,21 @@ body, html {
     transition: all 0.1s ease;
 }
 
-#cancel-modal-btn {
+.cancel-modal-btn {
     background-color: transparent;
     color: #cdd6f4;
     border: 2px solid #313244;
 }
 
-#cancel-modal-btn:hover {
+.cancel-modal-btn:hover {
     background-color: #313244;
 }
 
-#confirm-modal-btn {
+.confirm-modal-btn {
     background-color: #cba6f7;
     color: #11111b;
 }
 
-#confirm-modal-btn:hover {
+.confirm-modal-btn:hover {
     background-color: #dec7fa;
 }

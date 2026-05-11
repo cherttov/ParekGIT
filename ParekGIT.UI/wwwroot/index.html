@@ -63,25 +63,71 @@
 
     <div class="dropdown-backdrop" id="dropdown-backdrop"></div>
 
-    <div class="modal-backdrop" id="branch-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add new repository</h3>
-                <button id="close-modal-icon">&times;</button>
+    <div class="modals">
+        <div class="modal-backdrop" id="branch-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Create new branch</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="text" class="modal-input" placeholder="New branch name" />
+                </div>
+
+                <div class="modal-footer">
+                    <button class="confirm-modal-btn">Create branch</button>
+                    <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
             </div>
 
-            <div class="modal-body">
-                <input type="text" id="modal-input" placeholder="New branch name"/>
+        </div>
+
+        <div class="modal-backdrop" id="repo-create-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Create a new repository</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="text" class="modal-input input-name" placeholder="Name" />
+                    <input type="text" class="modal-input input-path" placeholder="Local path"/>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="confirm-modal-btn">Create repository</button>
+                    <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
             </div>
 
-            <div class="modal-footer"> 
-                <button id="confirm-modal-btn">Confirm</button>
-                <button id="cancel-modal-btn">Cancel</button>
+        </div>
+
+        <div class="modal-backdrop" id="repo-add-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add local repository</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="text" class="modal-input" placeholder="Repository path" />
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="confirm-modal-btn">Add repository</button>
+                    <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
             </div>
 
         </div>
 
     </div>
+
 
     <div class="app-container">
         <div class="left-sidebar" id="left-sidebar">

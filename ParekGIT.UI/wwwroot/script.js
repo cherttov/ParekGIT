@@ -26,11 +26,22 @@ const resizer = document.getElementById("resizer");
 
 // Modals
 const modalBackdrops = document.querySelectorAll('.modal-backdrop');
-const modalCloseTriggers = document.querySelectorAll('#close-modal-icon, #cancel-modal-btn');
+const modalCloseTriggers = document.querySelectorAll('.close-modal-icon, .cancel-modal-btn');
 
 const branchModal = document.getElementById("branch-modal");
-const branchModalInput = branchModal.querySelector("#modal-input");
-const branchModalConfirmBtn = branchModal.querySelector("#confirm-modal-btn");
+const branchModalInput = branchModal.querySelector(".modal-input");
+const branchModalConfirmBtn = branchModal.querySelector(".confirm-modal-btn");
+
+// const repoCloneModal = document.getElementById("repo-clone-modal");
+
+const repoCreateModal = document.getElementById("repo-create-modal");
+const repoCreateModalInputName = repoCreateModal.querySelector(".input-name");
+const repoCreateModalInputPath = repoCreateModal.querySelector(".input-path");
+const repoCreateModalConfirmBtn = repoCreateModal.querySelector(".confirm-modal-btn");
+
+const repoAddModal = document.getElementById("repo-add-modal");
+const repoAddModalInput = repoAddModal.querySelector(".modal-input");
+const repoAddModalConfirmBtn = repoAddModal.querySelector(".confirm-modal-btn");
 
 // ------- APP STATE -------
 let currentRepoPath = "";
@@ -240,6 +251,15 @@ function stopResize() {
 }
 
 // Add/new buttons (dropdowns)
+repoNewBtn.addEventListener("click", (event) => { // temporary, later foreach option
+    event.stopPropagation();
+    closeDropdowns();
+
+    repoCreateModal.classList.add("show");
+    setTimeout(() => {
+        repoCreateModalInput.focus();
+    }, 100);
+});
 branchNewBtn.addEventListener("click", (event) => {
     event.stopPropagation();
     closeDropdowns();
