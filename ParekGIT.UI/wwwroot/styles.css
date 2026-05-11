@@ -84,6 +84,11 @@ body, html {
     color: #11111b;
 }
 
+.topbar-btn.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
 .btn-arrow {
     flex-shrink: 0;
 
@@ -479,7 +484,7 @@ body, html {
 
 .modal-header h3 {
     margin: 0;
-    font-family: 'FiraCode', sans-serif;
+    font-family: inherit;
     font-size: 15px;
     font-weight: 600;
 }
@@ -510,8 +515,8 @@ body, html {
     border-radius: 4px;
     border-color: #11111b;
 
-    font-family: 'FiraCode', sans-serif;
-    font-size: 13px;
+    font-family: inherit;
+    font-size: 15px;
 
     transition: border-color 0.1s ease;
 
@@ -531,7 +536,7 @@ body, html {
 }
 
 .modal-footer button {
-    padding: 6px 12px;
+    padding: 4px 8px;
     border: none;
     border-radius: 4px;
     font-family: inherit;

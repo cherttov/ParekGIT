@@ -3,6 +3,7 @@ using CliWrap.Buffered;
 using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
+using System.Globalization;
 
 namespace ParekGIT.Core.Git
 {
@@ -47,6 +48,13 @@ namespace ParekGIT.Core.Git
             string arguments = isRemote
                 ? $"checkout -t \"{branchName}\""
                 : $"checkout \"{branchName}\"";
+
+            await ExecuteCommandAsync(repositoryPath, arguments);
+        }
+
+        public async Task CreateBranchAsync(string repositoryPath, string branchName)
+        {
+            string arguments = $"checkout -b \"{branchName}\"";
 
             await ExecuteCommandAsync(repositoryPath, arguments);
         }

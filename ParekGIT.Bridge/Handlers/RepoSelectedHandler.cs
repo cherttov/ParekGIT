@@ -15,6 +15,7 @@ namespace ParekGIT.Bridge.Handlers
 
         public string Action => "REPO_SELECTED";
 
+        // Constructor
         public RepoSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner)
         {
             _window = window;

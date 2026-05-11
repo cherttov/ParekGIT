@@ -7,16 +7,16 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-    public class BranchSelectedHandler : IMessageHandler
+    public class BranchCreateHandler : IMessageHandler
     {
         private readonly PhotinoWindow _window;
         private readonly LiteDbStore _dbStore;
         private readonly IGitRunner _gitRunner;
 
-        public string Action => "BRANCH_SELECTED";
+        public string Action => "BRANCH_CREATE";
 
         // Constructor
-        public BranchSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner)
+        public BranchCreateHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner)
         {
             _window = window;
             _dbStore = dbStore;
@@ -31,19 +31,15 @@ namespace ParekGIT.Bridge.Handlers
             string branchName = payload.GetProperty("branchName").GetString()
                                 ?? throw new ArgumentNullException("branchName");
 
-            bool isRemote = payload.GetProperty("isRemote").GetBoolean();
-
-            // Change branch in git
-            await _gitRunner.CheckoutBranchAsync(repoPath, branchName, isRemote);
+            // Create new branch
+            await _gitRunner.CreateBranchAsync(repoPath, branchName);
 
             // Update displayed list
             var branches = await _gitRunner.GetBranchesAsync(repoPath);
 
-            // Send text data (later)
-
             var response = new IpcMessage
             {
-                Action = "BRANCH_LOADED",
+                Action = "BRANCH_LOADED", // since it updates the dropdown just use this or "BRANCHES_LOADED"
                 Payload = JsonSerializer.SerializeToElement(branches)
             };
 

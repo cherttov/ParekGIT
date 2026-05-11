@@ -2,11 +2,13 @@
 // Topbar
 const repoContainer = document.getElementById("repositories-container");
 const repoDropdown = document.getElementById("repository-dropdown-panel");
+const repoNewBtn = document.querySelector("#repositories-container .btn-add");
 const repoBtn = document.querySelector("#repositories-container .topbar-btn");
 const repoPanel = document.querySelector("#repositories-container .dropdown-panel");
 
 const branchContainer = document.getElementById("branches-container");
 const branchDropdown = document.getElementById("branch-dropdown-panel");
+const branchNewBtn = document.querySelector("#branches-container .btn-new");
 const branchBtn = document.querySelector("#branches-container .topbar-btn");
 const branchPanel = document.querySelector("#branches-container .dropdown-panel");
 
@@ -21,6 +23,14 @@ const mainContent = document.getElementById("main-content");
 // Right Sidebar + SplitContainer
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
+
+// Modals
+const modalBackdrops = document.querySelectorAll('.modal-backdrop');
+const modalCloseTriggers = document.querySelectorAll('#close-modal-icon, #cancel-modal-btn');
+
+const branchModal = document.getElementById("branch-modal");
+const branchModalInput = branchModal.querySelector("#modal-input");
+const branchModalConfirmBtn = branchModal.querySelector("#confirm-modal-btn");
 
 // ------- APP STATE -------
 let currentRepoPath = "";
@@ -73,6 +83,12 @@ const closeDropdowns = () => {
     backdrop.classList.remove('show');
 };
 
+const closeAndClearModal = (modalElement) => {
+    modalElement.classList.remove('show');
+    const inputs = modalElement.querySelectorAll('input');
+    inputs.forEach(input => input.value = "");
+};
+
 const toggleDropdown = (toShow, toHide, event) => {
     event.stopPropagation();
     updatePanelWidths();
@@ -100,6 +116,8 @@ function loadRepositoriesIntoDropdown(repositories) {
         item.addEventListener("click", () => {
             currentRepoPath = repo.AbsolutePath;
             sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
+
+            branchBtn.classList.remove("disabled");
         });
 
         repoDropdown.appendChild(item);
@@ -155,20 +173,33 @@ document.addEventListener('wheel', (event) => {
     }
 }, { passive: false });
 
-// Dropdown toggles
+// Toggles (dropdowns)
 repoBtn.addEventListener('click', (event) => toggleDropdown(repoPanel, branchPanel, event));
 branchBtn.addEventListener('click', (event) => toggleDropdown(branchPanel, repoPanel, event));
 
-// Close triggers
+// Close triggers (dropdowns)
 backdrop.addEventListener('click', closeDropdowns);
 window.addEventListener('click', closeDropdowns);
 
-// Prevent closing when inside
+// Close triggers (modals)
+modalBackdrops.forEach(backdrop => {
+    backdrop.addEventListener('click', (event) => {
+        if (event.target === backdrop) { closeAndClearModal(backdrop); }
+    });
+});
+modalCloseTriggers.forEach(trigger => {
+    trigger.addEventListener('click', (event) => {
+        const parentModal = event.target.closest('.modal-backdrop');
+        if (parentModal) { closeAndClearModal(parentModal); }
+    });
+});
+
+// Prevent closing when inside (dropdowns)
 document.querySelectorAll('.dropdown-panel').forEach(panel => {
     panel.addEventListener('click', (event) => event.stopPropagation());
 });
 
-// Resizer logic
+// Resizer logic (split-container)
 window.addEventListener('resize', updatePanelWidths);
 
 resizer.addEventListener("mousedown", (event) => {
@@ -208,7 +239,37 @@ function stopResize() {
     document.body.style.userSelect = "";
 }
 
-// Search & Selection Setup
+// Add/new buttons (dropdowns)
+branchNewBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+
+    branchModal.classList.add("show");
+    setTimeout(() => {
+        branchModalInput.focus();
+    }, 100);
+});
+
+// Confirm buttons (modals)
+branchModalConfirmBtn.addEventListener("click", () => {
+    const newBranchName = branchModalInput.value.trim();
+
+    if (newBranchName === "") { return; }
+
+    sendIpcMessage("BRANCH_CREATE", {
+        absolutePath: currentRepoPath,
+        branchName: newBranchName
+    });
+
+    closeAndClearModal(branchModal);
+});
+
+// Input boxes (modals)
+branchModalInput.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") { branchModalConfirmBtn.click(); }
+});
+
+// Search & Selection Setup (dropdowns)
 const setupFilter = (inputSelector, panelSelector) => {
     const searchInput = document.querySelector(inputSelector);
 
@@ -239,8 +300,8 @@ const setupSelection = (panelSelector, btnValueSelector) => {
         if (item) {
             valueDisplay.textContent = item.textContent;
 
-            panel.querySelectorAll('.dropdown-item').forEach(el => {
-                el.classList.remove('active');
+            panel.querySelectorAll('.dropdown-item').forEach(elem => {
+                elem.classList.remove('active');
             });
 
             item.classList.add('active');
@@ -258,6 +319,8 @@ setupSelection('#branch-dropdown-panel', '#branches-container .btn-value');
 
 // ------- APP INIT -------
 updatePanelWidths();
+
+branchBtn.classList.add("disabled"); // change to load last selected repo automatically
 
 window.addEventListener('DOMContentLoaded', () => {
     sendIpcMessage("APP_READY");

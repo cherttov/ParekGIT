@@ -11,5 +11,6 @@ namespace ParekGIT.Core.Interfaces
 
         // Commands
         Task CheckoutBranchAsync(string repositoryPath, string branchName, bool isRemote);
+        Task CreateBranchAsync(string repositoryPath, string branchName);
     }
 }

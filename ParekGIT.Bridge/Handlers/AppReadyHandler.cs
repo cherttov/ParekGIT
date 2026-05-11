@@ -13,6 +13,7 @@ namespace ParekGIT.Bridge.Handlers
 
         public string Action => "APP_READY";
 
+        // Constructor
         public AppReadyHandler(PhotinoWindow window, LiteDbStore dbStore)
         {
             _window = window;
