@@ -250,8 +250,8 @@ body, html {
 }
 
 .topbar-filter-btn .btn-arrow {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     background-color: #11111b;
 }
 
@@ -519,6 +519,18 @@ body, html {
     gap: 12px;
 }
 
+.modal-body-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.modal-body-row label {
+    font-family: inherit;
+    font-size: 15px;
+    user-select: none;
+}
+
 .modal-input {
     width: 100%;
     box-sizing: border-box;
@@ -531,10 +543,9 @@ body, html {
     border-color: #11111b;
 
     font-family: inherit;
-    font-size: 15px;
+    font-size: 13px;
 
     transition: border-color 0.1s ease;
-
     user-select: none;
     outline: none;
 }
@@ -551,7 +562,7 @@ body, html {
 }
 
 .modal-footer button {
-    padding: 4px 8px;
+    padding: 6px 8px;
     border: none;
     border-radius: 4px;
     font-family: inherit;
@@ -560,13 +571,13 @@ body, html {
     transition: all 0.1s ease;
 }
 
-.cancel-modal-btn {
+.modal-footer .cancel-modal-btn {
     background-color: transparent;
     color: #cdd6f4;
-    border: 2px solid #313244;
+    border: 1px solid #313244;
 }
 
-.cancel-modal-btn:hover {
+.modal-footer .cancel-modal-btn:hover {
     background-color: #313244;
 }
 

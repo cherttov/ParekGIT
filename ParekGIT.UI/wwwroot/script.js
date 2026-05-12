@@ -251,15 +251,15 @@ function stopResize() {
 }
 
 // Add/new buttons (dropdowns)
-//repoNewBtn.addEventListener("click", (event) => { // temporary, later foreach option
-//    event.stopPropagation();
-//    closeDropdowns();
+repoNewBtn.addEventListener("click", (event) => { // temporary, later foreach option
+    event.stopPropagation();
+    closeDropdowns();
 
-//    repoCreateModal.classList.add("show");
-//    setTimeout(() => {
-//        repoCreateModalInput.focus();
-//    }, 100);
-//});
+    repoCreateModal.classList.add("show");
+    setTimeout(() => {
+        repoCreateModalInputName.focus();
+    }, 100);
+});
 branchNewBtn.addEventListener("click", (event) => {
     event.stopPropagation();
     closeDropdowns();

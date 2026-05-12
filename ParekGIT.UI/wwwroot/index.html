@@ -26,6 +26,7 @@
                         Add
                         <div class="btn-arrow"></div>
                     </button>
+
                 </div>
 
                 <!-- <div class="dropdown-item active">my-web-app</div> -->
@@ -75,7 +76,10 @@
                 </div>
 
                 <div class="modal-body">
-                    <input type="text" class="modal-input" placeholder="New branch name" />
+                    <div class="modal-body-row">
+                        <label>Name</label>
+                        <input type="text" class="modal-input" placeholder="new branch name" />
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -95,8 +99,34 @@
                 </div>
 
                 <div class="modal-body">
-                    <input type="text" class="modal-input input-name" placeholder="Name" />
-                    <input type="text" class="modal-input input-path" placeholder="Local path"/>
+                    <div class="modal-body-row">
+                        <label>Name</label>
+                        <input type="text" class="modal-input input-name" placeholder="repository name"/>
+                    </div>
+
+                    <div class="modal-body-row">
+                        <label>Description</label>
+                        <input type="text" class="modal-input input-description"/>
+                    </div>
+
+                    <div class="modal-body-row">
+                        <label>Local path</label>
+                        <input type="text" class="modal-input input-path" placeholder="repository path"/>
+                    </div>
+
+                    <div class="modal-body-row">
+                        <label>Git ignore</label>
+                        <select id="select-git-ignore" class="modal-input">
+                            <option value="none-gitignore">None</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-body-row">
+                        <label>License</label>
+                        <select id="select-git-license" class="modal-input">
+                            <option value="none-license">None</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -116,7 +146,10 @@
                 </div>
 
                 <div class="modal-body">
-                    <input type="text" class="modal-input" placeholder="Repository path" />
+                    <div class="modal-body-row">
+                        <label>Local path</label>
+                        <input type="text" class="modal-input" placeholder="repository path" />
+                    </div>
 
                 </div>
 
