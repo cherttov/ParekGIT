@@ -108,7 +108,7 @@ body, html {
     background-color: #11111b;
 }
 
-.topbar-dropdown-container:has(.dropdown-panel.show) .btn-arrow {
+.topbar-dropdown-container:has(.dropdown-panel.show) .topbar-btn .btn-arrow {
     transform: rotate(-180deg);
 }
 
@@ -225,6 +225,9 @@ body, html {
 .topbar-filter-btn {
     flex-shrink: 0;
     padding: 4px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
 
     color: #11111b;
     background-color: #cba6f7;
@@ -235,7 +238,7 @@ body, html {
     font-size: 13px;
     font-weight: 600;
 
-    transition: color 0.1s ease;
+    transition: color 0.1s ease, background-color 0.1s ease;
 
     user-select: none;
     outline: none;
@@ -244,6 +247,12 @@ body, html {
 .topbar-filter-btn:hover {
     color: #10101a;
     background-color: #dec7fa;
+}
+
+.topbar-filter-btn .btn-arrow {
+    width: 20px;
+    height: 20px;
+    background-color: #11111b;
 }
 
 .dropdown-item {
