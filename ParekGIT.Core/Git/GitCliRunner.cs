@@ -58,5 +58,54 @@ namespace ParekGIT.Core.Git
 
             await ExecuteCommandAsync(repositoryPath, arguments);
         }
+
+        public async Task<GitRepository> CreateRepositoryAsync(string repoName, string description, string localPath, string gitIgnore, string license)
+        {
+            // Create & check directory
+            string fullPath = Path.Combine(localPath, repoName);
+
+            if (Directory.Exists(fullPath)) { throw new Exception($"Directory {repoName} already exists."); }
+
+            Directory.CreateDirectory(fullPath);
+
+            // Init repo
+            await ExecuteCommandAsync(fullPath, "init -b main");
+
+            // gitignore if not None
+            if (!string.Equals(gitIgnore, "None", StringComparison.OrdinalIgnoreCase))
+            {
+                await GenerateGitIgnoreAsync(fullPath, gitIgnore);
+            }
+
+            // license if not None
+            if (!string.Equals(license, "None", StringComparison.OrdinalIgnoreCase))
+            {
+                await GenerateLicenseAsync(fullPath, gitIgnore);
+            }
+
+            await ExecuteCommandAsync(fullPath, "add .");
+            await ExecuteCommandAsync(fullPath, "commit -m \"Initial commit\"");
+
+            return new GitRepository
+            {
+                Id = Guid.NewGuid(),
+                Name = repoName,
+                AbsolutePath = fullPath,
+                LastAccessed = DateTime.UtcNow
+            };
+        }
+
+        // Helpers
+        private async Task GenerateGitIgnoreAsync(string path, string type)
+        {
+            // Define git ignores templates
+            await File.WriteAllTextAsync(Path.Combine(path, ".gitignore"), "");
+        }
+
+        private async Task GenerateLicenseAsync(string path, string type)
+        {
+            // Define licenses
+            await File.WriteAllTextAsync(Path.Combine(path, ".gitignore"), "");
+        }
     }
 }

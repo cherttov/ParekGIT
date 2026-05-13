@@ -29,18 +29,21 @@ const modalBackdrops = document.querySelectorAll('.modal-backdrop');
 const modalCloseTriggers = document.querySelectorAll('.close-modal-icon, .cancel-modal-btn');
 
 const branchModal = document.getElementById("branch-modal");
-const branchModalInput = branchModal.querySelector(".modal-input");
+const branchModalInputName = branchModal.querySelector(".modal-input");
 const branchModalConfirmBtn = branchModal.querySelector(".confirm-modal-btn");
 
 // const repoCloneModal = document.getElementById("repo-clone-modal");
 
 const repoCreateModal = document.getElementById("repo-create-modal");
 const repoCreateModalInputName = repoCreateModal.querySelector(".input-name");
+const repoCreateModalInputDescription = repoCreateModal.querySelector(".input-description");
 const repoCreateModalInputPath = repoCreateModal.querySelector(".input-path");
+const repoCreateModalSelectGitIgnore = repoCreateModal.querySelector("#select-git-ignore");
+const repoCreateModalSelectLicense = repoCreateModal.querySelector("#select-git-license");
 const repoCreateModalConfirmBtn = repoCreateModal.querySelector(".confirm-modal-btn");
 
 const repoAddModal = document.getElementById("repo-add-modal");
-const repoAddModalInput = repoAddModal.querySelector(".modal-input");
+const repoAddModalInputPath = repoAddModal.querySelector(".modal-input");
 const repoAddModalConfirmBtn = repoAddModal.querySelector(".confirm-modal-btn");
 
 // ------- APP STATE -------
@@ -69,6 +72,12 @@ window.external.receiveMessage(message => {
 
         case "BRANCH_LOADED":
             loadBranchesIntoDropdown(data.Payload); // temporary
+            break;
+
+        case "REPO_CREATED": // finish
+            break;
+
+        case "REPO_ADDED": // finish
             break;
 
         default:
@@ -260,19 +269,20 @@ repoNewBtn.addEventListener("click", (event) => { // temporary, later foreach op
         repoCreateModalInputName.focus();
     }, 100);
 });
+
 branchNewBtn.addEventListener("click", (event) => {
     event.stopPropagation();
     closeDropdowns();
 
     branchModal.classList.add("show");
     setTimeout(() => {
-        branchModalInput.focus();
+        branchModalInputName.focus();
     }, 100);
 });
 
 // Confirm buttons (modals)
 branchModalConfirmBtn.addEventListener("click", () => {
-    const newBranchName = branchModalInput.value.trim();
+    const newBranchName = branchModalInputName.value.trim();
 
     if (newBranchName === "") { return; }
 
@@ -284,8 +294,36 @@ branchModalConfirmBtn.addEventListener("click", () => {
     closeAndClearModal(branchModal);
 });
 
+repoCreateModalConfirmBtn.addEventListener("click", () => {
+    const repoName = repoCreateModalInputName.value.trim();
+    const description = repoCreateModalInputDescription.value.trim() ?? "";
+    const localPath = repoCreateModalInputPath.value.trim();
+    const gitIgnore = repoCreateModalSelectGitIgnore.value.trim() ?? "None";
+    const gitLicense = repoCreateModalSelectLicense.value.trim() ?? "None";
+
+    sendIpcMessage("REPO_CREATE", {
+        "repoName": repoName,
+        "description": description,
+        "localPath": localPath,
+        "gitIgnore": gitIgnore,
+        "gitLicense": gitLicense
+    });
+
+    closeAndClearModal(repoCreateModal);
+});
+
+repoAddModalConfirmBtn.addEventListener("click", () => {
+    const repoPath = repoAddModalInputPath.value.trim();
+
+    sendIpcMessage("REPO_ADD", {
+        "repoPath": repoPath
+    });
+
+    closeAndClearModal(repoAddModal);
+});
+
 // Input boxes (modals)
-branchModalInput.addEventListener("keyup", (event) => {
+branchModalInputName.addEventListener("keyup", (event) => {
     if (event.key === "Enter") { branchModalConfirmBtn.click(); }
 });
 
