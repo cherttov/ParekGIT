@@ -24,6 +24,7 @@ namespace ParekGIT.Bridge.Handlers
         {
             var repos = await _dbStore.GetAllRepositoriesAsync();
 
+            // Response
             var response = new IpcMessage
             {
                 Action = "LOAD_REPOSITORIES",

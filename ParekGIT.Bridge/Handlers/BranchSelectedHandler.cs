@@ -41,6 +41,7 @@ namespace ParekGIT.Bridge.Handlers
 
             // Send text data (later)
 
+            // Response
             var response = new IpcMessage
             {
                 Action = "BRANCH_LOADED",

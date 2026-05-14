@@ -37,6 +37,7 @@ namespace ParekGIT.Bridge.Handlers
             // Update displayed list
             var branches = await _gitRunner.GetBranchesAsync(repoPath);
 
+            // Response
             var response = new IpcMessage
             {
                 Action = "BRANCH_LOADED", // since it updates the dropdown just use this or "BRANCHES_LOADED"

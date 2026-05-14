@@ -30,6 +30,7 @@ namespace ParekGIT.Bridge.Handlers
 
             var branches = await _gitRunner.GetBranchesAsync(repoPath);
 
+            // Response
             var response = new IpcMessage
             {
                 Action = "BRANCHES_LOADED",
