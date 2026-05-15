@@ -46,6 +46,12 @@ const repoAddModal = document.getElementById("repo-add-modal");
 const repoAddModalInputPath = repoAddModal.querySelector(".modal-input");
 const repoAddModalConfirmBtn = repoAddModal.querySelector(".confirm-modal-btn");
 
+// Context menus
+const repoContextMenu = document.getElementById("repo-context-menu");
+const repoMenuClone = repoContextMenu.querySelector(".context-menu-item.item-clone");
+const repoMenuCreate = repoContextMenu.querySelector(".context-menu-item.item-create");
+const repoMenuAdd = repoContextMenu.querySelector(".context-menu-item.item-add");
+
 // ------- APP STATE -------
 let currentRepoPath = "";
 
@@ -101,6 +107,7 @@ const closeDropdowns = () => {
     repoPanel.classList.remove('show');
     branchPanel.classList.remove('show');
     backdrop.classList.remove('show');
+    repoContextMenu.classList.remove('show');
 };
 
 const closeAndClearModal = (modalElement) => {
@@ -260,14 +267,27 @@ function stopResize() {
 }
 
 // Add/new buttons (dropdowns)
-repoNewBtn.addEventListener("click", (event) => { // temporary, later foreach option
+repoNewBtn.addEventListener("click", (event) => {
     event.stopPropagation();
-    closeDropdowns();
 
-    repoCreateModal.classList.add("show");
-    setTimeout(() => {
-        repoCreateModalInputName.focus();
-    }, 100);
+    repoContextMenu.classList.add('show');
+
+    // Get mouse pos & limit it
+    let mouseX = event.clientX;
+    let mouseY = event.clientY;
+
+    const menuWidth = repoContextMenu.offsetWidth;
+    const menuHeight = repoContextMenu.offsetHeight;
+
+    if (mouseX + menuWidth > window.innerWidth) {
+        mouseX = mouseX - menuWidth;
+    }
+    if (mouseY + menuHeight > window.innerHeight) {
+        mouseY = mouseY - menuHeight;
+    }
+
+    repoContextMenu.style.left = `${mouseX}px`;
+    repoContextMenu.style.top = `${mouseY}px`;
 });
 
 branchNewBtn.addEventListener("click", (event) => {
@@ -279,6 +299,41 @@ branchNewBtn.addEventListener("click", (event) => {
         branchModalInputName.focus();
     }, 100);
 });
+
+// Context menu options (context-menu)
+repoMenuClone.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+});
+
+repoMenuCreate.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+
+    repoCreateModal.classList.add("show");
+    setTimeout(() => {
+        repoCreateModalInputName.focus();
+    }, 100);
+});
+
+repoMenuAdd.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+
+    repoAddModal.classList.add("show");
+    setTimeout(() => {
+        repoAddModalInputPath.focus();
+    }, 100);
+});
+
+// Force close (context-menu)
+window.addEventListener("click", (event) => {
+    if (repoContextMenu.classList.contains("show")) {
+        if (!repoContextMenu.contains(event.target) && !repoNewBtn.contains(event.target)) {
+            repoContextMenu.classList.remove("show");
+        }
+    }
+}, true);
 
 // Confirm buttons (modals)
 branchModalConfirmBtn.addEventListener("click", () => {

@@ -589,3 +589,45 @@ body, html {
 .confirm-modal-btn:hover {
     background-color: #dec7fa;
 }
+
+/* CONTEXT MENUS */
+.context-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 3000;
+
+    background-color: #11111b;
+    padding: 4px 0;
+    width: 212px;
+    border-radius: 6px;
+}
+
+.context-menu.show {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.1s ease, visibility 0.1s;
+}
+
+.context-menu-item {
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+
+    font-family: inherit;
+    font-size: 13px;
+    color: #cdd6f4;
+    padding: 6px 16px;
+
+    user-select: none;
+    transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.context-menu-item:hover {
+    background-color: #313244;
+}
