@@ -52,6 +52,9 @@ const repoMenuClone = repoContextMenu.querySelector(".context-menu-item.item-clo
 const repoMenuCreate = repoContextMenu.querySelector(".context-menu-item.item-create");
 const repoMenuAdd = repoContextMenu.querySelector(".context-menu-item.item-add");
 
+const repoItemContextMenu = document.getElementById("repo-item-context-menu");
+const repoItemMenuRemove = repoItemContextMenu.querySelector(".context-menu-item.item-remove");
+
 // ------- APP STATE -------
 let currentRepoPath = "";
 
@@ -102,6 +105,25 @@ const updatePanelWidths = () => {
     branchPanel.style.width = window.getComputedStyle(rightSidebar).width;
 };
 
+// Context menu position
+const placeContextMenu = (event, contextMenu) => {
+    let mouseX = event.clientX;
+    let mouseY = event.clientY;
+
+    const menuWidth = contextMenu.offsetWidth;
+    const menuHeight = contextMenu.offsetHeight;
+
+    if (mouseX + menuWidth > window.innerWidth) {
+        mouseX = mouseX - menuWidth;
+    }
+    if (mouseY + menuHeight > window.innerHeight) {
+        mouseY = mouseY - menuHeight;
+    }
+
+    contextMenu.style.left = `${mouseX}px`;
+    contextMenu.style.top = `${mouseY}px`;
+};
+
 // Close everything
 const closeDropdowns = () => {
     repoPanel.classList.remove('show');
@@ -140,11 +162,24 @@ function loadRepositoriesIntoDropdown(repositories) {
 
         item.innerHTML = `${repo.Name}`;
 
+        // LMB - select
         item.addEventListener("click", () => {
             currentRepoPath = repo.AbsolutePath;
             sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
 
             branchBtn.classList.remove("disabled");
+        });
+
+        // RMB - context menu
+        item.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            repoContextMenu.classList.remove("show");
+
+            repoItemContextMenu.classList.add("show");
+
+            placeContextMenu(event, repoItemContextMenu);
         });
 
         repoDropdown.appendChild(item);
@@ -272,22 +307,9 @@ repoNewBtn.addEventListener("click", (event) => {
 
     repoContextMenu.classList.add('show');
 
-    // Get mouse pos & limit it
-    let mouseX = event.clientX;
-    let mouseY = event.clientY;
+    repoItemContextMenu.classList.remove("show");
 
-    const menuWidth = repoContextMenu.offsetWidth;
-    const menuHeight = repoContextMenu.offsetHeight;
-
-    if (mouseX + menuWidth > window.innerWidth) {
-        mouseX = mouseX - menuWidth;
-    }
-    if (mouseY + menuHeight > window.innerHeight) {
-        mouseY = mouseY - menuHeight;
-    }
-
-    repoContextMenu.style.left = `${mouseX}px`;
-    repoContextMenu.style.top = `${mouseY}px`;
+    placeContextMenu(event, repoContextMenu);
 });
 
 branchNewBtn.addEventListener("click", (event) => {
@@ -331,6 +353,12 @@ window.addEventListener("click", (event) => {
     if (repoContextMenu.classList.contains("show")) {
         if (!repoContextMenu.contains(event.target) && !repoNewBtn.contains(event.target)) {
             repoContextMenu.classList.remove("show");
+        }
+    }
+
+    if (repoItemContextMenu.classList.contains("show")) {
+        if (!repoItemContextMenu.contains(event.target)) {
+            repoItemContextMenu.classList.remove("show");
         }
     }
 }, true);
