@@ -470,11 +470,9 @@ body, html {
     background-color: #1e1e2e;
     border-radius: 4px;
     width: 400px;
-    padding: 16px;
 
     display: flex;
     flex-direction: column;
-    gap: 16px;
 
     transform: scale(0.95);
     transition: transform 0.1s ease-in;
@@ -489,6 +487,8 @@ body, html {
     justify-content: space-between;
     align-items: center;
     user-select: none;
+    border-bottom: 1px solid #313244;
+    padding: 16px;
 }
 
 .modal-header h3 {
@@ -517,6 +517,7 @@ body, html {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    padding: 16px;
 }
 
 .modal-body-row {
@@ -550,6 +551,34 @@ body, html {
     outline: none;
 }
 
+.input-button-container {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.input-button-container .modal-input {
+    flex: 1;
+}
+
+.browse-btn {
+    padding: 4px 12px;
+    background-color: #313244;
+    color: #cdd6f4;
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background-color 0.1s ease;
+    user-select: none;
+}
+
+.browse-btn:hover {
+    background-color: #45475a;
+}
+
 .modal-input:focus {
     border-color: #cba6f7
 }
@@ -559,6 +588,8 @@ body, html {
     justify-content: flex-end;
     gap: 8px;
     user-select: none;
+    border-top: 1px solid #313244;
+    padding: 16px;
 }
 
 .modal-footer button {
