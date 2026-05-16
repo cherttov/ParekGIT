@@ -561,22 +561,22 @@ body, html {
     flex: 1;
 }
 
-.browse-btn {
+.input-button-container .browse-btn {
     padding: 4px 12px;
-    background-color: #313244;
+    background-color: transparent;
     color: #cdd6f4;
-    border: none;
+    border: 1px solid #313244;
     border-radius: 4px;
     font-family: inherit;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     white-space: nowrap;
     transition: background-color 0.1s ease;
     user-select: none;
 }
 
 .browse-btn:hover {
-    background-color: #45475a;
+    background-color: #313244;
 }
 
 .modal-input:focus {
@@ -598,7 +598,7 @@ body, html {
     border-radius: 4px;
     font-family: inherit;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     transition: all 0.1s ease;
 }
 

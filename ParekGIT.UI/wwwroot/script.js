@@ -53,6 +53,8 @@ const repoMenuCreate = repoContextMenu.querySelector(".context-menu-item.item-cr
 const repoMenuAdd = repoContextMenu.querySelector(".context-menu-item.item-add");
 
 const repoItemContextMenu = document.getElementById("repo-item-context-menu");
+const repoItemMenuTerminal = repoItemContextMenu.querySelector(".context-menu-item.item-terminal");
+const repoItemMenuExplorer = repoItemContextMenu.querySelector(".context-menu-item.item-explorer");
 const repoItemMenuRemove = repoItemContextMenu.querySelector(".context-menu-item.item-remove");
 
 // ------- APP STATE -------
@@ -130,6 +132,7 @@ const closeDropdowns = () => {
     branchPanel.classList.remove('show');
     backdrop.classList.remove('show');
     repoContextMenu.classList.remove('show');
+    repoItemContextMenu.classList.remove('show');
 };
 
 const closeAndClearModal = (modalElement) => {
@@ -176,6 +179,8 @@ function loadRepositoriesIntoDropdown(repositories) {
             event.stopPropagation();
 
             repoContextMenu.classList.remove("show");
+
+            repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
 
             repoItemContextMenu.classList.add("show");
 
@@ -346,6 +351,45 @@ repoMenuAdd.addEventListener("click", (event) => {
     setTimeout(() => {
         repoAddModalInputPath.focus();
     }, 100);
+});
+
+repoItemMenuTerminal.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    const pathToRepo = repoItemContextMenu.dataset.targetPath;
+    if (pathToRepo) {
+        sendIpcMessage("REPO_TERMINAL", {
+            "absolutePath": pathToRepo
+        });
+    }
+
+    repoItemContextMenu.classList.remove("show");
+});
+
+repoItemMenuExplorer.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    const pathToRepo = repoItemContextMenu.dataset.targetPath;
+    if (pathToRepo) {
+        sendIpcMessage("REPO_EXPLORER", {
+            "absolutePath": pathToRepo
+        });
+    }
+
+    repoItemContextMenu.classList.remove("show");
+});
+
+repoItemMenuRemove.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    const pathToRepo = repoItemContextMenu.dataset.targetPath;
+    if (pathToRepo) {
+        sendIpcMessage("REPO_REMOVE", {
+            "absolutePath": pathToRepo
+        });
+    }
+
+    repoItemContextMenu.classList.remove("show");
 });
 
 // Force close (context-menu)
