@@ -87,10 +87,12 @@ window.external.receiveMessage(message => {
             loadBranchesIntoDropdown(data.Payload); // temporary
             break;
 
-        case "REPO_CREATED": // finish
+        case "REPO_CREATED":
+            addRepositoryToDropdown(data.Payload);
             break;
 
-        case "REPO_ADDED": // finish
+        case "REPO_ADDED":
+            addRepositoryToDropdown(data.Payload);
             break;
 
         case "REPO_REMOVED":
@@ -98,11 +100,7 @@ window.external.receiveMessage(message => {
             break;
 
         case "FOLDER_SELECTED":
-            if (activeBrowseInput) {
-                activeBrowseInput.value = data.Payload.path;
-                activeBrowseInput.focus();
-                activeBrowseInput = null;
-            }
+            folderSelected(data.Payload);
             break;
 
         default:
@@ -269,6 +267,45 @@ function deleteRepoFromDropdown(repository) {
         const existingBranches = branchDropdown.querySelectorAll('.dropdown-item');
         existingBranches.forEach(item => item.remove());
     }
+}
+
+// C# - Folder selected
+function folderSelected(directory) {
+    if (activeBrowseInput) {
+        activeBrowseInput.value = directory.path;
+        activeBrowseInput.focus();
+        activeBrowseInput = null;
+    }
+}
+
+// C# - Add repository to dropdown
+function addRepositoryToDropdown(repo) {
+    const item = document.createElement("div");
+    item.className = "dropdown-item";
+    item.dataset.path = repo.AbsolutePath;
+    item.innerHTML = `${repo.Name}`;
+
+    // LMB - select
+    item.addEventListener("click", () => {
+        currentRepoPath = repo.AbsolutePath;
+        sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
+        branchBtn.classList.remove("disabled");
+    });
+
+    // RMB - context menu
+    item.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        repoContextMenu.classList.remove("show");
+        repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
+        repoItemContextMenu.classList.add("show");
+
+        placeContextMenu(event, repoItemContextMenu);
+    });
+
+    repoDropdown.appendChild(item);
+    item.click();
 }
 
 // ------- EVENT LISTENERS -------

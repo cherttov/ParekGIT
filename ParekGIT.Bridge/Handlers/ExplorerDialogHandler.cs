@@ -23,7 +23,7 @@ namespace ParekGIT.Bridge.Handlers
 
             if (selectedDir != null && selectedDir.Length > 0)
             {
-                // Response
+                // Response (success)
                 var response = new IpcMessage
                 {
                     Action = "FOLDER_SELECTED",
@@ -32,9 +32,17 @@ namespace ParekGIT.Bridge.Handlers
 
                 _window.SendWebMessage(JsonSerializer.Serialize(response));
             }
+            else
+            {
+                // Response (cancel)
+                var response = new IpcMessage
+                {
+                    Action = "FOLDER_CANCELED",
+                    Payload = JsonSerializer.SerializeToElement(null)
+                };
 
-            // Later: send error
-            await Task.CompletedTask;
+                _window.SendWebMessage(JsonSerializer.Serialize(response));
+            }
         }
     }
 }
