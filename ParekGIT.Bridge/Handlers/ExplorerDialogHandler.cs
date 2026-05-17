@@ -38,7 +38,7 @@ namespace ParekGIT.Bridge.Handlers
                 var response = new IpcMessage
                 {
                     Action = "FOLDER_CANCELED",
-                    Payload = JsonSerializer.SerializeToElement(null)
+                    Payload = JsonSerializer.SerializeToElement(new { })
                 };
 
                 _window.SendWebMessage(JsonSerializer.Serialize(response));
