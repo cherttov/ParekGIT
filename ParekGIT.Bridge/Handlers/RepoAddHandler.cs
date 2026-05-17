@@ -25,19 +25,19 @@ namespace ParekGIT.Bridge.Handlers
 
         public async Task ExecuteAsync(JsonElement payload)
         {
-            string fullPath = payload.GetProperty("fullPath").GetString()
-                ?? throw new ArgumentNullException("fullPath");
+            string repoPath = payload.GetProperty("repoPath").GetString()
+                ?? throw new ArgumentNullException("repoPath");
 
             // Normalize path if ends with .git
-            if (fullPath.EndsWith(".git", StringComparison.OrdinalIgnoreCase) ||
-                fullPath.EndsWith(".git/", StringComparison.OrdinalIgnoreCase) ||
-                fullPath.EndsWith(".git\\", StringComparison.OrdinalIgnoreCase))
+            if (repoPath.EndsWith(".git", StringComparison.OrdinalIgnoreCase) ||
+                repoPath.EndsWith(".git/", StringComparison.OrdinalIgnoreCase) ||
+                repoPath.EndsWith(".git\\", StringComparison.OrdinalIgnoreCase))
             {
-                fullPath = Directory.GetParent(fullPath.TrimEnd('/', '\\'))?.FullName ?? fullPath;
+                repoPath = Directory.GetParent(repoPath.TrimEnd('/', '\\'))?.FullName ?? repoPath;
             }
 
             // Verify if valid .git repo
-            string gitFolderPath = Path.Combine(fullPath, ".git");
+            string gitFolderPath = Path.Combine(repoPath, ".git");
             if (!Directory.Exists(gitFolderPath))
             {
                 SendError("The selected folder is not a valid Git repository.");
@@ -45,14 +45,14 @@ namespace ParekGIT.Bridge.Handlers
             }
 
             // Create repo object
-            string repoName = new DirectoryInfo(fullPath).Name;
-            DateTime lastAccessed = new DirectoryInfo(fullPath).LastAccessTime;
+            string repoName = new DirectoryInfo(repoPath).Name;
+            DateTime lastAccessed = new DirectoryInfo(repoPath).LastAccessTime;
 
             var addedRepo = new GitRepository
             {
                 Id = Guid.NewGuid(),
                 Name = repoName,
-                AbsolutePath = fullPath,
+                AbsolutePath = repoPath,
                 LastAccessed = lastAccessed
             };
 

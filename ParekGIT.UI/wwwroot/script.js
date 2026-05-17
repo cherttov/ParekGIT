@@ -91,6 +91,10 @@ window.external.receiveMessage(message => {
         case "REPO_ADDED": // finish
             break;
 
+        case "REPO_REMOVED":
+            deleteRepoFromDropdown(data.Payload);
+            break;
+
         default:
             console.warn("Unknown action received received: ", data.Action);
     }
@@ -232,6 +236,31 @@ function loadBranchesIntoDropdown(branches) {
     branchBtnValue.textContent = currentBranchName;
 }
 
+// C# - Delete repo 
+function deleteRepoFromDropdown(repository) {
+    const removedPath = repository.absolutePath;
+    if (!removedPath) { return; }
+
+    const cssPath = removedPath.replace(/\\/g, '\\\\');
+    const itemToRemove = repoDropdown.querySelector(`.dropdown-item[data-path="${cssPath}"]`)
+
+    if (itemToRemove) { itemToRemove.remove(); }
+
+    if (currentRepoPath === removedPath) {
+        currentRepoPath = "";
+
+        const repoBtnValue = repoBtn.querySelector('.btn-value');
+        if (repoBtnValue) { repoBtnValue.textContent = "None"; }
+
+        branchBtn.classList.add("disabled");
+        const branchBtnValue = branchBtn.querySelector('.btn-value');
+        if (branchBtnValue) { branchBtnValue.textContent = "None"; }
+
+        const existingBranches = branchDropdown.querySelectorAll('.dropdown-item');
+        existingBranches.forEach(item => item.remove());
+    }
+}
+
 // ------- EVENT LISTENERS -------
 // Global overrides
 document.addEventListener('wheel', (event) => {
@@ -359,7 +388,7 @@ repoItemMenuTerminal.addEventListener("click", (event) => {
     const pathToRepo = repoItemContextMenu.dataset.targetPath;
     if (pathToRepo) {
         sendIpcMessage("REPO_TERMINAL", {
-            "absolutePath": pathToRepo
+            "repoPath": pathToRepo
         });
     }
 
@@ -372,7 +401,7 @@ repoItemMenuExplorer.addEventListener("click", (event) => {
     const pathToRepo = repoItemContextMenu.dataset.targetPath;
     if (pathToRepo) {
         sendIpcMessage("REPO_EXPLORER", {
-            "absolutePath": pathToRepo
+            "repoPath": pathToRepo
         });
     }
 
@@ -385,7 +414,7 @@ repoItemMenuRemove.addEventListener("click", (event) => {
     const pathToRepo = repoItemContextMenu.dataset.targetPath;
     if (pathToRepo) {
         sendIpcMessage("REPO_REMOVE", {
-            "absolutePath": pathToRepo
+            "repoPath": pathToRepo
         });
     }
 
