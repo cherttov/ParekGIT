@@ -36,14 +36,15 @@ const branchModalConfirmBtn = branchModal.querySelector(".confirm-modal-btn");
 
 const repoCreateModal = document.getElementById("repo-create-modal");
 const repoCreateModalInputName = repoCreateModal.querySelector(".input-name");
-const repoCreateModalInputDescription = repoCreateModal.querySelector(".input-description");
 const repoCreateModalInputPath = repoCreateModal.querySelector(".input-path");
+const repoCreateModalBrowseBtn = repoCreateModal.querySelector(".browse-btn");
 const repoCreateModalSelectGitIgnore = repoCreateModal.querySelector("#select-git-ignore");
 const repoCreateModalSelectLicense = repoCreateModal.querySelector("#select-git-license");
 const repoCreateModalConfirmBtn = repoCreateModal.querySelector(".confirm-modal-btn");
 
 const repoAddModal = document.getElementById("repo-add-modal");
 const repoAddModalInputPath = repoAddModal.querySelector(".modal-input");
+const repoAddModalBrowseBtn = repoAddModal.querySelector(".browse-btn");
 const repoAddModalConfirmBtn = repoAddModal.querySelector(".confirm-modal-btn");
 
 // Context menus
@@ -59,6 +60,7 @@ const repoItemMenuRemove = repoItemContextMenu.querySelector(".context-menu-item
 
 // ------- APP STATE -------
 let currentRepoPath = "";
+let activeBrowseInput = null;
 
 // ------- IPC COMMUNICATION -------
 const sendIpcMessage = (action, payload = {}) => {
@@ -93,6 +95,14 @@ window.external.receiveMessage(message => {
 
         case "REPO_REMOVED":
             deleteRepoFromDropdown(data.Payload);
+            break;
+
+        case "FOLDER_SELECTED":
+            if (activeBrowseInput) {
+                activeBrowseInput.value = data.Payload.path;
+                activeBrowseInput.focus();
+                activeBrowseInput = null;
+            }
             break;
 
         default:
@@ -452,14 +462,12 @@ branchModalConfirmBtn.addEventListener("click", () => {
 
 repoCreateModalConfirmBtn.addEventListener("click", () => {
     const repoName = repoCreateModalInputName.value.trim();
-    const description = repoCreateModalInputDescription.value.trim() ?? "";
     const localPath = repoCreateModalInputPath.value.trim();
     const gitIgnore = repoCreateModalSelectGitIgnore.value.trim() ?? "None";
     const gitLicense = repoCreateModalSelectLicense.value.trim() ?? "None";
 
     sendIpcMessage("REPO_CREATE", {
         "repoName": repoName,
-        "description": description,
         "localPath": localPath,
         "gitIgnore": gitIgnore,
         "gitLicense": gitLicense
@@ -481,6 +489,23 @@ repoAddModalConfirmBtn.addEventListener("click", () => {
 // Input boxes (modals)
 branchModalInputName.addEventListener("keyup", (event) => {
     if (event.key === "Enter") { branchModalConfirmBtn.click(); }
+});
+
+// Browse buttons (modals)
+repoCreateModalBrowseBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    activeBrowseInput = repoCreateModalInputPath;
+
+    sendIpcMessage("OPEN_EXPLORER_DIALOG");
+});
+
+repoAddModalBrowseBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    activeBrowseInput = repoAddModalInputPath;
+
+    sendIpcMessage("OPEN_EXPLORER_DIALOG");
 });
 
 // Search & Selection Setup (dropdowns)

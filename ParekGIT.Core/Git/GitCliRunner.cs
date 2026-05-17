@@ -59,7 +59,7 @@ namespace ParekGIT.Core.Git
             await ExecuteCommandAsync(repositoryPath, arguments);
         }
 
-        public async Task<GitRepository> CreateRepositoryAsync(string repoName, string description, string localPath, string gitIgnore, string license)
+        public async Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license)
         {
             // Create & check directory
             string fullPath = Path.Combine(localPath, repoName);

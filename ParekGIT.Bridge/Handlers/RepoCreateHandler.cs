@@ -28,9 +28,6 @@ namespace ParekGIT.Bridge.Handlers
             string repoName = payload.GetProperty("repoName").GetString()
                               ?? throw new ArgumentNullException("repoName");
 
-            string description = payload.GetProperty("description").GetString()
-                                 ?? string.Empty;
-
             string localPath = payload.GetProperty("localPath").GetString()
                                ?? throw new ArgumentNullException("localPath");
 
@@ -41,7 +38,7 @@ namespace ParekGIT.Bridge.Handlers
                                ?? "None";
 
             // Create repo in git
-            var repository = await _gitRunner.CreateRepositoryAsync(repoName, description, localPath, gitIgnore, gitLicense);
+            var repository = await _gitRunner.CreateRepositoryAsync(repoName, localPath, gitIgnore, gitLicense);
 
             _dbStore.UpsertRepositoryAsync(repository);
 

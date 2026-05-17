@@ -39,6 +39,7 @@ namespace ParekGIT.UI
             router.RegisterHandler(new RepoRemoveHandler(window, dbStore, gitRunner));
             router.RegisterHandler(new BranchSelectedHandler(window, dbStore, gitRunner));
             router.RegisterHandler(new BranchCreateHandler(window, dbStore, gitRunner));
+            router.RegisterHandler(new ExplorerDialogHandler(window));
 
             window.RegisterWebMessageReceivedHandler(router.HandleMessage);
 
