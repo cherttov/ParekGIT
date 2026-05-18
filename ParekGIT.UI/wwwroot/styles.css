@@ -433,6 +433,11 @@ body, html {
     background-color: #dec7fa;
 }
 
+.commit-btn.disabled, .commit-btn:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
 /* RESIZER */
 .resizer {
     width: 6px;

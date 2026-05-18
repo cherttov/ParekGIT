@@ -23,6 +23,9 @@ const mainContent = document.getElementById("main-content");
 // Right Sidebar + SplitContainer
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
+const commitMessageInput = document.getElementById("commit-name-input");
+const commitDescriptionInput = document.getElementById("commit-desc-input");
+const commitBtn = document.getElementById("commit-btn");
 
 // Modals
 const modalBackdrops = document.querySelectorAll('.modal-backdrop');
@@ -165,6 +168,17 @@ const toggleDropdown = (toShow, toHide, event) => {
 
     const isOpening = toShow.classList.toggle('show');
     backdrop.classList.toggle('show', isOpening);
+};
+
+// Commit button disabling/enabling
+const toggleCommitButton = () => {
+    if (commitMessageInput.value.trim() === "") {
+        commitBtn.disabled = true;
+        commitBtn.classList.add("disabled");
+    } else {
+        commitBtn.disabled = false;
+        commitBtn.classList.remove("disabled");
+    }
 };
 
 // C# - Load repositories
@@ -386,6 +400,9 @@ function stopResize() {
     document.removeEventListener("mouseup", stopResize);
     document.body.style.userSelect = "";
 }
+
+// Commit section (right-sidebar)
+commitMessageInput.addEventListener("input", toggleCommitButton);
 
 // Add/new buttons (dropdowns)
 repoNewBtn.addEventListener("click", (event) => {
@@ -618,6 +635,7 @@ setupSelection('#branch-dropdown-panel', '#branches-container .btn-value');
 updatePanelWidths();
 
 branchBtn.classList.add("disabled"); // change to load last selected repo automatically
+toggleCommitButton();
 
 window.addEventListener('DOMContentLoaded', () => {
     sendIpcMessage("APP_READY");
