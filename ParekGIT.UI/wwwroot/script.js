@@ -47,6 +47,11 @@ const repoAddModalInputPath = repoAddModal.querySelector(".modal-input");
 const repoAddModalBrowseBtn = repoAddModal.querySelector(".browse-btn");
 const repoAddModalConfirmBtn = repoAddModal.querySelector(".confirm-modal-btn");
 
+const repoRemoveModal = document.getElementById("repo-remove-modal");
+const repoRemoveModalName = document.getElementById("remove-modal-repo-name");
+const repoRemoveModalLocalCheckbox = repoRemoveModal.querySelector(".checkbox-local");
+const repoRemoveModalConfirmBtn = repoRemoveModal.querySelector(".confirm-modal-btn");
+
 // Context menus
 const repoContextMenu = document.getElementById("repo-context-menu");
 const repoMenuClone = repoContextMenu.querySelector(".context-menu-item.item-clone");
@@ -460,12 +465,13 @@ repoItemMenuRemove.addEventListener("click", (event) => {
 
     const pathToRepo = repoItemContextMenu.dataset.targetPath;
     if (pathToRepo) {
-        sendIpcMessage("REPO_REMOVE", {
-            "repoPath": pathToRepo
-        });
+        repoRemoveModal.dataset.targetPath = pathToRepo;
+
+        repoRemoveModal.classList.add("show");
     }
 
     repoItemContextMenu.classList.remove("show");
+    closeDropdowns();
 });
 
 // Force close (context-menu)
@@ -521,6 +527,18 @@ repoAddModalConfirmBtn.addEventListener("click", () => {
     });
 
     closeAndClearModal(repoAddModal);
+});
+
+repoRemoveModalConfirmBtn.addEventListener("click", () => {
+    const repoPath = repoRemoveModal.dataset.targetPath;
+
+    if (repoPath) {
+        sendIpcMessage("REPO_REMOVE", {
+            "repoPath": repoPath
+        });
+    }
+
+    closeAndClearModal(repoRemoveModal);
 });
 
 // Input boxes (modals)

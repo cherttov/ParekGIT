@@ -440,7 +440,7 @@ body, html {
     background-color: transparent;
 }
 
-/* MODAL BACKDROPS */
+/* MODALS */
 .modal-backdrop {
     visibility: hidden;
     opacity: 0;
@@ -619,6 +619,64 @@ body, html {
 
 .confirm-modal-btn:hover {
     background-color: #dec7fa;
+}
+
+.checkbox-row label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #cdd6f4;
+    font-family: inherit;
+    font-size: 13px;
+    user-select: none;
+}
+
+.checkbox-local {
+    appearance: none;
+    background-color: #313244;
+    border: 1px solid #6c7086;
+    border-radius: 4px;
+
+    width: 16px;
+    height: 16px;
+    margin: 0;
+
+    user-select: none;
+    transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+
+.checkbox-local:hover {
+    border-color: #7f849c;
+}
+
+.checkbox-local:checked {
+    background-color: #cba6f7;
+    border-color: #cba6f7;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox-local:checked::before {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: #11111b;
+
+    mask-image: url('assets/icons/materials_check.svg');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
+.highlight-name {
+    color: #cba6f7;
+    font-weight: 600;
+    margin-top: 4px;
 }
 
 /* CONTEXT MENUS */

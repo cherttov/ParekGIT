@@ -112,7 +112,7 @@
                 <div class="modal-body">
                     <div class="modal-body-row">
                         <label>Name</label>
-                        <input type="text" class="modal-input input-name" placeholder="repository name"/>
+                        <input type="text" class="modal-input input-name" placeholder="repository name" />
                     </div>
 
                     <div class="modal-body-row">
@@ -167,6 +167,37 @@
 
                 <div class="modal-footer">
                     <button class="confirm-modal-btn">Add repository</button>
+                    <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="modal-backdrop" id="repo-remove-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Remove repository</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="modal-body-row">
+                        <label>Are you sure you want to remove this repository from ParekGIT?</label>
+                        <label class="highlight-name" id="remove-modal-repo-name">{ repository_name }</label>
+                    </div>
+
+                    <div class="modal-body-row checkbox-row">
+                        <label>
+                            <input type="checkbox" class="checkbox-local" />
+                            Also delete local directory
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="confirm-modal-btn">Remove</button>
                     <button class="cancel-modal-btn">Cancel</button>
                 </div>
 
