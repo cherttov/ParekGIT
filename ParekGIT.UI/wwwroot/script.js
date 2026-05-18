@@ -533,8 +533,11 @@ repoRemoveModalConfirmBtn.addEventListener("click", () => {
     const repoPath = repoRemoveModal.dataset.targetPath;
 
     if (repoPath) {
+        const deleteLocal = repoRemoveModalLocalCheckbox.checked;
+
         sendIpcMessage("REPO_REMOVE", {
-            "repoPath": repoPath
+            "repoPath": repoPath,
+            "deleteLocal": deleteLocal
         });
     }
 
