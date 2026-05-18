@@ -1,0 +1,45 @@
+﻿using ParekGIT.Bridge.Interfaces;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text.Json;
+
+namespace ParekGIT.Bridge.Handlers
+{
+    public class RepoTerminalHandler : IMessageHandler
+    {
+        public string Action => "REPO_TERMINAL";
+
+        public Task ExecuteAsync(JsonElement payload)
+        {
+            string repoPath = payload.GetProperty("repoPath").GetString()
+                ?? throw new ArgumentNullException("repoPath");
+
+            if (!string.IsNullOrEmpty(repoPath) && Directory.Exists(repoPath))
+            {
+                var processInfo = new ProcessStartInfo
+                {
+                    WorkingDirectory = repoPath,
+                    UseShellExecute = true
+                };
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    processInfo.FileName = "cmd.exe";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    processInfo.FileName = "open";
+                    processInfo.Arguments = $"-a Terminal \"{repoPath}\"";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    processInfo.FileName = "x-terminal-emulator";
+                }
+
+                Process.Start(processInfo);
+            }
+
+            return Task.CompletedTask;
+        }
+    }
+}
