@@ -24,7 +24,7 @@ namespace ParekGIT.Core.Git
                     throw new Exception($"Git Error: {result.StandardError}");
                 }
 
-                return result.StandardOutput.Trim();
+                return result.StandardOutput.TrimEnd();
             }
             catch (Exception ex)
             {
@@ -40,6 +40,15 @@ namespace ParekGIT.Core.Git
             string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
 
             return GitBranchParser.Parse(rawOutput);
+        }
+
+        public async Task<IEnumerable<GitFileStatus>> GetStatusAsync(string repositoryPath)
+        {
+            string arguments = "status --porcelain";
+
+            string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
+
+            return GitStatusParser.Parse(rawOutput);
         }
 
         // Commands

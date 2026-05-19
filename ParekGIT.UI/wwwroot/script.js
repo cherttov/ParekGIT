@@ -23,6 +23,8 @@ const mainContent = document.getElementById("main-content");
 // Right Sidebar + SplitContainer
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
+
+const changesList = document.getElementById("changes-list");
 const commitMessageInput = document.getElementById("commit-name-input");
 const commitDescriptionInput = document.getElementById("commit-desc-input");
 const commitBtn = document.getElementById("commit-btn");
@@ -109,6 +111,10 @@ window.external.receiveMessage(message => {
 
         case "FOLDER_SELECTED":
             folderSelected(data.Payload);
+            break;
+
+        case "REPO_STATUS_LOADED":
+            renderChangedFiles(data.Payload);
             break;
 
         default:
@@ -200,6 +206,7 @@ function loadRepositoriesIntoDropdown(repositories) {
         item.addEventListener("click", () => {
             currentRepoPath = repo.AbsolutePath;
             sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
+            sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
 
             branchBtn.classList.remove("disabled");
         });
@@ -325,6 +332,42 @@ function addRepositoryToDropdown(repo) {
 
     repoDropdown.appendChild(item);
     item.click();
+}
+
+// C# - Load changed files to right sidebar
+function renderChangedFiles(files) {
+    changesList.innerHTML = "";
+
+    if (files.length === 0) { return; }
+
+    files.forEach(file => {
+        const item = document.createElement("div");
+        item.className = "change-item";
+
+        let statusLetter = "M";
+        let statusClass = "status-modified";
+
+        if (file.StatusCode.includes("?")) {
+            statusLetter = "U";
+            statusClass = "status-untracked";
+        } else if (file.StatusCode.includes("A")) {
+            statusLetter = "A";
+            statusClass = "status-added";
+        } else if (file.StatusCode.includes("D")) {
+            statusLetter = "D";
+            statusClass = "status-deleted";
+        } else if (file.StatusCode.includes("R")) {
+            statusLetter = "R";
+            statusClass = "status-renamed";
+        }
+
+        item.innerHTML = `
+            <div class="change-status ${statusClass}">${statusLetter}</div>
+            <div class="change-path">${file.Path}</div>
+        `
+
+        changesList.appendChild(item);
+    });
 }
 
 // ------- EVENT LISTENERS -------

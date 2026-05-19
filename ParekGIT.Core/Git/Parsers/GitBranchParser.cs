@@ -2,7 +2,7 @@
 
 namespace ParekGIT.Core.Git.Parsers
 {
-    internal class GitBranchParser
+    internal static class GitBranchParser
     {
         public static IEnumerable<GitBranch> Parse(string rawOutput)
         {

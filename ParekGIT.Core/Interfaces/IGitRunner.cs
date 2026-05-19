@@ -8,6 +8,7 @@ namespace ParekGIT.Core.Interfaces
 
         // Parsers
         Task<IEnumerable<GitBranch>> GetBranchesAsync(string repositoryPath);
+        Task<IEnumerable<GitFileStatus>> GetStatusAsync(string repositoryPath);
 
         // Commands
         Task CheckoutBranchAsync(string repositoryPath, string branchName, bool isRemote);

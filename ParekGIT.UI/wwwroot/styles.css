@@ -3,6 +3,12 @@
     src: url('assets/fonts/FiraCode/FiraCode-VariableFont_wght.ttf') format('truetype');
 }
 
+.status-untracked { color: #74c7ec } /* Saphire */
+.status-added { color: #a6e3a1 } /* Green */
+.status-modified { color: #f9e2af } /* Yellow */
+.status-deleted { color: #f38ba8 } /* Red */
+.status-renamed { color: #89b4fa } /* Blue */
+
 body, html {
     margin: 0;
     padding: 0;
@@ -376,14 +382,49 @@ body, html {
     flex-direction: column;
 }
 
+.changes-list-container {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.change-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background-color: transparent;
+    transition: background-color 0.1s ease;
+}
+
+.change-item:hover {
+    background-color: #313244;
+}
+
+.change-path {
+    color: #cdd6f4;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: none;
+}
+
+.change-status {
+    font-size: 15px;
+    font-weight: 500;
+    width: 16px;
+    text-align: center;
+    user-select: none;
+}
+
 .right-sidebar-bottom {
     margin-top: auto;
-
     padding: 8px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-
     background-color: #313244;
 }
 
