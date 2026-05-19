@@ -268,6 +268,11 @@ function loadBranchesIntoDropdown(branches) {
     });
 
     branchBtnValue.textContent = currentBranchName;
+
+    // Load changes
+    if (currentRepoPath) {
+        sendIpcMessage("GET_REPO_STATUS", { repoPath: currentRepoPath });
+    }
 }
 
 // C# - Delete repo 
@@ -315,6 +320,7 @@ function addRepositoryToDropdown(repo) {
     item.addEventListener("click", () => {
         currentRepoPath = repo.AbsolutePath;
         sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
+        sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
         branchBtn.classList.remove("disabled");
     });
 

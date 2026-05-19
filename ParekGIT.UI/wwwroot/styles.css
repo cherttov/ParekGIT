@@ -295,6 +295,7 @@ body, html {
     display: flex;
     flex-direction: row;
     flex: 1;
+    min-height: 0;
 }
 
 /* LEFT SIDEBAR */
@@ -364,6 +365,7 @@ body, html {
 .split-container{
     display: flex;
     flex: 1;
+    min-height: 0;
 }
 
 /* MAIN CONTENT */
@@ -380,10 +382,14 @@ body, html {
 
     display: flex;
     flex-direction: column;
+
+    height: 100%;
+    overflow: hidden;
 }
 
 .changes-list-container {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -420,7 +426,6 @@ body, html {
 }
 
 .right-sidebar-bottom {
-    margin-top: auto;
     padding: 8px;
     display: flex;
     flex-direction: column;
@@ -457,6 +462,7 @@ body, html {
     min-height: 48px;
     height: 128px;
     resize: vertical;
+    max-height: 40vh;
 }
 
 .commit-btn {
