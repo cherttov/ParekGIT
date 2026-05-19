@@ -387,6 +387,15 @@ body, html {
     overflow: hidden;
 }
 
+.changes-header {
+    font-size: 13px;
+    padding: 4px 8px;
+    color: #cdd6f4;
+    background-color: #313244;
+    user-select: none;
+    flex-shrink: 0;
+}
+
 .changes-list-container {
     flex: 1;
     min-height: 0;
@@ -398,6 +407,7 @@ body, html {
 .change-item {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
     padding: 4px 8px;
     background-color: transparent;
@@ -408,13 +418,12 @@ body, html {
     background-color: #313244;
 }
 
-.change-path {
-    color: #cdd6f4;
-    font-size: 13px;
-    white-space: nowrap;
+.change-item-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     overflow: hidden;
-    text-overflow: ellipsis;
-    user-select: none;
+    flex: 1;
 }
 
 .change-status {
@@ -422,6 +431,15 @@ body, html {
     font-weight: 500;
     width: 16px;
     text-align: center;
+    user-select: none;
+}
+
+.change-path {
+    color: #cdd6f4;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     user-select: none;
 }
 
@@ -687,7 +705,7 @@ body, html {
     user-select: none;
 }
 
-.checkbox-local {
+.ui-checkbox {
     appearance: none;
     background-color: #313244;
     border: 1px solid #6c7086;
@@ -696,16 +714,17 @@ body, html {
     width: 16px;
     height: 16px;
     margin: 0;
+    flex-shrink: 0;
 
     user-select: none;
     transition: background-color 0.1s ease, border-color 0.1s ease;
 }
 
-.checkbox-local:hover {
+.ui-checkbox:hover {
     border-color: #7f849c;
 }
 
-.checkbox-local:checked {
+.ui-checkbox:checked {
     background-color: #cba6f7;
     border-color: #cba6f7;
 
@@ -715,7 +734,7 @@ body, html {
     justify-content: center;
 }
 
-.checkbox-local:checked::before {
+.ui-checkbox:checked::before {
     content: "";
     position: absolute;
     width: 16px;

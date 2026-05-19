@@ -24,6 +24,7 @@ const mainContent = document.getElementById("main-content");
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
 
+const changesHeader = document.getElementById("changes-header");
 const changesList = document.getElementById("changes-list");
 const commitMessageInput = document.getElementById("commit-name-input");
 const commitDescriptionInput = document.getElementById("commit-desc-input");
@@ -54,7 +55,7 @@ const repoAddModalConfirmBtn = repoAddModal.querySelector(".confirm-modal-btn");
 
 const repoRemoveModal = document.getElementById("repo-remove-modal");
 const repoRemoveModalName = document.getElementById("remove-modal-repo-name");
-const repoRemoveModalLocalCheckbox = repoRemoveModal.querySelector(".checkbox-local");
+const repoRemoveModalLocalCheckbox = repoRemoveModal.querySelector(".ui-checkbox");
 const repoRemoveModalConfirmBtn = repoRemoveModal.querySelector(".confirm-modal-btn");
 
 // Context menus
@@ -71,6 +72,7 @@ const repoItemMenuRemove = repoItemContextMenu.querySelector(".context-menu-item
 // ------- APP STATE -------
 let currentRepoPath = "";
 let activeBrowseInput = null;
+let currentChangesCount = 0;
 
 // ------- IPC COMMUNICATION -------
 const sendIpcMessage = (action, payload = {}) => {
@@ -178,7 +180,7 @@ const toggleDropdown = (toShow, toHide, event) => {
 
 // Commit button disabling/enabling
 const toggleCommitButton = () => {
-    if (commitMessageInput.value.trim() === "") {
+    if (commitMessageInput.value.trim() === "" || currentChangesCount === 0) {
         commitBtn.disabled = true;
         commitBtn.classList.add("disabled");
     } else {
@@ -344,6 +346,12 @@ function addRepositoryToDropdown(repo) {
 function renderChangedFiles(files) {
     changesList.innerHTML = "";
 
+    currentChangesCount = files.length;
+
+    changesHeader.textContent = `${files.length} changed file${files.length === 1 ? '' : 's'}`;
+
+    toggleCommitButton();
+
     if (files.length === 0) { return; }
 
     files.forEach(file => {
@@ -368,8 +376,11 @@ function renderChangedFiles(files) {
         }
 
         item.innerHTML = `
-            <div class="change-status ${statusClass}">${statusLetter}</div>
-            <div class="change-path">${file.Path}</div>
+            <div class="change-item-left">
+                <div class="change-status ${statusClass}">${statusLetter}</div>
+                <div class="change-path">${file.Path}</div>
+            </div>
+            <input type="checkbox" class="ui-checkbox"/>
         `
 
         changesList.appendChild(item);
