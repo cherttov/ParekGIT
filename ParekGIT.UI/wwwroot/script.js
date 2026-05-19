@@ -221,6 +221,7 @@ function loadRepositoriesIntoDropdown(repositories) {
             repoContextMenu.classList.remove("show");
 
             repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
+            repoItemContextMenu.dataset.targetName = repo.Name;
 
             repoItemContextMenu.classList.add("show");
 
@@ -380,7 +381,7 @@ function renderChangedFiles(files) {
                 <div class="change-status ${statusClass}">${statusLetter}</div>
                 <div class="change-path">${file.Path}</div>
             </div>
-            <input type="checkbox" class="ui-checkbox"/>
+            <input type="checkbox" class="ui-checkbox" checked/>
         `
 
         changesList.appendChild(item);
@@ -541,8 +542,12 @@ repoItemMenuRemove.addEventListener("click", (event) => {
     event.stopPropagation();
 
     const pathToRepo = repoItemContextMenu.dataset.targetPath;
+    const repoName = repoItemContextMenu.dataset.targetName;
+
     if (pathToRepo) {
         repoRemoveModal.dataset.targetPath = pathToRepo;
+
+        repoRemoveModalName.textContent = repoName;
 
         repoRemoveModal.classList.add("show");
     }

@@ -751,6 +751,11 @@ body, html {
     color: #cba6f7;
     font-weight: 600;
     margin-top: 4px;
+    padding: 2px 6px;
+    background-color: #313244;
+    border-radius: 4px;
+    width: fit-content;
+    word-break: break-all;
 }
 
 /* CONTEXT MENUS */
