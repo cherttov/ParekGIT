@@ -25,6 +25,8 @@ const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
 
 const changesHeader = document.getElementById("changes-header");
+const changesCountText = document.getElementById("changes-count-text");
+const changesMasterCheckbox = document.getElementById("changes-master-checkbox");
 const changesList = document.getElementById("changes-list");
 const commitMessageInput = document.getElementById("commit-name-input");
 const commitDescriptionInput = document.getElementById("commit-desc-input");
@@ -189,6 +191,14 @@ const toggleCommitButton = () => {
     }
 };
 
+// Changes header checkbox updater
+const updateMasterCheckboxState = () => {
+    const allFileCheckboxes = Array.from(document.querySelectorAll(".changes-item-checkbox"));
+    if (allFileCheckboxes.length === 0) { return; }
+    const allChecked = allFileCheckboxes.every(box => box.checked);
+    changesMasterCheckbox.checked = allChecked;
+}
+
 // C# - Load repositories
 function loadRepositoriesIntoDropdown(repositories) {
     const existingItems = repoDropdown.querySelectorAll('.dropdown-item');
@@ -349,7 +359,7 @@ function renderChangedFiles(files) {
 
     currentChangesCount = files.length;
 
-    changesHeader.textContent = `${files.length} changed file${files.length === 1 ? '' : 's'}`;
+    changesCountText.textContent = `${files.length} changed file${files.length === 1 ? '' : 's'}`;
 
     toggleCommitButton();
 
@@ -381,8 +391,13 @@ function renderChangedFiles(files) {
                 <div class="change-status ${statusClass}">${statusLetter}</div>
                 <div class="change-path">${file.Path}</div>
             </div>
-            <input type="checkbox" class="ui-checkbox" checked/>
+            <input type="checkbox" class="ui-checkbox changes-item-checkbox" checked/>
         `
+
+        const checkbox = item.querySelector(".changes-item-checkbox");
+        checkbox.addEventListener("change", () => {
+            updateMasterCheckboxState();
+        });
 
         changesList.appendChild(item);
     });
@@ -461,6 +476,15 @@ function stopResize() {
     document.removeEventListener("mouseup", stopResize);
     document.body.style.userSelect = "";
 }
+
+// Master checkbox logic (right-sidebar/changes-header)
+changesMasterCheckbox.addEventListener("change", (event) => {
+    const isChecked = event.target.checked;
+    const allFileCheckboxes = document.querySelectorAll(".changes-item-checkbox");
+    allFileCheckboxes.forEach(box => {
+        box.checked = isChecked
+    });
+});
 
 // Commit section (right-sidebar)
 commitMessageInput.addEventListener("input", toggleCommitButton);

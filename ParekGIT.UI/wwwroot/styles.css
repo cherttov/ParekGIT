@@ -24,6 +24,49 @@ body, html {
     -webkit-user-drag: none;
 }
 
+/* REUSABLE COMPONENTS */
+.ui-checkbox {
+    appearance: none;
+    background-color: #313244;
+    border: 1px solid #6c7086;
+    border-radius: 4px;
+
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    flex-shrink: 0;
+
+    user-select: none;
+    transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+
+.ui-checkbox:hover {
+    border-color: #7f849c;
+}
+
+.ui-checkbox:checked {
+    background-color: #cba6f7;
+    border-color: #cba6f7;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ui-checkbox:checked::before {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: #11111b;
+
+    mask-image: url('assets/icons/materials_check.svg');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
 /* TOPBAR */
 .topbar {
     width: 100%;
@@ -388,6 +431,9 @@ body, html {
 }
 
 .changes-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: 13px;
     padding: 4px 8px;
     color: #cdd6f4;
@@ -703,48 +749,6 @@ body, html {
     font-family: inherit;
     font-size: 13px;
     user-select: none;
-}
-
-.ui-checkbox {
-    appearance: none;
-    background-color: #313244;
-    border: 1px solid #6c7086;
-    border-radius: 4px;
-
-    width: 16px;
-    height: 16px;
-    margin: 0;
-    flex-shrink: 0;
-
-    user-select: none;
-    transition: background-color 0.1s ease, border-color 0.1s ease;
-}
-
-.ui-checkbox:hover {
-    border-color: #7f849c;
-}
-
-.ui-checkbox:checked {
-    background-color: #cba6f7;
-    border-color: #cba6f7;
-
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.ui-checkbox:checked::before {
-    content: "";
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    background-color: #11111b;
-
-    mask-image: url('assets/icons/materials_check.svg');
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    mask-position: center;
 }
 
 .highlight-name {
