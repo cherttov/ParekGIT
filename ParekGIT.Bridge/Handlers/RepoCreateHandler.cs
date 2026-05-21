@@ -40,7 +40,7 @@ namespace ParekGIT.Bridge.Handlers
             // Create repo in git
             var repository = await _gitRunner.CreateRepositoryAsync(repoName, localPath, gitIgnore, gitLicense);
 
-            _dbStore.UpsertRepositoryAsync(repository);
+            await _dbStore.UpsertRepositoryAsync(repository);
 
             // Response
             var response = new IpcMessage

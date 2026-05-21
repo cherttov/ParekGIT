@@ -73,6 +73,7 @@ const repoItemMenuRemove = repoItemContextMenu.querySelector(".context-menu-item
 
 // ------- APP STATE -------
 let currentRepoPath = "";
+let currentBranch = "";
 let activeBrowseInput = null;
 let currentChangesCount = 0;
 
@@ -119,6 +120,10 @@ window.external.receiveMessage(message => {
 
         case "REPO_STATUS_LOADED":
             renderChangedFiles(data.Payload);
+            break;
+
+        case "REPO_COMMITTED": // finish
+            processCommit();
             break;
 
         default:
@@ -182,12 +187,20 @@ const toggleDropdown = (toShow, toHide, event) => {
 
 // Commit button disabling/enabling
 const toggleCommitButton = () => {
-    if (commitMessageInput.value.trim() === "" || currentChangesCount === 0) {
+    const checkedCount = document.querySelectorAll(".changes-item-checkbox:checked").length;
+
+    if (commitMessageInput.value.trim() === "" || checkedCount === 0) {
         commitBtn.disabled = true;
         commitBtn.classList.add("disabled");
     } else {
         commitBtn.disabled = false;
         commitBtn.classList.remove("disabled");
+    }
+
+    if (checkedCount > 0 && currentBranch !== "") {
+        commitBtn.textContent = `Commit ${checkedCount} file${checkedCount === 1 ? '' : 's'} to ${currentBranch}`;
+    } else {
+        commitBtn.textContent = "Commit";
     }
 };
 
@@ -195,8 +208,11 @@ const toggleCommitButton = () => {
 const updateMasterCheckboxState = () => {
     const allFileCheckboxes = Array.from(document.querySelectorAll(".changes-item-checkbox"));
     if (allFileCheckboxes.length === 0) { return; }
+
     const allChecked = allFileCheckboxes.every(box => box.checked);
     changesMasterCheckbox.checked = allChecked;
+
+    toggleCommitButton();
 }
 
 // C# - Load repositories
@@ -262,6 +278,7 @@ function loadBranchesIntoDropdown(branches) {
         if (branch.IsCurrent) {
             item.className = "dropdown-item active";
             currentBranchName = branch.Name;
+            currentBranch = branch.Name;
         }
         else {
             item.className = "dropdown-item";
@@ -281,6 +298,8 @@ function loadBranchesIntoDropdown(branches) {
     });
 
     branchBtnValue.textContent = currentBranchName;
+
+    toggleCommitButton();
 
     // Load changes
     if (currentRepoPath) {
@@ -332,6 +351,9 @@ function addRepositoryToDropdown(repo) {
     // LMB - select
     item.addEventListener("click", () => {
         currentRepoPath = repo.AbsolutePath;
+        currentBranch = "";
+        toggleCommitButton();
+
         sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
         sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
         branchBtn.classList.remove("disabled");
@@ -358,16 +380,17 @@ function renderChangedFiles(files) {
     changesList.innerHTML = "";
 
     currentChangesCount = files.length;
-
     changesCountText.textContent = `${files.length} changed file${files.length === 1 ? '' : 's'}`;
 
-    toggleCommitButton();
-
-    if (files.length === 0) { return; }
+    if (files.length === 0) {
+        toggleCommitButton();
+        return;
+    }
 
     files.forEach(file => {
         const item = document.createElement("div");
         item.className = "change-item";
+        item.dataset.path = file.Path;
 
         let statusLetter = "M";
         let statusClass = "status-modified";
@@ -401,6 +424,20 @@ function renderChangedFiles(files) {
 
         changesList.appendChild(item);
     });
+
+    toggleCommitButton();
+}
+
+// C# - Repo committed handler
+function processCommit() {
+    commitMessageInput.value = "";
+    commitDescriptionInput.value = "";
+
+    toggleCommitButton();
+
+    if (currentRepoPath) {
+        sendIpcMessage("GET_REPO_STATUS", { repoPath: currentRepoPath });
+    }
 }
 
 // ------- EVENT LISTENERS -------
@@ -484,10 +521,40 @@ changesMasterCheckbox.addEventListener("change", (event) => {
     allFileCheckboxes.forEach(box => {
         box.checked = isChecked
     });
+
+    toggleCommitButton();
 });
 
 // Commit section (right-sidebar)
 commitMessageInput.addEventListener("input", toggleCommitButton);
+
+commitBtn.addEventListener("click", () => {
+    const message = commitMessageInput.value.trim();
+    const description = commitDescriptionInput.value.trim();
+
+    if (message === "" || currentRepoPath === "" || currentChangesCount === 0) { return; }
+
+    const selectedFiles = [];
+    const allFileCheckboxes = document.querySelectorAll(".changes-item-checkbox:checked");
+
+    allFileCheckboxes.forEach(checkbox => {
+        const itemRow = checkbox.closest('.change-item');
+        const filePath = itemRow.dataset.path;
+        selectedFiles.push(filePath);
+    });
+
+    if (selectedFiles.length === 0) { return; }
+
+    commitBtn.disabled = true;
+    commitBtn.classList.add("disabled");
+
+    sendIpcMessage("REPO_COMMIT", {
+        repoPath: currentRepoPath,
+        message: message,
+        description: description,
+        files: selectedFiles
+    });
+});
 
 // Add/new buttons (dropdowns)
 repoNewBtn.addEventListener("click", (event) => {

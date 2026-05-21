@@ -104,6 +104,31 @@ namespace ParekGIT.Core.Git
             };
         }
 
+        public async Task CommitAsync(string repoPath, string message, string desc, IEnumerable<string> files)
+        {
+            if (files == null) { return; }
+
+            // Unstage everything
+            await ExecuteCommandAsync(repoPath, "reset");
+
+            // Stage selected files
+            string fileArgs = string.Join(" ", files.Select(file => $"\"{file}\""));
+            await ExecuteCommandAsync(repoPath, $"add -- {fileArgs}");
+
+            // Prepare commit command
+            string safeMessage = message.Replace("\"", "\\\"");
+            string commitArgs = $"commit -m \"{safeMessage}\"";
+
+            // Add description if typed in
+            if (!string.IsNullOrWhiteSpace(desc))
+            {
+                string safeDescription = desc.Replace("\"", "\\\"");
+                commitArgs += $" -m \"{safeDescription}\"";
+            }
+
+            await ExecuteCommandAsync(repoPath, commitArgs);
+        }
+
         // Helpers
         private async Task GenerateGitIgnoreAsync(string path, string type)
         {
