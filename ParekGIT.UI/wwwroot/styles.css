@@ -430,6 +430,49 @@ body, html {
     overflow: hidden;
 }
 
+.tab-selector {
+    display: flex;
+    background-color: #1e1e2e;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    
+    color: #6c7086;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 0;
+
+    transition: color 0.1s ease, background-color 0.1s ease, border-color 0.1s ease;
+    outline: none;
+}
+
+.tab-btn:hover {
+    color: #cdd6f4;
+    background-color: #313244;
+}
+
+.tab-btn.active {
+    color: #cdd6f4;
+}
+
+.changes-tab, .history-tab {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.changes-tab.active, .history-tab.active {
+    display: flex;
+}
+
 .changes-header {
     display: flex;
     align-items: center;
@@ -478,6 +521,7 @@ body, html {
     width: 16px;
     text-align: center;
     user-select: none;
+    flex-shrink: 0;
 }
 
 .change-path {

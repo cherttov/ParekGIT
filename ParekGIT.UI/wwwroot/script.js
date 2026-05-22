@@ -24,6 +24,11 @@ const mainContent = document.getElementById("main-content");
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
 
+const tabBtnChanges = document.getElementById("tab-btn-changes");
+const tabBtnHistory = document.getElementById("tab-btn-history");
+const tabChanges = document.getElementById("changes-tab");
+const tabHistory = document.getElementById("history-tab");
+
 const changesHeader = document.getElementById("changes-header");
 const changesCountText = document.getElementById("changes-count-text");
 const changesMasterCheckbox = document.getElementById("changes-master-checkbox");
@@ -215,6 +220,21 @@ const updateMasterCheckboxState = () => {
     toggleCommitButton();
 }
 
+// Tab switching helpers
+const switchToChangesTab = () => {
+    tabBtnChanges.classList.add("active");
+    tabBtnHistory.classList.remove("active");
+    tabChanges.classList.add("active");
+    tabHistory.classList.remove("active");
+};
+const switchToHistoryTab = () => {
+    tabBtnChanges.classList.remove("active");
+    tabBtnHistory.classList.add("active");
+    tabChanges.classList.remove("active");
+    tabHistory.classList.add("active");
+};
+
+
 // C# - Load repositories
 function loadRepositoriesIntoDropdown(repositories) {
     const existingItems = repoDropdown.querySelectorAll('.dropdown-item');
@@ -233,6 +253,10 @@ function loadRepositoriesIntoDropdown(repositories) {
         // LMB - select
         item.addEventListener("click", () => {
             currentRepoPath = repo.AbsolutePath;
+            currentBranch = "";
+            toggleCommitButton();
+            switchToChangesTab();
+
             sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
             sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
 
@@ -514,6 +538,11 @@ function stopResize() {
     document.body.style.userSelect = "";
 }
 
+// Sidebar tab switching (right-sidebar/tab-selector)
+tabBtnChanges.addEventListener("click", switchToChangesTab);
+
+tabBtnHistory.addEventListener("click", switchToHistoryTab);
+
 // Master checkbox logic (right-sidebar/changes-header)
 changesMasterCheckbox.addEventListener("change", (event) => {
     const isChecked = event.target.checked;
@@ -791,6 +820,7 @@ setupSelection('#branch-dropdown-panel', '#branches-container .btn-value');
 updatePanelWidths();
 
 branchBtn.classList.add("disabled"); // change to load last selected repo automatically
+switchToChangesTab();
 toggleCommitButton();
 
 window.addEventListener('DOMContentLoaded', () => {
