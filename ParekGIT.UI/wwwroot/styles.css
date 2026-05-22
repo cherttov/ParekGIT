@@ -493,6 +493,10 @@ body, html {
     flex-direction: column;
 }
 
+.changes-list-container::-webkit-scrollbar {
+    display: none;
+}
+
 .change-item {
     display: flex;
     align-items: center;
