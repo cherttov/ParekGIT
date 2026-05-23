@@ -37,6 +37,8 @@ const commitMessageInput = document.getElementById("commit-name-input");
 const commitDescriptionInput = document.getElementById("commit-desc-input");
 const commitBtn = document.getElementById("commit-btn");
 
+const customScrollbar = document.querySelector(".custom-scrollbar");
+
 // Modals
 const modalBackdrops = document.querySelectorAll('.modal-backdrop');
 const modalCloseTriggers = document.querySelectorAll('.close-modal-icon, .cancel-modal-btn');
@@ -234,6 +236,37 @@ const switchToHistoryTab = () => {
     tabHistory.classList.add("active");
 };
 
+// Update custom scrollbar
+const updateCustomScrollbar = () => {
+    // If should be visible
+    if (!changesList || !customScrollbar) { return; }
+
+    const containerH = changesList.clientHeight;
+    const contentH = changesList.scrollHeight;
+
+    if (contentH <= containerH) {
+        customScrollbar.style.display = "none";
+        return;
+    }
+
+    customScrollbar.style.display = "block";
+
+    const EDGE_PADDING = 6;
+
+    const usableTrackHeight = containerH - (EDGE_PADDING * 2);
+
+    // Style math
+    const heightRatio = containerH / contentH;
+    const thumbHeight = Math.max(heightRatio * usableTrackHeight, 30);
+
+    const scrollPercentage = changesList.scrollTop / (contentH - containerH);
+    const maxThumbTop = usableTrackHeight - thumbHeight;
+    const thumbTop = EDGE_PADDING + (scrollPercentage * maxThumbTop);
+
+    // Apply style
+    customScrollbar.style.height = `${thumbHeight}px`;
+    customScrollbar.style.transform = `translateY(${thumbTop}px)`;
+};
 
 // C# - Load repositories
 function loadRepositoriesIntoDropdown(repositories) {
@@ -584,6 +617,14 @@ commitBtn.addEventListener("click", () => {
         files: selectedFiles
     });
 });
+
+// Scrollbar (right-sidebar)
+changesList.addEventListener("scroll", updateCustomScrollbar);
+window.addEventListener("resize", updateCustomScrollbar);
+const listResizeObserver = new ResizeObserver(() => {
+    updateCustomScrollbar();
+});
+if (changesList) { listResizeObserver.observe(changesList); }
 
 // Add/new buttons (dropdowns)
 repoNewBtn.addEventListener("click", (event) => {

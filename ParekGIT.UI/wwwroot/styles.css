@@ -485,16 +485,47 @@ body, html {
     flex-shrink: 0;
 }
 
+.changes-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+}
+
 .changes-list-container {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    scrollbar-width: none;
 }
 
 .changes-list-container::-webkit-scrollbar {
     display: none;
+}
+
+.custom-scrollbar {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    width: 4px;
+    background-color: #9399b2;
+    border-radius: 6px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: auto;
+    transition: opacity 0.1s ease;
+}
+
+.changes-list-wrapper:hover .custom-scrollbar {
+    opacity: 0.15;
+}
+
+.changes-list-wrapper:hover .custom-scrollbar:hover {
+    opacity: 0.3;
 }
 
 .change-item {
