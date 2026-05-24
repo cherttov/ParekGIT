@@ -51,6 +51,15 @@ namespace ParekGIT.Core.Git
             return GitStatusParser.Parse(rawOutput);
         }
 
+        public async Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repositoryPath, string branchName, int limit = 50)
+        {
+            string arguments = $"log \"{branchName}\" -n {limit} --pretty=format:\"%H|%s|%an|%ar\"";
+
+            string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
+
+            return GitHistoryParser.Parse(rawOutput);
+        }
+
         // Commands
         public async Task CheckoutBranchAsync(string repositoryPath, string branchName, bool isRemote)
         {

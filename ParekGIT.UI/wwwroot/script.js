@@ -33,11 +33,13 @@ const changesHeader = document.getElementById("changes-header");
 const changesCountText = document.getElementById("changes-count-text");
 const changesMasterCheckbox = document.getElementById("changes-master-checkbox");
 const changesList = document.getElementById("changes-list");
+const changesScrollbar = document.getElementById("changes-scrollbar");
 const commitMessageInput = document.getElementById("commit-name-input");
 const commitDescriptionInput = document.getElementById("commit-desc-input");
 const commitBtn = document.getElementById("commit-btn");
 
-const customScrollbar = document.querySelector(".custom-scrollbar");
+const historyList = document.getElementById("history-list");
+const historyScrollbar = document.getElementById("history-scrollbar");
 
 // Modals
 const modalBackdrops = document.querySelectorAll('.modal-backdrop');
@@ -129,8 +131,12 @@ window.external.receiveMessage(message => {
             renderChangedFiles(data.Payload);
             break;
 
-        case "REPO_COMMITTED": // finish
+        case "REPO_COMMITTED":
             processCommit();
+            break;
+
+        case "BRANCH_HISTORY_LOADED":
+            renderHistory(data.Payload);
             break;
 
         default:
@@ -237,19 +243,19 @@ const switchToHistoryTab = () => {
 };
 
 // Update custom scrollbar
-const updateCustomScrollbar = () => {
+const updateCustomScrollbar = (container, scrollbar) => {
     // If should be visible
-    if (!changesList || !customScrollbar) { return; }
+    if (!container || !scrollbar) { return; }
 
-    const containerH = changesList.clientHeight;
-    const contentH = changesList.scrollHeight;
+    const containerH = container.clientHeight;
+    const contentH = container.scrollHeight;
 
     if (contentH <= containerH) {
-        customScrollbar.style.display = "none";
+        scrollbar.style.display = "none";
         return;
     }
 
-    customScrollbar.style.display = "block";
+    scrollbar.style.display = "block";
 
     const EDGE_PADDING = 6;
 
@@ -259,13 +265,13 @@ const updateCustomScrollbar = () => {
     const heightRatio = containerH / contentH;
     const thumbHeight = Math.max(heightRatio * usableTrackHeight, 30);
 
-    const scrollPercentage = changesList.scrollTop / (contentH - containerH);
+    const scrollPercentage = container.scrollTop / (contentH - containerH);
     const maxThumbTop = usableTrackHeight - thumbHeight;
     const thumbTop = EDGE_PADDING + (scrollPercentage * maxThumbTop);
 
     // Apply style
-    customScrollbar.style.height = `${thumbHeight}px`;
-    customScrollbar.style.transform = `translateY(${thumbTop}px)`;
+    scrollbar.style.height = `${thumbHeight}px`;
+    scrollbar.style.transform = `translateY(${thumbTop}px)`;
 };
 
 // C# - Load repositories
@@ -358,9 +364,16 @@ function loadBranchesIntoDropdown(branches) {
 
     toggleCommitButton();
 
-    // Load changes
+    // Load changes & history
     if (currentRepoPath) {
         sendIpcMessage("GET_REPO_STATUS", { repoPath: currentRepoPath });
+
+        if (currentBranch) {
+            sendIpcMessage("GET_BRANCH_HISTORY", {
+                repoPath: currentRepoPath,
+                branchName: currentBranch
+            });
+        }
     }
 }
 
@@ -483,6 +496,7 @@ function renderChangedFiles(files) {
     });
 
     toggleCommitButton();
+    updateCustomScrollbar(changesList, changesScrollbar);
 }
 
 // C# - Repo committed handler
@@ -494,7 +508,43 @@ function processCommit() {
 
     if (currentRepoPath) {
         sendIpcMessage("GET_REPO_STATUS", { repoPath: currentRepoPath });
+
+        if (currentBranch) {
+            sendIpcMessage("GET_BRANCH_HISTORY", {
+                repoPath: currentRepoPath,
+                branchName: currentBranch
+            });
+        }
     }
+}
+
+// C# - Load commit history into history-tab
+function renderHistory(commits) {
+    historyList.innerHTML = "";
+
+    if (!commits || commits.length === 0) {
+        updateCustomScrollbar(historyList, historyScrollbar);
+        return;
+    }
+
+    commits.forEach(commit => {
+        const item = document.createElement("div");
+        item.className = "history-item";
+
+        item.dataset.hash = commit.Hash;
+
+        item.innerHTML = `
+            <div class="history-message">${commit.Message}</div>
+            <div class="history-meta">
+                <div class="history-author">${commit.Author}</div>
+                <div class="history-time"">${commit.TimeAgo}</div>
+            </div>
+        `;
+
+        historyList.appendChild(item);
+    });
+
+    updateCustomScrollbar(historyList, historyScrollbar);
 }
 
 // ------- EVENT LISTENERS -------
@@ -619,12 +669,21 @@ commitBtn.addEventListener("click", () => {
 });
 
 // Scrollbar (right-sidebar)
-changesList.addEventListener("scroll", updateCustomScrollbar);
-window.addEventListener("resize", updateCustomScrollbar);
-const listResizeObserver = new ResizeObserver(() => {
-    updateCustomScrollbar();
+changesList.addEventListener("scroll", () => { updateCustomScrollbar(changesList, changesScrollbar); });
+historyList.addEventListener("scroll", () => { updateCustomScrollbar(historyList, historyScrollbar); });
+
+window.addEventListener("resize", () => {
+    updateCustomScrollbar(changesList, changesScrollbar);
+    updateCustomScrollbar(historyList, historyScrollbar);
 });
+
+const listResizeObserver = new ResizeObserver(() => {
+    updateCustomScrollbar(changesList, changesScrollbar);
+    updateCustomScrollbar(historyList, historyScrollbar);
+});
+
 if (changesList) { listResizeObserver.observe(changesList); }
+if (historyList) { listResizeObserver.observe(historyList); }
 
 // Add/new buttons (dropdowns)
 repoNewBtn.addEventListener("click", (event) => {

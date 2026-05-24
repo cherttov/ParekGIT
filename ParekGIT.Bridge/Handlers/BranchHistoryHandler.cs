@@ -1,0 +1,51 @@
+﻿using ParekGIT.Bridge.Data;
+using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Core.Interfaces;
+using ParekGIT.Data.Data;
+using Photino.NET;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace ParekGIT.Bridge.Handlers
+{
+    public class BranchHistoryHandler : IMessageHandler
+    {
+        private readonly PhotinoWindow _window;
+        private readonly LiteDbStore _dbStore;
+        private readonly IGitRunner _gitRunner;
+
+        public string Action => "GET_BRANCH_HISTORY";
+
+        // Constructor
+        public BranchHistoryHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner)
+        {
+            _window = window;
+            _dbStore = dbStore;
+            _gitRunner = gitRunner;
+        }
+
+        public async Task ExecuteAsync(JsonElement payload)
+        {
+            string repoPath = payload.GetProperty("repoPath").GetString()
+                              ?? throw new ArgumentNullException("repoPath");
+
+            string branchName = payload.GetProperty("branchName").GetString()
+                                ?? throw new ArgumentNullException("branchName");
+
+            var commits = await _gitRunner.GetBranchHistoryAsync(repoPath, branchName);
+
+            // Response
+            var response = new IpcMessage
+            {
+                Action = "BRANCH_HISTORY_LOADED",
+                Payload = JsonSerializer.SerializeToElement(commits)
+            };
+
+            _window.SendWebMessage(JsonSerializer.Serialize(response));
+        }
+    }
+}

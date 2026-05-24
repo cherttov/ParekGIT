@@ -520,10 +520,12 @@ body, html {
     transition: opacity 0.1s ease;
 }
 
+.history-list-wrapper:hover .custom-scrollbar,
 .changes-list-wrapper:hover .custom-scrollbar {
     opacity: 0.15;
 }
 
+.history-list-wrapper:hover .custom-scrollbar:hover,
 .changes-list-wrapper:hover .custom-scrollbar:hover {
     opacity: 0.3;
 }
@@ -629,6 +631,61 @@ body, html {
 .commit-btn.disabled, .commit-btn:disabled {
     opacity: 0.6;
     pointer-events: none;
+}
+
+.history-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.history-list-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: none;
+}
+
+.history-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 8px;
+    background-color: transparent;
+    transition: background-color 0.1s ease;
+}
+
+.history-item:hover {
+    background-color: #313244;
+}
+
+.history-message {
+    color: #cdd6f4;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-meta {
+    display: flex;
+    align-items: center;
+    font-family: inherit;
+    gap: 6px;
+    color: #6c7086;
+    font-size: 12px;
+}
+
+.history-author::after {
+    content: ".";
+    margin-left: 6px;
 }
 
 /* RESIZER */
