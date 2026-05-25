@@ -3,7 +3,6 @@ using CliWrap.Buffered;
 using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
-using System.Globalization;
 
 namespace ParekGIT.Core.Git
 {
@@ -72,7 +71,10 @@ namespace ParekGIT.Core.Git
                 string fullPath = Path.Combine(repositoryPath, filePath);
                 if (File.Exists(fullPath))
                 {
-                    return await File.ReadAllTextAsync(fullPath);
+                    string rawText = await File.ReadAllTextAsync(fullPath);
+
+                    var lines = rawText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                    return string.Join("\n", lines.Select(line => "+" + line));
                 }
             }
 

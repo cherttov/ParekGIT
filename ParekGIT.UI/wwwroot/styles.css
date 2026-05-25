@@ -429,6 +429,7 @@ body, html {
     flex-direction: column;
     height: 100%;
     background-color: #181825;
+    position: relative;
 }
 
 .diff-header {
@@ -446,33 +447,64 @@ body, html {
 }
 
 .diff-body-wrapper {
-    position: relative;
     flex: 1;
     min-height: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    overflow-x: auto;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+#diff-scrollbar {
+    top: 33px;
 }
 
 .diff-content {
     flex: 1;
     margin: 0;
-    max-width: 100%;
     box-sizing: border-box;
-    padding: 16px;
+    padding: 2px 0;
 
-    overflow-x: auto;
-    overflow-y: auto;
-    scrollbar-width: none;
+    overflow: visible;
+    width: max-content;
+    min-width: 100%;
 
-    color: #a6adc8;
+    color: #bac2de;
     font-family: inherit;
     font-size: 13px;
     white-space: pre;
+    user-select: text;
 }
 
 .diff-content::-webkit-scrollbar {
     display: none;
+}
+
+.diff-add {
+    display: block;
+    padding: 0 4px;
+    color: #a6e3a1;
+    background-color: rgba(166, 227, 161, 0.1);
+}
+
+.diff-remove {
+    display: block;
+    padding: 0 4px;
+    color: #f38ba8;
+    background-color: rgba(166, 227, 161, 0.1);
+}
+
+.diff-chunk {
+    display: block;
+    padding: 0 4px;
+    color: #6c7086;
+}
+
+.diff-normal {
+    display: block;
+    padding: 0 4px;
 }
 
 .diff-body-wrapper:hover .custom-scrollbar { opacity: 0.15; }

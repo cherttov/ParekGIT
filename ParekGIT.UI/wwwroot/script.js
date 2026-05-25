@@ -308,15 +308,56 @@ const loadDraft = () => {
     }
 };
 
+const escapeHtml = (unsafeText) => {
+    return unsafeText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039");
+};
+
 // C# - Load diff text
 function renderFileDiff(diffText) {
     if (!diffText || diffText.trim() === "") {
         diffContent.textContent = "(No changes or binary file)";
-    } else {
-        diffContent.textContent = diffText;
+        updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
+        return;
+    }
+    
+    const lines = diffText.split('\n');
+    const formattedLines = [];
+    let hitFirstChunk = !diffText.startsWith('diff --git');
+
+    for (let line of lines) {
+        // skip git diff headers
+        if (!hitFirstChunk) {
+            if (line.startsWith('@@')) { hitFirstChunk = true }
+            else { continue; }
+        }
+
+        let safeLine = escapeHtml(line);
+
+        // Apply classes based on character (1 spaces)
+        if (safeLine.startsWith('+')) {
+            formattedLines.push(`<span class="diff-add">+ ${safeLine.substring(1)}</span>`);
+        } else if (safeLine.startsWith('-')) {
+            formattedLines.push(`<span class="diff-remove">- ${safeLine.substring(1)}</span>`);
+        } else if (safeLine.startsWith('@@')) {
+            formattedLines.push(`<span class="diff-chunk">${safeLine.substring(1)}</span>`);
+        } else {
+            formattedLines.push(`<span class="diff-normal">  ${safeLine.substring(1)}</span>`)
+        }
     }
 
-    updateCustomScrollbar(diffContent, diffScrollbar);
+    // Inject colored html
+    if (formattedLines.length === 0) {
+        diffContent.innerHTML = escapeHtml(diffText);
+    } else {
+        diffContent.innerHTML = formattedLines.join('');
+    }
+
+    updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
 }
 
 // C# - Load repositories
@@ -620,7 +661,7 @@ document.addEventListener('wheel', (event) => {
 }, { passive: false });
 
 // Diff page (main-content)
-diffContent.addEventListener("scroll", () => updateCustomScrollbar(diffContent, diffScrollbar));
+diffBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(diffBodyWrapper, diffScrollbar));
 
 // Toggles (dropdowns)
 repoBtn.addEventListener('click', (event) => toggleDropdown(repoPanel, branchPanel, event));
