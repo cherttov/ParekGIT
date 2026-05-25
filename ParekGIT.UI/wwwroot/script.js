@@ -85,6 +85,7 @@ let currentRepoPath = "";
 let currentBranch = "";
 let activeBrowseInput = null;
 let currentChangesCount = 0;
+let repoDrafts = {};
 
 // ------- IPC COMMUNICATION -------
 const sendIpcMessage = (action, payload = {}) => {
@@ -274,6 +275,30 @@ const updateCustomScrollbar = (container, scrollbar) => {
     scrollbar.style.transform = `translateY(${thumbTop}px)`;
 };
 
+// Draft memory helpers
+const saveDraft = () => {
+    if (!currentRepoPath) { return; }
+
+    repoDrafts[currentRepoPath] = {
+        message: commitMessageInput.value,
+        description: commitDescriptionInput.value
+    };
+};
+
+const loadDraft = () => {
+    if (!currentRepoPath) { return; }
+
+    const draft = repoDrafts[currentRepoPath];
+
+    if (draft) {
+        commitMessageInput.value = draft.message;
+        commitDescriptionInput.value = draft.description;
+    } else {
+        commitMessageInput.value = "";
+        commitDescriptionInput.value = "";
+    }
+};
+
 // C# - Load repositories
 function loadRepositoriesIntoDropdown(repositories) {
     const existingItems = repoDropdown.querySelectorAll('.dropdown-item');
@@ -293,6 +318,8 @@ function loadRepositoriesIntoDropdown(repositories) {
         item.addEventListener("click", () => {
             currentRepoPath = repo.AbsolutePath;
             currentBranch = "";
+
+            loadDraft();
             toggleCommitButton();
             switchToChangesTab();
 
@@ -504,6 +531,8 @@ function processCommit() {
     commitMessageInput.value = "";
     commitDescriptionInput.value = "";
 
+    saveDraft();
+
     toggleCommitButton();
 
     if (currentRepoPath) {
@@ -638,7 +667,14 @@ changesMasterCheckbox.addEventListener("change", (event) => {
 });
 
 // Commit section (right-sidebar)
-commitMessageInput.addEventListener("input", toggleCommitButton);
+commitMessageInput.addEventListener("input", () => {
+    saveDraft();
+    toggleCommitButton();
+});
+
+commitDescriptionInput.addEventListener("input", () => {
+    saveDraft();
+});
 
 commitBtn.addEventListener("click", () => {
     const message = commitMessageInput.value.trim();
