@@ -20,6 +20,11 @@ const leftSidebar = document.getElementById("left-sidebar");
 // Main Content
 const mainContent = document.getElementById("main-content");
 
+const diffFilename = document.getElementById("diff-filename");
+const diffContent = document.getElementById("diff-content");
+const diffBodyWrapper = document.getElementById("diff-body-wrapper");
+const diffScrollbar = document.getElementById("diff-scrollbar");
+
 // Right Sidebar + SplitContainer
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
@@ -138,6 +143,10 @@ window.external.receiveMessage(message => {
 
         case "BRANCH_HISTORY_LOADED":
             renderHistory(data.Payload);
+            break;
+
+        case "FILE_DIFF_LOADED":
+            renderFileDiff(data.Payload);
             break;
 
         default:
@@ -298,6 +307,17 @@ const loadDraft = () => {
         commitDescriptionInput.value = "";
     }
 };
+
+// C# - Load diff text
+function renderFileDiff(diffText) {
+    if (!diffText || diffText.trim() === "") {
+        diffContent.textContent = "(No changes or binary file)";
+    } else {
+        diffContent.textContent = diffText;
+    }
+
+    updateCustomScrollbar(diffContent, diffScrollbar);
+}
 
 // C# - Load repositories
 function loadRepositoriesIntoDropdown(repositories) {
@@ -514,6 +534,21 @@ function renderChangedFiles(files) {
             <input type="checkbox" class="ui-checkbox changes-item-checkbox" checked/>
         `
 
+        // Clicking on change-item
+        const leftArea = item.querySelector(".change-item-left");
+        leftArea.addEventListener("click", () => {
+            document.querySelectorAll(".change-item").forEach(el => el.classList.remove("selected"));
+            item.classList.add("selected");
+
+            diffFilename.textContent = file.Path;
+            diffContent.textContent = "Loading changes...";
+
+            sendIpcMessage("GET_FILE_DIFF", {
+                repoPath: currentRepoPath,
+                filePath: file.Path
+            });
+        });
+
         const checkbox = item.querySelector(".changes-item-checkbox");
         checkbox.addEventListener("change", () => {
             updateMasterCheckboxState();
@@ -584,6 +619,9 @@ document.addEventListener('wheel', (event) => {
     }
 }, { passive: false });
 
+// Diff page (main-content)
+diffContent.addEventListener("scroll", () => updateCustomScrollbar(diffContent, diffScrollbar));
+
 // Toggles (dropdowns)
 repoBtn.addEventListener('click', (event) => toggleDropdown(repoPanel, branchPanel, event));
 branchBtn.addEventListener('click', (event) => toggleDropdown(branchPanel, repoPanel, event));
@@ -630,14 +668,20 @@ resizer.addEventListener("mousedown", (event) => {
 });
 
 function resize(event) {
-    if (isResizing) {
-        let targetWidth = window.innerWidth - event.clientX;
-        let newWidth = Math.max(minRightWidth, Math.min(targetWidth, maxRightWidth));
+    if (!isResizing) { return; }
 
-        rightSidebar.style.width = `${newWidth}px`;
-        branchContainer.style.width = `${newWidth}px`;
-        branchPanel.style.width = `${newWidth}px`;
+    let targetWidth = window.innerWidth - event.clientX;
+    let newWidth = Math.max(minRightWidth, Math.min(targetWidth, maxRightWidth));
 
+    // Calculate always visible
+    rightSidebar.style.width = `${newWidth}px`;
+    branchContainer.style.width = `${newWidth}px`;
+
+    if (branchPanel.classList.contains('show')) {
+        branchpanel.style.width = `${newWidth}px`;
+    }
+
+    if (repoPanel.classList.contains('show')) {
         repoPanel.style.width = `${repoContainer.offsetWidth}px`;
         repoPanel.style.left = `${repoContainer.offsetLeft}px`;
     }

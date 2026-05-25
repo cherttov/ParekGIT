@@ -60,6 +60,25 @@ namespace ParekGIT.Core.Git
             return GitHistoryParser.Parse(rawOutput);
         }
 
+        public async Task<string> GetFileDiffAsync(string repositoryPath, string filePath)
+        {
+            string arguments = $"diff HEAD -- \"{filePath}\"";
+
+            string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
+
+            // If empty, must be untracked file (read directly)
+            if (string.IsNullOrWhiteSpace(rawOutput))
+            {
+                string fullPath = Path.Combine(repositoryPath, filePath);
+                if (File.Exists(fullPath))
+                {
+                    return await File.ReadAllTextAsync(fullPath);
+                }
+            }
+
+            return rawOutput;
+        }
+
         // Commands
         public async Task CheckoutBranchAsync(string repositoryPath, string branchName, bool isRemote)
         {

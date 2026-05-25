@@ -15,16 +15,14 @@ namespace ParekGIT.Bridge.Handlers
     public class BranchHistoryHandler : IMessageHandler
     {
         private readonly PhotinoWindow _window;
-        private readonly LiteDbStore _dbStore;
         private readonly IGitRunner _gitRunner;
 
         public string Action => "GET_BRANCH_HISTORY";
 
         // Constructor
-        public BranchHistoryHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner)
+        public BranchHistoryHandler(PhotinoWindow window, IGitRunner gitRunner)
         {
             _window = window;
-            _dbStore = dbStore;
             _gitRunner = gitRunner;
         }
 
