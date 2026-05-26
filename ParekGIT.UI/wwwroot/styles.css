@@ -3,17 +3,64 @@
     src: url('assets/fonts/FiraCode/FiraCode-VariableFont_wght.ttf') format('truetype');
 }
 
+:root {
+    /* Backgrounds */
+    --bg-deep: #11111b; /* topbar, left sidebar, inputs, dropdowns */
+    --bg-main: #181825; /* main app background, diff viewer */
+    --bg-panel: #1e1e2e; /* right sidebar, modals, diff header */
+    --bg-hover: #313244; /* hover states, list items, modals borders */
+    --bg-active: #45475a; /* selected/active dropdown items */
+
+    /* Text & borders */
+    --text-primary: #cdd6f4; /* Main UI text */
+    --text-secondary: #bac2de; /* Code viewer text */
+    --text-muted: #6c7086; /* Placeholders, icons, unmodified code */
+    --text-label: #9399b2; /* Topbar labels */
+
+    --border-color: #313244; /* Dividers, modal borders */
+    --border-input: #6c7086; /* Input boxes, checkbox borders */
+    --border-input-hover: #7f849c; /* Checkbox hover border */
+
+    /* Accents */
+    --accent: #cba6f7; /* Primary purple (buttons) */
+    --accent-hover: #dec7fa; /* Lighter purple (hover) */
+    --accent-text: #11111b; /* Dark text for buttons/checkboxes */
+    --accent-text-hover: #10101a; /* Darker text for button hovers */
+
+    /* Overlays & scrollbars */
+    --backdrop-dropdown: rgba(0, 0, 0, 0.6);
+    --backdrop-modal: rgba(0, 0, 0, 0.4);
+    --scrollbar-track: transparent;
+    --scrollbar-thumb: rgba(205, 214, 244, 0.15);
+    --scrollbar-hover: rgba(205, 214, 244, 0.30);
+    --scrollbar-solid: #9399b2; /* Custom vertical scrollbar thumb */
+
+
+    /* Git diff & status colors */
+    --diff-add-text: #a6e3a1; /* Green */
+    --diff-add-bg: #a6e3a11a; /* Green 10% alpha */
+    --diff-remove-text: #f38ba8; /* Red */
+    --diff-remove-bg: #f38ba81a; /* Red 10% alpha */
+    --diff-chunk-text: #6c7086; /* Gray */
+    --diff-chunk-bg: #6c708633; /* Gray 20% alpha  */
+
+    --status-untracked: #74c7ec; /* Sapphire */
+    --status-added: #a6e3a1; /* Green */
+    --status-modified: #f9e2af; /* Yellow */
+    --status-deleted: #f38ba8; /* Red */
+    --status-renamed: #89b4fa; /* Blue */
+}
+
 body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    background-color: #181825;
+    background-color: var(--bg-main);
     font-family: 'FiraCode', sans-serif;
-    color: #cdd6f4;
+    color: var(--text-primary);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-
     user-select: none;
     -webkit-user-drag: none;
 }
@@ -21,27 +68,23 @@ body, html {
 /* REUSABLE COMPONENTS */
 .ui-checkbox {
     appearance: none;
-    background-color: #313244;
-    border: 1px solid #6c7086;
+    background-color: var(--bg-hover);
+    border: 1px solid var(--border-input);
     border-radius: 4px;
-
     width: 16px;
     height: 16px;
     margin: 0;
     flex-shrink: 0;
-
-    user-select: none;
     transition: background-color 0.1s ease, border-color 0.1s ease;
 }
 
 .ui-checkbox:hover {
-    border-color: #7f849c;
+    border-color: var(--border-input-hover);
 }
 
 .ui-checkbox:checked {
-    background-color: #cba6f7;
-    border-color: #cba6f7;
-
+    background-color: var(--accent);
+    border-color: var(--accent);
     position: relative;
     display: flex;
     align-items: center;
@@ -53,8 +96,7 @@ body, html {
     position: absolute;
     width: 16px;
     height: 16px;
-    background-color: #11111b;
-
+    background-color: var(--accent-text);
     mask-image: url('assets/icons/materials_check.svg');
     mask-size: contain;
     mask-repeat: no-repeat;
@@ -65,7 +107,7 @@ body, html {
 .topbar {
     width: 100%;
     height: 32px;
-    background-color: #11111b;
+    background-color: var(--bg-deep);
     display: flex;
     z-index: 1000;
     overflow: visible;
@@ -74,11 +116,9 @@ body, html {
 .topbar-logo {
     width: 48px;
     flex-shrink: 0;
-
     font-family: 'FiraCode', sans-serif;
     font-size: 13px;
     font-weight: bold;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -94,40 +134,36 @@ body, html {
     height: 100%;
     background: transparent;
     border: none;
-    color: #cdd6f4;
-
+    color: var(--text-primary);
     font-family: inherit;
     font-weight: 500;
-    user-select: none;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     transition: background-color 0.1s ease
 }
 
 .topbar-btn:hover {
-    background-color: #cba6f7;
+    background-color: var(--accent);
 }
 
 .topbar-btn .btn-label {
-    color: #9399b2;
+    color: var(--text-label);
     transition: color 0.1s ease;
 }
 
 .topbar-btn:hover .btn-label {
-    color: #181825;
+    color: var(--bg-main);
 }
 
 .topbar-btn .btn-value {
-    color: #cdd6f4;
+    color: var(--text-primary);
     transition: color 0.1s ease;
     font-weight: 500;
 }
 
 .topbar-btn:hover .btn-value {
-    color: #11111b;
+    color: var(--accent-text);
 }
 
 .topbar-btn.disabled {
@@ -137,13 +173,10 @@ body, html {
 
 .btn-arrow {
     flex-shrink: 0;
-
     width: 20px;
     height: 20px;
-
-    background-color: #cdd6f4;
+    background-color: var(--text-primary);
     transition: background-color 0.1s ease, transform 0.2s ease;
-
     mask-image: url('assets/icons/materials_arrow_drop_down.svg');
     mask-size: contain;
     mask-repeat: no-repeat;
@@ -151,7 +184,7 @@ body, html {
 }
 
 .topbar-btn:hover .btn-arrow {
-    background-color: #11111b;
+    background-color: var(--accent-text);
 }
 
 .topbar-dropdown-container:has(.dropdown-panel.show) .topbar-btn .btn-arrow {
@@ -161,15 +194,13 @@ body, html {
 .dropdown-backdrop {
     visibility: hidden;
     opacity: 0;
-
     position: fixed;
     top: 32px;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: var(--backdrop-dropdown);
     z-index: 500;
-
     transition: visibility 0.2s, opacity 0.2s ease-in;
 }
 
@@ -184,10 +215,9 @@ body, html {
     top: 32px;
     max-height: calc(100vh - 48px);
     overflow-y: auto;
-    background-color: #1e1e2e;
+    background-color: var(--bg-panel);
     z-index: 1000;
     flex-direction: column;
-    user-select: none;
 }
 
 .dropdown-panel.show {
@@ -219,7 +249,6 @@ body, html {
     align-items: center;
     width: 100%;
     padding: 8px;
-
     box-sizing: border-box;
     gap: 8px;
 }
@@ -229,14 +258,11 @@ body, html {
     left: 14px;
     width: 18px;
     height: 18px;
-
-    background-color: #6c7086;
-
+    background-color: var(--text-muted);
     mask-image: url('assets/icons/materials_search.svg');
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
-
     pointer-events: none;
 }
 
@@ -244,28 +270,22 @@ body, html {
     width: 100%;
     box-sizing: border-box;
     padding: 4px 4px 4px 26px;
-
-    color: #cdd6f4;
-    background-color: #11111b;
-    border: 1px solid #313244;
+    color: var(--text-primary);
+    background-color: var(--bg-deep);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    border-color: #11111b;
-
-    font-family: 'FiraCode', sans-serif;
+    font-family: inherit;
     font-size: 13px;
-
     transition: border-color 0.1s ease;
-
-    user-select: none;
     outline: none;
 }
 
 .filter-input:focus {
-    border-color: #cba6f7;
+    border-color: var(--accent);
 }
 
 .filter-input::placeholder {
-    color: #6c7086;
+    color: var(--text-muted);
 }
 
 .topbar-filter-btn {
@@ -274,57 +294,49 @@ body, html {
     display: inline-flex;
     align-items: center;
     gap: 2px;
-
-    color: #11111b;
-    background-color: #cba6f7;
+    color: var(--accent-text);
+    background-color: var(--accent);
     border: none;
     border-radius: 4px;
-
-    font-family: 'FiraCode', sans-serif;
+    font-family: inherit;
     font-size: 13px;
     font-weight: 600;
-
     transition: color 0.1s ease, background-color 0.1s ease;
-
-    user-select: none;
     outline: none;
 }
 
 .topbar-filter-btn:hover {
-    color: #10101a;
-    background-color: #dec7fa;
+    color: var(--accent-text-hover);
+    background-color: var(--accent-hover);
 }
 
 .topbar-filter-btn .btn-arrow {
     width: 18px;
     height: 18px;
-    background-color: #11111b;
+    background-color: var(--accent-text);
 }
 
 .dropdown-item {
     padding: 2px 8px;
-
-    color: #cdd6f4;
-    font-family: 'FiraCode', sand-serif;
+    color: var(--text-primary);
+    font-family: inherit;
     font-size: 14px;
-
     display: flex;
     align-items: center;
     gap: 8px;
-
     transition: background-color 0.1s ease;
 }
 
 .dropdown-item:hover {
-    background-color: #313244;
+    background-color: var(--bg-hover);
 }
 
 .dropdown-item.active {
-    background-color: #45475a;
+    background-color: var(--bg-active);
 }
 
 .dropdown-item.active:hover {
-    background-color: #313244;
+    background-color: var(--bg-hover);
 }
 
 /* APP CONTAINER */
@@ -338,7 +350,7 @@ body, html {
 /* LEFT SIDEBAR */
 .left-sidebar {
     width: 48px;
-    background-color: #11111b;
+    background-color: var(--bg-deep);
     display: flex;
     flex-shrink: 0;
     flex-direction: column;
@@ -350,11 +362,9 @@ body, html {
     aspect-ratio: 1 / 1;
     padding: 0;
     margin: 0;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     background-color: transparent;
     border: none;
     border-radius: 0;
@@ -363,35 +373,24 @@ body, html {
 .btn-icon {
     width: 24px;
     height: 24px;
-
-    background-color: #6c7086;
-
+    background-color: var(--text-muted);
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
-
     transition: background-color 0.1s ease;
 }
 
 .left-sidebar-btn:hover .btn-icon {
-    background-color: #cba6f7;
+    background-color: var(--accent);
 }
 
-.icon-file {
-    mask-image: url('assets/icons/materials_file_copy.svg'); 
-}
+.icon-file { mask-image: url('assets/icons/materials_file_copy.svg'); }
 
-.icon-branches {
-    mask-image: url('assets/icons/materials_alt_route.svg');
-}
+.icon-branches { mask-image: url('assets/icons/materials_alt_route.svg'); }
 
-.icon-analytics {
-    mask-image: url('assets/icons/materials_bar_chart.svg');
-}
+.icon-analytics { mask-image: url('assets/icons/materials_bar_chart.svg'); }
 
-.icon-todo {
-    mask-image: url('assets/icons/materials_assignment.svg');
-}
+.icon-todo { mask-image: url('assets/icons/materials_assignment.svg'); }
 
 .icon-fetch {
     transform: rotate(-45deg);
@@ -428,7 +427,7 @@ body, html {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: #181825;
+    background-color: var(--bg-main);
     position: relative;
 }
 
@@ -437,12 +436,11 @@ body, html {
     align-items: center;
     box-sizing: border-box;
     padding: 8px 16px;
-    background-color: #1e1e2e;
-    color: #cdd6f4;
+    background-color: var(--bg-panel);
+    color: var(--text-primary);
     font-family: inherit;
     font-size: 13px;
     font-weight: 500;
-    user-select: none;
     flex-shrink: 0;
     overflow: hidden;
 }
@@ -473,12 +471,10 @@ body, html {
     margin: 0;
     box-sizing: border-box;
     padding: 2px 0;
-
     overflow: visible;
     width: max-content;
     min-width: 100%;
-
-    color: #bac2de;
+    color: var(--text-secondary);
     font-family: inherit;
     font-size: 13px;
     white-space: pre;
@@ -492,21 +488,21 @@ body, html {
 .diff-add {
     display: block;
     padding: 0 4px;
-    color: #a6e3a1;
-    background-color: rgba(166, 227, 161, 0.1);
+    color: var(--diff-add-text);
+    background-color: var(--diff-add-bg);
 }
 
 .diff-remove {
     display: block;
     padding: 0 4px;
-    color: #f38ba8;
-    background-color: rgba(166, 227, 161, 0.1);
+    color: var(--diff-remove-text);
+    background-color: var(--diff-remove-bg);
 }
 
 .diff-chunk {
     display: block;
     padding: 0 4px;
-    color: #6c7086;
+    color: var(--diff-chunk-text);
 }
 
 .diff-normal {
@@ -521,11 +517,9 @@ body, html {
 .right-sidebar {
     width: 256px;
     min-width: 192px;
-    background-color: #1e1e2e;
-
+    background-color: var(--bg-panel);
     display: flex;
     flex-direction: column;
-
     height: 100%;
     overflow: hidden;
     flex-shrink: 0;
@@ -533,8 +527,7 @@ body, html {
 
 .tab-selector {
     display: flex;
-    background-color: #1e1e2e;
-    user-select: none;
+    background-color: var(--bg-panel);
     flex-shrink: 0;
 }
 
@@ -542,24 +535,22 @@ body, html {
     flex: 1;
     background: transparent;
     border: none;
-    
-    color: #6c7086;
+    color: var(--text-muted);
     font-family: inherit;
     font-size: 13px;
     font-weight: 500;
     padding: 8px 0;
-
     transition: color 0.1s ease, background-color 0.1s ease, border-color 0.1s ease;
     outline: none;
 }
 
 .tab-btn:hover {
-    color: #cdd6f4;
-    background-color: #313244;
+    color: var(--text-primary);
+    background-color: var(--bg-hover);
 }
 
 .tab-btn.active {
-    color: #cdd6f4;
+    color: var(--text-primary);
 }
 
 .changes-tab, .history-tab {
@@ -580,9 +571,8 @@ body, html {
     justify-content: space-between;
     font-size: 13px;
     padding: 4px 8px;
-    color: #cdd6f4;
-    background-color: #313244;
-    user-select: none;
+    color: var(--text-primary);
+    background-color: var(--bg-hover);
     flex-shrink: 0;
 }
 
@@ -613,7 +603,7 @@ body, html {
     top: 0;
     right: 2px;
     width: 4px;
-    background-color: #9399b2;
+    background-color: var(--scrollbar-solid);
     border-radius: 6px;
     z-index: 100;
     opacity: 0;
@@ -639,12 +629,12 @@ body, html {
 }
 
 .change-item:hover {
-    background-color: #313244;
+    background-color: var(--bg-hover);
 }
 
 .change-item.selected {
-    background-color: #313244;
-    border-left: 2px solid #cba6f7;
+    background-color: var(--bg-hover);
+    border-left: 2px solid var(--accent);
 }
 
 .change-item-left {
@@ -660,23 +650,21 @@ body, html {
     font-weight: 500;
     width: 16px;
     text-align: center;
-    user-select: none;
     flex-shrink: 0;
 }
 
-.status-untracked { color: #74c7ec } /* Saphire */
-.status-added { color: #a6e3a1 } /* Green */
-.status-modified { color: #f9e2af } /* Yellow */
-.status-deleted { color: #f38ba8 } /* Red */
-.status-renamed { color: #89b4fa } /* Blue */
+.status-untracked { color: var(--status-untracked); }
+.status-added { color: var(--status-added); }
+.status-modified { color: var(--status-modified); }
+.status-deleted { color: var(--status-deleted); }
+.status-renamed { color: var(--status-renamed); }
 
 .change-path {
-    color: #cdd6f4;
+    color: var(--text-primary);
     font-size: 13px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    user-select: none;
 }
 
 .right-sidebar-bottom {
@@ -684,28 +672,27 @@ body, html {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    background-color: #313244;
+    background-color: var(--bg-hover);
 }
 
 .commit-input {
-    background-color: #1e1e2e;
-    border: 1px solid #1e1e2e;
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    color: #cdd6f4;
+    color: var(--text-primary);
     font-family: inherit;
     font-size: 13px;
     padding: 4px;
     outline: none;
     transition: border-color 0.1s ease;
-    user-select: none;
 }
 
 .commit-input::placeholder {
-    color: #6c7086;
+    color: var(--text-muted);
 }
 
 .commit-input:focus {
-    border-color: #cba6f7;
+    border-color: var(--accent);
 }
 
 .message-input {
@@ -720,8 +707,8 @@ body, html {
 }
 
 .commit-btn {
-    background-color: #cba6f7;
-    color: #11111b;
+    background-color: var(--accent);
+    color: var(--accent-text);
     border: none;
     border-radius: 4px;
     padding: 4px;
@@ -729,12 +716,11 @@ body, html {
     font-size: 13px;
     font-weight: 600;
     transition: background-color 0.1s ease;
-    user-select: none;
 }
 
 .commit-btn:hover {
-    color: #10101a;
-    background-color: #dec7fa;
+    color: var(--accent-text-hover);
+    background-color: var(--accent-hover);
 }
 
 .commit-btn.disabled, .commit-btn:disabled {
@@ -770,11 +756,11 @@ body, html {
 }
 
 .history-item:hover {
-    background-color: #313244;
+    background-color: var(--bg-hover);
 }
 
 .history-message {
-    color: #cdd6f4;
+    color: var(--text-primary);
     font-family: inherit;
     font-size: 13px;
     font-weight: 500;
@@ -788,7 +774,7 @@ body, html {
     align-items: center;
     font-family: inherit;
     gap: 6px;
-    color: #6c7086;
+    color: var(--text-muted);
     font-size: 12px;
 }
 
@@ -801,20 +787,16 @@ body, html {
 .modal-backdrop {
     visibility: hidden;
     opacity: 0;
-
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: var(--backdrop-modal);
     z-index: 1500;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     transition: visibility 0.2s, opacity 0.2s ease-in;
 }
 
@@ -824,7 +806,7 @@ body, html {
 }
 
 .modal-content {
-    background-color: #1e1e2e;
+    background-color: var(--bg-panel);
     border-radius: 4px;
     width: 400px;
 
@@ -843,8 +825,7 @@ body, html {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    user-select: none;
-    border-bottom: 1px solid #313244;
+    border-bottom: 1px solid var(--border-color);
     padding: 16px;
 }
 
@@ -858,7 +839,7 @@ body, html {
 .close-modal-icon {
     background: transparent;
     border: none;
-    color: #6c7086;
+    color: var(--text-muted);
     font-size: 20px;
     cursor: pointer;
     line-height: 1;
@@ -867,7 +848,7 @@ body, html {
 }
 
 .close-modal-icon:hover {
-    color: #cba6f7;
+    color: var(--accent);
 }
 
 .modal-body {
@@ -886,25 +867,19 @@ body, html {
 .modal-body-row label {
     font-family: inherit;
     font-size: 15px;
-    user-select: none;
 }
 
 .modal-input {
     width: 100%;
     box-sizing: border-box;
     padding: 4px;
-
-    color: #cdd6f4;
-    background-color: #11111b;
-    border: 1px solid #313244;
+    color: var(--text-primary);
+    background-color: var(--bg-deep);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    border-color: #11111b;
-
     font-family: inherit;
     font-size: 13px;
-
     transition: border-color 0.1s ease;
-    user-select: none;
     outline: none;
 }
 
@@ -921,31 +896,29 @@ body, html {
 .input-button-container .browse-btn {
     padding: 4px 12px;
     background-color: transparent;
-    color: #cdd6f4;
-    border: 1px solid #313244;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-family: inherit;
     font-size: 13px;
     font-weight: 500;
     white-space: nowrap;
     transition: background-color 0.1s ease;
-    user-select: none;
 }
 
 .browse-btn:hover {
-    background-color: #313244;
+    background-color: var(--bg-hover);
 }
 
 .modal-input:focus {
-    border-color: #cba6f7
+    border-color: var(--accent);
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 8px;
-    user-select: none;
-    border-top: 1px solid #313244;
+    border-top: 1px solid var(--border-color);
     padding: 16px;
 }
 
@@ -961,40 +934,38 @@ body, html {
 
 .modal-footer .cancel-modal-btn {
     background-color: transparent;
-    color: #cdd6f4;
-    border: 1px solid #313244;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
 }
 
 .modal-footer .cancel-modal-btn:hover {
-    background-color: #313244;
+    background-color: var(--bg-hover);
 }
 
 .confirm-modal-btn {
-    background-color: #cba6f7;
-    color: #11111b;
+    background-color: var(--accent);
+    color: var(--accent-text);
 }
 
 .confirm-modal-btn:hover {
-    background-color: #dec7fa;
+    background-color: var(--accent-hover);
 }
 
 .checkbox-row label {
     display: flex;
     align-items: center;
     gap: 8px;
-
-    color: #cdd6f4;
+    color: var(--text-primary);
     font-family: inherit;
     font-size: 13px;
-    user-select: none;
 }
 
 .highlight-name {
-    color: #cba6f7;
+    color: var(--accent);
     font-weight: 600;
     margin-top: 4px;
     padding: 2px 6px;
-    background-color: #313244;
+    background-color: var(--bg-hover);
     border-radius: 4px;
     width: fit-content;
     word-break: break-all;
@@ -1009,8 +980,7 @@ body, html {
     opacity: 0;
     pointer-events: none;
     z-index: 3000;
-
-    background-color: #11111b;
+    background-color: var(--bg-deep);
     padding: 4px 0;
     min-width: 164px;
     border-radius: 6px;
@@ -1028,16 +998,13 @@ body, html {
     border: none;
     width: 100%;
     text-align: left;
-
     font-family: inherit;
     font-size: 13px;
-    color: #cdd6f4;
+    color: var(--text-primary);
     padding: 6px 16px;
-
-    user-select: none;
     transition: background-color 0.1s ease, color 0.1s ease;
 }
 
 .context-menu-item:hover {
-    background-color: #313244;
+    background-color: var(--bg-hover);
 }
