@@ -308,6 +308,12 @@ const loadDraft = () => {
     }
 };
 
+const resetDiffViewer = () => {
+    diffFilename.textContent = "Select a file to view changes";
+    diffContent.textContent = "";
+    updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
+};
+
 const escapeHtml = (unsafeText) => {
     return unsafeText
         .replace(/&/g, "&amp;")
@@ -321,6 +327,13 @@ const escapeHtml = (unsafeText) => {
 function renderFileDiff(diffText) {
     if (!diffText || diffText.trim() === "") {
         diffContent.textContent = "(No changes or binary file)";
+        updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
+        return;
+    }
+
+    // Intercept binary files
+    if (diffText.includes("Binary files ")) {
+        diffContent.innerHTML = `<span class="diff-chunk">Binary file changed (no preview available)</span>`;
         updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
         return;
     }
@@ -383,6 +396,7 @@ function loadRepositoriesIntoDropdown(repositories) {
             loadDraft();
             toggleCommitButton();
             switchToChangesTab();
+            resetDiffViewer();
 
             sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
             sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
@@ -510,7 +524,9 @@ function addRepositoryToDropdown(repo) {
     item.addEventListener("click", () => {
         currentRepoPath = repo.AbsolutePath;
         currentBranch = "";
+
         toggleCommitButton();
+        resetDiffViewer();
 
         sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
         sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });

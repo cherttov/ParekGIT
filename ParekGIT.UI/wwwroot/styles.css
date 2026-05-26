@@ -444,6 +444,13 @@ body, html {
     font-weight: 500;
     user-select: none;
     flex-shrink: 0;
+    overflow: hidden;
+}
+
+#diff-filename {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .diff-body-wrapper {
