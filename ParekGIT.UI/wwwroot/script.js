@@ -227,6 +227,26 @@ const toggleCommitButton = () => {
     }
 };
 
+// Modal input boxes validator
+const validateBranchModal = () => {
+    const isValid = branchModalInputName.value.trim() !== "";
+    branchModalConfirmBtn.disabled = !isValid;
+    branchModalConfirmBtn.classList.toggle("disabled", !isValid);
+}
+
+const validateRepoCreateModal = () => {
+    const isValid = repoCreateModalInputName.value.trim() !== ""
+                    && repoCreateModalInputPath.value.trim() !== "";
+    repoCreateModalConfirmBtn.disabled = !isValid;
+    repoCreateModalConfirmBtn.classList.toggle("disabled", !isValid);
+}
+
+const validateRepoAddModal = () => {
+    const isValid = repoAddModalInputPath.value.trim() !== "";
+    repoAddModalConfirmBtn.disabled = !isValid;
+    repoAddModalConfirmBtn.classList.toggle("disabled", !isValid);
+}
+
 // Changes header checkbox updater
 const updateMasterCheckboxState = () => {
     const allFileCheckboxes = Array.from(document.querySelectorAll(".changes-item-checkbox"));
@@ -838,6 +858,7 @@ branchNewBtn.addEventListener("click", (event) => {
     closeDropdowns();
 
     branchModal.classList.add("show");
+    validateBranchModal();
     setTimeout(() => {
         branchModalInputName.focus();
     }, 100);
@@ -854,6 +875,7 @@ repoMenuCreate.addEventListener("click", (event) => {
     closeDropdowns();
 
     repoCreateModal.classList.add("show");
+    validateRepoCreateModal();
     setTimeout(() => {
         repoCreateModalInputName.focus();
     }, 100);
@@ -864,6 +886,7 @@ repoMenuAdd.addEventListener("click", (event) => {
     closeDropdowns();
 
     repoAddModal.classList.add("show");
+    validateRepoAddModal();
     setTimeout(() => {
         repoAddModalInputPath.focus();
     }, 100);
@@ -987,6 +1010,21 @@ repoRemoveModalConfirmBtn.addEventListener("click", () => {
 branchModalInputName.addEventListener("keyup", (event) => {
     if (event.key === "Enter") { branchModalConfirmBtn.click(); }
 });
+repoCreateModalInputName.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") { repoCreateModalConfirmBtn.click(); }
+});
+repoCreateModalInputPath.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") { repoCreateModalConfirmBtn.click(); }
+});
+repoAddModalInputPath.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") { repoAddModalConfirmBtn.click(); }
+});
+
+// Confirm toggle (modals)
+branchModalInputName.addEventListener("input", validateBranchModal);
+repoCreateModalInputName.addEventListener("input", validateRepoCreateModal);
+repoCreateModalInputPath.addEventListener("input", validateRepoCreateModal);
+repoAddModalInputPath.addEventListener("input", validateRepoAddModal);
 
 // Browse buttons (modals)
 repoCreateModalBrowseBtn.addEventListener("click", (event) => {

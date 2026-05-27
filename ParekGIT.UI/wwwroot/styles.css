@@ -723,7 +723,8 @@ body, html {
     background-color: var(--accent-hover);
 }
 
-.commit-btn.disabled, .commit-btn:disabled {
+.commit-btn.disabled,
+.commit-btn:disabled {
     opacity: 0.6;
     pointer-events: none;
 }
@@ -949,6 +950,12 @@ body, html {
 
 .confirm-modal-btn:hover {
     background-color: var(--accent-hover);
+}
+
+.confirm-modal-btn:disabled,
+.confirm-modal-btn.disabled {
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 .checkbox-row label {
