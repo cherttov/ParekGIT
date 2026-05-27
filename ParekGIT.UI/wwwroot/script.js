@@ -85,6 +85,11 @@ const repoItemMenuTerminal = repoItemContextMenu.querySelector(".context-menu-it
 const repoItemMenuExplorer = repoItemContextMenu.querySelector(".context-menu-item.item-explorer");
 const repoItemMenuRemove = repoItemContextMenu.querySelector(".context-menu-item.item-remove");
 
+const branchItemContextMenu = document.getElementById("branch-item-context-menu");
+const branchItemMenuRename = branchItemContextMenu.querySelector(".context-menu-item.item-rename");
+const branchItemMenuCopy = branchItemContextMenu.querySelector(".context-menu-item.item-copy");
+const branchItemMenuRemove = branchItemContextMenu.querySelector(".context-menu-item.item-remove");
+
 // ------- APP STATE -------
 let currentRepoPath = "";
 let currentBranch = "";
@@ -191,6 +196,9 @@ const closeDropdowns = () => {
     backdrop.classList.remove('show');
     repoContextMenu.classList.remove('show');
     repoItemContextMenu.classList.remove('show');
+    branchItemContextMenu.classList.remove('show');
+
+    document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
 };
 
 const closeAndClearModal = (modalElement) => {
@@ -203,6 +211,8 @@ const toggleDropdown = (toShow, toHide, event) => {
     event.stopPropagation();
     updatePanelWidths();
     toHide.classList.remove('show');
+
+    document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
 
     const isOpening = toShow.classList.toggle('show');
     backdrop.classList.toggle('show', isOpening);
@@ -430,6 +440,8 @@ function loadRepositoriesIntoDropdown(repositories) {
             event.stopPropagation();
 
             repoContextMenu.classList.remove("show");
+            repoDropdown.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
+            item.classList.add("context-active");
 
             repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
             repoItemContextMenu.dataset.targetName = repo.Name;
@@ -471,12 +483,28 @@ function loadBranchesIntoDropdown(branches) {
 
         item.innerHTML = `${branch.Name}`;
 
+        // LMB - select
         item.addEventListener("click", () => {
             sendIpcMessage("BRANCH_SELECTED", {
                 absolutePath: currentRepoPath,
                 branchName: branch.Name,
                 isRemote: branch.IsRemote
             });
+        });
+
+        // RMB - context menu
+        item.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            branchItemContextMenu.dataset.targetPath = currentRepoPath;
+            branchItemContextMenu.dataset.targetName = branch.Name;
+
+            branchItemContextMenu.classList.add("show");
+            branchDropdown.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
+            item.classList.add("context-active");
+
+            placeContextMenu(event, branchItemContextMenu);
         });
 
         branchDropdown.appendChild(item);
@@ -559,7 +587,11 @@ function addRepositoryToDropdown(repo) {
         event.stopPropagation();
 
         repoContextMenu.classList.remove("show");
+        repoDropdown.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
+        item.classList.add("context-active");
+
         repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
+
         repoItemContextMenu.classList.add("show");
 
         placeContextMenu(event, repoItemContextMenu);
@@ -947,6 +979,14 @@ window.addEventListener("click", (event) => {
     if (repoItemContextMenu.classList.contains("show")) {
         if (!repoItemContextMenu.contains(event.target)) {
             repoItemContextMenu.classList.remove("show");
+            document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
+        }
+    }
+
+    if (branchItemContextMenu.classList.contains("show")) {
+        if (!branchItemContextMenu.contains(event.target)) {
+            branchItemContextMenu.classList.remove("show");
+            document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
         }
     }
 }, true);
