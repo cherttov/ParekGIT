@@ -985,6 +985,14 @@ topbarRepoMenuRemove.addEventListener("click", (event) => {
     closeDropdowns();
 });
 
+topbarBranchMenuNew.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+    branchModal.classList.add("show");
+    validateBranchModal();
+    setTimeout(() => { branchModalInputName.focus(); }, 100);
+});
+
 repoMenuClone.addEventListener("click", (event) => {
     event.stopPropagation();
     closeDropdowns();
