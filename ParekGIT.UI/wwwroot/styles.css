@@ -1016,3 +1016,8 @@ body, html {
 .context-menu-item:hover {
     background-color: var(--bg-hover);
 }
+
+#topbar-branch-context-menu,
+#topbar-repo-context-menu {
+    border: 1px solid var(--border-color);
+}

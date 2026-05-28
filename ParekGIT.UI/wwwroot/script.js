@@ -90,6 +90,20 @@ const branchItemMenuRename = branchItemContextMenu.querySelector(".context-menu-
 const branchItemMenuCopy = branchItemContextMenu.querySelector(".context-menu-item.item-copy");
 const branchItemMenuRemove = branchItemContextMenu.querySelector(".context-menu-item.item-remove");
 
+const topbarRepoContextMenu = document.getElementById("topbar-repo-context-menu");
+const topbarRepoMenuClone = topbarRepoContextMenu.querySelector(".context-menu-item.item-clone");
+const topbarRepoMenuCreate = topbarRepoContextMenu.querySelector(".context-menu-item.item-create");
+const topbarRepoMenuAdd = topbarRepoContextMenu.querySelector(".context-menu-item.item-add");
+const topbarRepoMenuTerminal = topbarRepoContextMenu.querySelector(".context-menu-item.item-terminal");
+const topbarRepoMenuExplorer = topbarRepoContextMenu.querySelector(".context-menu-item.item-explorer");
+const topbarRepoMenuRemove = topbarRepoContextMenu.querySelector(".context-menu-item.item-remove");
+
+const topbarBranchContextMenu = document.getElementById("topbar-branch-context-menu");
+const topbarBranchMenuNew = topbarBranchContextMenu.querySelector(".context-menu-item.item-new");
+const topbarBranchMenuRename = topbarBranchContextMenu.querySelector(".context-menu-item.item-rename");
+const topbarBranchMenuCopy = topbarBranchContextMenu.querySelector(".context-menu-item.item-copy");
+const topbarBranchMenuRemove = topbarBranchContextMenu.querySelector(".context-menu-item.item-remove");
+
 // ------- APP STATE -------
 let currentRepoPath = "";
 let currentBranch = "";
@@ -197,6 +211,8 @@ const closeDropdowns = () => {
     repoContextMenu.classList.remove('show');
     repoItemContextMenu.classList.remove('show');
     branchItemContextMenu.classList.remove('show');
+    topbarRepoContextMenu.classList.remove('show');
+    topbarBranchContextMenu.classList.remove('show');
 
     document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
 };
@@ -733,7 +749,25 @@ diffBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(diffBodyW
 
 // Toggles (dropdowns)
 repoBtn.addEventListener('click', (event) => toggleDropdown(repoPanel, branchPanel, event));
+repoBtn.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    closeDropdowns();
+
+    topbarRepoContextMenu.classList.add("show");
+    placeContextMenu(event, topbarRepoContextMenu);
+});
+
 branchBtn.addEventListener('click', (event) => toggleDropdown(branchPanel, repoPanel, event));
+branchBtn.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (branchBtn.classList.contains("disabled")) { return; }
+    closeDropdowns();
+
+    topbarBranchContextMenu.classList.add("show");
+    placeContextMenu(event, topbarBranchContextMenu);
+});
 
 // Close triggers (dropdowns)
 backdrop.addEventListener('click', closeDropdowns);
@@ -897,6 +931,62 @@ branchNewBtn.addEventListener("click", (event) => {
 });
 
 // Context menu options (context-menu)
+topbarRepoMenuClone.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+});
+
+topbarRepoMenuCreate.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+    repoCreateModal.classList.add("show");
+    validateRepoCreateModal();
+    setTimeout(() => { repoCreateModalInputName.focus(); }, 100);
+});
+
+topbarRepoMenuAdd.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+    repoAddModal.classList.add("show");
+    validateRepoAddModal();
+    setTimeout(() => { repoAddModalInputPath.focus(); }, 100);
+});
+
+topbarRepoMenuTerminal.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const pathToRepo = repoItemContextMenu.dataset.targetPath;
+    if (pathToRepo) {
+        sendIpcMessage("REPO_TERMINAL", {
+            "repoPath": pathToRepo
+        });
+    }
+    repoItemContextMenu.classList.remove("show");
+});
+
+topbarRepoMenuExplorer.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const pathToRepo = repoItemContextMenu.dataset.targetPath;
+    if (pathToRepo) {
+        sendIpcMessage("REPO_EXPLORER", {
+            "repoPath": pathToRepo
+        });
+    }
+    repoItemContextMenu.classList.remove("show");
+});
+
+topbarRepoMenuRemove.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const pathToRepo = repoItemContextMenu.dataset.targetPath;
+    const repoName = repoItemContextMenu.dataset.targetName;
+    if (pathToRepo) {
+        repoRemoveModal.dataset.targetPath = pathToRepo;
+        repoRemoveModalName.textContent = repoName;
+        repoRemoveModal.classList.add("show");
+    }
+    repoItemContextMenu.classList.remove("show");
+    closeDropdowns();
+});
+
 repoMenuClone.addEventListener("click", (event) => {
     event.stopPropagation();
     closeDropdowns();
@@ -908,9 +998,7 @@ repoMenuCreate.addEventListener("click", (event) => {
 
     repoCreateModal.classList.add("show");
     validateRepoCreateModal();
-    setTimeout(() => {
-        repoCreateModalInputName.focus();
-    }, 100);
+    setTimeout(() => { repoCreateModalInputName.focus(); }, 100);
 });
 
 repoMenuAdd.addEventListener("click", (event) => {
@@ -919,9 +1007,7 @@ repoMenuAdd.addEventListener("click", (event) => {
 
     repoAddModal.classList.add("show");
     validateRepoAddModal();
-    setTimeout(() => {
-        repoAddModalInputPath.focus();
-    }, 100);
+    setTimeout(() => { repoAddModalInputPath.focus(); }, 100);
 });
 
 repoItemMenuTerminal.addEventListener("click", (event) => {
@@ -986,6 +1072,20 @@ window.addEventListener("click", (event) => {
     if (branchItemContextMenu.classList.contains("show")) {
         if (!branchItemContextMenu.contains(event.target)) {
             branchItemContextMenu.classList.remove("show");
+            document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
+        }
+    }
+
+    if (topbarRepoContextMenu.classList.contains("show")) {
+        if (!topbarRepoContextMenu.contains(event.target)) {
+            topbarRepoContextMenu.classList.remove("show");
+            document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
+        }
+    }
+
+    if (topbarBranchContextMenu.classList.contains("show")) {
+        if (!topbarBranchContextMenu.contains(event.target)) {
+            topbarBranchContextMenu.classList.remove("show");
             document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
         }
     }
