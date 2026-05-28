@@ -398,6 +398,12 @@ body, html {
     mask-image: url('assets/icons/materials_cached.svg');
 }
 
+.icon-account { mask-image: url('assets/icons/materials_person.svg'); }
+
+.icon-settings { mask-image: url('assets/icons/materials_settings.svg'); }
+
+.btn-settings { margin-top: auto; }
+
 /* SPLIT CONTAINER */
 .split-container{
     display: flex;
@@ -1015,6 +1021,14 @@ body, html {
 
 .context-menu-item:hover {
     background-color: var(--bg-hover);
+}
+
+.context-menu-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 4px 0;
+    flex-shrink: 0;
+    pointer-events: none;
 }
 
 #topbar-branch-context-menu,

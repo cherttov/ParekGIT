@@ -75,12 +75,14 @@
     <div class="context-menu" id="repo-item-context-menu">
         <button class="context-menu-item item-terminal">Open in terminal</button>
         <button class="context-menu-item item-explorer">Show in explorer</button>
+        <div class="context-menu-divider"></div>
         <button class="context-menu-item item-remove">Remove</button>
     </div>
 
     <div class="context-menu" id="branch-item-context-menu">
         <button class="context-menu-item item-rename">Rename</button>
         <button class="context-menu-item item-copy">Copy branch name</button>
+        <div class="context-menu-divider"></div>
         <button class="context-menu-item item-remove">Remove</button>
     </div>
 
@@ -88,17 +90,19 @@
         <button class="context-menu-item item-clone">Clone repository</button>
         <button class="context-menu-item item-create">Create new repository</button>
         <button class="context-menu-item item-add">Add existing repository</button>
-        <!-- divider -->
+        <div class="context-menu-divider"></div>
         <button class="context-menu-item item-terminal">Open in terminal</button>
         <button class="context-menu-item item-explorer">Show in explorer</button>
+        <div class="context-menu-divider"></div>
         <button class="context-menu-item item-remove">Remove</button>
     </div>
 
     <div class="context-menu" id="topbar-branch-context-menu">
         <button class="context-menu-item item-new">New</button>
-        <!-- divider -->
+        <div class="context-menu-divider"></div>
         <button class="context-menu-item item-rename">Rename</button>
         <button class="context-menu-item item-copy">Copy branch name</button>
+        <div class="context-menu-divider"></div>
         <button class="context-menu-item item-remove">Remove</button>
     </div>
 
@@ -119,6 +123,26 @@
 
                 <div class="modal-footer">
                     <button class="confirm-modal-btn">Create branch</button>
+                    <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="modal-backdrop" id="repo-clone-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Clone a repository</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="confirm-modal-btn">Clone</button>
                     <button class="cancel-modal-btn">Cancel</button>
                 </div>
 
@@ -251,6 +275,14 @@
 
             <button class="left-sidebar-btn btn-fetch">
                 <div class="btn-icon icon-fetch"></div>
+            </button>
+
+            <button class="left-sidebar-btn btn-settings">
+                <div class="btn-icon icon-settings"></div>
+            </button>
+
+            <button class="left-sidebar-btn btn-account">
+                <div class="btn-icon icon-account"></div>
             </button>
 
         </div>

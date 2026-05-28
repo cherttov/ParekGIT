@@ -54,7 +54,8 @@ const branchModal = document.getElementById("branch-modal");
 const branchModalInputName = branchModal.querySelector(".modal-input");
 const branchModalConfirmBtn = branchModal.querySelector(".confirm-modal-btn");
 
-// const repoCloneModal = document.getElementById("repo-clone-modal");
+const repoCloneModal = document.getElementById("repo-clone-modal");
+const repoCloneModalConfirmBtn = repoCloneModal.querySelector(".confirm-modal-btn");
 
 const repoCreateModal = document.getElementById("repo-create-modal");
 const repoCreateModalInputName = repoCreateModal.querySelector(".input-name");
@@ -925,15 +926,16 @@ branchNewBtn.addEventListener("click", (event) => {
 
     branchModal.classList.add("show");
     validateBranchModal();
-    setTimeout(() => {
-        branchModalInputName.focus();
-    }, 100);
+    setTimeout(() => { branchModalInputName.focus(); }, 100);
 });
 
 // Context menu options (context-menu)
 topbarRepoMenuClone.addEventListener("click", (event) => {
     event.stopPropagation();
     closeDropdowns();
+    repoCloneModal.classList.add("show");
+    // validateRepoCloneModal();
+    // setTimeout(() => { ...; }, 100);
 });
 
 topbarRepoMenuCreate.addEventListener("click", (event) => {
@@ -986,6 +988,10 @@ topbarRepoMenuRemove.addEventListener("click", (event) => {
 repoMenuClone.addEventListener("click", (event) => {
     event.stopPropagation();
     closeDropdowns();
+
+    repoCloneModal.classList.add("show");
+    // validateRepoCloneModal();
+    // setTimeout(() => { ...; }, 100);
 });
 
 repoMenuCreate.addEventListener("click", (event) => {
@@ -1099,6 +1105,10 @@ branchModalConfirmBtn.addEventListener("click", () => {
     });
 
     closeAndClearModal(branchModal);
+});
+
+repoCloneModalConfirmBtn.addEventListener("click", () => {
+    closeAndClearModal(repoCloneModal);
 });
 
 repoCreateModalConfirmBtn.addEventListener("click", () => {
