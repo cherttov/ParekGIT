@@ -954,36 +954,32 @@ topbarRepoMenuAdd.addEventListener("click", (event) => {
 
 topbarRepoMenuTerminal.addEventListener("click", (event) => {
     event.stopPropagation();
-    const pathToRepo = repoItemContextMenu.dataset.targetPath;
-    if (pathToRepo) {
+    if (currentRepoPath) {
         sendIpcMessage("REPO_TERMINAL", {
-            "repoPath": pathToRepo
+            "repoPath": currentRepoPath
         });
     }
-    repoItemContextMenu.classList.remove("show");
+    closeDropdowns();
 });
 
 topbarRepoMenuExplorer.addEventListener("click", (event) => {
     event.stopPropagation();
-    const pathToRepo = repoItemContextMenu.dataset.targetPath;
-    if (pathToRepo) {
+    if (currentRepoPath) {
         sendIpcMessage("REPO_EXPLORER", {
-            "repoPath": pathToRepo
+            "repoPath": currentRepoPath
         });
     }
-    repoItemContextMenu.classList.remove("show");
+    closeDropdowns();
 });
 
 topbarRepoMenuRemove.addEventListener("click", (event) => {
     event.stopPropagation();
-    const pathToRepo = repoItemContextMenu.dataset.targetPath;
-    const repoName = repoItemContextMenu.dataset.targetName;
+    const pathToRepo = currentRepoPath;
     if (pathToRepo) {
-        repoRemoveModal.dataset.targetPath = pathToRepo;
-        repoRemoveModalName.textContent = repoName;
+        repoRemoveModal.dataset.targetPath = currentRepoPath;
+        repoRemoveModalName.textContent = document.querySelector('#repositories-container .btn-value').textContent;
         repoRemoveModal.classList.add("show");
     }
-    repoItemContextMenu.classList.remove("show");
     closeDropdowns();
 });
 
