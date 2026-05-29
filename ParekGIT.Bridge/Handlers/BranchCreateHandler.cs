@@ -25,8 +25,8 @@ namespace ParekGIT.Bridge.Handlers
 
         public async Task ExecuteAsync(JsonElement payload)
         {
-            string repoPath = payload.GetProperty("absolutePath").GetString()
-                              ?? throw new ArgumentNullException("absolutePath");
+            string repoPath = payload.GetProperty("repoPath").GetString()
+                              ?? throw new ArgumentNullException("repoPath");
 
             string branchName = payload.GetProperty("branchName").GetString()
                                 ?? throw new ArgumentNullException("branchName");

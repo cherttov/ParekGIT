@@ -83,7 +83,7 @@
         <button class="context-menu-item item-rename">Rename</button>
         <button class="context-menu-item item-copy">Copy branch name</button>
         <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-remove">Remove</button>
+        <button class="context-menu-item item-delete">Delete</button>
     </div>
 
     <div class="context-menu" id="topbar-repo-context-menu">
@@ -103,11 +103,11 @@
         <button class="context-menu-item item-rename">Rename</button>
         <button class="context-menu-item item-copy">Copy branch name</button>
         <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-remove">Remove</button>
+        <button class="context-menu-item item-delete">Delete</button>
     </div>
 
     <div class="modals">
-        <div class="modal-backdrop" id="branch-modal">
+        <div class="modal-backdrop" id="branch-new-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>Create new branch</h3>
@@ -123,6 +123,52 @@
 
                 <div class="modal-footer">
                     <button class="confirm-modal-btn">Create branch</button>
+                    <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="modal-backdrop" id="branch-rename-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Rename branch</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="modal-body-row">
+                        <label>Name</label>
+                        <input type="text" class="modal-input" placeholder="new branch name" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="confirm-modal-btn">Rename branch</button>
+                    <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="modal-backdrop" id="branch-delete-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Delete branch</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="modal-body-row">
+                        <label>Are you sure you want to delete this branch?</label>
+                        <label class="highlight-name" id="delete-modal-branch-name">{ branch_name }</label>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="confirm-modal-btn">Delete branch</button>
                     <button class="cancel-modal-btn">Cancel</button>
                 </div>
 

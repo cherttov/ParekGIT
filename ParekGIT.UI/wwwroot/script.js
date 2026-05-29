@@ -50,9 +50,16 @@ const historyScrollbar = document.getElementById("history-scrollbar");
 const modalBackdrops = document.querySelectorAll('.modal-backdrop');
 const modalCloseTriggers = document.querySelectorAll('.close-modal-icon, .cancel-modal-btn');
 
-const branchModal = document.getElementById("branch-modal");
-const branchModalInputName = branchModal.querySelector(".modal-input");
-const branchModalConfirmBtn = branchModal.querySelector(".confirm-modal-btn");
+const branchNewModal = document.getElementById("branch-new-modal");
+const branchNewModalInputName = branchNewModal.querySelector(".modal-input");
+const branchNewModalConfirmBtn = branchNewModal.querySelector(".confirm-modal-btn");
+
+const branchRenameModal = document.getElementById("branch-rename-modal");
+const branchRenameModalInputName = branchRenameModal.querySelector(".modal-input");
+const branchRenameModalConfirmBtn = branchRenameModal.querySelector(".confirm-modal-btn");
+
+const branchDeleteModal = document.getElementById("branch-delete-modal");
+const branchDeleteModalConfirmBtn = branchDeleteModal.querySelector(".confirm-modal-btn");
 
 const repoCloneModal = document.getElementById("repo-clone-modal");
 const repoCloneModalConfirmBtn = repoCloneModal.querySelector(".confirm-modal-btn");
@@ -89,7 +96,7 @@ const repoItemMenuRemove = repoItemContextMenu.querySelector(".context-menu-item
 const branchItemContextMenu = document.getElementById("branch-item-context-menu");
 const branchItemMenuRename = branchItemContextMenu.querySelector(".context-menu-item.item-rename");
 const branchItemMenuCopy = branchItemContextMenu.querySelector(".context-menu-item.item-copy");
-const branchItemMenuRemove = branchItemContextMenu.querySelector(".context-menu-item.item-remove");
+const branchItemMenuDelete = branchItemContextMenu.querySelector(".context-menu-item.item-delete");
 
 const topbarRepoContextMenu = document.getElementById("topbar-repo-context-menu");
 const topbarRepoMenuClone = topbarRepoContextMenu.querySelector(".context-menu-item.item-clone");
@@ -103,7 +110,7 @@ const topbarBranchContextMenu = document.getElementById("topbar-branch-context-m
 const topbarBranchMenuNew = topbarBranchContextMenu.querySelector(".context-menu-item.item-new");
 const topbarBranchMenuRename = topbarBranchContextMenu.querySelector(".context-menu-item.item-rename");
 const topbarBranchMenuCopy = topbarBranchContextMenu.querySelector(".context-menu-item.item-copy");
-const topbarBranchMenuRemove = topbarBranchContextMenu.querySelector(".context-menu-item.item-remove");
+const topbarBranchMenuDelete = topbarBranchContextMenu.querySelector(".context-menu-item.item-delete");
 
 // ------- APP STATE -------
 let currentRepoPath = "";
@@ -255,24 +262,33 @@ const toggleCommitButton = () => {
 };
 
 // Modal input boxes validator
-const validateBranchModal = () => {
-    const isValid = branchModalInputName.value.trim() !== "";
-    branchModalConfirmBtn.disabled = !isValid;
-    branchModalConfirmBtn.classList.toggle("disabled", !isValid);
-}
+const validateBranchNewModal = () => {
+    const isValid = branchNewModalInputName.value.trim() !== "";
+    branchNewModalConfirmBtn.disabled = !isValid;
+    branchNewModalConfirmBtn.classList.toggle("disabled", !isValid);
+};
+
+const validateBranchRenameModal = () => {
+    const newName = branchRenameModalInputName.value.trim();
+    const oldName = branchRenameModal.dataset.targetName || currentBranch;
+
+    const isValid = newName !== "" && newName !== oldName;
+    branchRenameModalConfirmBtn.disabled = !isValid;
+    branchRenameModalConfirmBtn.classList.toggle("disabled", !isValid);
+};
 
 const validateRepoCreateModal = () => {
     const isValid = repoCreateModalInputName.value.trim() !== ""
-                    && repoCreateModalInputPath.value.trim() !== "";
+        && repoCreateModalInputPath.value.trim() !== "";
     repoCreateModalConfirmBtn.disabled = !isValid;
     repoCreateModalConfirmBtn.classList.toggle("disabled", !isValid);
-}
+};
 
 const validateRepoAddModal = () => {
     const isValid = repoAddModalInputPath.value.trim() !== "";
     repoAddModalConfirmBtn.disabled = !isValid;
     repoAddModalConfirmBtn.classList.toggle("disabled", !isValid);
-}
+};
 
 // Changes header checkbox updater
 const updateMasterCheckboxState = () => {
@@ -283,7 +299,7 @@ const updateMasterCheckboxState = () => {
     changesMasterCheckbox.checked = allChecked;
 
     toggleCommitButton();
-}
+};
 
 // Tab switching helpers
 const switchToChangesTab = () => {
@@ -924,9 +940,9 @@ branchNewBtn.addEventListener("click", (event) => {
     event.stopPropagation();
     closeDropdowns();
 
-    branchModal.classList.add("show");
-    validateBranchModal();
-    setTimeout(() => { branchModalInputName.focus(); }, 100);
+    branchNewModal.classList.add("show");
+    validateBranchNewModal();
+    setTimeout(() => { branchNewModalInputName.focus(); }, 100);
 });
 
 // Context menu options (context-menu)
@@ -988,9 +1004,102 @@ topbarRepoMenuRemove.addEventListener("click", (event) => {
 topbarBranchMenuNew.addEventListener("click", (event) => {
     event.stopPropagation();
     closeDropdowns();
-    branchModal.classList.add("show");
-    validateBranchModal();
-    setTimeout(() => { branchModalInputName.focus(); }, 100);
+    branchNewModal.classList.add("show");
+    validateBranchNewModal();
+    setTimeout(() => { branchNewModalInputName.focus(); }, 100);
+});
+
+topbarBranchMenuCopy.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+    if (currentBranch) {
+        navigator.clipboard.writeText(currentBranch).then(() => {
+            console.log(`Copied '${currentBranch}' to clipboard.`);
+        }).catch(err => {
+            console.error("Failed to copy text: ", err);
+        });
+    }
+});
+
+topbarBranchMenuRename.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+
+    if (!currentRepoPath || !currentBranch) { return; }
+
+    branchRenameModal.dataset.targetName = currentBranch;
+    branchRenameModalInputName.value = currentBranch;
+
+    branchRenameModal.classList.add("show");
+    validateBranchRenameModal();
+
+    setTimeout(() => {
+        branchRenameModalInputName.focus();
+        branchRenameModalInputName.select();
+    }, 100);
+});
+
+topbarBranchMenuDelete.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+
+    if (!currentRepoPath || !currentBranch) { return; }
+
+    branchDeleteModal.dataset.targetName = currentBranch;
+    document.getElementById("delete-modal-branch-name").textContent = currentBranch;
+
+    branchDeleteModal.classList.add("show");
+});
+
+branchItemMenuRename.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const branchName = branchItemContextMenu.dataset.targetName;
+
+    if (branchName) {
+        branchRenameModal.dataset.targetName = branchName;
+        branchRenameModalInputName.value = branchName;
+
+        branchRenameModal.classList.add("show");
+        validateBranchRenameModal();
+
+        setTimeout(() => {
+            branchRenameModalInputName.focus();
+            branchRenameModalInputName.select();
+        }, 100);
+    }
+
+    branchItemContextMenu.classList.remove("show");
+    closeDropdowns();
+});
+
+branchItemMenuCopy.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const branchName = branchItemContextMenu.dataset.targetName;
+
+    if (branchName) {
+        navigator.clipboard.writeText(branchName).then(() => {
+            console.log(`Copied '${branchName}' to clipboard.`);
+        }).catch(err => {
+            console.error("Failed to copy text: ", err);
+        });
+    }
+
+    branchItemContextMenu.classList.remove("show");
+    closeDropdowns();
+});
+
+branchItemMenuDelete.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const branchName = branchItemContextMenu.dataset.targetName;
+
+    if (branchName) {
+        branchDeleteModal.classList.add("show");
+        document.getElementById("delete-modal-branch-name").textContent = branchName;
+        branchDeleteModal.classList.add("show");
+    }
+
+    branchItemContextMenu.classList.remove("show");
+    closeDropdowns();
 });
 
 repoMenuClone.addEventListener("click", (event) => {
@@ -1102,17 +1211,45 @@ window.addEventListener("click", (event) => {
 }, true);
 
 // Confirm buttons (modals)
-branchModalConfirmBtn.addEventListener("click", () => {
-    const newBranchName = branchModalInputName.value.trim();
+branchNewModalConfirmBtn.addEventListener("click", () => {
+    const newBranchName = branchNewModalInputName.value.trim();
 
     if (newBranchName === "") { return; }
 
     sendIpcMessage("BRANCH_CREATE", {
-        absolutePath: currentRepoPath,
+        repoPath: currentRepoPath,
         branchName: newBranchName
     });
 
-    closeAndClearModal(branchModal);
+    closeAndClearModal(branchNewModal);
+});
+
+branchRenameModalConfirmBtn.addEventListener("click", () => {
+    const newBranchName = branchRenameModalInputName.value.trim();
+    const oldBranchName = branchRenameModal.dataset.targetName;
+
+    if (newBranchName === "" || !oldBranchName) { return; }
+
+    sendIpcMessage("BRANCH_RENAME", {
+        repoPath: currentRepoPath,
+        oldName: oldBranchName,
+        newName: newBranchName
+    });
+
+    closeAndClearModal(branchRenameModal);
+});
+
+branchDeleteModalConfirmBtn.addEventListener("click", () => {
+    const branchName = branchDeleteModal.dataset.targetName;
+
+    if (!branchName) { return; }
+
+    sendIpcMessage("BRANCH_DELETE", {
+        repoPath: currentRepoPath,
+        branchName: branchName
+    });
+
+    closeAndClearModal(branchDeleteModal);
 });
 
 repoCloneModalConfirmBtn.addEventListener("click", () => {
@@ -1161,8 +1298,11 @@ repoRemoveModalConfirmBtn.addEventListener("click", () => {
 });
 
 // Input boxes (modals)
-branchModalInputName.addEventListener("keyup", (event) => {
-    if (event.key === "Enter") { branchModalConfirmBtn.click(); }
+branchNewModalInputName.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") { branchNewModalConfirmBtn.click(); }
+});
+branchRenameModalInputName.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") { branchRenameModalConfirmBtn.click(); }
 });
 repoCreateModalInputName.addEventListener("keyup", (event) => {
     if (event.key === "Enter") { repoCreateModalConfirmBtn.click(); }
@@ -1175,7 +1315,8 @@ repoAddModalInputPath.addEventListener("keyup", (event) => {
 });
 
 // Confirm toggle (modals)
-branchModalInputName.addEventListener("input", validateBranchModal);
+branchNewModalInputName.addEventListener("input", validateBranchNewModal);
+branchRenameModalInputName.addEventListener("input", validateBranchRenameModal);
 repoCreateModalInputName.addEventListener("input", validateRepoCreateModal);
 repoCreateModalInputPath.addEventListener("input", validateRepoCreateModal);
 repoAddModalInputPath.addEventListener("input", validateRepoAddModal);
