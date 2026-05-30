@@ -176,8 +176,16 @@ window.external.receiveMessage(message => {
             renderFileDiff(data.Payload);
             break;
 
+        case "BRANCH_DELETED":
+            removeBranchFromDropdown(data.Payload);
+            break; 
+
+        case "BRANCH_RENAMED":
+            renameBranchInDropdown(data.Payload);
+            break;
+
         default:
-            console.warn("Unknown action received received: ", data.Action);
+            console.warn("Unknown action received: ", data.Action);
     }
 })
 
@@ -514,6 +522,8 @@ function loadBranchesIntoDropdown(branches) {
             item.className = "dropdown-item";
         }
 
+        item.dataset.branchName = branch.Name;
+
         item.innerHTML = `${branch.Name}`;
 
         // LMB - select
@@ -751,6 +761,38 @@ function renderHistory(commits) {
     });
 
     updateCustomScrollbar(historyList, historyScrollbar);
+}
+
+// C# - Remove branch from dropdown
+function removeBranchFromDropdown(payload) {
+    const items = branchDropdown.querySelectorAll('.dropdown-item');
+    items.forEach(item => {
+        if (item.dataset.branchName === payload.branchName) { item.remove(); }
+    });
+}
+
+// C# - Rename branch in dropdown
+function renameBranchInDropdown(payload) {
+    const oldName = payload.oldName;
+    const newName = payload.newName;
+
+    const items = branchDropdown.querySelectorAll('.dropdown-item');
+    items.forEach(item => {
+        if (item.dataset.branchName === oldName) {
+            item.textContent = newName;
+            item.dataset.branchName = newName;
+        }
+    });
+
+    if (currentBranch === oldName) {
+        currentBranch = newName;
+        document.querySelector('#branches-contaienr .btn-value').textContent = newName;
+        toggleCommitButton();
+    }
+
+    if (currentRepoPath) {
+        sendIpcMessage("REPO_SELECTED", { absolutePath: currentRepoPath });
+    }
 }
 
 // ------- EVENT LISTENERS -------
@@ -1093,7 +1135,8 @@ branchItemMenuDelete.addEventListener("click", (event) => {
     const branchName = branchItemContextMenu.dataset.targetName;
 
     if (branchName) {
-        branchDeleteModal.classList.add("show");
+        branchDeleteModal.dataset.targetName = branchName;
+
         document.getElementById("delete-modal-branch-name").textContent = branchName;
         branchDeleteModal.classList.add("show");
     }

@@ -1,21 +1,25 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Interfaces;
-using ParekGIT.Data.Data;
 using Photino.NET;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace ParekGIT.Bridge.Handlers
 {
-    public class BranchCreateHandler : IMessageHandler
+    public class BranchDeleteHandler : IMessageHandler
     {
         private readonly PhotinoWindow _window;
         private readonly IGitRunner _gitRunner;
 
-        public string Action => "BRANCH_CREATE";
+        public string Action => "BRANCH_DELETE";
 
         // Constructor
-        public BranchCreateHandler(PhotinoWindow window, IGitRunner gitRunner)
+        public BranchDeleteHandler(PhotinoWindow window, IGitRunner gitRunner)
         {
             _window = window;
             _gitRunner = gitRunner;
@@ -27,19 +31,21 @@ namespace ParekGIT.Bridge.Handlers
                               ?? throw new ArgumentNullException("repoPath");
 
             string branchName = payload.GetProperty("branchName").GetString()
-                                ?? throw new ArgumentNullException("branchName");
+                              ?? throw new ArgumentNullException("branchName");
 
-            // Create new branch
-            await _gitRunner.CreateBranchAsync(repoPath, branchName);
+            await _gitRunner.DeleteBranchAsync(repoPath, branchName);
 
-            // Update displayed list
-            var branches = await _gitRunner.GetBranchesAsync(repoPath);
+            var responsePayload = new
+            {
+                repoPath = repoPath,
+                branchName = branchName
+            };
 
             // Response
             var response = new IpcMessage
             {
-                Action = "BRANCH_LOADED", // since it updates the dropdown just use this or "BRANCHES_LOADED"
-                Payload = JsonSerializer.SerializeToElement(branches)
+                Action = "BRANCH_DELETED",
+                Payload = JsonSerializer.SerializeToElement(responsePayload)
             };
 
             _window.SendWebMessage(JsonSerializer.Serialize(response));

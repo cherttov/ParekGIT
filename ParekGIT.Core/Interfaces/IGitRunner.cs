@@ -16,6 +16,8 @@ namespace ParekGIT.Core.Interfaces
         Task CheckoutBranchAsync(string repositoryPath, string branchName, bool isRemote);
         Task CreateBranchAsync(string repositoryPath, string branchName);
         Task CommitAsync(string repoPath, string message, string desc, IEnumerable<string> files);
+        Task RenameBranchAsync(string repositoryPath, string oldName, string newName);
+        Task DeleteBranchAsync(string repositoryPath, string branchName);
 
         Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license);
     }
