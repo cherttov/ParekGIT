@@ -465,7 +465,7 @@ function renderFileDiff(diffText) {
 
     // Inject colored html
     if (formattedLines.length === 0) {
-        diffContent.innerHTML = escapeHtml(diffText);
+        diffContent.innerHTML = `<span class="diff-chunk">Empty file (no content to preview)</span>`;
     } else {
         diffContent.innerHTML = formattedLines.join('');
     }
@@ -490,6 +490,8 @@ function loadRepositoriesIntoDropdown(repositories) {
 
         // LMB - select
         item.addEventListener("click", () => {
+            if (currentRepoPath === repo.AbsolutePath) { return; }
+
             currentRepoPath = repo.AbsolutePath;
             currentBranch = "";
 
@@ -564,6 +566,8 @@ function loadBranchesIntoDropdown(branches) {
 
         // LMB - select
         item.addEventListener("click", () => {
+            if (currentBranch === branch.Name) { return; }
+
             sendIpcMessage("BRANCH_SELECTED", {
                 absolutePath: currentRepoPath,
                 branchName: branch.Name,
@@ -727,6 +731,8 @@ function renderChangedFiles(files) {
         // Clicking on change-item
         const leftArea = item.querySelector(".change-item-left");
         leftArea.addEventListener("click", () => {
+            if (item.classList.contains("selected")) { return; }
+
             document.querySelectorAll(".change-item").forEach(el => el.classList.remove("selected"));
             item.classList.add("selected");
 
