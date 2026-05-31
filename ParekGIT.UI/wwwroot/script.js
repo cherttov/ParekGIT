@@ -112,6 +112,8 @@ const topbarBranchMenuRename = topbarBranchContextMenu.querySelector(".context-m
 const topbarBranchMenuCopy = topbarBranchContextMenu.querySelector(".context-menu-item.item-copy");
 const topbarBranchMenuDelete = topbarBranchContextMenu.querySelector(".context-menu-item.item-delete");
 
+const protectedBranches = ["main", "master"];
+
 // ------- APP STATE -------
 let currentRepoPath = "";
 let currentBranch = "";
@@ -269,7 +271,18 @@ const toggleCommitButton = () => {
     }
 };
 
-// Modal input boxes validator
+// Context menu validators
+const validateBranchContextMenu = (branchName, renameBtn, deleteBtn) => {
+    const isProtected = protectedBranches.includes(branchName.toLowerCase());
+
+    renameBtn.classList.toggle("disabled", isProtected);
+    renameBtn.disabled = isProtected;
+
+    deleteBtn.classList.toggle("disabled", isProtected);
+    deleteBtn.disabled = isProtected;
+};
+
+// Modal input boxes validators
 const validateBranchNewModal = () => {
     const isValid = branchNewModalInputName.value.trim() !== "";
     branchNewModalConfirmBtn.disabled = !isValid;
@@ -280,7 +293,10 @@ const validateBranchRenameModal = () => {
     const newName = branchRenameModalInputName.value.trim();
     const oldName = branchRenameModal.dataset.targetName || currentBranch;
 
-    const isValid = newName !== "" && newName !== oldName;
+    const isValid = newName !== ""
+                    && newName !== oldName
+                    && !protectedBranches.includes(newName);
+
     branchRenameModalConfirmBtn.disabled = !isValid;
     branchRenameModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
@@ -543,6 +559,8 @@ function loadBranchesIntoDropdown(branches) {
             branchItemContextMenu.dataset.targetPath = currentRepoPath;
             branchItemContextMenu.dataset.targetName = branch.Name;
 
+            validateBranchContextMenu(branch.Name, branchItemMenuRename, branchItemMenuDelete);
+
             branchItemContextMenu.classList.add("show");
             branchDropdown.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
             item.classList.add("context-active");
@@ -786,7 +804,7 @@ function renameBranchInDropdown(payload) {
 
     if (currentBranch === oldName) {
         currentBranch = newName;
-        document.querySelector('#branches-contaienr .btn-value').textContent = newName;
+        document.querySelector('#branches-container .btn-value').textContent = newName;
         toggleCommitButton();
     }
 
@@ -821,8 +839,11 @@ branchBtn.addEventListener('click', (event) => toggleDropdown(branchPanel, repoP
 branchBtn.addEventListener("contextmenu", (event) => {
     event.preventDefault();
     event.stopPropagation();
+
     if (branchBtn.classList.contains("disabled")) { return; }
     closeDropdowns();
+
+    validateBranchContextMenu(currentBranch, topbarBranchMenuRename, topbarBranchMenuDelete);
 
     topbarBranchContextMenu.classList.add("show");
     placeContextMenu(event, topbarBranchContextMenu);
@@ -846,7 +867,7 @@ modalCloseTriggers.forEach(trigger => {
 });
 
 // Prevent closing when inside (dropdowns)
-document.querySelectorAll('.dropdown-panel').forEach(panel => {
+document.querySelectorAll('.dropdown-panel, .context-menu').forEach(panel => {
     panel.addEventListener('click', (event) => event.stopPropagation());
 });
 

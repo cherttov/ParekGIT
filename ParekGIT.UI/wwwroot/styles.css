@@ -1035,3 +1035,9 @@ body, html {
 #topbar-repo-context-menu {
     border: 1px solid var(--border-color);
 }
+
+.context-menu-item.disabled,
+.context-menu-item:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
