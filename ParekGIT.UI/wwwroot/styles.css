@@ -369,6 +369,12 @@ body, html {
     background-color: transparent;
     border: none;
     border-radius: 0;
+    transition: background-color 0.2s ease-in;
+}
+
+.left-sidebar-btn.disabled {
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 .btn-icon {
@@ -378,7 +384,7 @@ body, html {
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
-    transition: background-color 0.1s ease;
+    transition: background-color 0.1s ease, transform 0.5s ease-out;
 }
 
 .left-sidebar-btn:hover .btn-icon {
@@ -403,6 +409,24 @@ body, html {
 .icon-settings { mask-image: url('assets/icons/materials_settings.svg'); }
 
 .btn-settings { margin-top: auto; }
+
+@keyframes spin-fetch {
+    from { transform: rotate(-45deg); }
+    to { transform: rotate(315deg); }
+}
+
+.left-sidebar-btn.fetching {
+    background-color: var(--bg-active);
+}
+
+.left-sidebar-btn.fetching .icon-fetch {
+    animation: spin-fetch 1s linear infinite;
+    background-color: var(--accent);
+}
+
+.left-sidebar-btn.fetching {
+    pointer-events: none;
+}
 
 /* SPLIT CONTAINER */
 .split-container{

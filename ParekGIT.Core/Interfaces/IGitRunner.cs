@@ -18,6 +18,7 @@ namespace ParekGIT.Core.Interfaces
         Task CommitAsync(string repoPath, string message, string desc, IEnumerable<string> files);
         Task RenameBranchAsync(string repositoryPath, string oldName, string newName);
         Task DeleteBranchAsync(string repositoryPath, string branchName);
+        Task FetchRepositoryAsync(string repositoryPath);
 
         Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license);
     }

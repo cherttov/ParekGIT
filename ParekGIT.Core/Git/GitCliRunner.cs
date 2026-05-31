@@ -173,6 +173,12 @@ namespace ParekGIT.Core.Git
             await ExecuteCommandAsync(repositoryPath, arguments);
         }
 
+        public async Task FetchRepositoryAsync(string repositoryPath)
+        {
+            string arguments = "fetch --all --prune";
+
+            await ExecuteCommandAsync(repositoryPath, arguments);
+        }
 
         // Helpers
         private async Task GenerateGitIgnoreAsync(string path, string type)

@@ -14,17 +14,15 @@ namespace ParekGIT.Bridge.Handlers
 {
     public class RepoCommitHandler : IMessageHandler
     {
-        PhotinoWindow _window;
-        LiteDbStore _dbStore;
-        IGitRunner _gitRunner;
+        private PhotinoWindow _window;
+        private IGitRunner _gitRunner;
 
         public string Action => "REPO_COMMIT";
 
         // Constructor
-        public RepoCommitHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner)
+        public RepoCommitHandler(PhotinoWindow window, IGitRunner gitRunner)
         {
             _window = window;
-            _dbStore = dbStore;
             _gitRunner = gitRunner;
         }
 

@@ -17,6 +17,14 @@ const backdrop = document.getElementById("dropdown-backdrop");
 // Left Sidebar
 const leftSidebar = document.getElementById("left-sidebar");
 
+const fileBtn = leftSidebar.querySelector(".btn-file");
+const bracnhesBtn = leftSidebar.querySelector(".btn-branches");
+const analyticsBtn = leftSidebar.querySelector(".btn-analytics");
+const todoBtn = leftSidebar.querySelector(".btn-todo");
+const fetchBtn = leftSidebar.querySelector(".btn-fetch");
+const settingsBtn = leftSidebar.querySelector(".btn-settings");
+const accountBtn = leftSidebar.querySelector(".btn-account");
+
 // Main Content
 const mainContent = document.getElementById("main-content");
 
@@ -186,6 +194,10 @@ window.external.receiveMessage(message => {
             renameBranchInDropdown(data.Payload);
             break;
 
+        case "REPO_FETCHED":
+            fetchRepo(data.Payload);
+            break;
+
         default:
             console.warn("Unknown action received: ", data.Action);
     }
@@ -201,6 +213,24 @@ const updatePanelWidths = () => {
     repoPanel.style.left = `${repoContainer.offsetLeft}px`;
     branchPanel.style.width = window.getComputedStyle(rightSidebar).width;
 };
+
+const stopFetchAnimation = () => {
+    const icon = fetchBtn.querySelector('.icon-fetch');
+    if (!icon) { return; }
+
+    const currentTransform = window.getComputedStyle(icon).transform;
+    fetchBtn.classList.remove("fetching");
+    icon.style.transform = currentTransform;
+    void icon.offsetWidth;
+
+    icon.style.transition = "transform 0.5s ease-out, background-color 0.3s ease";
+    icon.style.transform = "rotate(-45deg)";
+
+    setTimeout(() => {
+        icon.style.transform = "";
+        icon.style.transition = "";
+    }, 500);
+}
 
 // Context menu position
 const placeContextMenu = (event, contextMenu) => {
@@ -504,6 +534,7 @@ function loadRepositoriesIntoDropdown(repositories) {
             sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
 
             branchBtn.classList.remove("disabled");
+            fetchBtn.classList.remove("disabled");
         });
 
         // RMB - context menu
@@ -629,6 +660,8 @@ function deleteRepoFromDropdown(repository) {
         if (repoBtnValue) { repoBtnValue.textContent = "None"; }
 
         branchBtn.classList.add("disabled");
+        fetchBtn.classList.add("disabled");
+
         const branchBtnValue = branchBtn.querySelector('.btn-value');
         if (branchBtnValue) { branchBtnValue.textContent = "None"; }
 
@@ -839,6 +872,21 @@ function renameBranchInDropdown(payload) {
     }
 }
 
+// C# - Repo fetching
+function fetchRepo(repo) {
+    stopFetchAnimation();
+
+    if (currentRepoPath) {
+        sendIpcMessage("GET_REPO_STATUS", { repoPath: currentRepoPath });
+        if (currentBranch) {
+            sendIpcMessage("GET_BRANCH_HISTORY", {
+                repoPath: currentRepoPath,
+                branchName: currentBranch
+            });
+        }
+    }
+}
+
 // ------- EVENT LISTENERS -------
 // Global overrides
 document.addEventListener('wheel', (event) => {
@@ -846,6 +894,17 @@ document.addEventListener('wheel', (event) => {
         event.preventDefault();
     }
 }, { passive: false });
+
+// Left sidebar buttons (left-sidebar)
+fetchBtn.addEventListener("click", () => {
+    if (!currentRepoPath || fetchBtn.classList.contains("fetching")) { return; }
+
+    fetchBtn.classList.add("fetching");
+
+    sendIpcMessage("REPO_FETCH", {
+        repoPath: currentRepoPath
+    });
+});
 
 // Diff page (main-content)
 diffBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(diffBodyWrapper, diffScrollbar));
@@ -1487,6 +1546,8 @@ setupSelection('#branch-dropdown-panel', '#branches-container .btn-value');
 updatePanelWidths();
 
 branchBtn.classList.add("disabled"); // change to load last selected repo automatically
+fetchBtn.classList.add("disabled");
+
 switchToChangesTab();
 toggleCommitButton();
 
