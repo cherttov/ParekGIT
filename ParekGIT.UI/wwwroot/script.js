@@ -282,6 +282,19 @@ const validateBranchContextMenu = (branchName, renameBtn, deleteBtn) => {
     deleteBtn.disabled = isProtected;
 };
 
+const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn) => {
+    const isRepoSelected = !repoName || repoName.trim() === "";
+
+    terminalBtn.classList.toggle("disabled", isRepoSelected);
+    terminalBtn.disabled = isRepoSelected;
+
+    explorerBtn.classList.toggle("disabled", isRepoSelected);
+    explorerBtn.disabled = isRepoSelected;
+
+    removeBtn.classList.toggle("disabled", isRepoSelected);
+    removeBtn.disabled = isRepoSelected;
+};
+
 // Modal input boxes validators
 const validateBranchNewModal = () => {
     const isValid = branchNewModalInputName.value.trim() !== "";
@@ -502,6 +515,13 @@ function loadRepositoriesIntoDropdown(repositories) {
 
             repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
             repoItemContextMenu.dataset.targetName = repo.Name;
+
+            validateRepoContextMenu(
+                repo.AbsolutePath,
+                repoItemMenuTerminal,
+                repoItemMenuExplorer,
+                repoItemMenuRemove
+            );
 
             repoItemContextMenu.classList.add("show");
 
@@ -830,6 +850,13 @@ repoBtn.addEventListener("contextmenu", (event) => {
     event.preventDefault();
     event.stopPropagation();
     closeDropdowns();
+
+    validateRepoContextMenu(
+        currentRepoPath,
+        topbarRepoMenuTerminal,
+        topbarRepoMenuExplorer,
+        topbarRepoMenuRemove
+    );
 
     topbarRepoContextMenu.classList.add("show");
     placeContextMenu(event, topbarRepoContextMenu);
