@@ -198,6 +198,13 @@ window.external.receiveMessage(message => {
             fetchRepo(data.Payload);
             break;
 
+        case "REPO_FILES_CHANGED":
+            processFileChanges(data.Payload);
+            break;
+
+        case "BRANCH_PULL_COMPLETED":
+            break;
+
         default:
             console.warn("Unknown action received: ", data.Action);
     }
@@ -286,18 +293,38 @@ const toggleDropdown = (toShow, toHide, event) => {
 const toggleCommitButton = () => {
     const checkedCount = document.querySelectorAll(".changes-item-checkbox:checked").length;
 
+    // Wait for C# to return the branch name
+    if (currentBranch === "") {
+        commitBtn.disabled = true;
+        commitBtn.classList.add("disabled");
+        commitBtn.textContent = "Loading...";
+        return;
+    }
+
+    // Pull request state
+    const isProtectedBranch = protectedBranches.includes(currentBranch.toLowerCase());
+    const isNoChangesMade = currentChangesCount === 0;
+
+    if (isNoChangesMade && !isProtectedBranch) {
+        commitBtn.disabled = false;
+        commitBtn.classList.remove("disabled");
+        commitBtn.textContent = `Create pull request`;
+        return;
+    }
+
+    // Commit state
+    const commitText = checkedCount > 0
+        ? `Commit ${checkedCount} file${checkedCount === 1 ? '' : 's'} to ${currentBranch}`
+        : `Commit`;
+
     if (commitMessageInput.value.trim() === "" || checkedCount === 0) {
         commitBtn.disabled = true;
         commitBtn.classList.add("disabled");
+        commitBtn.textContent = commitText;
     } else {
         commitBtn.disabled = false;
         commitBtn.classList.remove("disabled");
-    }
-
-    if (checkedCount > 0 && currentBranch !== "") {
-        commitBtn.textContent = `Commit ${checkedCount} file${checkedCount === 1 ? '' : 's'} to ${currentBranch}`;
-    } else {
-        commitBtn.textContent = "Commit";
+        commitBtn.textContent = commitText;
     }
 };
 
@@ -887,6 +914,15 @@ function fetchRepo(repo) {
     }
 }
 
+// C# - Repo files changed
+function processFileChanges(repo) {
+    if (currentRepoPath === repo.repoPath) {
+        sendIpcMessage("GET_REPO_STATUS", { repoPath: currentRepoPath });
+    } else {
+        console.warn("RepoWatcher is watching unnecessary repositories.");
+    }
+}
+
 // ------- EVENT LISTENERS -------
 // Global overrides
 document.addEventListener('wheel', (event) => {
@@ -1036,6 +1072,23 @@ commitDescriptionInput.addEventListener("input", () => {
 });
 
 commitBtn.addEventListener("click", () => {
+    // Pull request
+    const isProtectedBranch = protectedBranches.includes(currentBranch.toLowerCase());
+    const isNoChangesMade = currentChangesCount === 0;
+
+    if (isNoChangesMade && !isProtectedBranch && currentBranch !== "") {
+        sendIpcMessage("BRANCH_PULL_REQUEST", {
+            repoPath: currentRepoPath,
+            branchName: currentBranch
+        });
+
+        commitBtn.disabled = true;
+        commitBtn.classList.add("disabled");
+
+        return
+    }
+
+    // Standard commit
     const message = commitMessageInput.value.trim();
     const description = commitDescriptionInput.value.trim();
 

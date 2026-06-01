@@ -4,6 +4,7 @@ using System.Drawing;
 using ParekGIT.Bridge.Ipc;
 using ParekGIT.Bridge.Handlers;
 using ParekGIT.Core.Git;
+using ParekGIT.Core.Services;
 
 namespace ParekGIT.UI
 {
@@ -17,6 +18,9 @@ namespace ParekGIT.UI
 
             // Core runner
             var gitRunner = new GitCliRunner();
+
+            // Repo watcher
+            var repoWatcher = new RepoWatcher();
 
             // Window
             var window = new PhotinoWindow()
@@ -34,7 +38,7 @@ namespace ParekGIT.UI
 
             router.RegisterHandler(new AppReadyHandler(window, dbStore));
 
-            router.RegisterHandler(new RepoSelectedHandler(window, dbStore, gitRunner));
+            router.RegisterHandler(new RepoSelectedHandler(window, dbStore, gitRunner, repoWatcher));
             router.RegisterHandler(new RepoAddHandler(window, dbStore, gitRunner));
             router.RegisterHandler(new RepoCreateHandler(window, dbStore, gitRunner));
             router.RegisterHandler(new RepoRemoveHandler(window, dbStore, gitRunner));
@@ -43,6 +47,7 @@ namespace ParekGIT.UI
             router.RegisterHandler(new RepoTerminalHandler());
             router.RegisterHandler(new RepoCommitHandler(window, gitRunner));
             router.RegisterHandler(new RepoFetchHandler(window, gitRunner));
+            router.RegisterHandler(new RepoWatcherHandler(window, repoWatcher));
 
             router.RegisterHandler(new BranchSelectedHandler(window, dbStore, gitRunner));
             router.RegisterHandler(new BranchCreateHandler(window, gitRunner));

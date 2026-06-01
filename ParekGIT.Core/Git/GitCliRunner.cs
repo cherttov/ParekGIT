@@ -43,7 +43,7 @@ namespace ParekGIT.Core.Git
 
         public async Task<IEnumerable<GitFileStatus>> GetStatusAsync(string repositoryPath)
         {
-            string arguments = "status --porcelain";
+            string arguments = "status --porcelain -uall";
 
             string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
 

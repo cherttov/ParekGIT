@@ -1,6 +1,7 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Interfaces;
+using ParekGIT.Core.Services;
 using ParekGIT.Data.Data;
 using Photino.NET;
 using System.Text.Json;
@@ -13,14 +14,17 @@ namespace ParekGIT.Bridge.Handlers
         private readonly LiteDbStore _dbStore;
         private readonly IGitRunner _gitRunner;
 
+        private readonly RepoWatcher _repoWatcher;
+
         public string Action => "REPO_SELECTED";
 
         // Constructor
-        public RepoSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner)
+        public RepoSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner, RepoWatcher repoWatcher)
         {
             _window = window;
             _dbStore = dbStore;
             _gitRunner = gitRunner;
+            _repoWatcher = repoWatcher;
         }
 
         public async Task ExecuteAsync(JsonElement payload)
@@ -29,6 +33,7 @@ namespace ParekGIT.Bridge.Handlers
                               ?? throw new ArgumentNullException("absolutePath");
 
             var branches = await _gitRunner.GetBranchesAsync(repoPath);
+            _repoWatcher.WatchRepository(repoPath);
 
             // Response
             var response = new IpcMessage
