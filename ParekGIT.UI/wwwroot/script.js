@@ -301,17 +301,6 @@ const toggleCommitButton = () => {
         return;
     }
 
-    // Pull request state
-    const isProtectedBranch = protectedBranches.includes(currentBranch.toLowerCase());
-    const isNoChangesMade = currentChangesCount === 0;
-
-    if (isNoChangesMade && !isProtectedBranch) {
-        commitBtn.disabled = false;
-        commitBtn.classList.remove("disabled");
-        commitBtn.textContent = `Create pull request`;
-        return;
-    }
-
     // Commit state
     const commitText = checkedCount > 0
         ? `Commit ${checkedCount} file${checkedCount === 1 ? '' : 's'} to ${currentBranch}`
@@ -1072,23 +1061,6 @@ commitDescriptionInput.addEventListener("input", () => {
 });
 
 commitBtn.addEventListener("click", () => {
-    // Pull request
-    const isProtectedBranch = protectedBranches.includes(currentBranch.toLowerCase());
-    const isNoChangesMade = currentChangesCount === 0;
-
-    if (isNoChangesMade && !isProtectedBranch && currentBranch !== "") {
-        sendIpcMessage("BRANCH_PULL_REQUEST", {
-            repoPath: currentRepoPath,
-            branchName: currentBranch
-        });
-
-        commitBtn.disabled = true;
-        commitBtn.classList.add("disabled");
-
-        return
-    }
-
-    // Standard commit
     const message = commitMessageInput.value.trim();
     const description = commitDescriptionInput.value.trim();
 
