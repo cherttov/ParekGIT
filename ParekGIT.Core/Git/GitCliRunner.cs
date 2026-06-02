@@ -81,6 +81,36 @@ namespace ParekGIT.Core.Git
             return rawOutput;
         }
 
+        public async Task<CommitDetailsResult>  GetCommitDetailsAsync(string repositoryPath, string hash)
+        {
+            string arguments = $"show --name-only --format=\"%an\" {hash}";
+
+            string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
+
+            var lines = rawOutput.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (lines.Length == 0) 
+            {
+                return new CommitDetailsResult { Author = "Unknown", Files = Array.Empty<string>() };
+            }
+
+            string author = lines[0].Trim();
+            var files = lines.Skip(1).Select(f => f.Trim()).ToList();
+
+            return new CommitDetailsResult
+            {
+                Author = author,
+                Files = files
+            };
+        }
+
+        public async Task<string> GetHistoryFileDiffAsync(string repositoryPath, string commitHash, string filePath)
+        {
+            string arguments = $"show --format= {commitHash} -- \"{filePath}\"";
+
+            return await ExecuteCommandAsync(repositoryPath, arguments);
+        }
+
         // Commands
         public async Task CheckoutBranchAsync(string repositoryPath, string branchName, bool isRemote)
         {

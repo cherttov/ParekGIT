@@ -454,15 +454,17 @@ body, html {
     overflow: hidden;
 }
 
-.diff-viewer {
-    display: flex;
+.diff-viewer,
+.details-viewer {
+    display: none;
     flex-direction: column;
     height: 100%;
     background-color: var(--bg-main);
     position: relative;
 }
 
-.diff-header {
+.diff-header,
+.details-header {
     display: flex;
     align-items: center;
     box-sizing: border-box;
@@ -482,7 +484,8 @@ body, html {
     white-space: nowrap;
 }
 
-.diff-body-wrapper {
+.diff-body-wrapper,
+.details-body-wrapper {
     flex: 1;
     min-height: 0;
     display: flex;
@@ -543,6 +546,103 @@ body, html {
 
 .diff-body-wrapper:hover .custom-scrollbar { opacity: 0.15; }
 .diff-body-wrapper:hover .custom-scrollbar:hover { opacity: 0.3; }
+
+.details-header {
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.details-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+    flex: 1;
+    min-width: 0;
+}
+
+.details-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.details-body-wrapper:hover .custom-scrollbar { opacity: 0.15; }
+.details-body-wrapper:hover .custom-scrollbar:hover { opacity: 0.3; }
+
+.details-footer {
+    flex-shrink: 0;
+    background-color: #1e1e2e;
+    z-index: 1000;
+}
+
+.details-footer-container {
+    position: relative;
+    height: 32px;
+}
+
+.details-footer-btn:hover {
+    background-color: var(--bg-hover);
+}
+
+.details-footer-btn:hover .btn-value {
+    color: var(--text-primary);
+}
+
+.details-footer-btn:hover .btn-arrow {
+    background-color: var(--text-primary);
+}
+
+.details-footer-btn:disabled,
+.details-footer-btn.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.details-footer-container .btn-arrow {
+    transform: rotate(-180deg);
+}
+
+.details-footer-container:has(.dropdown-panel.show) .btn-arrow {
+    transform: rotate(0deg);
+}
+
+#details-footer-panel {
+    position: absolute;
+    visibility: hidden;
+    top: auto;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    max-height: 240px;
+    opacity: 0;
+    border-bottom: none;
+    transition: opacity 0.2s ease, visibility 0.2s;
+}
+
+#details-footer-panel.show {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#details-commit-author {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#details-commit-stats {
+    color: var(--text-muted);
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+#details-scrollbar {
+    top: 33px;
+}
 
 /* RIGHT SIDEBAR */
 .right-sidebar {

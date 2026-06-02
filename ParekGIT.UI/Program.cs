@@ -56,6 +56,8 @@ namespace ParekGIT.UI
             router.RegisterHandler(new BranchHistoryHandler(window, gitRunner));
 
             router.RegisterHandler(new FileDiffHandler(window, gitRunner));
+            router.RegisterHandler(new HistoryFileDiffHandler(window, gitRunner));
+            router.RegisterHandler(new CommitDetailsHandler(window, gitRunner));
 
             router.RegisterHandler(new ExplorerDialogHandler(window));            
 

@@ -28,10 +28,21 @@ const accountBtn = leftSidebar.querySelector(".btn-account");
 // Main Content
 const mainContent = document.getElementById("main-content");
 
+const diffViewer = document.getElementById("diff-viewer");
 const diffFilename = document.getElementById("diff-filename");
 const diffContent = document.getElementById("diff-content");
 const diffBodyWrapper = document.getElementById("diff-body-wrapper");
 const diffScrollbar = document.getElementById("diff-scrollbar");
+
+const detailsViewer = document.getElementById("details-viewer");
+const detailsCommitAuthor = document.getElementById("details-commit-author");
+const detailsCommitStats = document.getElementById("details-commit-stats");
+const detailsContent = document.getElementById("details-content");
+const detailsBodyWrapper = document.getElementById("details-body-wrapper");
+const detailsScrollbar = document.getElementById("details-scrollbar");
+const detailsBtn = document.querySelector(".details-footer-btn");
+const detailsBtnValue = detailsBtn.querySelector(".btn-value");
+const detailsPanel = document.getElementById("details-footer-panel");
 
 // Right Sidebar + SplitContainer
 const rightSidebar = document.getElementById("right-sidebar");
@@ -125,6 +136,7 @@ const protectedBranches = ["main", "master"];
 // ------- APP STATE -------
 let currentRepoPath = "";
 let currentBranch = "";
+let activeHistoryHash = "";
 let activeBrowseInput = null;
 let currentChangesCount = 0;
 let repoDrafts = {};
@@ -183,7 +195,7 @@ window.external.receiveMessage(message => {
             break;
 
         case "FILE_DIFF_LOADED":
-            renderFileDiff(data.Payload);
+            renderFileDiff(data.Payload, diffContent, diffBodyWrapper, diffScrollbar);
             break;
 
         case "BRANCH_DELETED":
@@ -202,7 +214,12 @@ window.external.receiveMessage(message => {
             processFileChanges(data.Payload);
             break;
 
-        case "BRANCH_PULL_COMPLETED":
+        case "COMMIT_DETAILS_LOADED":
+            loadCommitDetails(data.Payload);
+            break;
+
+        case "HISTORY_FILE_DIFF_LOADED":
+            renderFileDiff(data.Payload.diffText, detailsContent, detailsBodyWrapper, detailsScrollbar);
             break;
 
         default:
@@ -268,6 +285,7 @@ const closeDropdowns = () => {
     branchItemContextMenu.classList.remove('show');
     topbarRepoContextMenu.classList.remove('show');
     topbarBranchContextMenu.classList.remove('show');
+    detailsPanel.classList.remove('show');
 
     document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
 };
@@ -282,6 +300,7 @@ const toggleDropdown = (toShow, toHide, event) => {
     event.stopPropagation();
     updatePanelWidths();
     toHide.classList.remove('show');
+    detailsPanel.classList.remove('show');
 
     document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
 
@@ -390,12 +409,18 @@ const switchToChangesTab = () => {
     tabBtnHistory.classList.remove("active");
     tabChanges.classList.add("active");
     tabHistory.classList.remove("active");
+
+    diffViewer.style.display = "flex";
+    detailsViewer.style.display = "none";
 };
 const switchToHistoryTab = () => {
     tabBtnChanges.classList.remove("active");
     tabBtnHistory.classList.add("active");
     tabChanges.classList.remove("active");
     tabHistory.classList.add("active");
+
+    diffViewer.style.display = "none";
+    detailsViewer.style.display = "flex";
 };
 
 // Update custom scrollbar
@@ -470,17 +495,17 @@ const escapeHtml = (unsafeText) => {
 };
 
 // C# - Load diff text
-function renderFileDiff(diffText) {
+function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget) {
     if (!diffText || diffText.trim() === "") {
-        diffContent.textContent = "(No changes or binary file)";
-        updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
+        contentTarget.textContent = "(No changes or binary file)";
+        updateCustomScrollbar(wrapperTarget, scrollbarTarget);
         return;
     }
 
     // Intercept binary files
     if (diffText.includes("Binary files ")) {
-        diffContent.innerHTML = `<span class="diff-chunk">Binary file changed (no preview available)</span>`;
-        updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
+        contentTarget.innerHTML = `<span class="diff-chunk">Binary file changed (no preview available)</span>`;
+        updateCustomScrollbar(wrapperTarget, scrollbarTarget);
         return;
     }
     
@@ -504,19 +529,21 @@ function renderFileDiff(diffText) {
             formattedLines.push(`<span class="diff-remove">- ${safeLine.substring(1)}</span>`);
         } else if (safeLine.startsWith('@@')) {
             formattedLines.push(`<span class="diff-chunk">${safeLine.substring(1)}</span>`);
+        } else if (safeLine.startsWith(' ')) {
+            formattedLines.push(`<span class="diff-normal">  ${safeLine.substring(1)}</span>`);
         } else {
-            formattedLines.push(`<span class="diff-normal">  ${safeLine.substring(1)}</span>`)
+            formattedLines.push(`<span class="diff-normal">  ${safeLine.substring(1)}</span>`);
         }
     }
 
     // Inject colored html
     if (formattedLines.length === 0) {
-        diffContent.innerHTML = `<span class="diff-chunk">Empty file (no content to preview)</span>`;
+        contentTarget.innerHTML = `<span class="diff-chunk">Empty file (no content to preview)</span>`;
     } else {
-        diffContent.innerHTML = formattedLines.join('');
+        contentTarget.innerHTML = formattedLines.join('');
     }
 
-    updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
+    updateCustomScrollbar(wrapperTarget, scrollbarTarget);
 }
 
 // C# - Load repositories
@@ -690,6 +717,7 @@ function deleteRepoFromDropdown(repository) {
 function folderSelected(directory) {
     if (activeBrowseInput) {
         activeBrowseInput.value = directory.path;
+        activeBrowseInput.dispatchEvent(new Event('input'));
         activeBrowseInput.focus();
         activeBrowseInput = null;
     }
@@ -850,6 +878,22 @@ function renderHistory(commits) {
             </div>
         `;
 
+        // LMB - Show commit history details
+        item.addEventListener("click", () => {
+            document.querySelectorAll(".history-item").forEach(el => el.classList.remove("selected"));
+            item.classList.add("selected");
+
+            activeHistoryHash = commit.Hash;
+            detailsCommitAuthor.textContent = `Loading details...`;
+            detailsCommitStats.textContent = ``;
+            detailsContent.textContent = "";
+
+            sendIpcMessage("GET_COMMIT_DETAILS", {
+                repoPath: currentRepoPath,
+                commitHash: commit.Hash
+            });
+        });
+
         historyList.appendChild(item);
     });
 
@@ -912,6 +956,49 @@ function processFileChanges(repo) {
     }
 }
 
+// C# - History commit details
+function loadCommitDetails(details) {
+    // Header info
+    detailsCommitAuthor.innerHTML = `${details.author}`;
+    detailsCommitStats.textContent = `${details.fileCount} file${details.fileCount === 1 ? '' : 's'} changed`;
+
+    detailsPanel.innerHTML = "";
+
+    if (!details.files || details.files.length === 0) {
+        detailsBtnValue.textContent = "No files available";
+        detailsBtn.disabled = true;
+        return;
+    }
+
+    detailsBtn.disabled = false;
+
+    details.files.forEach((file, index) => {
+        const item = document.createElement("div");
+        item.className = "dropdown-item";
+        item.textContent = file;
+
+        // LMB
+        item.addEventListener("click", (event) => {
+            event.stopPropagation();
+            detailsBtnValue.textContent = file;
+            closeDropdowns();
+            detailsContent.textContent = "Loading diff...";
+
+            sendIpcMessage("GET_HISTORY_FILE_DIFF", {
+                repoPath: currentRepoPath,
+                commitHash: activeHistoryHash,
+                filePath: file
+            });
+        });
+
+        detailsPanel.appendChild(item);
+
+        if (index === 0) {
+            item.click();
+        }
+    });
+}
+
 // ------- EVENT LISTENERS -------
 // Global overrides
 document.addEventListener('wheel', (event) => {
@@ -933,6 +1020,16 @@ fetchBtn.addEventListener("click", () => {
 
 // Diff page (main-content)
 diffBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(diffBodyWrapper, diffScrollbar));
+
+// History details page (main-content)
+detailsBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar));
+detailsBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    repoPanel.classList.remove('show');
+    branchPanel.classList.remove('show');
+    const isOpening = detailsPanel.classList.toggle("show");
+    backdrop.classList.toggle("show", isOpening);
+})
 
 // Toggles (dropdowns)
 repoBtn.addEventListener('click', (event) => toggleDropdown(repoPanel, branchPanel, event));

@@ -11,6 +11,7 @@ namespace ParekGIT.Core.Interfaces
         Task<IEnumerable<GitFileStatus>> GetStatusAsync(string repositoryPath);
         Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repositoryPath, string branchName, int limit = 50);
         Task<string> GetFileDiffAsync(string repositoryPath, string filePath);
+        Task<CommitDetailsResult> GetCommitDetailsAsync(string repositoryPath, string hash);
 
         // Commands
         Task CheckoutBranchAsync(string repositoryPath, string branchName, bool isRemote);
