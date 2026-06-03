@@ -580,6 +580,10 @@ body, html {
 .details-footer {
     flex-shrink: 0;
     background-color: #1e1e2e;
+    z-index: 100;
+}
+
+.details-footer:has(#details-footer-panel.show) {
     z-index: 1000;
 }
 
@@ -631,6 +635,7 @@ body, html {
     visibility: visible;
     opacity: 1;
     pointer-events: auto;
+    border-bottom: 1px solid var(--border-color);
 }
 
 #details-commit-stats {

@@ -485,6 +485,18 @@ const resetDiffViewer = () => {
     updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
 };
 
+const resetDetailsViewer = () => {
+    detailsCommitMessage.textContent = "Select a commit to view details";
+    detailsCommitStats.textContent = "";
+    detailsContent.textContent = "";
+
+    detailsBtnValue.textContent = "No commit selected";
+    detailsBtn.disabled = true;
+    detailsBtn.classList.add("disabled");
+
+    detailsPanel.innerHTML = "";
+};
+
 const escapeHtml = (unsafeText) => {
     return unsafeText
         .replace(/&/g, "&amp;")
@@ -572,6 +584,7 @@ function loadRepositoriesIntoDropdown(repositories) {
             toggleCommitButton();
             switchToChangesTab();
             resetDiffViewer();
+            resetDetailsViewer();
 
             sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
             sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
@@ -641,6 +654,12 @@ function loadBranchesIntoDropdown(branches) {
         // LMB - select
         item.addEventListener("click", () => {
             if (currentBranch === branch.Name) { return; }
+
+            resetDiffViewer();
+            resetDetailsViewer();
+
+            historyList.innerHTML = "";
+            changesList.innerHTML = "";
 
             sendIpcMessage("BRANCH_SELECTED", {
                 absolutePath: currentRepoPath,
@@ -737,6 +756,7 @@ function addRepositoryToDropdown(repo) {
 
         toggleCommitButton();
         resetDiffViewer();
+        resetDetailsViewer();
 
         sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
         sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
@@ -1689,6 +1709,7 @@ fetchBtn.classList.add("disabled");
 
 switchToChangesTab();
 toggleCommitButton();
+resetDetailsViewer();
 
 window.addEventListener('DOMContentLoaded', () => {
     sendIpcMessage("APP_READY");
