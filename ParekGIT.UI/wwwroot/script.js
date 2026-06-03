@@ -888,6 +888,10 @@ function renderHistory(commits) {
             detailsCommitStats.textContent = ``;
             detailsContent.textContent = "";
 
+            detailsBtnValue.textContent = "Loading...";
+            detailsBtn.disabled = true;
+            detailsBtn.classList.add("disabled");
+
             sendIpcMessage("GET_COMMIT_DETAILS", {
                 repoPath: currentRepoPath,
                 commitHash: commit.Hash
@@ -960,42 +964,53 @@ function processFileChanges(repo) {
 function loadCommitDetails(details) {
     // Header info
     detailsCommitMessage.innerHTML = `${details.message}`;
-    detailsCommitStats.textContent = `${details.fileCount} file${details.fileCount === 1 ? '' : 's'} changed`;
+    detailsCommitStats.textContent = `${details.files.length} file${details.files.length === 1 ? '' : 's'} changed`;
 
     detailsPanel.innerHTML = "";
 
     if (!details.files || details.files.length === 0) {
         detailsBtnValue.textContent = "No files available";
         detailsBtn.disabled = true;
+        detailsBtn.classList.add("disabled");
         return;
     }
 
     detailsBtn.disabled = false;
+    detailsBtn.classList.remove("disabled");
 
     details.files.forEach((file, index) => {
         const item = document.createElement("div");
         item.className = "dropdown-item";
-        item.textContent = file;
+
+        let statusClass = "status-modified";
+        if (file.StatusCode.startsWith("A")) { statusClass = "status-added"; }
+        else if (file.StatusCode.startsWith("D")) { statusClass = "status-deleted"; }
+        else if (file.StatusCode.startsWith("R")) { statusClass = "status-renamed"; }
+        else if (file.StatusCode.startsWith("U")) { statusClass = "status-untracked"; }
+
+        item.innerHTML = `<span class="change-status ${statusClass}">${file.StatusCode[0]}</span>
+                          <span class="change-path">${file.Path}</span>`;
 
         // LMB
         item.addEventListener("click", (event) => {
             event.stopPropagation();
-            detailsBtnValue.textContent = file;
+            detailsPanel.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove("active"));
+            item.classList.add('active');
+
+            detailsBtnValue.textContent = file.Path;
             closeDropdowns();
             detailsContent.textContent = "Loading diff...";
 
             sendIpcMessage("GET_HISTORY_FILE_DIFF", {
                 repoPath: currentRepoPath,
                 commitHash: activeHistoryHash,
-                filePath: file
+                filePath: file.Path
             });
         });
 
         detailsPanel.appendChild(item);
 
-        if (index === 0) {
-            item.click();
-        }
+        if (index === 0) { item.click(); }
     });
 }
 
@@ -1024,6 +1039,8 @@ diffBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(diffBodyW
 // History details page (main-content)
 detailsBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar));
 detailsBtn.addEventListener("click", (event) => {
+    if (detailsBtn.disabled || detailsBtn.classList.contains("disabled")) { return; }
+
     event.stopPropagation();
     repoPanel.classList.remove('show');
     branchPanel.classList.remove('show');

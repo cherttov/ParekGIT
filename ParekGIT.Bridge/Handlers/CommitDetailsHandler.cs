@@ -39,8 +39,8 @@ namespace ParekGIT.Bridge.Handlers
             // Convert to json payload
             var jsPayload = new
             {
+                author = details.Author,
                 message = details.Message,
-                fileCount = details.Files.Count(),
                 files = details.Files
             };
 

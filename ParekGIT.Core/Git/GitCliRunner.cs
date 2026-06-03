@@ -83,7 +83,7 @@ namespace ParekGIT.Core.Git
 
         public async Task<CommitDetailsResult>  GetCommitDetailsAsync(string repositoryPath, string hash)
         {
-            string arguments = $"show --name-only --format=\"%an%n%s\" {hash}";
+            string arguments = $"show --name-status --format=\"%an%n%s\" {hash}";
 
             string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
 
@@ -91,12 +91,18 @@ namespace ParekGIT.Core.Git
 
             if (lines.Length == 0) 
             {
-                return new CommitDetailsResult { Author = "Unknown", Files = Array.Empty<string>() };
+                return new CommitDetailsResult { Author = "Unknown", Files = new List<GitFileStatus>() };
             }
 
             string author = lines[0].Trim();
             string message = lines.Length > 1 ? lines[1].Trim() : "";
-            var files = lines.Skip(2).Select(f => f.Trim()).ToList();
+            List<GitFileStatus> files = lines.Skip(2).Select(f => {
+                var parts = f.Split('\t');
+                return new GitFileStatus {
+                    StatusCode = parts[0].Trim(),
+                    Path = parts.Length > 1 ? parts[1].Trim() : parts[0].Trim()
+                };
+            }).ToList();
 
             return new CommitDetailsResult
             {

@@ -10,6 +10,6 @@ namespace ParekGIT.Core.Models
     {
         public string Author { get; set; }
         public string Message { get; set; }
-        public IEnumerable<string> Files { get; set; }
+        public List<GitFileStatus> Files { get; set; }
     }
 }
