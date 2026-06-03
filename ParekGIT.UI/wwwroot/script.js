@@ -35,7 +35,7 @@ const diffBodyWrapper = document.getElementById("diff-body-wrapper");
 const diffScrollbar = document.getElementById("diff-scrollbar");
 
 const detailsViewer = document.getElementById("details-viewer");
-const detailsCommitAuthor = document.getElementById("details-commit-author");
+const detailsCommitMessage = document.getElementById("details-commit-message");
 const detailsCommitStats = document.getElementById("details-commit-stats");
 const detailsContent = document.getElementById("details-content");
 const detailsBodyWrapper = document.getElementById("details-body-wrapper");
@@ -884,7 +884,7 @@ function renderHistory(commits) {
             item.classList.add("selected");
 
             activeHistoryHash = commit.Hash;
-            detailsCommitAuthor.textContent = `Loading details...`;
+            detailsCommitMessage.textContent = `Loading details...`;
             detailsCommitStats.textContent = ``;
             detailsContent.textContent = "";
 
@@ -959,7 +959,7 @@ function processFileChanges(repo) {
 // C# - History commit details
 function loadCommitDetails(details) {
     // Header info
-    detailsCommitAuthor.innerHTML = `${details.author}`;
+    detailsCommitMessage.innerHTML = `${details.message}`;
     detailsCommitStats.textContent = `${details.fileCount} file${details.fileCount === 1 ? '' : 's'} changed`;
 
     detailsPanel.innerHTML = "";

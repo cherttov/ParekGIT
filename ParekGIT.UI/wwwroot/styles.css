@@ -561,6 +561,12 @@ body, html {
     min-width: 0;
 }
 
+#details-commit-message {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .details-header-right {
     display: flex;
     align-items: center;
@@ -625,12 +631,6 @@ body, html {
     visibility: visible;
     opacity: 1;
     pointer-events: auto;
-}
-
-#details-commit-author {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 #details-commit-stats {
@@ -885,10 +885,16 @@ body, html {
     padding: 4px 8px;
     background-color: transparent;
     transition: background-color 0.1s ease;
+    border-left: 2px solid transparent;
 }
 
 .history-item:hover {
     background-color: var(--bg-hover);
+}
+
+.history-item.selected {
+    background-color: var(--bg-hover);
+    border-left: 2px solid var(--accent);
 }
 
 .history-message {
