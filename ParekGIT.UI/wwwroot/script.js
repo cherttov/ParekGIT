@@ -532,6 +532,8 @@ function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget)
             else { continue; }
         }
 
+        if (line.startsWith('\\')) { continue; }
+
         let safeLine = escapeHtml(line);
 
         // Apply classes based on character (1 spaces)
@@ -1017,7 +1019,8 @@ function loadCommitDetails(details) {
             detailsPanel.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove("active"));
             item.classList.add('active');
 
-            detailsBtnValue.textContent = file.Path;
+            detailsBtnValue.innerHTML = `<span class="change-status ${statusClass}">${file.StatusCode[0]}</span>
+                                         <span class="change-path">${file.Path}</span>`;
             closeDropdowns();
             detailsContent.textContent = "Loading diff...";
 
