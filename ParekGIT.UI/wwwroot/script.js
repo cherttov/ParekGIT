@@ -138,6 +138,7 @@ let currentRepoPath = "";
 let currentBranch = "";
 let activeHistoryHash = "";
 let activeBrowseInput = null;
+let activeDetailsFile = "";
 let currentChangesCount = 0;
 let repoDrafts = {};
 
@@ -902,6 +903,8 @@ function renderHistory(commits) {
 
         // LMB - Show commit history details
         item.addEventListener("click", () => {
+            if (item.classList.contains("selected")) { return; }
+
             document.querySelectorAll(".history-item").forEach(el => el.classList.remove("selected"));
             item.classList.add("selected");
 
@@ -984,6 +987,8 @@ function processFileChanges(repo) {
 
 // C# - History commit details
 function loadCommitDetails(details) {
+    activeDetailsFile = "";
+
     // Header info
     detailsCommitMessage.innerHTML = `${details.message}`;
     detailsCommitStats.textContent = `${details.files.length} file${details.files.length === 1 ? '' : 's'} changed`;
@@ -1015,6 +1020,9 @@ function loadCommitDetails(details) {
 
         // LMB
         item.addEventListener("click", (event) => {
+            if (file.Path === activeDetailsFile) { closeDropdowns(); return; }
+            activeDetailsFile = file.Path;
+
             event.stopPropagation();
             detailsPanel.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove("active"));
             item.classList.add('active');
