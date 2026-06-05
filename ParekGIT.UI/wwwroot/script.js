@@ -1509,7 +1509,6 @@ repoItemMenuTerminal.addEventListener("click", (event) => {
             "repoPath": pathToRepo
         });
     }
-
     closeDropdowns();
 });
 
@@ -1522,7 +1521,6 @@ repoItemMenuExplorer.addEventListener("click", (event) => {
             "repoPath": pathToRepo
         });
     }
-
     closeDropdowns();
 });
 
@@ -1539,7 +1537,6 @@ repoItemMenuRemove.addEventListener("click", (event) => {
 
         repoRemoveModal.classList.add("show");
     }
-
     closeDropdowns();
 });
 
@@ -1547,7 +1544,7 @@ changesItemMenuDiscard.addEventListener("click", (event) => {
     event.stopPropagation();
     const filePath = changesItemContextMenu.dataset.targetPath;
     if (filePath) {
-        sendIpcMessage("", {
+        sendIpcMessage("CHANGE_DISCARD", {
             repoPath: currentRepoPath,
             filePath: filePath
         });
@@ -1559,7 +1556,7 @@ changesItemMenuIgnoreFile.addEventListener("click", (event) => {
     event.stopPropagation();
     const filePath = changesItemContextMenu.dataset.targetPath;
     if (filePath) {
-        sendIpcMessage("", {
+        sendIpcMessage("CHANGE_IGNORE_FILE", {
             repoPath: currentRepoPath,
             filePath: filePath
         });
@@ -1571,22 +1568,17 @@ changesItemMenuCopyAbsPath.addEventListener("click", (event) => {
     event.stopPropagation();
     const filePath = changesItemContextMenu.dataset.targetPath;
     if (filePath) {
-        sendIpcMessage("", {
-            repoPath: currentRepoPath,
-            filePath: filePath
-        });
+        const absPath = `${currentRepoPath}\\${filePath}`.replace(/\\\\/g, '\\');
+        navigator.clipboard.writeText(absPath).then(() => console.log(`Copied '${absPath}'`));
     }
     closeDropdowns();
 });
 
-changesItemMenuCopyAbsPath.addEventListener("click", (event) => {
+changesItemMenuCopyRelPath.addEventListener("click", (event) => {
     event.stopPropagation();
     const filePath = changesItemContextMenu.dataset.targetPath;
     if (filePath) {
-        sendIpcMessage("", {
-            repoPath: currentRepoPath,
-            filePath: filePath
-        });
+        navigator.clipboard.writeText(filePath).then(() => console.log(`Copied '${filePath}'`));
     }
     closeDropdowns();
 });
@@ -1595,7 +1587,7 @@ changesItemMenuExplorer.addEventListener("click", (event) => {
     event.stopPropagation();
     const filePath = changesItemContextMenu.dataset.targetPath;
     if (filePath) {
-        sendIpcMessage("", {
+        sendIpcMessage("CHANGE_EXPLORER", {
             repoPath: currentRepoPath,
             filePath: filePath
         });
@@ -1607,7 +1599,7 @@ historyItemMenuCheckout.addEventListener("click", (event) => {
     event.stopPropagation();
     const hash = historyItemContextMenu.dataset.targetHash;
     if (hash) {
-        sendIpcMessage("", {
+        sendIpcMessage("HISTORY_CHECKOUT", {
             repoPath: currentRepoPath,
             filePath: filePath
         });
@@ -1619,7 +1611,7 @@ historyItemMenuRevert.addEventListener("click", (event) => {
     event.stopPropagation();
     const hash = historyItemContextMenu.dataset.targetHash;
     if (hash) {
-        sendIpcMessage("", {
+        sendIpcMessage("HISTORY_REVERT", {
             repoPath: currentRepoPath,
             filePath: filePath
         });
@@ -1631,7 +1623,7 @@ historyItemMenuCreateBranch.addEventListener("click", (event) => {
     event.stopPropagation();
     const hash = historyItemContextMenu.dataset.targetHash;
     if (hash) {
-        sendIpcMessage("", {
+        sendIpcMessage("HISTORY_BRANCH_CREATE", {
             repoPath: currentRepoPath,
             filePath: filePath
         });
