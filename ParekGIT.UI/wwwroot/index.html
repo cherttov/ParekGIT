@@ -106,6 +106,26 @@
         <button class="context-menu-item item-delete">Delete</button>
     </div>
 
+    <div class="context-menu" id="changes-item-context-menu">
+        <button class="context-menu-item item-discard">Discard changes</button>
+        <div class="context-menu-divider"></div>
+        <button class="context-menu-item item-ignore-file">Ignore file (add to .gitignore)</button>
+        <div class="context-menu-divider"></div>
+        <button class="context-menu-item item-copy-abs-path">Copy absolute file path</button>
+        <button class="context-menu-item item-copy-rel-path">Copy relative file path</button>
+        <div class="context-menu-divider"></div>
+        <button class="context-menu-item item-explorer">Show in explorer</button>
+    </div>
+
+    <div class="context-menu" id="history-item-context-menu">
+        <button class="context-menu-item item-checkout">Checkout commit</button>
+        <button class="context-menu-item item-revert">Revert changes in commit</button>
+        <div class="context-menu-divider"></div>
+        <button class="context-menu-item item-create-branch">Create branch from commit</button>
+        <div class="context-menu-divider"></div>
+        <button class="context-menu-item item-copy-sha">Copy SHA</button>
+    </div>
+
     <div class="modals">
         <div class="modal-backdrop" id="branch-new-modal">
             <div class="modal-content">

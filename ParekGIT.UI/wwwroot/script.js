@@ -131,6 +131,19 @@ const topbarBranchMenuRename = topbarBranchContextMenu.querySelector(".context-m
 const topbarBranchMenuCopy = topbarBranchContextMenu.querySelector(".context-menu-item.item-copy");
 const topbarBranchMenuDelete = topbarBranchContextMenu.querySelector(".context-menu-item.item-delete");
 
+const changesItemContextMenu = document.getElementById("changes-item-context-menu");
+const changesItemMenuDiscard = changesItemContextMenu.querySelector(".context-menu-item.item-discard");
+const changesItemMenuIgnoreFile = changesItemContextMenu.querySelector(".context-menu-item.item-ignore-file");
+const changesItemMenuCopyAbsPath = changesItemContextMenu.querySelector(".context-menu-item.item-copy-abs-path");
+const changesItemMenuCopyRelPath = changesItemContextMenu.querySelector(".context-menu-item.item-copy-rel-path");
+const changesItemMenuExplorer = changesItemContextMenu.querySelector(".context-menu-item.item-explorer");
+
+const historyItemContextMenu = document.getElementById("history-item-context-menu");
+const historyItemMenuCheckout = historyItemContextMenu.querySelector(".context-menu-item.item-checkout");
+const historyItemMenuRevert = historyItemContextMenu.querySelector(".context-menu-item.item-revert");
+const historyItemMenuCreateBranch = historyItemContextMenu.querySelector(".context-menu-item.item-create-branch");
+const historyItemMenuCopySHA = historyItemContextMenu.querySelector(".context-menu-item.item-copy-sha");
+
 const protectedBranches = ["main", "master"];
 
 // ------- APP STATE -------
@@ -286,6 +299,8 @@ const closeDropdowns = () => {
     branchItemContextMenu.classList.remove('show');
     topbarRepoContextMenu.classList.remove('show');
     topbarBranchContextMenu.classList.remove('show');
+    changesItemContextMenu.classList.remove('show');
+    historyItemContextMenu.classList.remove('show');
     detailsPanel.classList.remove('show');
 
     document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
@@ -828,7 +843,7 @@ function renderChangedFiles(files) {
             <input type="checkbox" class="ui-checkbox changes-item-checkbox" checked/>
         `
 
-        // Clicking on change-item
+        // LMB - Change item clicking
         const leftArea = item.querySelector(".change-item-left");
         leftArea.addEventListener("click", () => {
             if (item.classList.contains("selected")) { return; }
@@ -848,6 +863,21 @@ function renderChangedFiles(files) {
         const checkbox = item.querySelector(".changes-item-checkbox");
         checkbox.addEventListener("change", () => {
             updateMasterCheckboxState();
+        });
+
+        // RMB - Change item context menu
+        leftArea.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            closeDropdowns();
+
+            changesItemContextMenu.dataset.targetPath = file.Path;
+
+            document.querySelectorAll(".change-item").forEach(el => el.classList.remove("context-active"));
+            item.classList.add("show");
+
+            changesItemContextMenu.classList.add("show");
+            placeContextMenu(event, changesItemContextMenu);
         });
 
         changesList.appendChild(item);
@@ -921,6 +951,21 @@ function renderHistory(commits) {
                 repoPath: currentRepoPath,
                 commitHash: commit.Hash
             });
+        });
+
+        // RMB - History item context menu
+        item.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            closeDropdowns();
+
+            historyItemContextMenu.dataset.targetHash = commit.Hash;
+
+            document.querySelectorAll(".history-item").forEach(el => el.classList.remove("context-active"));
+            item.classList.add("context-active");
+
+            historyItemContextMenu.classList.add("show");
+            placeContextMenu(event, historyItemContextMenu);
         });
 
         historyList.appendChild(item);
@@ -1465,7 +1510,7 @@ repoItemMenuTerminal.addEventListener("click", (event) => {
         });
     }
 
-    repoItemContextMenu.classList.remove("show");
+    closeDropdowns();
 });
 
 repoItemMenuExplorer.addEventListener("click", (event) => {
@@ -1478,7 +1523,7 @@ repoItemMenuExplorer.addEventListener("click", (event) => {
         });
     }
 
-    repoItemContextMenu.classList.remove("show");
+    closeDropdowns();
 });
 
 repoItemMenuRemove.addEventListener("click", (event) => {
@@ -1495,7 +1540,109 @@ repoItemMenuRemove.addEventListener("click", (event) => {
         repoRemoveModal.classList.add("show");
     }
 
-    repoItemContextMenu.classList.remove("show");
+    closeDropdowns();
+});
+
+changesItemMenuDiscard.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const filePath = changesItemContextMenu.dataset.targetPath;
+    if (filePath) {
+        sendIpcMessage("", {
+            repoPath: currentRepoPath,
+            filePath: filePath
+        });
+    }
+    closeDropdowns();
+});
+
+changesItemMenuIgnoreFile.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const filePath = changesItemContextMenu.dataset.targetPath;
+    if (filePath) {
+        sendIpcMessage("", {
+            repoPath: currentRepoPath,
+            filePath: filePath
+        });
+    }
+    closeDropdowns();
+});
+
+changesItemMenuCopyAbsPath.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const filePath = changesItemContextMenu.dataset.targetPath;
+    if (filePath) {
+        sendIpcMessage("", {
+            repoPath: currentRepoPath,
+            filePath: filePath
+        });
+    }
+    closeDropdowns();
+});
+
+changesItemMenuCopyAbsPath.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const filePath = changesItemContextMenu.dataset.targetPath;
+    if (filePath) {
+        sendIpcMessage("", {
+            repoPath: currentRepoPath,
+            filePath: filePath
+        });
+    }
+    closeDropdowns();
+});
+
+changesItemMenuExplorer.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const filePath = changesItemContextMenu.dataset.targetPath;
+    if (filePath) {
+        sendIpcMessage("", {
+            repoPath: currentRepoPath,
+            filePath: filePath
+        });
+    }
+    closeDropdowns();
+});
+
+historyItemMenuCheckout.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const hash = historyItemContextMenu.dataset.targetHash;
+    if (hash) {
+        sendIpcMessage("", {
+            repoPath: currentRepoPath,
+            filePath: filePath
+        });
+    }
+    closeDropdowns();
+});
+
+historyItemMenuRevert.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const hash = historyItemContextMenu.dataset.targetHash;
+    if (hash) {
+        sendIpcMessage("", {
+            repoPath: currentRepoPath,
+            filePath: filePath
+        });
+    }
+    closeDropdowns();
+});
+
+historyItemMenuCreateBranch.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const hash = historyItemContextMenu.dataset.targetHash;
+    if (hash) {
+        sendIpcMessage("", {
+            repoPath: currentRepoPath,
+            filePath: filePath
+        });
+    }
+    closeDropdowns();
+});
+
+historyItemMenuCopySHA.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const hash = historyItemContextMenu.dataset.targetHash;
+    if (hash) { navigator.clipboard.writeText(hash).then(() => console.log(`Copied '${hash}'`));  }
     closeDropdowns();
 });
 
