@@ -43,7 +43,6 @@ namespace ParekGIT.UI
             router.RegisterHandler(new RepoCreateHandler(window, dbStore, gitRunner));
             router.RegisterHandler(new RepoRemoveHandler(window, dbStore, gitRunner));
             router.RegisterHandler(new RepoStatusHandler(window, gitRunner));
-            router.RegisterHandler(new RepoExplorerHandler());
             router.RegisterHandler(new RepoTerminalHandler());
             router.RegisterHandler(new RepoCommitHandler(window, gitRunner));
             router.RegisterHandler(new RepoFetchHandler(window, gitRunner));
@@ -62,7 +61,8 @@ namespace ParekGIT.UI
             router.RegisterHandler(new ChangeDiscardHandler(window, gitRunner));
             router.RegisterHandler(new ChangeIgnoreHandler(window, gitRunner));
 
-            router.RegisterHandler(new ExplorerDialogHandler(window));            
+            router.RegisterHandler(new ExplorerDialogHandler(window));
+            router.RegisterHandler(new ExplorerOpenHandler());
 
             window.RegisterWebMessageReceivedHandler(router.HandleMessage);
 

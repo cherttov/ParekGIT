@@ -9,7 +9,7 @@ namespace ParekGIT.Bridge.Handlers
     {
         private readonly PhotinoWindow _window;
 
-        public string Action => "OPEN_EXPLORER_DIALOG";
+        public string Action => "EXPLORER_OPEN_DIALOG";
 
         // Constructor
         public ExplorerDialogHandler(PhotinoWindow window)

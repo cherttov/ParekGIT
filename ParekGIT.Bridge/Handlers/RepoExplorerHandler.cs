@@ -1,23 +1,34 @@
 ﻿using ParekGIT.Bridge.Interfaces;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-    public class RepoExplorerHandler : IMessageHandler
+    public class ExplorerOpenHandler : IMessageHandler
     {
-        public string Action => "REPO_EXPLORER";
+        public string Action => "EXPLORER_OPEN";
 
         public Task ExecuteAsync(JsonElement payload)
         {
-            string repoPath = payload.GetProperty("repoPath").GetString()
-                ?? throw new ArgumentNullException("repoPath");
+            string rawPath = payload.GetProperty("path").GetString()
+                ?? throw new ArgumentNullException("path");
 
-            if (!string.IsNullOrEmpty(repoPath) && Directory.Exists(repoPath))
+            if (string.IsNullOrEmpty(rawPath)) { return Task.CompletedTask; }
+
+            string normalizedPath = Path.GetFullPath(rawPath);
+
+            if (!Directory.Exists(normalizedPath)) { return Task.CompletedTask; }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Process.Start("xdg-open", normalizedPath);
+            } 
+            else
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = repoPath,
+                    FileName = normalizedPath,
                     UseShellExecute = true
                 });
             }

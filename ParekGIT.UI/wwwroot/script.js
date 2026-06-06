@@ -18,7 +18,7 @@ const backdrop = document.getElementById("dropdown-backdrop");
 const leftSidebar = document.getElementById("left-sidebar");
 
 const fileBtn = leftSidebar.querySelector(".btn-file");
-const bracnhesBtn = leftSidebar.querySelector(".btn-branches");
+const brachesBtn = leftSidebar.querySelector(".btn-branches");
 const analyticsBtn = leftSidebar.querySelector(".btn-analytics");
 const todoBtn = leftSidebar.querySelector(".btn-todo");
 const fetchBtn = leftSidebar.querySelector(".btn-fetch");
@@ -1215,7 +1215,7 @@ function resize(event) {
     branchContainer.style.width = `${newWidth}px`;
 
     if (branchPanel.classList.contains('show')) {
-        branchpanel.style.width = `${newWidth}px`;
+        branchPanel.style.width = `${newWidth}px`;
     }
 
     if (repoPanel.classList.contains('show')) {
@@ -1360,8 +1360,8 @@ topbarRepoMenuTerminal.addEventListener("click", (event) => {
 topbarRepoMenuExplorer.addEventListener("click", (event) => {
     event.stopPropagation();
     if (currentRepoPath) {
-        sendIpcMessage("REPO_EXPLORER", {
-            "repoPath": currentRepoPath
+        sendIpcMessage("EXPLORER_OPEN", {
+            "path": currentRepoPath
         });
     }
     closeDropdowns();
@@ -1524,8 +1524,8 @@ repoItemMenuExplorer.addEventListener("click", (event) => {
 
     const pathToRepo = repoItemContextMenu.dataset.targetPath;
     if (pathToRepo) {
-        sendIpcMessage("REPO_EXPLORER", {
-            "repoPath": pathToRepo
+        sendIpcMessage("EXPLORER_OPEN", {
+            "path": pathToRepo
         });
     }
     closeDropdowns();
@@ -1576,7 +1576,16 @@ changesItemMenuCopyAbsPath.addEventListener("click", (event) => {
     event.stopPropagation();
     const filePath = changesItemContextMenu.dataset.targetPath;
     if (filePath) {
-        const absPath = `${currentRepoPath}\\${filePath}`.replace(/\\\\/g, '\\');
+        let absPath = `${currentRepoPath}/${filePath}`;
+
+        const isWindows = currentRepoPath.includes('\\');
+
+        if (isWindows) {
+            absPath = absPath.replace(/\//g, '\\').replace(/\\\\/g, '\\');
+        } else {
+            absPath = absPath.replace(/\\/g, '/').replace(/\/\//g, '/');
+        }
+
         navigator.clipboard.writeText(absPath).then(() => console.log(`Copied '${absPath}'`));
     }
     closeDropdowns();
@@ -1595,9 +1604,12 @@ changesItemMenuExplorer.addEventListener("click", (event) => {
     event.stopPropagation();
     const filePath = changesItemContextMenu.dataset.targetPath;
     if (filePath) {
-        sendIpcMessage("CHANGE_EXPLORER", {
-            repoPath: currentRepoPath,
-            filePath: filePath
+        let rawPath = `${currentRepoPath}/${filePath}`;
+        let lastSlashIndex = rawPath.lastIndexOf('/');
+        let dirPath = rawPath.substring(0, lastSlashIndex);
+
+        sendIpcMessage("EXPLORER_OPEN", {
+            path: dirPath
         });
     }
     closeDropdowns();
@@ -1609,7 +1621,7 @@ historyItemMenuCheckout.addEventListener("click", (event) => {
     if (hash) {
         sendIpcMessage("HISTORY_CHECKOUT", {
             repoPath: currentRepoPath,
-            filePath: filePath
+            commitHash: hash
         });
     }
     closeDropdowns();
@@ -1621,7 +1633,7 @@ historyItemMenuRevert.addEventListener("click", (event) => {
     if (hash) {
         sendIpcMessage("HISTORY_REVERT", {
             repoPath: currentRepoPath,
-            filePath: filePath
+            commitHash: hash
         });
     }
     closeDropdowns();
@@ -1633,7 +1645,7 @@ historyItemMenuCreateBranch.addEventListener("click", (event) => {
     if (hash) {
         sendIpcMessage("HISTORY_BRANCH_CREATE", {
             repoPath: currentRepoPath,
-            filePath: filePath
+            commitHash: hash
         });
     }
     closeDropdowns();
@@ -1800,7 +1812,7 @@ repoCreateModalBrowseBtn.addEventListener("click", (event) => {
 
     activeBrowseInput = repoCreateModalInputPath;
 
-    sendIpcMessage("OPEN_EXPLORER_DIALOG");
+    sendIpcMessage("EXPLORER_OPEN_DIALOG");
 });
 
 repoAddModalBrowseBtn.addEventListener("click", (event) => {
@@ -1808,7 +1820,7 @@ repoAddModalBrowseBtn.addEventListener("click", (event) => {
 
     activeBrowseInput = repoAddModalInputPath;
 
-    sendIpcMessage("OPEN_EXPLORER_DIALOG");
+    sendIpcMessage("EXPLORER_OPEN_DIALOG");
 });
 
 // Search & Selection Setup (dropdowns)
