@@ -236,6 +236,13 @@ window.external.receiveMessage(message => {
             renderFileDiff(data.Payload.diffText, detailsContent, detailsBodyWrapper, detailsScrollbar);
             break;
 
+        case "CHANGE_DISCARDED":
+            break;
+
+        case "CHANGE_IGNORED":
+            processFileChanges(data.Payload);
+            break;
+
         default:
             console.warn("Unknown action received: ", data.Action);
     }
@@ -1556,9 +1563,10 @@ changesItemMenuIgnoreFile.addEventListener("click", (event) => {
     event.stopPropagation();
     const filePath = changesItemContextMenu.dataset.targetPath;
     if (filePath) {
-        sendIpcMessage("CHANGE_IGNORE_FILE", {
+        sendIpcMessage("CHANGE_IGNORE", {
             repoPath: currentRepoPath,
-            filePath: filePath
+            filePath: filePath,
+            ignoreType: "file"
         });
     }
     closeDropdowns();

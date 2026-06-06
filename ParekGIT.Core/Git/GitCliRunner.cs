@@ -3,18 +3,19 @@ using CliWrap.Buffered;
 using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ParekGIT.Core.Git
 {
     public class GitCliRunner : IGitRunner
     {
-        public async Task<string> ExecuteCommandAsync(string repositoryPath, string arguments)
+        public async Task<string> ExecuteCommandAsync(string repoPath, string arguments)
         {
             try
             {
                 var result = await Cli.Wrap("git")
                     .WithArguments(arguments)
-                    .WithWorkingDirectory(repositoryPath)
+                    .WithWorkingDirectory(repoPath)
                     .WithValidation(CommandResultValidation.None)
                     .ExecuteBufferedAsync();
 
@@ -32,43 +33,43 @@ namespace ParekGIT.Core.Git
         }
 
         // Parsers
-        public async Task<IEnumerable<GitBranch>> GetBranchesAsync(string repositoryPath)
+        public async Task<IEnumerable<GitBranch>> GetBranchesAsync(string repoPath)
         {
             string arguments = "branch --all --format=\"%(refname:short)|%(HEAD)|%(upstream:short)|%(objectname)\"";
 
-            string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
+            string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
             return GitBranchParser.Parse(rawOutput);
         }
 
-        public async Task<IEnumerable<GitFileStatus>> GetStatusAsync(string repositoryPath)
+        public async Task<IEnumerable<GitFileStatus>> GetStatusAsync(string repoPath)
         {
             string arguments = "status --porcelain -uall";
 
-            string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
+            string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
             return GitStatusParser.Parse(rawOutput);
         }
 
-        public async Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repositoryPath, string branchName, int limit = 50)
+        public async Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int limit = 50)
         {
             string arguments = $"log \"{branchName}\" -n {limit} --pretty=format:\"%H|%s|%an|%ar\"";
 
-            string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
+            string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
             return GitHistoryParser.Parse(rawOutput);
         }
 
-        public async Task<string> GetFileDiffAsync(string repositoryPath, string filePath)
+        public async Task<string> GetFileDiffAsync(string repoPath, string filePath)
         {
             string arguments = $"diff HEAD -- \"{filePath}\"";
 
-            string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
+            string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
             // If empty, must be untracked file (read directly)
             if (string.IsNullOrWhiteSpace(rawOutput))
             {
-                string fullPath = Path.Combine(repositoryPath, filePath);
+                string fullPath = Path.Combine(repoPath, filePath);
                 if (File.Exists(fullPath))
                 {
                     string rawText = await File.ReadAllTextAsync(fullPath);
@@ -81,11 +82,11 @@ namespace ParekGIT.Core.Git
             return rawOutput;
         }
 
-        public async Task<CommitDetailsResult>  GetCommitDetailsAsync(string repositoryPath, string hash)
+        public async Task<CommitDetailsResult>  GetCommitDetailsAsync(string repoPath, string hash)
         {
             string arguments = $"show --name-status --format=\"%an%n%s\" {hash}";
 
-            string rawOutput = await ExecuteCommandAsync(repositoryPath, arguments);
+            string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
             var lines = rawOutput.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -112,28 +113,132 @@ namespace ParekGIT.Core.Git
             };
         }
 
-        public async Task<string> GetHistoryFileDiffAsync(string repositoryPath, string commitHash, string filePath)
+        public async Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath)
         {
             string arguments = $"show --format= {commitHash} -- \"{filePath}\"";
 
-            return await ExecuteCommandAsync(repositoryPath, arguments);
+            return await ExecuteCommandAsync(repoPath, arguments);
         }
 
         // Commands
-        public async Task CheckoutBranchAsync(string repositoryPath, string branchName, bool isRemote)
+        public async Task CheckoutBranchAsync(string repoPath, string branchName, bool isRemote)
         {
             string arguments = isRemote
                 ? $"checkout -t \"{branchName}\""
                 : $"checkout \"{branchName}\"";
 
-            await ExecuteCommandAsync(repositoryPath, arguments);
+            await ExecuteCommandAsync(repoPath, arguments);
         }
 
-        public async Task CreateBranchAsync(string repositoryPath, string branchName)
+        public async Task CreateBranchAsync(string repoPath, string branchName)
         {
             string arguments = $"checkout -b \"{branchName}\"";
 
-            await ExecuteCommandAsync(repositoryPath, arguments);
+            await ExecuteCommandAsync(repoPath, arguments);
+        }
+
+        public async Task CommitAsync(string repoPath, string message, string desc, IEnumerable<string> files)
+        {
+            if (files == null) { return; }
+
+            // Unstage everything
+            await ExecuteCommandAsync(repoPath, "reset");
+
+            // Stage selected files
+            string fileArgs = string.Join(" ", files.Select(file => $"\"{file}\""));
+            await ExecuteCommandAsync(repoPath, $"add -- {fileArgs}");
+
+            // Prepare commit command
+            string safeMessage = message.Replace("\"", "\\\"");
+            string commitArgs = $"commit -m \"{safeMessage}\"";
+
+            // Add description if typed in
+            if (!string.IsNullOrWhiteSpace(desc))
+            {
+                string safeDescription = desc.Replace("\"", "\\\"");
+                commitArgs += $" -m \"{safeDescription}\"";
+            }
+
+            await ExecuteCommandAsync(repoPath, commitArgs);
+        }
+
+        public async Task RenameBranchAsync(string repoPath, string oldName, string newName)
+        {
+            string arguments = $"branch -m {oldName} {newName}";
+
+            await ExecuteCommandAsync(repoPath, arguments);
+        }
+
+        public async Task DeleteBranchAsync(string repoPath, string branchName)
+        {
+            string arguments = $"branch -d {branchName}";
+
+            await ExecuteCommandAsync(repoPath, arguments);
+        }
+
+        public async Task FetchRepositoryAsync(string repoPath)
+        {
+            string arguments = "fetch --all --prune";
+
+            await ExecuteCommandAsync(repoPath, arguments);
+        }
+
+        public async Task DiscardChangeAsync(string repoPath, string filePath)
+        {
+            string statusArgs = $"status --porcelain -- \"{filePath}\"";
+            string statusOutput = await ExecuteCommandAsync(repoPath, statusArgs);
+            if (string.IsNullOrWhiteSpace(statusOutput)) { return; }
+
+            string statusCode = statusOutput.Length >= 2 ? statusOutput.Substring(0, 2) : "";
+            if (statusCode == "??")
+            { 
+                await ExecuteCommandAsync(repoPath, $"clean -f -- \"{filePath}\"");
+            }
+            else if (statusCode.StartsWith("A"))
+            { 
+                await ExecuteCommandAsync(repoPath, $"restore --staged -- \"{filePath}\"");
+                await ExecuteCommandAsync(repoPath, $"clean -f -- \"{filePath}\"");
+            }
+            else // Modified/Deleted
+            { 
+                await ExecuteCommandAsync(repoPath, $"restore --staged --worktree -- \"{filePath}\"");
+            }
+        }
+
+        public async Task IgnoreFileAsync(string repoPath, string filePath)
+        {
+            string gitignorePath = Path.Combine(repoPath, ".gitignore");
+            string normalizedFilePath = filePath.Replace("\\", "/");
+
+            bool alreadyIgnored = false;
+            if (File.Exists(gitignorePath))
+            {
+                var lines = await File.ReadAllLinesAsync(gitignorePath);
+                alreadyIgnored = lines.Any(lines => lines.Trim() == normalizedFilePath);
+            }
+
+            if (!alreadyIgnored)
+            {
+                string contentToAppend = File.Exists(gitignorePath) && new FileInfo(gitignorePath).Length > 0
+                    ? Environment.NewLine + normalizedFilePath
+                    : normalizedFilePath;
+
+                await File.AppendAllTextAsync(gitignorePath, contentToAppend + Environment.NewLine);
+            }
+
+            string arguments = $"rm --cached --ignore-unmatch -- \"{filePath}\"";
+
+            await ExecuteCommandAsync(repoPath, arguments);
+        }
+
+        public async Task IgnoreFolderAsync(string repoPath, string filePath) 
+        {
+            await Task.CompletedTask;
+        }
+
+        public async Task IgnoreExtensionAsync(string repoPath, string filePath) 
+        {
+            await Task.CompletedTask;
         }
 
         public async Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license)
@@ -170,52 +275,6 @@ namespace ParekGIT.Core.Git
                 AbsolutePath = fullPath,
                 LastAccessed = DateTime.UtcNow
             };
-        }
-
-        public async Task CommitAsync(string repoPath, string message, string desc, IEnumerable<string> files)
-        {
-            if (files == null) { return; }
-
-            // Unstage everything
-            await ExecuteCommandAsync(repoPath, "reset");
-
-            // Stage selected files
-            string fileArgs = string.Join(" ", files.Select(file => $"\"{file}\""));
-            await ExecuteCommandAsync(repoPath, $"add -- {fileArgs}");
-
-            // Prepare commit command
-            string safeMessage = message.Replace("\"", "\\\"");
-            string commitArgs = $"commit -m \"{safeMessage}\"";
-
-            // Add description if typed in
-            if (!string.IsNullOrWhiteSpace(desc))
-            {
-                string safeDescription = desc.Replace("\"", "\\\"");
-                commitArgs += $" -m \"{safeDescription}\"";
-            }
-
-            await ExecuteCommandAsync(repoPath, commitArgs);
-        }
-
-        public async Task RenameBranchAsync(string repositoryPath, string oldName, string newName)
-        {
-            string arguments = $"branch -m {oldName} {newName}";
-
-            await ExecuteCommandAsync(repositoryPath, arguments);
-        }
-
-        public async Task DeleteBranchAsync(string repositoryPath, string branchName)
-        {
-            string arguments = $"branch -d {branchName}";
-
-            await ExecuteCommandAsync(repositoryPath, arguments);
-        }
-
-        public async Task FetchRepositoryAsync(string repositoryPath)
-        {
-            string arguments = "fetch --all --prune";
-
-            await ExecuteCommandAsync(repositoryPath, arguments);
         }
 
         // Helpers

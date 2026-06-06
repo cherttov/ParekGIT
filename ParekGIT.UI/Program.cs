@@ -59,6 +59,9 @@ namespace ParekGIT.UI
             router.RegisterHandler(new HistoryFileDiffHandler(window, gitRunner));
             router.RegisterHandler(new CommitDetailsHandler(window, gitRunner));
 
+            router.RegisterHandler(new ChangeDiscardHandler(window, gitRunner));
+            router.RegisterHandler(new ChangeIgnoreHandler(window, gitRunner));
+
             router.RegisterHandler(new ExplorerDialogHandler(window));            
 
             window.RegisterWebMessageReceivedHandler(router.HandleMessage);
