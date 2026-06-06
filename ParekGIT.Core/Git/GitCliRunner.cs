@@ -241,6 +241,51 @@ namespace ParekGIT.Core.Git
             await Task.CompletedTask;
         }
 
+        public async Task CheckoutCommitAsync(string repoPath, string commitHash)
+        {
+            var status = await GetStatusAsync(repoPath);
+
+            if (status.Any())
+            {
+                throw new Exception("Uncommitted changes are present [CheckoutCommitAsync]");
+            }
+
+            string arguments = $"checkout --detach {commitHash}";
+
+            await ExecuteCommandAsync(repoPath, arguments);
+        }
+
+        public async Task RevertCommitAsync(string repoPath, string commitHash)
+        {
+            var status = await GetStatusAsync(repoPath);
+            if (status.Any())
+            {
+                throw new Exception("Uncommitted changes are present [RevertCommitAsync]");
+            }
+
+            try
+            {
+                // Revert
+                string arguments = $"revert --no-edit {commitHash}";
+
+                await ExecuteCommandAsync(repoPath, arguments);
+            }
+            catch (Exception ex)
+            {
+                // Merge conflict
+                if (ex.Message.Contains("conflict", StringComparison.OrdinalIgnoreCase) ||
+                    ex.Message.Contains("could not revert", StringComparison.OrdinalIgnoreCase))
+                {
+                    await ExecuteCommandAsync(repoPath, "revert --abort");
+
+                    throw new Exception("Merge conflict while reverting changes [RevertCommitAsync]");
+                }
+
+                // Random errors
+                throw;
+            }
+        }
+
         public async Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license)
         {
             // Create & check directory

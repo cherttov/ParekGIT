@@ -177,7 +177,7 @@ window.external.receiveMessage(message => {
             break;
 
         case "BRANCH_LOADED":
-            loadBranchesIntoDropdown(data.Payload); // temporary
+            loadBranchesIntoDropdown(data.Payload); // TEMPORARY
             break;
 
         case "REPO_CREATED":
@@ -236,11 +236,17 @@ window.external.receiveMessage(message => {
             renderFileDiff(data.Payload.diffText, detailsContent, detailsBodyWrapper, detailsScrollbar);
             break;
 
-        case "CHANGE_DISCARDED":
+        case "CHANGE_DISCARDED": // FINISH
             break;
 
         case "CHANGE_IGNORED":
-            processFileChanges(data.Payload);
+            processFileChanges(data.Payload); // REVISIT
+            break;
+
+        case "HISTORY_CHECKED_OUT": // FINISH
+            break;
+
+        case "HISTORY_REVERT_RESULT": // FINISH
             break;
 
         default:
@@ -1639,11 +1645,11 @@ historyItemMenuRevert.addEventListener("click", (event) => {
     closeDropdowns();
 });
 
-historyItemMenuCreateBranch.addEventListener("click", (event) => {
+historyItemMenuCreateBranch.addEventListener("click", (event) => { // FINISH
     event.stopPropagation();
     const hash = historyItemContextMenu.dataset.targetHash;
     if (hash) {
-        sendIpcMessage("HISTORY_BRANCH_CREATE", {
+        sendIpcMessage("HISTORY_BRANCH_CREATE", { // CHANGE: CONNECT TO MODAL THEN TO BACKEND
             repoPath: currentRepoPath,
             commitHash: hash
         });
