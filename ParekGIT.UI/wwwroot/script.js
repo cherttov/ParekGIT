@@ -157,6 +157,7 @@ let activeBrowseInput = null;
 let activeDetailsFile = "";
 let currentChangesCount = 0;
 let repoDrafts = {};
+let fetchStopRequested = false;
 
 // ------- IPC COMMUNICATION -------
 const sendIpcMessage = (action, payload = {}) => {
@@ -270,7 +271,7 @@ const updatePanelWidths = () => {
 
 const stopFetchAnimation = () => {
     const icon = fetchBtn.querySelector('.icon-fetch');
-    if (!icon) { return; }
+    if (!icon || !fetchBtn.classList.contains("fetching")) { return; }
 
     const currentTransform = window.getComputedStyle(icon).transform;
     fetchBtn.classList.remove("fetching");
@@ -624,6 +625,7 @@ function loadRepositoriesIntoDropdown(repositories) {
             sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
 
             branchBtn.classList.remove("disabled");
+            mergeBtn.classList.remove("disabled");
             fetchBtn.classList.remove("disabled");
         });
 
@@ -756,6 +758,7 @@ function deleteRepoFromDropdown(repository) {
         if (repoBtnValue) { repoBtnValue.textContent = "None"; }
 
         branchBtn.classList.add("disabled");
+        mergeBtn.classList.add("disabled");
         fetchBtn.classList.add("disabled");
 
         const branchBtnValue = branchBtn.querySelector('.btn-value');
@@ -1117,6 +1120,12 @@ document.addEventListener('wheel', (event) => {
 }, { passive: false });
 
 // Left sidebar buttons (left-sidebar)
+mergeBtn.addEventListener("click", () => {
+    if (!currentRepoPath || !currentBranch) { return; }
+
+    // open branch merge modal
+});
+
 fetchBtn.addEventListener("click", () => {
     if (!currentRepoPath || fetchBtn.classList.contains("fetching")) { return; }
 
@@ -1428,6 +1437,18 @@ topbarBranchMenuCopy.addEventListener("click", (event) => {
     }
 });
 
+topbarBranchMenuMerge.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeDropdowns();
+    if (!currentRepoPath || !currentBranch) { return; }
+
+    // show branch merge modal
+
+    setTimeout(() => {
+
+    }, 100);
+});
+
 topbarBranchMenuRename.addEventListener("click", (event) => {
     event.stopPropagation();
     closeDropdowns();
@@ -1489,6 +1510,18 @@ branchItemMenuCopy.addEventListener("click", (event) => {
         }).catch(err => {
             console.error("Failed to copy text: ", err);
         });
+    }
+
+    branchItemContextMenu.classList.remove("show");
+    closeDropdowns();
+});
+
+branchItemMenuMerge.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const branchName = branchItemContextMenu.dataset.targetName;
+
+    if (branchName) {
+        // show branch merge modal
     }
 
     branchItemContextMenu.classList.remove("show");
