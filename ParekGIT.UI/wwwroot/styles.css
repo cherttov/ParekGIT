@@ -393,6 +393,8 @@ body, html {
 
 .icon-file { mask-image: url('assets/icons/materials_file_copy.svg'); }
 
+.icon-merge { mask-image: url('assets/icons/materials_merge_type.svg'); }
+
 .icon-branches { mask-image: url('assets/icons/materials_alt_route.svg'); }
 
 .icon-analytics { mask-image: url('assets/icons/materials_bar_chart.svg'); }

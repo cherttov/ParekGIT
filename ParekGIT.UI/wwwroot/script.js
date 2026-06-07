@@ -18,7 +18,8 @@ const backdrop = document.getElementById("dropdown-backdrop");
 const leftSidebar = document.getElementById("left-sidebar");
 
 const fileBtn = leftSidebar.querySelector(".btn-file");
-const brachesBtn = leftSidebar.querySelector(".btn-branches");
+const mergeBtn = leftSidebar.querySelector(".btn-merge");
+const branchesBtn = leftSidebar.querySelector(".btn-branches");
 const analyticsBtn = leftSidebar.querySelector(".btn-analytics");
 const todoBtn = leftSidebar.querySelector(".btn-todo");
 const fetchBtn = leftSidebar.querySelector(".btn-fetch");
@@ -115,6 +116,7 @@ const repoItemMenuRemove = repoItemContextMenu.querySelector(".context-menu-item
 const branchItemContextMenu = document.getElementById("branch-item-context-menu");
 const branchItemMenuRename = branchItemContextMenu.querySelector(".context-menu-item.item-rename");
 const branchItemMenuCopy = branchItemContextMenu.querySelector(".context-menu-item.item-copy");
+const branchItemMenuMerge = branchItemContextMenu.querySelector(".context-menu-item.item-merge");
 const branchItemMenuDelete = branchItemContextMenu.querySelector(".context-menu-item.item-delete");
 
 const topbarRepoContextMenu = document.getElementById("topbar-repo-context-menu");
@@ -129,6 +131,7 @@ const topbarBranchContextMenu = document.getElementById("topbar-branch-context-m
 const topbarBranchMenuNew = topbarBranchContextMenu.querySelector(".context-menu-item.item-new");
 const topbarBranchMenuRename = topbarBranchContextMenu.querySelector(".context-menu-item.item-rename");
 const topbarBranchMenuCopy = topbarBranchContextMenu.querySelector(".context-menu-item.item-copy");
+const topbarBranchMenuMerge = topbarBranchContextMenu.querySelector(".context-menu-item.item-merge");
 const topbarBranchMenuDelete = topbarBranchContextMenu.querySelector(".context-menu-item.item-delete");
 
 const changesItemContextMenu = document.getElementById("changes-item-context-menu");
@@ -1901,8 +1904,16 @@ setupSelection('#branch-dropdown-panel', '#branches-container .btn-value');
 // ------- APP INIT -------
 updatePanelWidths();
 
-branchBtn.classList.add("disabled"); // change to load last selected repo automatically
+fileBtn.classList.add("disabled");
+mergeBtn.classList.add("disabled");
+branchesBtn.classList.add("disabled");
+analyticsBtn.classList.add("disabled");
+todoBtn.classList.add("disabled");
 fetchBtn.classList.add("disabled");
+settingsBtn.classList.add("disabled");
+accountBtn.classList.add("disabled");
+
+branchBtn.classList.add("disabled"); // change to load last selected repo automatically
 
 switchToChangesTab();
 toggleCommitButton();
