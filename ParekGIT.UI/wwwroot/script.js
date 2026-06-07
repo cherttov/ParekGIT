@@ -857,8 +857,8 @@ function renderChangedFiles(files) {
         `
 
         // LMB - Change item clicking
-        const leftArea = item.querySelector(".change-item-left");
-        leftArea.addEventListener("click", () => {
+        item.addEventListener("click", (event) => {
+            if (event.target.classList.contains("changes-item-checkbox")) { return; }
             if (item.classList.contains("selected")) { return; }
 
             document.querySelectorAll(".change-item").forEach(el => el.classList.remove("selected"));
@@ -879,7 +879,7 @@ function renderChangedFiles(files) {
         });
 
         // RMB - Change item context menu
-        leftArea.addEventListener("contextmenu", (event) => {
+        item.addEventListener("contextmenu", (event) => {
             event.preventDefault();
             event.stopPropagation();
             closeDropdowns();
@@ -887,7 +887,7 @@ function renderChangedFiles(files) {
             changesItemContextMenu.dataset.targetPath = file.Path;
 
             document.querySelectorAll(".change-item").forEach(el => el.classList.remove("context-active"));
-            item.classList.add("show");
+            item.classList.add("context-active");
 
             changesItemContextMenu.classList.add("show");
             placeContextMenu(event, changesItemContextMenu);
@@ -907,7 +907,9 @@ function processCommit() {
 
     saveDraft();
 
+    resetDiffViewer();
     toggleCommitButton();
+    resetDetailsViewer();
 
     if (currentRepoPath) {
         sendIpcMessage("GET_REPO_STATUS", { repoPath: currentRepoPath });
@@ -1192,10 +1194,29 @@ document.querySelectorAll('.dropdown-panel, .context-menu').forEach(panel => {
 });
 
 // Resizer logic (split-container)
-window.addEventListener('resize', updatePanelWidths);
+window.addEventListener('resize', () => {
+    const mainCSS = window.getComputedStyle(mainContent);
+    const minMainWidth = parseInt(mainCSS.minWidth) || 360;
+
+    const rightCSS = window.getComputedStyle(rightSidebar);
+    const fallbackMinRight = parseInt(rightCSS.minWidth) || 192;
+
+    const currentMaxRightWidth = window.innerWidth - leftSidebar.offsetWidth - minMainWidth - resizer.offsetWidth;
+    let currentRightWidth = parseInt(rightCSS.width);
+
+    if (currentRightWidth > currentMaxRightWidth) {
+        const safeWidth = Math.max(fallbackMinRight, currentMaxRightWidth);
+        rightSidebar.style.width = `${safeWidth}px`;
+        branchContainer.style.width = `${safeWidth}px`;
+    }
+
+    updatePanelWidths();
+    closeDropdowns();
+});
 
 resizer.addEventListener("mousedown", (event) => {
     isResizing = true;
+    closeDropdowns();
 
     const rightCSS = window.getComputedStyle(rightSidebar);
     const mainCSS = window.getComputedStyle(mainContent);
