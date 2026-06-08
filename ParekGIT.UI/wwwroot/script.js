@@ -81,6 +81,9 @@ const branchRenameModalConfirmBtn = branchRenameModal.querySelector(".confirm-mo
 const branchDeleteModal = document.getElementById("branch-delete-modal");
 const branchDeleteModalConfirmBtn = branchDeleteModal.querySelector(".confirm-modal-btn");
 
+const branchMergeModal = document.getElementById("branch-merge-modal");
+const branchMergeModalConfirmBtn = branchMergeModal.querySelector(".confirm-modal-btn");
+
 const repoCloneModal = document.getElementById("repo-clone-modal");
 const repoCloneModalConfirmBtn = repoCloneModal.querySelector(".confirm-modal-btn");
 
@@ -1123,7 +1126,12 @@ document.addEventListener('wheel', (event) => {
 mergeBtn.addEventListener("click", () => {
     if (!currentRepoPath || !currentBranch) { return; }
 
-    // open branch merge modal
+    branchMergeModal.dataset.targetName = currentBranch;
+    branchMergeModal.classList.add("show");
+
+    setTimeout(() => {
+        // FINISH
+    }, 100);
 });
 
 fetchBtn.addEventListener("click", () => {
@@ -1442,10 +1450,11 @@ topbarBranchMenuMerge.addEventListener("click", (event) => {
     closeDropdowns();
     if (!currentRepoPath || !currentBranch) { return; }
 
-    // show branch merge modal
+    branchMergeModal.dataset.targetName = currentBranch;
+    branchMergeModal.classList.add("show");
 
     setTimeout(() => {
-
+        // FINISH
     }, 100);
 });
 
@@ -1521,7 +1530,12 @@ branchItemMenuMerge.addEventListener("click", (event) => {
     const branchName = branchItemContextMenu.dataset.targetName;
 
     if (branchName) {
-        // show branch merge modal
+        branchMergeModal.dataset.targetName = branchName;
+        branchMergeModal.classList.add("show");
+
+        setTimeout(() => {
+            // FINISH
+        }, 100);
     }
 
     branchItemContextMenu.classList.remove("show");
@@ -1798,6 +1812,16 @@ branchDeleteModalConfirmBtn.addEventListener("click", () => {
     });
 
     closeAndClearModal(branchDeleteModal);
+});
+
+branchMergeModalConfirmBtn.addEventListener("click", () => { // FINISH
+    // get what branches to merge
+
+    // check if not null
+
+    // send IPC message
+
+    closeAndClearModal(branchmergeModal);
 });
 
 repoCloneModalConfirmBtn.addEventListener("click", () => {
