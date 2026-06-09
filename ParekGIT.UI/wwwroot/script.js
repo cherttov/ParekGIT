@@ -82,6 +82,10 @@ const branchDeleteModal = document.getElementById("branch-delete-modal");
 const branchDeleteModalConfirmBtn = branchDeleteModal.querySelector(".confirm-modal-btn");
 
 const branchMergeModal = document.getElementById("branch-merge-modal");
+const branchMergeModalSourceLabel = document.getElementById("merge-modal-source-branch");
+const branchMergeModalTargetLabel = document.getElementById("merge-modal-target-branch");
+const branchMergeModalSelectSource = document.getElementById("merge-modal-select-source");
+const branchMergeModalSelectTarget = document.getElementById("merge-modal-select-target");
 const branchMergeModalConfirmBtn = branchMergeModal.querySelector(".confirm-modal-btn");
 
 const repoCloneModal = document.getElementById("repo-clone-modal");
@@ -428,6 +432,16 @@ const validateRepoAddModal = () => {
     repoAddModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
+const validateBranchMergeModal = () => {
+    const sourceBranch = branchMergeModalSelectSource.value;
+    const targetBranch = branchMergeModalSelectTarget.value;
+
+    const isValid = sourceBranch !== "" && targetBranch !== "" && sourceBranch !== targetBranch;
+
+    branchMergeModalConfirmBtn.classList.toggle("disabled", !isValid);
+    branchMergeModalConfirmBtn.disabled = !isValid;
+};
+
 // Changes header checkbox updater
 const updateMasterCheckboxState = () => {
     const allFileCheckboxes = Array.from(document.querySelectorAll(".changes-item-checkbox"));
@@ -542,6 +556,51 @@ const escapeHtml = (unsafeText) => {
         .replace(/'/g, "&#039");
 };
 
+// Merge modal helper
+const setupMergeModal = (preselectedTarget) => {
+    branchMergeModalSelectSource.innerHTML = "";
+    branchMergeModalSelectTarget.innerHTML = "";
+
+    const defaultSourceOption = document.createElement("option");
+    defaultSourceOption.value = "";
+    defaultSourceOption.textContent = "Select source...";
+    defaultSourceOption.disabled = true;
+    defaultSourceOption.selected = true;
+    branchMergeModalSelectSource.appendChild(defaultSourceOption);
+
+    const branchItems = branchDropdown.querySelectorAll('.dropdown-item');
+    branchItems.forEach(item => {
+        const branchName = item.dataset.branchName;
+        if (!branchName) { return; }
+
+        const optionSource = document.createElement("option");
+        optionSource.value = branchName;
+        optionSource.textContent = branchName;
+        branchMergeModalSelectSource.appendChild(optionSource);
+
+        const optionTarget = document.createElement("option");
+        optionTarget.value = branchName;
+        optionTarget.textContent = branchName;
+        branchMergeModalSelectTarget.appendChild(optionTarget);
+    });
+
+    branchMergeModalSelectTarget.value = preselectedTarget || currentBranch;
+
+    branchMergeModalSourceLabel.textContent = "{ none }";
+    branchMergeModalTargetLabel.textContent = branchMergeModalSelectTarget.value;
+
+    branchMergeModalSelectSource.onchange = (e) => {
+        branchMergeModalSourceLabel.textContent = e.target.value;
+        validateBranchMergeModal();
+    };
+    branchMergeModalSelectTarget.onchange = (e) => {
+        branchMergeModalTargetLabel.textContent = e.target.value;
+        validateBranchMergeModal();
+    };
+
+    validateBranchMergeModal();
+};
+
 // C# - Load diff text
 function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget) {
     if (!diffText || diffText.trim() === "") {
@@ -628,6 +687,7 @@ function loadRepositoriesIntoDropdown(repositories) {
             sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
 
             branchBtn.classList.remove("disabled");
+            branchBtn.disabled = false;
             mergeBtn.classList.remove("disabled");
             fetchBtn.classList.remove("disabled");
         });
@@ -761,6 +821,7 @@ function deleteRepoFromDropdown(repository) {
         if (repoBtnValue) { repoBtnValue.textContent = "None"; }
 
         branchBtn.classList.add("disabled");
+        branchBtn.disabled = true;
         mergeBtn.classList.add("disabled");
         fetchBtn.classList.add("disabled");
 
@@ -801,6 +862,7 @@ function addRepositoryToDropdown(repo) {
         sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
         sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
         branchBtn.classList.remove("disabled");
+        branchBtn.disabled = false;
     });
 
     // RMB - context menu
@@ -1126,12 +1188,9 @@ document.addEventListener('wheel', (event) => {
 mergeBtn.addEventListener("click", () => {
     if (!currentRepoPath || !currentBranch) { return; }
 
+    setupMergeModal(currentBranch);
     branchMergeModal.dataset.targetName = currentBranch;
     branchMergeModal.classList.add("show");
-
-    setTimeout(() => {
-        // FINISH
-    }, 100);
 });
 
 fetchBtn.addEventListener("click", () => {
@@ -1450,12 +1509,9 @@ topbarBranchMenuMerge.addEventListener("click", (event) => {
     closeDropdowns();
     if (!currentRepoPath || !currentBranch) { return; }
 
+    setupMergeModal(currentBranch);
     branchMergeModal.dataset.targetName = currentBranch;
     branchMergeModal.classList.add("show");
-
-    setTimeout(() => {
-        // FINISH
-    }, 100);
 });
 
 topbarBranchMenuRename.addEventListener("click", (event) => {
@@ -1530,12 +1586,9 @@ branchItemMenuMerge.addEventListener("click", (event) => {
     const branchName = branchItemContextMenu.dataset.targetName;
 
     if (branchName) {
+        setupMergeModal(branchName);
         branchMergeModal.dataset.targetName = branchName;
         branchMergeModal.classList.add("show");
-
-        setTimeout(() => {
-            // FINISH
-        }, 100);
     }
 
     branchItemContextMenu.classList.remove("show");
@@ -1814,12 +1867,17 @@ branchDeleteModalConfirmBtn.addEventListener("click", () => {
     closeAndClearModal(branchDeleteModal);
 });
 
-branchMergeModalConfirmBtn.addEventListener("click", () => { // FINISH
-    // get what branches to merge
+branchMergeModalConfirmBtn.addEventListener("click", () => {
+    const sourceBranch = branchMergeModalSelectSource.value;
+    const targetBranch = branchMergeModalSelectTarget.value;
 
-    // check if not null
+    if (!sourceBranch || !targetBranch || !currentRepoPath || sourceBranch === targetBranch) { return; }
 
-    // send IPC message
+    sendIpcMessage("BRANCH_MERGE", {
+        repoPath: currentRepoPath,
+        sourceBranch: sourceBranch,
+        targetBranch: targetBranch
+    });
 
     closeAndClearModal(branchmergeModal);
 });
@@ -1967,10 +2025,21 @@ branchesBtn.classList.add("disabled");
 analyticsBtn.classList.add("disabled");
 todoBtn.classList.add("disabled");
 fetchBtn.classList.add("disabled");
-settingsBtn.classList.add("disabled");
-accountBtn.classList.add("disabled");
+settingsBtn.classList.add("disabled"); // FINISH
+accountBtn.classList.add("disabled"); // FINISH
 
 branchBtn.classList.add("disabled"); // change to load last selected repo automatically
+branchBtn.disabled = true;
+
+// FINISH
+repoMenuClone.classList.add("disabled");
+repoMenuClone.disabled = true;
+topbarRepoMenuClone.classList.add("disabled");
+topbarRepoMenuClone.disabled = true;
+
+// FINISH
+historyItemMenuCreateBranch.classList.add("disabled");
+historyItemMenuCreateBranch.disabled = true;
 
 switchToChangesTab();
 toggleCommitButton();

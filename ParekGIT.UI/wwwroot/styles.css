@@ -1126,6 +1126,35 @@ body, html {
     word-break: break-all;
 }
 
+.merge-branch-inline {
+    display: inline-block;
+    margin: 0 4px;
+}
+
+.merge-branch-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.merge-branch-selector .modal-select {
+    flex: 1;
+}
+
+.merge-arrow-icon {
+    width: 24px;
+    height: 24px;
+    background-color: var(--text-muted);
+    mask-image: url('assets/icons/materials_arrow_drop_down.svg');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    transform: rotate(-90deg);
+    flex-shrink: 0;
+}
+
 /* CONTEXT MENUS */
 .context-menu {
     display: flex;

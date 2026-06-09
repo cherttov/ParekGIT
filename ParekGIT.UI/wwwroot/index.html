@@ -207,8 +207,21 @@
 
                 <div class="modal-body">
                     <div class="modal-body-row">
-                        
+                        <label> Are you sure you want to merge
+                            <span class="highlight-name merge-branch-inline" id="merge-modal-source-branch">{ branch1 }</span>
+                            into 
+                            <span class="highlight-name merge-branch-inline" id="merge-modal-target-branch">{ branch2 }</span>
+                        </label>
                     </div>
+
+                    <div class="modal-body-row">
+                        <div class="merge-branch-selector">
+                            <select class="modal-input modal-select" id="merge-modal-select-source"></select>
+                            <div class="merge-arrow-icon"></div>
+                            <select class="modal-input modal-select" id="merge-modal-select-target"></select>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="modal-footer">
