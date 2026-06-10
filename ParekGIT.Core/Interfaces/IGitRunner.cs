@@ -26,7 +26,7 @@ namespace ParekGIT.Core.Interfaces
         Task IgnoreExtensionAsync(string repoPath, string filePath);
         Task CheckoutCommitAsync(string repoPath, string commitHash);
         Task RevertCommitAsync(string repoPath, string commitHash);
-
+        Task MergeBranchesAsync(string repoPath, string sourceBranch, string targetBranch);
         Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license);
     }
 }

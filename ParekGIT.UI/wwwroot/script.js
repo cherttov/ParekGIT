@@ -260,6 +260,10 @@ window.external.receiveMessage(message => {
         case "HISTORY_REVERT_RESULT": // FINISH
             break;
 
+        case "BRANCH_MERGE":
+            processBranchesMerged();
+            break;
+
         default:
             console.warn("Unknown action received: ", data.Action);
     }
@@ -1176,6 +1180,24 @@ function loadCommitDetails(details) {
     });
 }
 
+// C# - Branches merged handler
+function processBranchesMerged() {
+    resetDiffViewer();
+    resetDetailsViewer();
+
+    if (currentRepoPath) {
+        sendIpcMessage("GET_BRANCHES", { absolutePath: currentRepoPath });
+        sendIpcMessage("GET_REPO_STATUS", { repoPath: currentRepoPath });
+
+        if (currentBranch) {
+            sendIpcMessage("GET_BRANCH_HISTORY", {
+                repoPath: currentRepoPath,
+                branchName: currentBranch
+            });
+        }
+    }
+}
+
 // ------- EVENT LISTENERS -------
 // Global overrides
 document.addEventListener('wheel', (event) => {
@@ -1879,7 +1901,7 @@ branchMergeModalConfirmBtn.addEventListener("click", () => {
         targetBranch: targetBranch
     });
 
-    closeAndClearModal(branchmergeModal);
+    closeAndClearModal(branchMergeModal);
 });
 
 repoCloneModalConfirmBtn.addEventListener("click", () => {

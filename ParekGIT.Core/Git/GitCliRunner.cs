@@ -286,6 +286,34 @@ namespace ParekGIT.Core.Git
             }
         }
 
+        public async Task MergeBranchesAsync(string repoPath, string sourceBranch, string targetBranch)
+        {
+            var status = await GetStatusAsync(repoPath);
+            if (status.Any())
+            {
+                throw new Exception("Uncommitted changes are present [MergeBranchesAsync]");
+            }
+
+            await ExecuteCommandAsync(repoPath, $"checkout \"{targetBranch}\"");
+
+            try
+            {
+                await ExecuteCommandAsync(repoPath, $"merge \"{sourceBranch}\"");
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("conflict", StringComparison.OrdinalIgnoreCase) ||
+                    ex.Message.Contains("merge failed", StringComparison.OrdinalIgnoreCase))
+                {
+                    await ExecuteCommandAsync(repoPath, "merge --abort");
+
+                    throw new Exception($"Merge conflict occured while merging '{sourceBranch}' -> '{targetBranch}'. Merge aborted.");
+                }
+
+                throw;
+            }
+        }
+
         public async Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license)
         {
             // Create & check directory
