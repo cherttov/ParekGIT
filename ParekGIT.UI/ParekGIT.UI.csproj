@@ -7,11 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-    <Version>0.5.0</Version>
-    <FileVersion>0.5.0</FileVersion>
+    <Version>1.0.0-alpha.1</Version>
+    <FileVersion>1.0.0</FileVersion>
     <AssemblyName>ParekGIT</AssemblyName>
     <AssemblyTitle>ParekGIT</AssemblyTitle>
-    <AssemblyVersion>0.5.0</AssemblyVersion>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
     <Product>ParekGIT</Product>
     <Company>cherttov</Company>
     <Description>ParekGIT</Description>
