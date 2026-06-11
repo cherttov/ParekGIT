@@ -1,18 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <Platforms>AnyCPU</Platforms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <Version>0.5.0</Version>
+    <FileVersion>0.5.0</FileVersion>
+    <AssemblyName>ParekGIT</AssemblyName>
+    <AssemblyTitle>ParekGIT</AssemblyTitle>
+    <AssemblyVersion>0.5.0</AssemblyVersion>
+    <Product>ParekGIT</Product>
+    <Company>cherttov</Company>
+    <Description>ParekGIT</Description>
+    
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <EnableDefaultContent>false</EnableDefaultContent>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\**" />
-    <None Update="wwwroot\**">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Content Include="wwwroot/**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   
   <ItemGroup>
@@ -24,5 +37,13 @@
     <ProjectReference Include="..\ParekGIT.Data\ParekGIT.Data.csproj" />
     <ProjectReference Include="..\ParekGIT.Bridge\ParekGIT.Bridge.csproj" />
   </ItemGroup>
+
+  <Target AfterTargets="Publish" Name="MovePublishedSingleFile">
+    <ItemGroup>
+      <PublishFile Include="$(PublishDir)\*" />
+    </ItemGroup>
+
+    <Move SourceFiles="@(PublishFile)" DestinationFolder="$(ProjectDir)\publish\build\$(AssemblyName).$(Version).$(RuntimeIdentifier)" />
+  </Target>
 
 </Project>
