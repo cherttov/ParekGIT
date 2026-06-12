@@ -109,6 +109,9 @@ const repoRemoveModalName = document.getElementById("remove-modal-repo-name");
 const repoRemoveModalLocalCheckbox = repoRemoveModal.querySelector(".ui-checkbox");
 const repoRemoveModalConfirmBtn = repoRemoveModal.querySelector(".confirm-modal-btn");
 
+const errorModal = document.getElementById("error-modal");
+const errorModalMessage = document.getElementById("error-modal-message")
+
 // Context menus
 const repoContextMenu = document.getElementById("repo-context-menu");
 const repoMenuClone = repoContextMenu.querySelector(".context-menu-item.item-clone");
@@ -260,8 +263,12 @@ window.external.receiveMessage(message => {
         case "HISTORY_REVERT_RESULT": // FINISH
             break;
 
-        case "BRANCH_MERGE":
+        case "BRANCH_MERGED":
             processBranchesMerged();
+            break;
+
+        case "APP_ERROR":
+            showErrorModal(data.Payload.message);
             break;
 
         default:
@@ -1196,6 +1203,12 @@ function processBranchesMerged() {
             });
         }
     }
+}
+
+// C# - Handle backend errors
+function showErrorModal(message) {
+    errorModalMessage.textContent = message || "An unknown error occured.";
+    errorModal.classList.add("show");
 }
 
 // ------- EVENT LISTENERS -------

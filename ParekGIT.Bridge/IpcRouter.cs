@@ -37,6 +37,13 @@ namespace ParekGIT.Bridge.Ipc
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to process IPC Message: {ex.Message}");
+
+                var error = new IpcMessage
+                {
+                    Action = "APP_ERROR",
+                    Payload = JsonSerializer.SerializeToElement(new { message = ex.Message })
+                };
+                window.SendWebMessage(JsonSerializer.Serialize(error));
             }
         }
     }

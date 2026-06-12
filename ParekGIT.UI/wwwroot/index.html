@@ -207,9 +207,10 @@
 
                 <div class="modal-body">
                     <div class="modal-body-row">
-                        <label> Are you sure you want to merge
+                        <label>
+                            Are you sure you want to merge
                             <span class="highlight-name merge-branch-inline" id="merge-modal-source-branch">{ branch1 }</span>
-                            into 
+                            into
                             <span class="highlight-name merge-branch-inline" id="merge-modal-target-branch">{ branch2 }</span>
                         </label>
                     </div>
@@ -350,6 +351,28 @@
                 <div class="modal-footer">
                     <button class="confirm-modal-btn">Remove</button>
                     <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="modal-backdrop" id="error-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Error</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="modal-body-row">
+                        <pre id="error-modal-message"></pre>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="cancel-modal-btn">Close</button>
                 </div>
 
             </div>
