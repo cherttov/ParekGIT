@@ -1,13 +1,15 @@
 ﻿using ParekGIT.Core.Models;
 using ParekGIT.Data.Interfaces;
 using LiteDB;
+using ParekGIT.Data.Models;
 
 namespace ParekGIT.Data.Data
 {
-    public class LiteDbStore : IRepositoryStore
+    public class LiteDbStore : IRepositoryStore, ISettingsStore
     {
         private readonly string _dbPath;
-        private const string CollectionName = "repositories";
+        private const string ReposCollectionName = "repositories";
+        private const string SettingsCollectionName = "settings";
 
         // Constructor
         public LiteDbStore()
@@ -19,13 +21,14 @@ namespace ParekGIT.Data.Data
             _dbPath = Path.Combine(appDataPath, "data.db");
         }
 
+        // Repos db
         public Task<IEnumerable<GitRepository>> GetAllRepositoriesAsync()
         {
             return Task.Run(() =>
             {
                 using (var db = new LiteDatabase(_dbPath))
                 {
-                    var collection = db.GetCollection<GitRepository>(CollectionName);
+                    var collection = db.GetCollection<GitRepository>(ReposCollectionName);
 
                     return (IEnumerable<GitRepository>)collection.Query()
                         .OrderByDescending(entry => entry.LastAccessed)
@@ -40,7 +43,7 @@ namespace ParekGIT.Data.Data
             {
                 using (var db = new LiteDatabase(_dbPath))
                 {
-                    var collection = db.GetCollection<GitRepository>(CollectionName);
+                    var collection = db.GetCollection<GitRepository>(ReposCollectionName);
 
                     collection.Upsert(repository);
                 }
@@ -53,9 +56,35 @@ namespace ParekGIT.Data.Data
             {
                 using (var db = new LiteDatabase(_dbPath))
                 {
-                    var collection = db.GetCollection<GitRepository>(CollectionName);
+                    var collection = db.GetCollection<GitRepository>(ReposCollectionName);
 
                     collection.Delete(id);
+                }
+            });
+        }
+
+        // Settings db
+        public Task<UserSettings> GetUserSettingsAsync()
+        {
+            return Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(_dbPath))
+                {
+                    var collection = db.GetCollection<UserSettings>(SettingsCollectionName);
+                    var settings = collection.FindById(1);
+                    return settings ?? new UserSettings();
+                }
+            });
+        }
+
+        public Task SaveUserSettingsAsync(UserSettings settings)
+        {
+            return Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(_dbPath))
+                {
+                    var collection = db.GetCollection<UserSettings>(SettingsCollectionName);
+                    collection.Upsert(settings);
                 }
             });
         }
