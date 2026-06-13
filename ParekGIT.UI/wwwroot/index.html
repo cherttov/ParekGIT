@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="styles.css"/>
 </head>
-<body>
+<body class="loading">
     <div class="topbar" id="topbar">
         <div class="topbar-logo">P.GIT</div>
 
@@ -351,6 +351,27 @@
                 <div class="modal-footer">
                     <button class="confirm-modal-btn">Remove</button>
                     <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="modal-backdrop" id="repo-settings-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Settings</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="modal-body-row">
+                        <label>Theme: </label>
+                        <select id="settings-theme-select" class="modal-input">
+                            <option value="catppuccin-mocha">Catppuccin Mocha</option>
+                        </select>
+                    </div>
+
                 </div>
 
             </div>

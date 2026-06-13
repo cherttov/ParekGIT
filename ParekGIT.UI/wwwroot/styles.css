@@ -65,6 +65,10 @@ body, html {
     -webkit-user-drag: none;
 }
 
+.loading {
+    display: none;
+}
+
 /* REUSABLE COMPONENTS */
 .ui-checkbox {
     appearance: none;

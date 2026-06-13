@@ -109,6 +109,8 @@ const repoRemoveModalName = document.getElementById("remove-modal-repo-name");
 const repoRemoveModalLocalCheckbox = repoRemoveModal.querySelector(".ui-checkbox");
 const repoRemoveModalConfirmBtn = repoRemoveModal.querySelector(".confirm-modal-btn");
 
+const settingsModal = document.getElementById("repo-settings-modal");
+
 const errorModal = document.getElementById("error-modal");
 const errorModalMessage = document.getElementById("error-modal-message")
 
@@ -182,8 +184,8 @@ window.external.receiveMessage(message => {
     const data = JSON.parse(message);
 
     switch (data.Action) {
-        case "LOAD_REPOSITORIES":
-            loadRepositoriesIntoDropdown(data.Payload);
+        case "APP_INITIALIZED":
+            appInit(data.Payload);
             break;
 
         case "BRANCHES_LOADED":
@@ -664,6 +666,17 @@ function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget)
     }
 
     updateCustomScrollbar(wrapperTarget, scrollbarTarget);
+}
+
+// C# - App init
+function appInit(data) {
+    // Visuals
+    // applyTheme(data.Theme);
+
+    // Data
+    loadRepositoriesIntoDropdown(data.Repositories);
+
+    document.body.classList.remove("loading");
 }
 
 // C# - Load repositories
@@ -1236,6 +1249,10 @@ fetchBtn.addEventListener("click", () => {
     sendIpcMessage("REPO_FETCH", {
         repoPath: currentRepoPath
     });
+});
+
+settingsBtn.addEventListener("click", () => {
+    settingsModal.classList.add("show");
 });
 
 // Diff page (main-content)
@@ -2060,7 +2077,6 @@ branchesBtn.classList.add("disabled");
 analyticsBtn.classList.add("disabled");
 todoBtn.classList.add("disabled");
 fetchBtn.classList.add("disabled");
-settingsBtn.classList.add("disabled"); // FINISH
 accountBtn.classList.add("disabled"); // FINISH
 
 branchBtn.classList.add("disabled"); // change to load last selected repo automatically
