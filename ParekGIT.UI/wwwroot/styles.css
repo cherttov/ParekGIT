@@ -585,7 +585,7 @@ body, html {
 
 .details-footer {
     flex-shrink: 0;
-    background-color: #1e1e2e;
+    background-color: var(--bg-panel);
     z-index: 100;
 }
 
@@ -1214,4 +1214,149 @@ body, html {
 .context-menu-item:disabled {
     opacity: 0.4;
     pointer-events: none;
+}
+
+/* ------ THEMES ------ */
+body.theme-catppuccin-mocha { /* CATPPUCCIN MOCHA */
+    --bg-deep: #11111b;
+    --bg-main: #181825;
+    --bg-panel: #1e1e2e;
+    --bg-hover: #313244;
+    --bg-active: #45475a;
+    --text-primary: #cdd6f4;
+    --text-secondary: #bac2de;
+    --text-muted: #6c7086;
+    --text-label: #9399b2;
+    --border-color: #313244;
+    --border-input: #6c7086;
+    --border-input-hover: #7f849c;
+    --accent: #cba6f7;
+    --accent-hover: #dec7fa;
+    --accent-text: #11111b;
+    --accent-text-hover: #10101a;
+    --backdrop-dropdown: rgba(0, 0, 0, 0.6);
+    --backdrop-modal: rgba(0, 0, 0, 0.4);
+    --scrollbar-track: transparent;
+    --scrollbar-thumb: rgba(205, 214, 244, 0.15);
+    --scrollbar-hover: rgba(205, 214, 244, 0.30);
+    --scrollbar-solid: #9399b2;
+    --diff-add-text: #a6e3a1;
+    --diff-add-bg: #a6e3a11a;
+    --diff-remove-text: #f38ba8;
+    --diff-remove-bg: #f38ba81a;
+    --diff-chunk-text: #6c7086;
+    --diff-chunk-bg: #6c708633;
+    --status-untracked: #74c7ec;
+    --status-added: #a6e3a1;
+    --status-modified: #f9e2af;
+    --status-deleted: #f38ba8;
+    --status-renamed: #89b4fa;
+}
+
+body.theme-catppuccin-macchiato { /* CATPPUCCIN MACCHIATO */
+    --bg-deep: #181926;
+    --bg-main: #1e2030;
+    --bg-panel: #24273a;
+    --bg-hover: #363a4f;
+    --bg-active: #494d64;
+    --text-primary: #cad3f5;
+    --text-secondary: #b8c0e0;
+    --text-muted: #6e738d;
+    --text-label: #939ab7;
+    --border-color: #363a4f;
+    --border-input: #6e738d;
+    --border-input-hover: #8087a2;
+    --accent: #c6a0f6;
+    --accent-hover: #dec7fa;
+    --accent-text: #181926;
+    --accent-text-hover: #10101a;
+    --backdrop-dropdown: rgba(0, 0, 0, 0.6);
+    --backdrop-modal: rgba(0, 0, 0, 0.4);
+    --scrollbar-track: transparent;
+    --scrollbar-thumb: rgba(202, 211, 245, 0.15);
+    --scrollbar-hover: rgba(202, 211, 245, 0.30);
+    --scrollbar-solid: #939ab7;
+    --diff-add-text: #a6da95;
+    --diff-add-bg: #a6da951a;
+    --diff-remove-text: #ed8796;
+    --diff-remove-bg: #ed87961a;
+    --diff-chunk-text: #6e738d;
+    --diff-chunk-bg: #6e738d33;
+    --status-untracked: #7dc4e4;
+    --status-added: #a6da95;
+    --status-modified: #eed49f;
+    --status-deleted: #ed8796;
+    --status-renamed: #8aadf4;
+}
+
+body.theme-catppuccin-frappe { /* CATPPUCCIN FRAPPE */
+    --bg-deep: #232634;
+    --bg-main: #292c3c;
+    --bg-panel: #303446;
+    --bg-hover: #414559;
+    --bg-active: #51576d;
+    --text-primary: #c6d0f5;
+    --text-secondary: #b5bfe2;
+    --text-muted: #626880;
+    --text-label: #838ba7;
+    --border-color: #414559;
+    --border-input: #626880;
+    --border-input-hover: #737994;
+    --accent: #ca9ee6;
+    --accent-hover: #ddbff5;
+    --accent-text: #232634;
+    --accent-text-hover: #222533;
+    --backdrop-dropdown: rgba(0, 0, 0, 0.6);
+    --backdrop-modal: rgba(0, 0, 0, 0.4);
+    --scrollbar-track: transparent;
+    --scrollbar-thumb: rgba(198, 208, 245, 0.15);
+    --scrollbar-hover: rgba(198, 208, 245, 0.30);
+    --scrollbar-solid: #838ba7;
+    --diff-add-text: #a6d189;
+    --diff-add-bg: #a6d1891a;
+    --diff-remove-text: #e78284;
+    --diff-remove-bg: #e782841a;
+    --diff-chunk-text: #626880;
+    --diff-chunk-bg: #62688033;
+    --status-untracked: #99d1db;
+    --status-added: #a6d189;
+    --status-modified: #e5c890;
+    --status-deleted: #e78284;
+    --status-renamed: #8caaee;
+}
+
+body.theme-catppuccin-latte { /* CATPPUCCIN LATTE */
+    --bg-deep: #dce0e8;
+    --bg-main: #e6e9ef;
+    --bg-panel: #eff1f5;
+    --bg-hover: #ccd0da;
+    --bg-active: #bcc0cc;
+    --text-primary: #4c4f69;
+    --text-secondary: #5c5f77;
+    --text-muted: #9ca0b0;
+    --text-label: #6c6f85;
+    --border-color: #ccd0da;
+    --border-input: #9ca0b0;
+    --border-input-hover: #8c8fa1;
+    --accent: #8839ef;
+    --accent-hover: #7287fd;
+    --accent-text: #eff1f5;
+    --accent-text-hover: #e6e9ef;
+    --backdrop-dropdown: rgba(0, 0, 0, 0.2);
+    --backdrop-modal: rgba(0, 0, 0, 0.15);
+    --scrollbar-track: transparent;
+    --scrollbar-thumb: rgba(76, 79, 105, 0.15);
+    --scrollbar-hover: rgba(76, 79, 105, 0.30);
+    --scrollbar-solid: #6c6f85;
+    --diff-add-text: #40a02b;
+    --diff-add-bg: #40a02b1a;
+    --diff-remove-text: #d20f39;
+    --diff-remove-bg: #d20f391a;
+    --diff-chunk-text: #9ca0b0;
+    --diff-chunk-bg: #9ca0b033;
+    --status-untracked: #04a5e5;
+    --status-added: #40a02b;
+    --status-modified: #df8e1d;
+    --status-deleted: #d20f39;
+    --status-renamed: #1e66f5;
 }

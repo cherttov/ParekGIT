@@ -110,6 +110,8 @@ const repoRemoveModalLocalCheckbox = repoRemoveModal.querySelector(".ui-checkbox
 const repoRemoveModalConfirmBtn = repoRemoveModal.querySelector(".confirm-modal-btn");
 
 const settingsModal = document.getElementById("repo-settings-modal");
+const settingsModalThemeSelect = document.getElementById("settings-theme-select");
+const settingsModalConfirmBtn = settingsModal.querySelector(".confirm-modal-btn");
 
 const errorModal = document.getElementById("error-modal");
 const errorModalMessage = document.getElementById("error-modal-message")
@@ -170,6 +172,7 @@ let activeDetailsFile = "";
 let currentChangesCount = 0;
 let repoDrafts = {};
 let fetchStopRequested = false;
+let currentTheme = "catppuccin-mocha";
 
 // ------- IPC COMMUNICATION -------
 const sendIpcMessage = (action, payload = {}) => {
@@ -267,6 +270,10 @@ window.external.receiveMessage(message => {
 
         case "BRANCH_MERGED":
             processBranchesMerged();
+            break;
+
+        case "SETTINGS_SAVED":
+            applyTheme(data.Payload.Theme)
             break;
 
         case "APP_ERROR":
@@ -518,6 +525,12 @@ const updateCustomScrollbar = (container, scrollbar) => {
     scrollbar.style.transform = `translateY(${thumbTop}px)`;
 };
 
+// Apply app theme
+const applyTheme = (themeName) => {
+    document.body.className = document.body.className.replace(/theme-\S+/g, '');
+    if (themeName) { document.body.classList.add(`theme-${themeName}`); }
+}
+
 // Draft memory helpers
 const saveDraft = () => {
     if (!currentRepoPath) { return; }
@@ -671,7 +684,9 @@ function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget)
 // C# - App init
 function appInit(data) {
     // Visuals
-    // applyTheme(data.Theme);
+    currentTheme = data.Settings.Theme;
+    applyTheme(data.Settings.Theme);
+    settingsModalThemeSelect.value = data.Settings.Theme;
 
     // Data
     loadRepositoriesIntoDropdown(data.Repositories);
@@ -1252,8 +1267,24 @@ fetchBtn.addEventListener("click", () => {
 });
 
 settingsBtn.addEventListener("click", () => {
+    settingsModalThemeSelect.value = currentTheme;
     settingsModal.classList.add("show");
 });
+
+// Settings modal (modals)
+settingsModalConfirmBtn.addEventListener("click", () => {
+    const updatedSettings = {
+        Id: 1,
+        Theme: settingsModalThemeSelect.value
+    };
+
+    sendIpcMessage("SETTINGS_SAVE", updatedSettings);
+
+    currentTheme = updatedSettings.Theme;
+
+    applyTheme(updatedSettings.Theme);
+    closeAndClearModal(settingsModal);
+})
 
 // Diff page (main-content)
 diffBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(diffBodyWrapper, diffScrollbar));

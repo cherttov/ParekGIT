@@ -68,7 +68,9 @@ namespace ParekGIT.UI
                 router.RegisterHandler(new ExplorerDialogHandler(window));
                 router.RegisterHandler(new ExplorerOpenHandler());
 
-                window.RegisterWebMessageReceivedHandler(router.HandleMessage);
+                router.RegisterHandler(new SettingsSaveHandler(window, dbStore));
+
+                window.RegisterWebMessageReceivedHandler(router.HandleMessage!);
 
                 window.WaitForClose();
             }

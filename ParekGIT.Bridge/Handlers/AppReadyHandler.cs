@@ -23,12 +23,12 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             var repos = await _dbStore.GetAllRepositoriesAsync();
-            //var settings = await _dbStore.GetUserSettingsAsync();
+            var settings = await _dbStore.GetUserSettingsAsync();
 
             var bootData = new
             {
-                Repositories = repos
-                //Settings = settings
+                Repositories = repos,
+                Settings = settings
             };
 
             // Response
