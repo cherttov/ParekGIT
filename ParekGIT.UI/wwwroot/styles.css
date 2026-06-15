@@ -151,8 +151,18 @@ body, html {
     background-color: var(--accent);
 }
 
+.btn-text-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+    flex: 1;
+}
+
 .topbar-btn .btn-label {
     color: var(--text-label);
+    white-space: nowrap;
+    flex-shrink: 0;
     transition: color 0.1s ease;
 }
 
@@ -162,8 +172,11 @@ body, html {
 
 .topbar-btn .btn-value {
     color: var(--text-primary);
-    transition: color 0.1s ease;
     font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.1s ease;
 }
 
 .topbar-btn:hover .btn-value {
@@ -222,6 +235,7 @@ body, html {
     background-color: var(--bg-panel);
     z-index: 1000;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 .dropdown-panel.show {
@@ -328,7 +342,18 @@ body, html {
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     transition: background-color 0.1s ease;
+}
+
+.dropdown-item-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1;
 }
 
 .dropdown-item:hover,
@@ -600,6 +625,11 @@ body, html {
 
 .details-footer-btn {
     padding-left: 8px;
+}
+
+.details-footer-btn .btn-value {
+    direction: rtl;
+    text-align: left;
 }
 
 .details-footer-btn:hover {
@@ -1157,6 +1187,18 @@ body, html {
     mask-position: center;
     transform: rotate(-90deg);
     flex-shrink: 0;
+}
+
+#error-modal-message {
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+    max-height: 256px;
+    overflow-y: auto;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text-primary);
+    user-select: text;
 }
 
 /* CONTEXT MENUS */

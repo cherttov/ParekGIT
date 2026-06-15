@@ -707,7 +707,7 @@ function loadRepositoriesIntoDropdown(repositories) {
 
         item.dataset.path = repo.AbsolutePath;
 
-        item.innerHTML = `${repo.Name}`;
+        item.innerHTML = `<span class="dropdown-item-text">${repo.Name}</span>`;
 
         // LMB - select
         item.addEventListener("click", () => {
@@ -787,7 +787,7 @@ function loadBranchesIntoDropdown(branches) {
 
         item.dataset.branchName = branch.Name;
 
-        item.innerHTML = `${branch.Name}`;
+        item.innerHTML = `<span class="dropdown-item-text">${branch.Name}</span>`;
 
         // LMB - select
         item.addEventListener("click", () => {
@@ -887,7 +887,7 @@ function addRepositoryToDropdown(repo) {
     const item = document.createElement("div");
     item.className = "dropdown-item";
     item.dataset.path = repo.AbsolutePath;
-    item.innerHTML = `${repo.Name}`;
+    item.innerHTML = `<span class="dropdown-item-text">${repo.Name}</span>`;
 
     // LMB - select
     item.addEventListener("click", () => {
@@ -914,6 +914,14 @@ function addRepositoryToDropdown(repo) {
         item.classList.add("context-active");
 
         repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
+        repoItemContextMenu.dataset.targetName = repo.Name;
+
+        validateRepoContextMenu(
+            repo.AbsolutePath,
+            repoItemMenuTerminal,
+            repoItemMenuExplorer,
+            repoItemMenuRemove
+        );
 
         repoItemContextMenu.classList.add("show");
 
@@ -1115,7 +1123,7 @@ function renameBranchInDropdown(payload) {
     const items = branchDropdown.querySelectorAll('.dropdown-item');
     items.forEach(item => {
         if (item.dataset.branchName === oldName) {
-            item.textContent = newName;
+            item.querySelector('.dropdown-item-text').textContent = newName;
             item.dataset.branchName = newName;
         }
     });
