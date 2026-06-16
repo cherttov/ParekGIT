@@ -312,7 +312,7 @@ const stopFetchAnimation = () => {
         icon.style.transform = "";
         icon.style.transition = "";
     }, 500);
-}
+};
 
 // Context menu position
 const placeContextMenu = (event, contextMenu) => {
@@ -902,6 +902,8 @@ function addRepositoryToDropdown(repo) {
         sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
         branchBtn.classList.remove("disabled");
         branchBtn.disabled = false;
+        mergeBtn.classList.remove("disabled");
+        fetchBtn.classList.remove("disabled");
     });
 
     // RMB - context menu
