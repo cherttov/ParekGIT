@@ -525,6 +525,54 @@ const updateCustomScrollbar = (container, scrollbar) => {
     scrollbar.style.transform = `translateY(${thumbTop}px)`;
 };
 
+const interactCustomScrollbar = (container, scrollbar) => {
+    let isDragging = false;
+    let startY;
+    let startScrollTop;
+
+    scrollbar.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) { return; }
+
+        isDragging = true;
+        startY = e.clientY;
+        startScrollTop = container.scrollTop;
+
+        scrollbar.classList.add('focused');
+
+        document.body.style.userSelect = 'none';
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+
+    const onMouseMove = (e) => {
+        if (!isDragging) { return; }
+
+        const deltaY = e.clientY - startY;
+
+        const containerH = container.clientHeight;
+        const contentH = container.scrollHeight;
+        const EDGE_PADDING = 6;
+        const usableTrackHeight = containerH - (EDGE_PADDING * 2);
+
+        const heightRatio = containerH / contentH;
+        const thumbHeight = Math.max(heightRatio * usableTrackHeight, 30);
+        const maxThumbTop = usableTrackHeight - thumbHeight;
+
+        if (maxThumbTop <= 0) { return; }
+
+        const scrollRatio = (contentH - containerH) / maxThumbTop;
+        container.scrollTop = startScrollTop + (deltaY * scrollRatio);
+    };
+
+    const onMouseUp = () => {
+        isDragging = false;
+        scrollbar.classList.remove('focused');
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+    }
+};
+
 // Apply app theme
 const applyTheme = (themeName) => {
     document.body.className = document.body.className.replace(/theme-\S+/g, '');
@@ -1572,6 +1620,7 @@ topbarRepoMenuRemove.addEventListener("click", (event) => {
     if (pathToRepo) {
         repoRemoveModal.dataset.targetPath = currentRepoPath;
         repoRemoveModalName.textContent = document.querySelector('#repositories-container .btn-value').textContent;
+        repoRemoveModalLocalCheckbox.checked = false;
         repoRemoveModal.classList.add("show");
     }
     closeDropdowns();
@@ -1764,6 +1813,7 @@ repoItemMenuRemove.addEventListener("click", (event) => {
         repoRemoveModal.dataset.targetPath = pathToRepo;
 
         repoRemoveModalName.textContent = repoName;
+        repoRemoveModalLocalCheckbox.checked = false;
 
         repoRemoveModal.classList.add("show");
     }
@@ -2111,6 +2161,11 @@ setupSelection('#branch-dropdown-panel', '#branches-container .btn-value');
 
 // ------- APP INIT -------
 updatePanelWidths();
+
+interactCustomScrollbar(diffBodyWrapper, diffScrollbar);
+interactCustomScrollbar(detailsBodyWrapper, detailsScrollbar);
+interactCustomScrollbar(changesList, changesScrollbar);
+interactCustomScrollbar(historyList, historyScrollbar);
 
 fileBtn.classList.add("disabled");
 mergeBtn.classList.add("disabled");

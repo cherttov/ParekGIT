@@ -578,6 +578,14 @@ body, html {
 .diff-body-wrapper:hover .custom-scrollbar { opacity: 0.15; }
 .diff-body-wrapper:hover .custom-scrollbar:hover { opacity: 0.3; }
 
+.custom-scrollbar.focused,
+.diff-body-wrapper:hover .custom-scrollbar.focused,
+.details-body-wrapper:hover .custom-scrollbar.focused,
+.history-list-wrapper:hover .custom-scrollbar.focused,
+.changes-list-wrapper:hover .custom-scrollbar.focused {
+    opacity: 0.3;
+}
+
 .details-header {
     justify-content: space-between;
     gap: 16px;
