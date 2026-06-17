@@ -16,19 +16,14 @@ namespace ParekGIT.Core.Git
                 var result = await Cli.Wrap("git")
                     .WithArguments(arguments)
                     .WithWorkingDirectory(repoPath)
-                    .WithValidation(CommandResultValidation.None)
+                    .WithValidation(CommandResultValidation.ZeroExitCode)
                     .ExecuteBufferedAsync();
-
-                if (result.ExitCode != 0)
-                {
-                    throw new Exception($"Git Error: {result.StandardError}");
-                }
 
                 return result.StandardOutput.TrimEnd();
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to run git command: {ex.Message}");
+                throw new Exception($"Git command failed: {ex.Message}");
             }
         }
 
@@ -335,7 +330,7 @@ namespace ParekGIT.Core.Git
             // license if not None
             if (!string.Equals(license, "None", StringComparison.OrdinalIgnoreCase))
             {
-                await GenerateLicenseAsync(fullPath, gitIgnore);
+                await GenerateLicenseAsync(fullPath, license);
             }
 
             await ExecuteCommandAsync(fullPath, "add .");

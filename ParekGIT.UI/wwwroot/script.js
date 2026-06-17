@@ -739,6 +739,17 @@ function appInit(data) {
     // Data
     loadRepositoriesIntoDropdown(data.Repositories);
 
+    // Load last repo
+    if (data.Settings.LastRepoPath) {
+        const cssPath = data.Settings.LastRepoPath.replace(/\\/g, '\\\\');
+
+        const lastRepoItem = repoDropdown.querySelector(`.dropdown-item[data-path="${cssPath}"]`);
+
+        if (lastRepoItem) {
+            lastRepoItem.click();
+        }
+    }
+
     document.body.classList.remove("loading");
 }
 

@@ -38,10 +38,9 @@ namespace ParekGIT.Bridge.Handlers
 
             // Verify if valid .git repo
             string gitFolderPath = Path.Combine(repoPath, ".git");
-            if (!Directory.Exists(gitFolderPath))
-            {
-                SendError("The selected folder is not a valid Git repository.");
-                return;
+            if (!Directory.Exists(gitFolderPath)) 
+            { 
+                throw new DirectoryNotFoundException("Selected folder is not a valid Git repository."); 
             }
 
             // Create repo object
@@ -67,19 +66,6 @@ namespace ParekGIT.Bridge.Handlers
             };
 
             _window.SendWebMessage(JsonSerializer.Serialize(response));
-        }
-
-        // Helpers
-        private void SendError(string message)
-        {
-            // Response
-            var errorResponse = new IpcMessage
-            {
-                Action = "REPO_ADD_ERROR",
-                Payload = JsonSerializer.SerializeToElement(new { error = message })
-            };
-
-            _window.SendWebMessage(JsonSerializer.Serialize(errorResponse));
         }
     }
 }

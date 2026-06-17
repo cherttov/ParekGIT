@@ -33,28 +33,13 @@ namespace ParekGIT.Bridge.Handlers
             string commitHash = payload.GetProperty("commitHash").GetString()
                               ?? throw new ArgumentNullException("commitHash");
 
-            bool isSuccess = true;
-            string errorMessage = "";
-
-            try
-            {
-                await _gitRunner.CheckoutCommitAsync(repoPath, commitHash);
-            }
-            catch (Exception ex)
-            {
-                isSuccess = false;
-                errorMessage = ex.Message;
-            }
+            await _gitRunner.RevertCommitAsync(repoPath, commitHash);
 
             // Response
             var response = new IpcMessage
             {
                 Action = "HISTORY_REVERT_RESULT",
-                Payload = JsonSerializer.SerializeToElement(new 
-                {
-                    success = isSuccess,
-                    errorMsg = errorMessage
-                })
+                Payload = JsonSerializer.SerializeToElement(new { success = true })
             };
 
             _window.SendWebMessage(JsonSerializer.Serialize(response));

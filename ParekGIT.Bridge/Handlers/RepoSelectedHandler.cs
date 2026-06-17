@@ -32,8 +32,18 @@ namespace ParekGIT.Bridge.Handlers
             string repoPath = payload.GetProperty("absolutePath").GetString()
                               ?? throw new ArgumentNullException("absolutePath");
 
+            var currentSettings = await _dbStore.GetUserSettingsAsync();
+
+            // Get branches
             var branches = await _gitRunner.GetBranchesAsync(repoPath);
             _repoWatcher.WatchRepository(repoPath);
+
+            // Update last repo path
+            if (currentSettings.LastRepoPath != repoPath)
+            {
+                currentSettings.LastRepoPath = repoPath;
+                await _dbStore.SaveUserSettingsAsync(currentSettings);
+            }
 
             // Response
             var response = new IpcMessage
