@@ -782,7 +782,7 @@ function loadRepositoriesIntoDropdown(repositories) {
 
         // LMB - select
         item.addEventListener("click", () => {
-            if (currentRepoPath === repo.AbsolutePath) { return; }
+            if (currentRepoPath.toLowerCase() === repo.AbsolutePath.toLowerCase()) { return; }
 
             currentRepoPath = repo.AbsolutePath;
             currentBranch = "";
@@ -862,7 +862,7 @@ function loadBranchesIntoDropdown(branches) {
 
         // LMB - select
         item.addEventListener("click", () => {
-            if (currentBranch === branch.Name) { return; }
+            if (currentBranch.toLowerCase() === branch.Name.toLowerCase()) { return; }
 
             resetDiffViewer();
             resetDetailsViewer();

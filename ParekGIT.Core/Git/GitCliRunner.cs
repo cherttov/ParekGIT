@@ -9,6 +9,15 @@ namespace ParekGIT.Core.Git
 {
     public class GitCliRunner : IGitRunner
     {
+        private readonly IFileSystemService _fileSystem;
+
+        // Constructor
+        public GitCliRunner(IFileSystemService fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
+
+        // Command executor
         public async Task<string> ExecuteCommandAsync(string repoPath, string arguments)
         {
             try
@@ -65,10 +74,9 @@ namespace ParekGIT.Core.Git
             if (string.IsNullOrWhiteSpace(rawOutput))
             {
                 string fullPath = Path.Combine(repoPath, filePath);
-                if (File.Exists(fullPath))
+                if (_fileSystem.FileExists(fullPath))
                 {
-                    string rawText = await File.ReadAllTextAsync(fullPath);
-
+                    string rawText = await _fileSystem.ReadAllTextAsync(fullPath);
                     var lines = rawText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
                     return string.Join("\n", lines.Select(line => "+" + line));
                 }
@@ -83,29 +91,7 @@ namespace ParekGIT.Core.Git
 
             string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
-            var lines = rawOutput.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-
-            if (lines.Length == 0) 
-            {
-                return new CommitDetailsResult { Author = "Unknown", Files = new List<GitFileStatus>() };
-            }
-
-            string author = lines[0].Trim();
-            string message = lines.Length > 1 ? lines[1].Trim() : "";
-            List<GitFileStatus> files = lines.Skip(2).Select(f => {
-                var parts = f.Split('\t');
-                return new GitFileStatus {
-                    StatusCode = parts[0].Trim(),
-                    Path = parts.Length > 1 ? parts[1].Trim() : parts[0].Trim()
-                };
-            }).ToList();
-
-            return new CommitDetailsResult
-            {
-                Author = author,
-                Message = message,
-                Files = files
-            };
+            return GitCommitDetailsParser.Parse(rawOutput);
         }
 
         public async Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath)

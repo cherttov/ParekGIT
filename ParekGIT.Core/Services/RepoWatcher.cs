@@ -1,15 +1,16 @@
-﻿using System.Timers;
+﻿using ParekGIT.Core.Interfaces;
+using System.Timers;
 using Timer = System.Timers.Timer;
 
 namespace ParekGIT.Core.Services
 {
-    public class RepoWatcher
+    public class RepoWatcher : IRepoWatcher
     {
-        private FileSystemWatcher _watcher;
-        private Timer _debounceTimer;
-        private string _currentRepoPath;
+        private FileSystemWatcher? _watcher;
+        private readonly Timer _debounceTimer;
+        private string? _currentRepoPath;
 
-        public event EventHandler<string> OnFilesChanged;
+        public event EventHandler<string>? OnFilesChanged;
 
         // Constructor
         public RepoWatcher()
@@ -30,11 +31,11 @@ namespace ParekGIT.Core.Services
                 _watcher.Dispose();
             }
 
-            _watcher = new FileSystemWatcher(repoPath);
-            _watcher.IncludeSubdirectories = true;
-
-            // Watch writes, renames, creates, deletes
-            _watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            _watcher = new FileSystemWatcher(repoPath)
+            {
+                IncludeSubdirectories = true,
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName
+            };
 
             // Event handlers
             _watcher.Changed += OnFileActivity;
@@ -47,7 +48,7 @@ namespace ParekGIT.Core.Services
 
         private void OnFileActivity(object sender, FileSystemEventArgs e)
         {
-            if (e.FullPath.Contains(".git")) { return; }
+            if (e.FullPath.Contains($"{Path.DirectorySeparatorChar}.git")) { return; }
 
             _debounceTimer.Stop();
             _debounceTimer.Start();
@@ -56,6 +57,17 @@ namespace ParekGIT.Core.Services
         private void TimerElapsed()
         {
             OnFilesChanged?.Invoke(this, _currentRepoPath);
+        }
+
+        public void Dispose()
+        {
+            if (_watcher != null)
+            {
+                _watcher.EnableRaisingEvents = false;
+                _watcher.Dispose();
+            }
+
+            _debounceTimer?.Dispose();
         }
     }
 }

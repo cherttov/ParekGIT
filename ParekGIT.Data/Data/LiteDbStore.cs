@@ -5,11 +5,12 @@ using ParekGIT.Data.Models;
 
 namespace ParekGIT.Data.Data
 {
-    public class LiteDbStore : IRepositoryStore, ISettingsStore
+    public class LiteDbStore : IRepositoryStore, ISettingsStore, ITodoStore
     {
         private readonly string _dbPath;
         private const string ReposCollectionName = "repositories";
         private const string SettingsCollectionName = "settings";
+        private const string TodosCollectionName = "todos";
 
         // Constructor
         public LiteDbStore()
@@ -30,7 +31,8 @@ namespace ParekGIT.Data.Data
                 {
                     var collection = db.GetCollection<GitRepository>(ReposCollectionName);
 
-                    return (IEnumerable<GitRepository>)collection.Query()
+                    return (IEnumerable<GitRepository>)collection
+                        .Query()
                         .OrderByDescending(entry => entry.LastAccessed)
                         .ToList();
                 }
@@ -85,6 +87,48 @@ namespace ParekGIT.Data.Data
                 {
                     var collection = db.GetCollection<UserSettings>(SettingsCollectionName);
                     collection.Upsert(settings);
+                }
+            });
+        }
+
+        // Todos db
+        public Task<IEnumerable<TodoItem>> GetAllTodosAsync()
+        {
+            return Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(_dbPath))
+                {
+                    var collection = db.GetCollection<TodoItem>(TodosCollectionName);
+
+                    return (IEnumerable<TodoItem>)collection
+                        .FindAll()
+                        .ToList();
+                }
+            });
+        }
+
+        public Task UpsertTodoAsync(TodoItem todo)
+        {
+            return Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(_dbPath))
+                {
+                    var collection = db.GetCollection<TodoItem>(TodosCollectionName);
+
+                    collection.Upsert(todo);
+                }
+            });
+        }
+
+        public Task DeleteTodoAsync(Guid id)
+        {
+            return Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(_dbPath))
+                {
+                    var collection = db.GetCollection<TodoItem>(TodosCollectionName);
+
+                    collection.Delete(id);
                 }
             });
         }

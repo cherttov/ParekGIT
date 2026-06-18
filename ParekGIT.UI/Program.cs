@@ -19,8 +19,11 @@ namespace ParekGIT.UI
                 // Database
                 var dbStore = new LiteDbStore();
 
+                // OS Services
+                var fileSystem = new FileSystemService();
+
                 // Core runner
-                var gitRunner = new GitCliRunner();
+                var gitRunner = new GitCliRunner(fileSystem);
 
                 // Repo watcher
                 var repoWatcher = new RepoWatcher();

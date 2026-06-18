@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace ParekGIT.Core.Interfaces
 {
-    internal interface IGitParser<T>
+    public interface IFileSystemService
     {
-        IEnumerable<T> Parse(string rawOutput);
+        bool FileExists(string path);
+        Task<string> ReadAllTextAsync(string path);
     }
 }
