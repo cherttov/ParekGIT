@@ -37,6 +37,7 @@ namespace ParekGIT.UI
                     .Center()
                     .SetContextMenuEnabled(true) // later false
                     .SetDevToolsEnabled(true) // later false
+                    .SetJavascriptClipboardAccessEnabled(true)
                     .Load("wwwroot/index.html");
 
                 // Setup IPC router
