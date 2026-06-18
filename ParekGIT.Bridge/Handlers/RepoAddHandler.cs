@@ -55,6 +55,12 @@ namespace ParekGIT.Bridge.Handlers
                 LastAccessed = lastAccessed
             };
 
+            IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
+            if (allRepos.Any(repo => string.Equals(repo.AbsolutePath, addedRepo.AbsolutePath, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new InvalidOperationException("Repository with this path already exists in the database.");
+            }
+
             // Save to db
             await _dbStore.UpsertRepositoryAsync(addedRepo);
 

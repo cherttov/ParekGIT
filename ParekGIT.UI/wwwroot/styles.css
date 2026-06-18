@@ -231,7 +231,6 @@ body, html {
     position: fixed;
     top: 32px;
     max-height: calc(100vh - 48px);
-    overflow-y: auto;
     background-color: var(--bg-panel);
     z-index: 1000;
     flex-direction: column;
@@ -240,6 +239,26 @@ body, html {
 
 .dropdown-panel.show {
     display: flex; 
+}
+
+.dropdown-list-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.dropdown-list-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.dropdown-list-container::-webkit-scrollbar {
+    display: none;
 }
 
 #repositories-container {
@@ -575,17 +594,6 @@ body, html {
     padding: 0 4px;
 }
 
-.diff-body-wrapper:hover .custom-scrollbar { opacity: 0.15; }
-.diff-body-wrapper:hover .custom-scrollbar:hover { opacity: 0.3; }
-
-.custom-scrollbar.focused,
-.diff-body-wrapper:hover .custom-scrollbar.focused,
-.details-body-wrapper:hover .custom-scrollbar.focused,
-.history-list-wrapper:hover .custom-scrollbar.focused,
-.changes-list-wrapper:hover .custom-scrollbar.focused {
-    opacity: 0.3;
-}
-
 .details-header {
     justify-content: space-between;
     gap: 16px;
@@ -612,9 +620,6 @@ body, html {
     gap: 8px;
     min-width: 0;
 }
-
-.details-body-wrapper:hover .custom-scrollbar { opacity: 0.15; }
-.details-body-wrapper:hover .custom-scrollbar:hover { opacity: 0.3; }
 
 .details-footer {
     flex-shrink: 0;
@@ -794,12 +799,6 @@ body, html {
     pointer-events: auto;
     transition: opacity 0.1s ease;
 }
-
-.history-list-wrapper:hover .custom-scrollbar,
-.changes-list-wrapper:hover .custom-scrollbar { opacity: 0.15; }
-
-.history-list-wrapper:hover .custom-scrollbar:hover,
-.changes-list-wrapper:hover .custom-scrollbar:hover { opacity: 0.3; }
 
 .change-item {
     display: flex;
@@ -1264,6 +1263,32 @@ body, html {
 .context-menu-item:disabled {
     opacity: 0.4;
     pointer-events: none;
+}
+
+/* SCROLLBAR STATES */
+.diff-body-wrapper:hover .custom-scrollbar, /* NORMAL */
+.details-body-wrapper:hover .custom-scrollbar,
+.history-list-wrapper:hover .custom-scrollbar,
+.changes-list-wrapper:hover .custom-scrollbar,
+.dropdown-list-wrapper:hover .custom-scrollbar {
+    opacity: 0.15;
+}
+
+.diff-body-wrapper:hover .custom-scrollbar:hover, /* HOVER */
+.details-body-wrapper:hover .custom-scrollbar:hover,
+.history-list-wrapper:hover .custom-scrollbar:hover,
+.changes-list-wrapper:hover .custom-scrollbar:hover,
+.dropdown-list-wrapper:hover .custom-scrollbar:hover {
+    opacity: 0.3;
+}
+
+.custom-scrollbar.focused, /* FOCUSED */
+.diff-body-wrapper:hover .custom-scrollbar.focused,
+.details-body-wrapper:hover .custom-scrollbar.focused,
+.history-list-wrapper:hover .custom-scrollbar.focused,
+.changes-list-wrapper:hover .custom-scrollbar.focused,
+.dropdown-list-wrapper:hover .custom-scrollbar.focused {
+    opacity: 0.3;
 }
 
 /* ------ THEMES ------ */

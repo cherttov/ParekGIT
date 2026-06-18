@@ -5,12 +5,16 @@ const repoDropdown = document.getElementById("repository-dropdown-panel");
 const repoNewBtn = document.querySelector("#repositories-container .btn-add");
 const repoBtn = document.querySelector("#repositories-container .topbar-btn");
 const repoPanel = document.querySelector("#repositories-container .dropdown-panel");
+const repoList = document.getElementById("repo-topbar-list");
+const repoScrollbar = document.getElementById("repo-topbar-scrollbar");
 
 const branchContainer = document.getElementById("branches-container");
 const branchDropdown = document.getElementById("branch-dropdown-panel");
 const branchNewBtn = document.querySelector("#branches-container .btn-new");
 const branchBtn = document.querySelector("#branches-container .topbar-btn");
 const branchPanel = document.querySelector("#branches-container .dropdown-panel");
+const branchList = document.getElementById("branch-topbar-list");
+const branchScrollbar = document.getElementById("branch-topbar-scrollbar");
 
 const backdrop = document.getElementById("dropdown-backdrop");
 
@@ -44,6 +48,8 @@ const detailsScrollbar = document.getElementById("details-scrollbar");
 const detailsBtn = document.querySelector(".details-footer-btn");
 const detailsBtnValue = detailsBtn.querySelector(".btn-value");
 const detailsPanel = document.getElementById("details-footer-panel");
+const detailsFileList = document.getElementById("details-file-list");
+const detailsFileScrollbar = document.getElementById("details-file-scrollbar");
 
 // Right Sidebar + SplitContainer
 const rightSidebar = document.getElementById("right-sidebar");
@@ -366,6 +372,13 @@ const toggleDropdown = (toShow, toHide, event) => {
 
     const isOpening = toShow.classList.toggle('show');
     backdrop.classList.toggle('show', isOpening);
+
+    if (isOpening) {
+        setTimeout(() => {
+            if (toShow === repoPanel) { updateCustomScrollbar(repoList, repoScrollbar); }
+            if (toShow === branchPanel) { updateCustomScrollbar(branchList, branchScrollbar); }
+        }, 10);
+    }
 };
 
 // Commit button disabling/enabling
@@ -617,8 +630,7 @@ const resetDetailsViewer = () => {
     detailsBtnValue.textContent = "No commit selected";
     detailsBtn.disabled = true;
     detailsBtn.classList.add("disabled");
-
-    detailsPanel.innerHTML = "";
+    detailsFileList.innerHTML = "";
 };
 
 const escapeHtml = (unsafeText) => {
@@ -814,7 +826,7 @@ function loadRepositoriesIntoDropdown(repositories) {
             placeContextMenu(event, repoItemContextMenu);
         });
 
-        repoDropdown.appendChild(item);
+        repoList.appendChild(item);
     });
 }
 
@@ -882,7 +894,7 @@ function loadBranchesIntoDropdown(branches) {
             placeContextMenu(event, branchItemContextMenu);
         });
 
-        branchDropdown.appendChild(item);
+        branchList.appendChild(item);
     });
 
     branchBtnValue.textContent = currentBranchName;
@@ -989,7 +1001,7 @@ function addRepositoryToDropdown(repo) {
         placeContextMenu(event, repoItemContextMenu);
     });
 
-    repoDropdown.appendChild(item);
+    repoList.appendChild(item);
     item.click();
 }
 
@@ -1232,7 +1244,7 @@ function loadCommitDetails(details) {
     detailsCommitMessage.innerHTML = `${details.message}`;
     detailsCommitStats.textContent = `${details.files.length} file${details.files.length === 1 ? '' : 's'} changed`;
 
-    detailsPanel.innerHTML = "";
+    detailsFileList.innerHTML = "";
 
     if (!details.files || details.files.length === 0) {
         detailsBtnValue.textContent = "No files available";
@@ -1263,7 +1275,7 @@ function loadCommitDetails(details) {
             activeDetailsFile = file.Path;
 
             event.stopPropagation();
-            detailsPanel.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove("active"));
+            detailsFileList.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove("active"));
             item.classList.add('active');
 
             detailsBtnValue.innerHTML = `<span class="change-status ${statusClass}">${file.StatusCode[0]}</span>
@@ -1278,10 +1290,12 @@ function loadCommitDetails(details) {
             });
         });
 
-        detailsPanel.appendChild(item);
+        detailsFileList.appendChild(item);
 
         if (index === 0) { item.click(); }
     });
+
+    updateCustomScrollbar(detailsFileList, detailsFileScrollbar);
 }
 
 // C# - Branches merged handler
@@ -1340,6 +1354,10 @@ settingsBtn.addEventListener("click", () => {
     settingsModal.classList.add("show");
 });
 
+// Scrollbars (topbar)
+repoList.addEventListener("scroll", () => updateCustomScrollbar(repoList, repoScrollbar));
+branchList.addEventListener("scroll", () => updateCustomScrollbar(branchList, branchScrollbar));
+
 // Settings modal (modals)
 settingsModalConfirmBtn.addEventListener("click", () => {
     const updatedSettings = {
@@ -1360,6 +1378,7 @@ diffBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(diffBodyW
 
 // History details page (main-content)
 detailsBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar));
+detailsFileList.addEventListener("scroll", () => updateCustomScrollbar(detailsFileList, detailsFileScrollbar));
 detailsBtn.addEventListener("click", (event) => {
     if (detailsBtn.disabled || detailsBtn.classList.contains("disabled")) { return; }
 
@@ -1368,7 +1387,11 @@ detailsBtn.addEventListener("click", (event) => {
     branchPanel.classList.remove('show');
     const isOpening = detailsPanel.classList.toggle("show");
     backdrop.classList.toggle("show", isOpening);
-})
+
+    if (isOpening) {
+        setTimeout(() => updateCustomScrollbar(detailsFileList, detailsFileScrollbar));
+    }
+});
 
 // Toggles (dropdowns)
 repoBtn.addEventListener('click', (event) => toggleDropdown(repoPanel, branchPanel, event));
@@ -2140,6 +2163,9 @@ const setupFilter = (inputSelector, panelSelector) => {
                 item.style.display = 'none';
             }
         });
+
+        updateCustomScrollbar(repoList, repoScrollbar);
+        updateCustomScrollbar(branchList, branchScrollbar);
     });
 };
 
@@ -2173,7 +2199,10 @@ setupSelection('#branch-dropdown-panel', '#branches-container .btn-value');
 // ------- APP INIT -------
 updatePanelWidths();
 
+interactCustomScrollbar(repoList, repoScrollbar);
+interactCustomScrollbar(branchList, branchScrollbar);
 interactCustomScrollbar(diffBodyWrapper, diffScrollbar);
+interactCustomScrollbar(detailsFileList, detailsFileScrollbar);
 interactCustomScrollbar(detailsBodyWrapper, detailsScrollbar);
 interactCustomScrollbar(changesList, changesScrollbar);
 interactCustomScrollbar(historyList, historyScrollbar);
