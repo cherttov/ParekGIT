@@ -1208,6 +1208,68 @@ body, html {
     user-select: text;
 }
 
+.todo-rows-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.todo-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background-color: transparent;
+    transition: background-color 0.1s ease;
+}
+
+.todo-row:hover {
+    background-color: var(--bg-hover);
+}
+
+.todo-label {
+    flex: 1;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 5px 0;
+    transition: color 0.1s ease;
+}
+
+.todo-label.done {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.todo-row .modal-input {
+    flex: 1;
+    margin: 0;
+}
+
+.todo-remove-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    padding: 0 4px;
+    transition: color 0.1s ease;
+}
+
+.todo-remove-btn:hover:not(:disabled) {
+    color: var(--diff-remove-text);
+}
+
+.todo-remove-btn:disabled,
+.todo-checkbox:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
 /* CONTEXT MENUS */
 .context-menu {
     display: flex;

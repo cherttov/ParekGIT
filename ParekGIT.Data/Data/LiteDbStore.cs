@@ -107,6 +107,36 @@ namespace ParekGIT.Data.Data
             });
         }
 
+        public Task<IEnumerable<TodoItem>> GetRepoTodosAsync(Guid repoId)
+        {
+            return Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(_dbPath))
+                {
+                    var collection = db.GetCollection<TodoItem>(TodosCollectionName);
+
+                    return (IEnumerable<TodoItem>)collection
+                        .Find(todo => todo.RepoId == repoId)
+                        .ToList();
+                }
+            });
+        }
+
+        public Task SaveRepoTodosAsync(Guid repoId, IEnumerable<TodoItem> todos)
+        {
+            return Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(_dbPath))
+                {
+                    var collection = db.GetCollection<TodoItem>(TodosCollectionName);
+
+                    collection.DeleteMany(todo => todo.RepoId == repoId);
+
+                    if (todos.Any()) { collection.InsertBulk(todos); }
+                }
+            });
+        }
+
         public Task UpsertTodoAsync(TodoItem todo)
         {
             return Task.Run(() =>

@@ -115,9 +115,13 @@ const repoRemoveModalName = document.getElementById("remove-modal-repo-name");
 const repoRemoveModalLocalCheckbox = repoRemoveModal.querySelector(".ui-checkbox");
 const repoRemoveModalConfirmBtn = repoRemoveModal.querySelector(".confirm-modal-btn");
 
-const settingsModal = document.getElementById("repo-settings-modal");
+const settingsModal = document.getElementById("settings-modal");
 const settingsModalThemeSelect = document.getElementById("settings-theme-select");
 const settingsModalConfirmBtn = settingsModal.querySelector(".confirm-modal-btn");
+
+const todoModal = document.getElementById("todo-modal");
+const todoModalRowsContainer = document.getElementById("todo-rows-container");
+const todoModalConfirmBtn = todoModal.querySelector(".confirm-modal-btn");
 
 const errorModal = document.getElementById("error-modal");
 const errorModalMessage = document.getElementById("error-modal-message")
@@ -179,6 +183,8 @@ let currentChangesCount = 0;
 let repoDrafts = {};
 let fetchStopRequested = false;
 let currentTheme = "catppuccin-mocha";
+let draftTodos = [];
+let activeTodos = [];
 
 // ------- IPC COMMUNICATION -------
 const sendIpcMessage = (action, payload = {}) => {
@@ -280,6 +286,10 @@ window.external.receiveMessage(message => {
 
         case "SETTINGS_SAVED":
             applyTheme(data.Payload.Theme)
+            break;
+
+        case "TODO_LOADED":
+            loadTodos(data.Payload.todos);
             break;
 
         case "APP_ERROR":
@@ -687,6 +697,86 @@ const setupMergeModal = (preselectedTarget) => {
     validateBranchMergeModal();
 };
 
+// Todo modal container list 
+const renderTodoList = () => {
+    todoModalRowsContainer.innerHTML = "";
+
+    // Render all existing todo items
+    draftTodos.forEach((todo, index) => {
+        const row = document.createElement("div");
+        row.className = "todo-row";
+
+        // Checkbox
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "ui-checkbox todo-checkbox";
+        checkbox.checked = todo.isCompleted;
+        checkbox.addEventListener("click", () => {
+            todo.isCompleted = checkbox.checked;
+            renderTodoList();
+        });
+
+        // Label
+        const label = document.createElement("span");
+        label.className = `todo-label ${todo.isCompleted ? "done" : ""}`;
+        label.textContent = todo.text;
+
+        // Delete
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "todo-remove-btn";
+        deleteBtn.innerHTML = "&times;";
+        deleteBtn.addEventListener("click", () => {
+            draftTodos.splice(index, 1);
+            renderTodoList();
+        });
+
+        row.appendChild(checkbox);
+        row.appendChild(label);
+        row.appendChild(deleteBtn);
+        todoModalRowsContainer.appendChild(row);
+    });
+
+    // Render constant new task row
+    const newRow = document.createElement("div");
+    newRow.className = "todo-row";
+
+    const newCheckbox = document.createElement("input");
+    newCheckbox.type = "checkbox";
+    newCheckbox.className = "ui-checkbox todo-checkbox";
+    newCheckbox.disabled = true;
+
+    const newInput = document.createElement("input");
+    newInput.type = "text";
+    newInput.className = "modal-input";
+    newInput.placeholder = "Add new task (press enter)";
+
+    const newDeleteBtn = document.createElement("button");
+    newDeleteBtn.className = "todo-remove-btn";
+    newDeleteBtn.innerHTML = "&times;";
+    newDeleteBtn.disabled = true;
+
+    newInput.addEventListener("keyup", (e) => {
+        if (e.key === "Enter" && newInput.value.trim() !== "") {
+            draftTodos.push({
+                text: newInput.value.trim(),
+                done: false
+            });
+            renderTodoList();
+
+            // Refocus on new task input
+            const newInputs = todoModalRowsContainer.querySelectorAll(".todo-row .modal-input");
+            if (newInputs.length > 0) {
+                newInputs[newInputs.length - 1].focus();
+            }
+        }
+    });
+
+    newRow.appendChild(newCheckbox);
+    newRow.appendChild(newInput);
+    newRow.appendChild(newDeleteBtn);
+    todoModalRowsContainer.appendChild(newRow);
+};
+
 // C# - Load diff text
 function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget) {
     if (!diffText || diffText.trim() === "") {
@@ -792,13 +882,16 @@ function loadRepositoriesIntoDropdown(repositories) {
             switchToChangesTab();
             resetDiffViewer();
             resetDetailsViewer();
+            activeTodos = [];
 
             sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
             sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
+            sendIpcMessage("TODO_LOAD", { repoPath: repo.AbsolutePath });
 
             branchBtn.classList.remove("disabled");
             branchBtn.disabled = false;
             mergeBtn.classList.remove("disabled");
+            todoBtn.classList.remove("disabled");
             fetchBtn.classList.remove("disabled");
         });
 
@@ -932,6 +1025,7 @@ function deleteRepoFromDropdown(repository) {
 
         branchBtn.classList.add("disabled");
         branchBtn.disabled = true;
+        todoBtn.classList.add("disabled");
         mergeBtn.classList.add("disabled");
         fetchBtn.classList.add("disabled");
 
@@ -968,11 +1062,15 @@ function addRepositoryToDropdown(repo) {
         toggleCommitButton();
         resetDiffViewer();
         resetDetailsViewer();
+        activeTodos = [];
 
         sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
         sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
+        sendIpcMessage("TODO_LOAD", { repoPath: repo.AbsolutePath });
+
         branchBtn.classList.remove("disabled");
         branchBtn.disabled = false;
+        todoBtn.classList.remove("disabled");
         mergeBtn.classList.remove("disabled");
         fetchBtn.classList.remove("disabled");
     });
@@ -1316,6 +1414,11 @@ function processBranchesMerged() {
     }
 }
 
+// C# - Load todos
+function loadTodos(todos) {
+    activeTodos = todos || [];
+}
+
 // C# - Handle backend errors
 function showErrorModal(message) {
     errorModalMessage.textContent = message || "An unknown error occured.";
@@ -1338,6 +1441,13 @@ mergeBtn.addEventListener("click", () => {
     branchMergeModal.dataset.targetName = currentBranch;
     branchMergeModal.classList.add("show");
 });
+
+todoBtn.addEventListener("click", () => {
+    if (!currentRepoPath) { return; }
+    draftTodos = JSON.parse(JSON.stringify(activeTodos));
+    renderTodoList();
+    todoModal.classList.add("show");
+})
 
 fetchBtn.addEventListener("click", () => {
     if (!currentRepoPath || fetchBtn.classList.contains("fetching")) { return; }
@@ -2102,6 +2212,19 @@ repoRemoveModalConfirmBtn.addEventListener("click", () => {
     }
 
     closeAndClearModal(repoRemoveModal);
+});
+
+todoModalConfirmBtn.addEventListener("click", () => {
+    if (!currentRepoPath) { return; }
+
+    activeTodos = JSON.parse(JSON.stringify(draftTodos));
+
+    sendIpcMessage("TODO_SAVE", {
+        repoPath: currentRepoPath,
+        todos: activeTodos
+    });
+
+    closeAndClearModal(todoModal);
 });
 
 // Input boxes (modals)
