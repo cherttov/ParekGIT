@@ -28,16 +28,20 @@ namespace ParekGIT.Bridge.Handlers
 
         public async Task ExecuteAsync(JsonElement payload)
         {
-            var settings = payload.Deserialize<UserSettings>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+            UserSettings incomingSettings = payload.Deserialize<UserSettings>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                 ?? throw new ArgumentNullException("settings");
 
-            await _dbStore.SaveUserSettingsAsync(settings);
+            UserSettings existingSettings = await _dbStore.GetUserSettingsAsync();
+
+            existingSettings.Theme = incomingSettings.Theme;
+
+            await _dbStore.SaveUserSettingsAsync(existingSettings);
 
             // Response
             var response = new IpcMessage
             {
                 Action = "SETTINGS_SAVED",
-                Payload = JsonSerializer.SerializeToElement(settings)
+                Payload = JsonSerializer.SerializeToElement(existingSettings)
             };
             _window.SendWebMessage(JsonSerializer.Serialize(response));
         }

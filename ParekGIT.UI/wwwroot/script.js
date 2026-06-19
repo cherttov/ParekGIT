@@ -292,6 +292,9 @@ window.external.receiveMessage(message => {
             loadTodos(data.Payload.todos);
             break;
 
+        case "TODO_SAVED":
+            break;
+
         case "APP_ERROR":
             showErrorModal(data.Payload.message);
             break;
@@ -713,7 +716,9 @@ const renderTodoList = () => {
         checkbox.checked = todo.isCompleted;
         checkbox.addEventListener("click", () => {
             todo.isCompleted = checkbox.checked;
-            renderTodoList();
+
+            if (todo.isCompleted) { label.classList.add("done"); }
+            else { label.classList.remove("done"); }
         });
 
         // Label

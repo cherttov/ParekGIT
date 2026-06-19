@@ -1238,12 +1238,15 @@ body, html {
     overflow: hidden;
     text-overflow: ellipsis;
     padding: 5px 0;
-    transition: color 0.1s ease;
+    transition: color 0.2s ease;
+    -webkit-font-smoothing: antialiased;
 }
 
 .todo-label.done {
     text-decoration: line-through;
     color: var(--text-muted);
+    text-decoration-color: var(--text-muted);
+    text-decoration-thickness: 1px;
 }
 
 .todo-row .modal-input {
