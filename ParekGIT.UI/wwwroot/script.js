@@ -746,26 +746,16 @@ const renderTodoList = () => {
     const newRow = document.createElement("div");
     newRow.className = "todo-row";
 
-    const newCheckbox = document.createElement("input");
-    newCheckbox.type = "checkbox";
-    newCheckbox.className = "ui-checkbox todo-checkbox";
-    newCheckbox.disabled = true;
-
     const newInput = document.createElement("input");
     newInput.type = "text";
     newInput.className = "modal-input";
     newInput.placeholder = "Add new task (press enter)";
 
-    const newDeleteBtn = document.createElement("button");
-    newDeleteBtn.className = "todo-remove-btn";
-    newDeleteBtn.innerHTML = "&times;";
-    newDeleteBtn.disabled = true;
-
     newInput.addEventListener("keyup", (e) => {
         if (e.key === "Enter" && newInput.value.trim() !== "") {
             draftTodos.push({
                 text: newInput.value.trim(),
-                done: false
+                isCompleted: false
             });
             renderTodoList();
 
@@ -777,9 +767,7 @@ const renderTodoList = () => {
         }
     });
 
-    newRow.appendChild(newCheckbox);
     newRow.appendChild(newInput);
-    newRow.appendChild(newDeleteBtn);
     todoModalRowsContainer.appendChild(newRow);
 
     setTimeout(() => {
@@ -1442,6 +1430,18 @@ document.addEventListener('wheel', (event) => {
         event.preventDefault();
     }
 }, { passive: false });
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        const activeModal = document.querySelector(".modal-backdrop.show");
+        if (activeModal) {
+            closeAndClearModal(activeModal);
+            return;
+        }
+
+        closeDropdowns();
+    }
+});
 
 // Left sidebar buttons (left-sidebar)
 mergeBtn.addEventListener("click", () => {
