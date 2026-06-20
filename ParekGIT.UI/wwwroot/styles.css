@@ -1208,12 +1208,25 @@ body, html {
     user-select: text;
 }
 
+.todo-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+    max-height: 400px;
+    overflow: hidden;
+}
+
 .todo-rows-container {
     display: flex;
     flex-direction: column;
     gap: 0;
-    max-height: 400px;
     overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.todo-rows-container::-webkit-scrollbar {
+    display: none;
 }
 
 .todo-row {
@@ -1272,6 +1285,8 @@ body, html {
     opacity: 0.3;
     pointer-events: none;
 }
+
+
 
 /* CONTEXT MENUS */
 .context-menu {
@@ -1335,7 +1350,8 @@ body, html {
 .details-body-wrapper:hover .custom-scrollbar,
 .history-list-wrapper:hover .custom-scrollbar,
 .changes-list-wrapper:hover .custom-scrollbar,
-.dropdown-list-wrapper:hover .custom-scrollbar {
+.dropdown-list-wrapper:hover .custom-scrollbar,
+.todo-list-wrapper:hover .custom-scrollbar {
     opacity: 0.15;
 }
 
@@ -1343,7 +1359,8 @@ body, html {
 .details-body-wrapper:hover .custom-scrollbar:hover,
 .history-list-wrapper:hover .custom-scrollbar:hover,
 .changes-list-wrapper:hover .custom-scrollbar:hover,
-.dropdown-list-wrapper:hover .custom-scrollbar:hover {
+.dropdown-list-wrapper:hover .custom-scrollbar:hover,
+.todo-list-wrapper:hover .custom-scrollbar:hover {
     opacity: 0.3;
 }
 
@@ -1352,7 +1369,8 @@ body, html {
 .details-body-wrapper:hover .custom-scrollbar.focused,
 .history-list-wrapper:hover .custom-scrollbar.focused,
 .changes-list-wrapper:hover .custom-scrollbar.focused,
-.dropdown-list-wrapper:hover .custom-scrollbar.focused {
+.dropdown-list-wrapper:hover .custom-scrollbar.focused,
+.todo-list-wrapper:hover .custom-scrollbar.focused {
     opacity: 0.3;
 }
 

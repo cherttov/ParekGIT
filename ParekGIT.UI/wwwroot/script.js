@@ -121,6 +121,7 @@ const settingsModalConfirmBtn = settingsModal.querySelector(".confirm-modal-btn"
 
 const todoModal = document.getElementById("todo-modal");
 const todoModalRowsContainer = document.getElementById("todo-rows-container");
+const todoScrollbar = document.getElementById("todo-scrollbar");
 const todoModalConfirmBtn = todoModal.querySelector(".confirm-modal-btn");
 
 const errorModal = document.getElementById("error-modal");
@@ -780,6 +781,10 @@ const renderTodoList = () => {
     newRow.appendChild(newInput);
     newRow.appendChild(newDeleteBtn);
     todoModalRowsContainer.appendChild(newRow);
+
+    setTimeout(() => {
+        updateCustomScrollbar(todoModalRowsContainer, todoScrollbar);
+    }, 10);
 };
 
 // C# - Load diff text
@@ -1472,6 +1477,11 @@ settingsBtn.addEventListener("click", () => {
 // Scrollbars (topbar)
 repoList.addEventListener("scroll", () => updateCustomScrollbar(repoList, repoScrollbar));
 branchList.addEventListener("scroll", () => updateCustomScrollbar(branchList, branchScrollbar));
+
+// Todo list scrollbar (scrollbar/modals)
+todoModalRowsContainer.addEventListener("scroll", () => {
+    updateCustomScrollbar(todoModalRowsContainer, todoScrollbar);
+});
 
 // Settings modal (modals)
 settingsModalConfirmBtn.addEventListener("click", () => {
@@ -2334,6 +2344,7 @@ interactCustomScrollbar(detailsFileList, detailsFileScrollbar);
 interactCustomScrollbar(detailsBodyWrapper, detailsScrollbar);
 interactCustomScrollbar(changesList, changesScrollbar);
 interactCustomScrollbar(historyList, historyScrollbar);
+interactCustomScrollbar(todoModalRowsContainer, todoScrollbar);
 
 fileBtn.classList.add("disabled");
 mergeBtn.classList.add("disabled");
