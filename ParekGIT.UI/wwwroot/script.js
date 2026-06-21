@@ -2405,7 +2405,7 @@ analyticsBtn.classList.add("disabled"); // FINISH
 todoBtn.classList.add("disabled");
 configBtn.classList.add("disabled");
 fetchBtn.classList.add("disabled");
-//accountBtn.classList.add("disabled"); // FINISH
+accountBtn.classList.add("disabled"); // FINISH
 
 branchBtn.classList.add("disabled");
 branchBtn.disabled = true;
