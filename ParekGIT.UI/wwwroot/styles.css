@@ -455,6 +455,8 @@ select:focus {
 
 .icon-todo { mask-image: url('assets/icons/materials_assignment.svg'); }
 
+.icon-config { mask-image: url('assets/icons/materials_user_attributes.svg'); }
+
 .icon-fetch {
     transform: rotate(-45deg);
     mask-image: url('assets/icons/materials_cached.svg');

@@ -4,7 +4,7 @@ namespace ParekGIT.Core.Interfaces
 {
     public interface IGitRunner
     {
-        Task<string> ExecuteCommandAsync(string repoPath, string arguments);
+        Task<string> ExecuteCommandAsync(string? repoPath, string arguments);
 
         // Parsers
         Task<IEnumerable<GitBranch>> GetBranchesAsync(string repoPath);
@@ -12,6 +12,9 @@ namespace ParekGIT.Core.Interfaces
         Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int limit = 50);
         Task<string> GetFileDiffAsync(string repoPath, string filePath);
         Task<CommitDetailsResult> GetCommitDetailsAsync(string repoPath, string hash);
+        Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath);
+        Task<GitConfigInfo> GetGlobalConfigAsync(string? repoPath);
+        Task<GitConfigInfo> GetLocalConfigAsync(string repoPath);
 
         // Commands
         Task CheckoutBranchAsync(string repoPath, string branchName, bool isRemote);
@@ -28,5 +31,6 @@ namespace ParekGIT.Core.Interfaces
         Task RevertCommitAsync(string repoPath, string commitHash);
         Task MergeBranchesAsync(string repoPath, string sourceBranch, string targetBranch);
         Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license);
+        Task SaveLocalConfigAsync(string repoPath, string name, string email);
     }
 }

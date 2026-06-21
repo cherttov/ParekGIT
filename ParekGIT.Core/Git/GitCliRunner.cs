@@ -18,13 +18,17 @@ namespace ParekGIT.Core.Git
         }
 
         // Command executor
-        public async Task<string> ExecuteCommandAsync(string repoPath, string arguments)
+        public async Task<string> ExecuteCommandAsync(string? repoPath, string arguments)
         {
+            string safeWorkingDir = string.IsNullOrWhiteSpace(repoPath)
+                    ? Environment.CurrentDirectory
+                    : repoPath;
+
             try
             {
                 var result = await Cli.Wrap("git")
                     .WithArguments(arguments)
-                    .WithWorkingDirectory(repoPath)
+                    .WithWorkingDirectory(safeWorkingDir)
                     .WithValidation(CommandResultValidation.ZeroExitCode)
                     .ExecuteBufferedAsync();
 
@@ -99,6 +103,30 @@ namespace ParekGIT.Core.Git
             string arguments = $"show --format= {commitHash} -- \"{filePath}\"";
 
             return await ExecuteCommandAsync(repoPath, arguments);
+        }
+
+        public async Task<GitConfigInfo> GetGlobalConfigAsync(string? repoPath = null) 
+        {
+            string name = await GetConfigValueAsync(repoPath, "global", "user.name");
+            string email = await GetConfigValueAsync(repoPath, "global", "user.email");
+
+            return new GitConfigInfo
+            {
+                Name = name,
+                Email = email
+            };
+        }
+
+        public async Task<GitConfigInfo> GetLocalConfigAsync(string repoPath)
+        {
+            string name = await GetConfigValueAsync(repoPath, "local", "user.name");
+            string email = await GetConfigValueAsync(repoPath, "local", "user.email");
+
+            return new GitConfigInfo
+            {
+                Name = name,
+                Email = email
+            };
         }
 
         // Commands
@@ -331,6 +359,31 @@ namespace ParekGIT.Core.Git
             };
         }
 
+        public async Task SaveLocalConfigAsync(string repoPath, string name, string email)
+        {
+            // Handle Name
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                await ExecuteCommandAsync(repoPath, "config --local --unset user.name");
+            }
+            else
+            {
+                string safeName = name.Replace("\"", "\\\"");
+                await ExecuteCommandAsync(repoPath, $"config --local user.name \"{safeName}\"");
+            }
+
+            // Handle Email
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                await ExecuteCommandAsync(repoPath, "config --local --unset user.email");
+            }
+            else
+            {
+                string safeEmail = email.Replace("\"", "\\\"");
+                await ExecuteCommandAsync(repoPath, $"config --local user.email \"{safeEmail}\"");
+            }
+        }
+
         // Helpers
         private async Task GenerateGitIgnoreAsync(string path, string type)
         {
@@ -342,6 +395,32 @@ namespace ParekGIT.Core.Git
         {
             // Define licenses
             await File.WriteAllTextAsync(Path.Combine(path, ".gitignore"), "");
+        }
+
+        private async Task<string> GetConfigValueAsync(string? repoPath, string scope, string key)
+        {
+            string safeWorkingDir = string.IsNullOrWhiteSpace(repoPath)
+                ? Environment.CurrentDirectory
+                : repoPath;
+
+            var result = await Cli.Wrap("git")
+                .WithArguments($"config --{scope} {key}")
+                .WithWorkingDirectory(safeWorkingDir)
+                .WithValidation(CommandResultValidation.None)
+                .ExecuteBufferedAsync();
+
+            if (result.ExitCode == 1 && string.IsNullOrWhiteSpace(result.StandardError))
+            {
+                return string.Empty;
+            }
+
+            if (result.ExitCode != 0)
+            {
+                string stderr = result.StandardError.Trim();
+                throw new Exception($"Git command failed: exit {result.ExitCode}");
+            }
+
+            return result.StandardOutput.TrimEnd();
         }
     }
 }

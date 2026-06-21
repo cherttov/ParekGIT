@@ -388,6 +388,26 @@
 
         </div>
 
+        <div class="modal-backdrop" id="account-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Account</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="confirm-modal-btn">Save</button>
+                    <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
+            </div>
+
+        </div>
+
         <div class="modal-backdrop" id="todo-modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -399,6 +419,35 @@
                     <div class="todo-list-wrapper">
                         <div class="todo-rows-container" id="todo-rows-container"></div>
                         <div class="custom-scrollbar" id="todo-scrollbar"></div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="confirm-modal-btn">Save</button>
+                    <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="modal-backdrop" id="config-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Config</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="modal-body-row">
+                        <label>Name</label>
+                        <input type="text" class="modal-input input-name" placeholder="{ author-name }" />
+                    </div>
+
+                    <div class="modal-body-row">
+                        <label>Email</label>
+                        <input type="text" class="modal-input input-email" placeholder="{ author-email }" />
                     </div>
 
                 </div>
@@ -438,7 +487,7 @@
 
     <div class="app-container">
         <div class="left-sidebar" id="left-sidebar">
-            <button class="left-sidebar-btn btn-file">
+            <button class="left-sidebar-btn btn-file" style="display: none;">
                 <div class="btn-icon icon-file"></div>
             </button>
 
@@ -446,16 +495,20 @@
                 <div class="btn-icon icon-merge"></div>
             </button>
 
-            <button class="left-sidebar-btn btn-branches">
+            <button class="left-sidebar-btn btn-branches" style="display: none;">
                 <div class="btn-icon icon-branches"></div>
             </button>
 
-            <button class="left-sidebar-btn btn-analytics">
+            <button class="left-sidebar-btn btn-analytics" style="display: none;">
                 <div class="btn-icon icon-analytics"></div>
             </button>
 
             <button class="left-sidebar-btn btn-todo">
                 <div class="btn-icon icon-todo"></div>
+            </button>
+
+            <button class="left-sidebar-btn btn-config">
+                <div class="btn-icon icon-config"></div>
             </button>
 
             <button class="left-sidebar-btn btn-fetch">

@@ -26,6 +26,7 @@ const mergeBtn = leftSidebar.querySelector(".btn-merge");
 const branchesBtn = leftSidebar.querySelector(".btn-branches");
 const analyticsBtn = leftSidebar.querySelector(".btn-analytics");
 const todoBtn = leftSidebar.querySelector(".btn-todo");
+const configBtn = leftSidebar.querySelector(".btn-config");
 const fetchBtn = leftSidebar.querySelector(".btn-fetch");
 const settingsBtn = leftSidebar.querySelector(".btn-settings");
 const accountBtn = leftSidebar.querySelector(".btn-account");
@@ -119,10 +120,18 @@ const settingsModal = document.getElementById("settings-modal");
 const settingsModalThemeSelect = document.getElementById("settings-theme-select");
 const settingsModalConfirmBtn = settingsModal.querySelector(".confirm-modal-btn");
 
+const accountModal = document.getElementById("account-modal");
+const accountModalConfirmBtn = accountModal.querySelector(".confirm-modal-btn");
+
 const todoModal = document.getElementById("todo-modal");
 const todoModalRowsContainer = document.getElementById("todo-rows-container");
 const todoScrollbar = document.getElementById("todo-scrollbar");
 const todoModalConfirmBtn = todoModal.querySelector(".confirm-modal-btn");
+
+const configModal = document.getElementById("config-modal");
+const configModalName = configModal.querySelector(".input-name");
+const configModalEmail = configModal.querySelector(".input-email");
+const configModalConfirmBtn = configModal.querySelector(".confirm-modal-btn");
 
 const errorModal = document.getElementById("error-modal");
 const errorModalMessage = document.getElementById("error-modal-message")
@@ -298,6 +307,13 @@ window.external.receiveMessage(message => {
 
         case "APP_ERROR":
             showErrorModal(data.Payload.message);
+            break;
+
+        case "CONFIG_LOCAL_LOADED":
+            processLocalConfigLoad(data.Payload);
+            break;
+
+        case "CONFIG_LOCAL_SAVED":
             break;
 
         default:
@@ -890,6 +906,7 @@ function loadRepositoriesIntoDropdown(repositories) {
             branchBtn.disabled = false;
             mergeBtn.classList.remove("disabled");
             todoBtn.classList.remove("disabled");
+            configBtn.classList.remove("disabled");
             fetchBtn.classList.remove("disabled");
         });
 
@@ -1023,8 +1040,9 @@ function deleteRepoFromDropdown(repository) {
 
         branchBtn.classList.add("disabled");
         branchBtn.disabled = true;
-        todoBtn.classList.add("disabled");
         mergeBtn.classList.add("disabled");
+        todoBtn.classList.add("disabled");
+        configBtn.classList.add("disabled");
         fetchBtn.classList.add("disabled");
 
         const branchBtnValue = branchBtn.querySelector('.btn-value');
@@ -1068,8 +1086,9 @@ function addRepositoryToDropdown(repo) {
 
         branchBtn.classList.remove("disabled");
         branchBtn.disabled = false;
-        todoBtn.classList.remove("disabled");
         mergeBtn.classList.remove("disabled");
+        todoBtn.classList.remove("disabled");
+        configBtn.classList.remove("disabled");
         fetchBtn.classList.remove("disabled");
     });
 
@@ -1423,6 +1442,17 @@ function showErrorModal(message) {
     errorModal.classList.add("show");
 }
 
+// C# - On local config load
+function processLocalConfigLoad(configs) {
+    configModalName.value = configs.localName || "";
+    configModalEmail.value = configs.localEmail || "";
+
+    configModalName.placeholder = configs.globalName || "Not set";
+    configModalEmail.placeholder = configs.globalEmail || "Not set";
+
+    configModal.classList.add("show");
+}
+
 // ------- EVENT LISTENERS -------
 // Global overrides
 document.addEventListener('wheel', (event) => {
@@ -1454,10 +1484,18 @@ mergeBtn.addEventListener("click", () => {
 
 todoBtn.addEventListener("click", () => {
     if (!currentRepoPath) { return; }
+
     draftTodos = JSON.parse(JSON.stringify(activeTodos));
+
     renderTodoList();
     todoModal.classList.add("show");
-})
+});
+
+configBtn.addEventListener("click", () => {
+    if (!currentRepoPath) { return; }
+
+    sendIpcMessage("CONFIG_LOCAL_GET", { repoPath: currentRepoPath });
+});
 
 fetchBtn.addEventListener("click", () => {
     if (!currentRepoPath || fetchBtn.classList.contains("fetching")) { return; }
@@ -1472,6 +1510,10 @@ fetchBtn.addEventListener("click", () => {
 settingsBtn.addEventListener("click", () => {
     settingsModalThemeSelect.value = currentTheme;
     settingsModal.classList.add("show");
+});
+
+accountBtn.addEventListener("click", () => {
+    accountModal.classList.add("show");
 });
 
 // Scrollbars (topbar)
@@ -2242,6 +2284,16 @@ todoModalConfirmBtn.addEventListener("click", () => {
     closeAndClearModal(todoModal);
 });
 
+configModalConfirmBtn.addEventListener("click", () => {
+    if (!currentRepoPath) { return; }
+
+    sendIpcMessage("CONFIG_LOCAL_SAVE", {
+        repoPath: currentRepoPath,
+        name: configModalName.value.trim(),
+        email: configModalEmail.value.trim()
+    });
+});
+
 // Input boxes (modals)
 branchNewModalInputName.addEventListener("keyup", (event) => {
     if (event.key === "Enter") { branchNewModalConfirmBtn.click(); }
@@ -2346,15 +2398,16 @@ interactCustomScrollbar(changesList, changesScrollbar);
 interactCustomScrollbar(historyList, historyScrollbar);
 interactCustomScrollbar(todoModalRowsContainer, todoScrollbar);
 
-fileBtn.classList.add("disabled");
+fileBtn.classList.add("disabled"); // FINISH
 mergeBtn.classList.add("disabled");
-branchesBtn.classList.add("disabled");
-analyticsBtn.classList.add("disabled");
+branchesBtn.classList.add("disabled"); // FINISH
+analyticsBtn.classList.add("disabled"); // FINISH
 todoBtn.classList.add("disabled");
+configBtn.classList.add("disabled");
 fetchBtn.classList.add("disabled");
-accountBtn.classList.add("disabled"); // FINISH
+//accountBtn.classList.add("disabled"); // FINISH
 
-branchBtn.classList.add("disabled"); // change to load last selected repo automatically
+branchBtn.classList.add("disabled");
 branchBtn.disabled = true;
 
 // FINISH
