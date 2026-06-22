@@ -1,4 +1,5 @@
 ﻿using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json;
@@ -12,7 +13,7 @@ namespace ParekGIT.Bridge.Handlers
         public Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                ?? throw new ArgumentNullException("repoPath");
+                ?? throw new IpcPayloadException("repoPath");
 
             if (!string.IsNullOrEmpty(repoPath) && Directory.Exists(repoPath))
             {

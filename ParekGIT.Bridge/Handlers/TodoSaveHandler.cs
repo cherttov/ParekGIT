@@ -1,5 +1,6 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
 using ParekGIT.Data.Models;
@@ -25,7 +26,7 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                              ?? throw new ArgumentNullException("repoPath");
+                              ?? throw new IpcPayloadException("repoPath");
 
             // Get target repo
             IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();

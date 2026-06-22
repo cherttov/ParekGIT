@@ -1,6 +1,6 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
-using ParekGIT.Core.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
 using Photino.NET;
@@ -12,21 +12,20 @@ namespace ParekGIT.Bridge.Handlers
     {
         private readonly PhotinoWindow _window;
         private readonly LiteDbStore _dbStore;
-        private readonly IGitRunner _gitRunner;
 
         public string Action => "REPO_ADD";
 
-        public RepoAddHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner)
+        // Constructor
+        public RepoAddHandler(PhotinoWindow window, LiteDbStore dbStore)
         {
             _window = window;
             _dbStore = dbStore;
-            _gitRunner = gitRunner;
         }
 
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                ?? throw new ArgumentNullException("repoPath");
+                ?? throw new IpcPayloadException("repoPath");
 
             // Normalize path if ends with .git
             if (repoPath.EndsWith(".git", StringComparison.OrdinalIgnoreCase) ||

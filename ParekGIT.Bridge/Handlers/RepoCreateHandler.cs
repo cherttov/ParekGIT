@@ -1,5 +1,6 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Data.Data;
 using Photino.NET;
@@ -26,10 +27,10 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoName = payload.GetProperty("repoName").GetString()
-                              ?? throw new ArgumentNullException("repoName");
+                              ?? throw new IpcPayloadException("repoName");
 
             string localPath = payload.GetProperty("localPath").GetString()
-                               ?? throw new ArgumentNullException("localPath");
+                               ?? throw new IpcPayloadException("localPath");
 
             string gitIgnore = payload.GetProperty("gitIgnore").GetString()
                                ?? "None";

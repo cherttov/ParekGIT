@@ -1,13 +1,9 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using Photino.NET;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -28,13 +24,13 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                ?? throw new ArgumentNullException("repoPath");
+                ?? throw new IpcPayloadException("repoPath");
 
             string filePath = payload.GetProperty("filePath").GetString()
-                ?? throw new ArgumentNullException("repoPath");
+                ?? throw new IpcPayloadException("filePath");
 
             string ignoreType = payload.GetProperty("ignoreType").GetString()
-                ?? throw new ArgumentNullException("ignoreType");
+                ?? throw new IpcPayloadException("ignoreType");
 
             switch (ignoreType)
             {
@@ -49,6 +45,8 @@ namespace ParekGIT.Bridge.Handlers
                 case "extension":
                     await _gitRunner.IgnoreExtensionAsync(repoPath, filePath);
                     break;
+                default:
+                    throw new IpcPayloadException("ignoreType", $"unrecognized value '{ignoreType}'");
             }
 
             // Response

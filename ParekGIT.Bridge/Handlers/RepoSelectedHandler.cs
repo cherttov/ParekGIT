@@ -1,8 +1,11 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
+using ParekGIT.Core.Models;
 using ParekGIT.Core.Services;
 using ParekGIT.Data.Data;
+using ParekGIT.Data.Models;
 using Photino.NET;
 using System.Text.Json;
 
@@ -13,7 +16,6 @@ namespace ParekGIT.Bridge.Handlers
         private readonly PhotinoWindow _window;
         private readonly LiteDbStore _dbStore;
         private readonly IGitRunner _gitRunner;
-
         private readonly RepoWatcher _repoWatcher;
 
         public string Action => "REPO_SELECTED";
@@ -30,12 +32,12 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("absolutePath").GetString()
-                              ?? throw new ArgumentNullException("absolutePath");
+                              ?? throw new IpcPayloadException("absolutePath");
 
-            var currentSettings = await _dbStore.GetUserSettingsAsync();
+            UserSettings currentSettings = await _dbStore.GetUserSettingsAsync();
 
             // Get branches
-            var branches = await _gitRunner.GetBranchesAsync(repoPath);
+            IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
             _repoWatcher.WatchRepository(repoPath);
 
             // Update last repo path

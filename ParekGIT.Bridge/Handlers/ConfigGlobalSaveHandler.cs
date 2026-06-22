@@ -1,14 +1,9 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
-using ParekGIT.Core.Git;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using Photino.NET;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -28,22 +23,19 @@ namespace ParekGIT.Bridge.Handlers
 
         public async Task ExecuteAsync(JsonElement payload)
         {
-            string repoPath = payload.GetProperty("repoPath").GetString()
-                              ?? throw new ArgumentNullException("repoPath");
-
             string name = payload.GetProperty("name").GetString()
-                              ?? throw new ArgumentNullException("name");
+                              ?? throw new IpcPayloadException("name");
 
             string email = payload.GetProperty("email").GetString()
-                              ?? throw new ArgumentNullException("email");
+                              ?? throw new IpcPayloadException("email");
 
-            await _gitRunner.SaveGlobalConfigAsync(repoPath, name, email);
+            await _gitRunner.SaveGlobalConfigAsync(null, name, email);
 
             // Response
             var response = new IpcMessage
             {
                 Action = "CONFIG_GLOBAL_SAVED",
-                Payload = JsonSerializer.SerializeToElement("")
+                Payload = JsonSerializer.SerializeToElement(new { success = true })
             };
 
             _window.SendWebMessage(JsonSerializer.Serialize(response));

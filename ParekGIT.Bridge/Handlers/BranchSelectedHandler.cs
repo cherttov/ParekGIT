@@ -1,7 +1,8 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
-using ParekGIT.Data.Data;
+using ParekGIT.Core.Models;
 using Photino.NET;
 using System.Text.Json;
 
@@ -24,10 +25,10 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("absolutePath").GetString()
-                              ?? throw new ArgumentNullException("absolutePath");
+                              ?? throw new IpcPayloadException("absolutePath");
 
             string branchName = payload.GetProperty("branchName").GetString()
-                                ?? throw new ArgumentNullException("branchName");
+                                ?? throw new IpcPayloadException("branchName");
 
             bool isRemote = payload.GetProperty("isRemote").GetBoolean();
 
@@ -35,14 +36,12 @@ namespace ParekGIT.Bridge.Handlers
             await _gitRunner.CheckoutBranchAsync(repoPath, branchName, isRemote);
 
             // Update displayed list
-            var branches = await _gitRunner.GetBranchesAsync(repoPath);
-
-            // Send text data (later)
+            IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
 
             // Response
             var response = new IpcMessage
             {
-                Action = "BRANCH_LOADED",
+                Action = "BRANCHES_LOADED",
                 Payload = JsonSerializer.SerializeToElement(branches)
             };
 

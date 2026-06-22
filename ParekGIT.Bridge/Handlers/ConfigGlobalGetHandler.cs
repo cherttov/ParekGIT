@@ -1,7 +1,7 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
-using ParekGIT.Core.Git;
 using ParekGIT.Core.Interfaces;
+using ParekGIT.Core.Models;
 using Photino.NET;
 using System.Text.Json;
 
@@ -23,10 +23,7 @@ namespace ParekGIT.Bridge.Handlers
 
         public async Task ExecuteAsync(JsonElement payload)
         {
-            string repoPath = payload.GetProperty("repoPath").GetString()
-                              ?? throw new ArgumentNullException("repoPath");
-
-            var globalConfig = await _gitRunner.GetGlobalConfigAsync();
+            GitConfigInfo globalConfig = await _gitRunner.GetGlobalConfigAsync(null);
 
             var jsPayload = new
             {

@@ -1,5 +1,6 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
 using ParekGIT.Data.Models;
@@ -25,14 +26,14 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                              ?? throw new ArgumentNullException("repoPath");
+                              ?? throw new IpcPayloadException("repoPath");
 
             IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
             GitRepository? targetRepo = allRepos.FirstOrDefault(repo => repo.AbsolutePath == repoPath);
 
             IEnumerable<TodoItem> todos = targetRepo != null
                 ? await _dbStore.GetRepoTodosAsync(targetRepo.Id)
-                : new List<TodoItem>();
+                : throw new IpcPayloadException("repoPath", $"no repository found for path: {repoPath}");
 
             // Response
             var response = new IpcMessage

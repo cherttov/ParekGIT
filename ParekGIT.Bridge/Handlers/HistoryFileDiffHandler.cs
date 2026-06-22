@@ -1,14 +1,9 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
-using ParekGIT.Core.Git;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using Photino.NET;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -19,6 +14,7 @@ namespace ParekGIT.Bridge.Handlers
 
         public string Action => "GET_HISTORY_FILE_DIFF";
 
+        // Constructor
         public HistoryFileDiffHandler(PhotinoWindow window, IGitRunner gitRunner)
         {
             _window = window;
@@ -28,13 +24,13 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                              ?? throw new ArgumentNullException("repoPath");
+                              ?? throw new IpcPayloadException("repoPath");
 
             string commitHash = payload.GetProperty("commitHash").GetString()
-                              ?? throw new ArgumentNullException("commitHash");
+                              ?? throw new IpcPayloadException("commitHash");
 
             string filePath = payload.GetProperty("filePath").GetString()
-                              ?? throw new ArgumentNullException("filePath");
+                              ?? throw new IpcPayloadException("filePath");
 
             string diffText = await _gitRunner.GetHistoryFileDiffAsync(repoPath, commitHash, filePath);
 

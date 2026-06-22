@@ -1,6 +1,8 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
+using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
 using Photino.NET;
 using System.Text.Json;
@@ -24,21 +26,21 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                              ?? throw new ArgumentNullException("repoPath");
+                              ?? throw new IpcPayloadException("repoPath");
 
             string branchName = payload.GetProperty("branchName").GetString()
-                                ?? throw new ArgumentNullException("branchName");
+                                ?? throw new IpcPayloadException("branchName");
 
             // Create new branch
             await _gitRunner.CreateBranchAsync(repoPath, branchName);
 
             // Update displayed list
-            var branches = await _gitRunner.GetBranchesAsync(repoPath);
+            IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
 
             // Response
             var response = new IpcMessage
             {
-                Action = "BRANCH_LOADED", // since it updates the dropdown just use this or "BRANCHES_LOADED"
+                Action = "BRANCHES_LOADED",
                 Payload = JsonSerializer.SerializeToElement(branches)
             };
 

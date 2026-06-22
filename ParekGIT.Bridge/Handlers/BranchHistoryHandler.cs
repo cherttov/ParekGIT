@@ -1,14 +1,10 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
-using ParekGIT.Data.Data;
+using ParekGIT.Core.Models;
 using Photino.NET;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -29,12 +25,12 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                              ?? throw new ArgumentNullException("repoPath");
+                              ?? throw new IpcPayloadException("repoPath");
 
             string branchName = payload.GetProperty("branchName").GetString()
-                                ?? throw new ArgumentNullException("branchName");
+                                ?? throw new IpcPayloadException("branchName");
 
-            var commits = await _gitRunner.GetBranchHistoryAsync(repoPath, branchName);
+            IEnumerable<GitCommit> commits = await _gitRunner.GetBranchHistoryAsync(repoPath, branchName);
 
             // Response
             var response = new IpcMessage

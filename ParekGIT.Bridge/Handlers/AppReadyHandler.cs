@@ -1,6 +1,8 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
+using ParekGIT.Data.Models;
 using Photino.NET;
 using System.Text.Json;
 
@@ -22,8 +24,8 @@ namespace ParekGIT.Bridge.Handlers
 
         public async Task ExecuteAsync(JsonElement payload)
         {
-            var repos = await _dbStore.GetAllRepositoriesAsync();
-            var settings = await _dbStore.GetUserSettingsAsync();
+            IEnumerable<GitRepository> repos = await _dbStore.GetAllRepositoriesAsync();
+            UserSettings settings = await _dbStore.GetUserSettingsAsync();
 
             var bootData = new
             {

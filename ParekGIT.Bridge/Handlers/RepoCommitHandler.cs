@@ -1,14 +1,9 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
-using ParekGIT.Data.Data;
 using Photino.NET;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -29,20 +24,21 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                ?? throw new ArgumentNullException("repoPath");
+                ?? throw new IpcPayloadException("repoPath");
 
             string message = payload.GetProperty("message").GetString()
-                ?? throw new ArgumentNullException("message");
+                ?? throw new IpcPayloadException("message");
 
-            string description = payload.GetProperty("description").GetString()
-                ?? throw new ArgumentNullException("description");
+            string description = payload.TryGetProperty("description", out var descriptionProperty)
+                ? (descriptionProperty.GetString() ?? "")
+                : "";
 
             var files = new List<string>();
             foreach (var file in payload.GetProperty("files").EnumerateArray())
             {
                 files.Add(file.GetString() ?? "");
             }
-            if (files.Count == 0) { throw new ArgumentNullException("files"); }
+            if (files.Count == 0) { throw new IpcPayloadException("files", "must contain at least 1 file"); }
 
             // Run commands (.Core)
             await _gitRunner.CommitAsync(repoPath, message, description, files);
@@ -51,7 +47,7 @@ namespace ParekGIT.Bridge.Handlers
             var response = new IpcMessage
             {
                 Action = "REPO_COMMITTED",
-                Payload = JsonSerializer.SerializeToElement("")
+                Payload = JsonSerializer.SerializeToElement(new { success = true })
             };
 
             _window.SendWebMessage(JsonSerializer.Serialize(response));

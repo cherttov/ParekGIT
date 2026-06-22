@@ -23,7 +23,7 @@ namespace ParekGIT.Bridge.Ipc
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var ipcMessage = JsonSerializer.Deserialize<IpcMessage>(message, options);
 
-                if (ipcMessage == null) return;
+                if (ipcMessage == null) { return; }
 
                 if (_handlers.TryGetValue(ipcMessage.Action, out var handler))
                 {
@@ -31,7 +31,15 @@ namespace ParekGIT.Bridge.Ipc
                 }
                 else
                 {
-                    Console.WriteLine($"No handler found for action: {ipcMessage.Action}");
+                    string warning = $"No handler found for action: {ipcMessage.Action}";
+                    Console.WriteLine(warning);
+
+                    var unknownActionError = new IpcMessage
+                    {
+                        Action = "APP_ERROR",
+                        Payload = JsonSerializer.SerializeToElement(new { message = warning })
+                    };
+                    window.SendWebMessage(JsonSerializer.Serialize(unknownActionError));
                 }
             }
             catch (Exception ex)

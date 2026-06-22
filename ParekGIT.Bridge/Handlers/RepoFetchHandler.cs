@@ -1,13 +1,9 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using Photino.NET;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -18,6 +14,7 @@ namespace ParekGIT.Bridge.Handlers
 
         public string Action => "REPO_FETCH";
 
+        // Constructor
         public RepoFetchHandler(PhotinoWindow window, IGitRunner gitRunner)
         {
             _window = window;
@@ -27,7 +24,7 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                ?? throw new ArgumentNullException("repoPath");
+                ?? throw new IpcPayloadException("repoPath");
 
             await _gitRunner.FetchRepositoryAsync(repoPath);
 

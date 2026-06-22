@@ -217,10 +217,6 @@ window.external.receiveMessage(message => {
             loadBranchesIntoDropdown(data.Payload);
             break;
 
-        case "BRANCH_LOADED":
-            loadBranchesIntoDropdown(data.Payload); // TEMPORARY
-            break;
-
         case "REPO_CREATED":
             addRepositoryToDropdown(data.Payload);
             break;
@@ -250,7 +246,7 @@ window.external.receiveMessage(message => {
             break;
 
         case "FILE_DIFF_LOADED":
-            renderFileDiff(data.Payload, diffContent, diffBodyWrapper, diffScrollbar);
+            renderFileDiff(data.Payload.diffText, diffContent, diffBodyWrapper, diffScrollbar);
             break;
 
         case "BRANCH_DELETED":

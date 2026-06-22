@@ -1,7 +1,8 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
-using ParekGIT.Data.Data;
+using ParekGIT.Core.Models;
 using Photino.NET;
 using System.Text.Json;
 
@@ -24,11 +25,21 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                ?? throw new ArgumentNullException("repoPath");
+                ?? throw new IpcPayloadException("repoPath");
 
-            if (string.IsNullOrEmpty(repoPath) || !Directory.Exists(repoPath)) { return; }
+            // Invalid repoPath -> empty response
+            if (string.IsNullOrEmpty(repoPath) || !Directory.Exists(repoPath)) 
+            {
+                var emptyResponse = new IpcMessage
+                {
+                    Action = "REPO_STATUS_LOADED",
+                    Payload = JsonSerializer.SerializeToElement(new List<object>())
+                };
+                _window.SendWebMessage(JsonSerializer.Serialize(emptyResponse));
+                return;
+            }
 
-            var changedFiles = await _gitRunner.GetStatusAsync(repoPath);
+            IEnumerable<GitFileStatus> changedFiles = await _gitRunner.GetStatusAsync(repoPath);
 
             // Response
             var response = new IpcMessage

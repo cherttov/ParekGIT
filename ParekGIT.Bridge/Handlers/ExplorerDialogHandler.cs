@@ -17,7 +17,7 @@ namespace ParekGIT.Bridge.Handlers
             _window = window;
         }
 
-        public async Task ExecuteAsync(JsonElement payload)
+        public Task ExecuteAsync(JsonElement payload)
         {
             string[] selectedDir = _window.ShowOpenFolder(multiSelect: false);
 
@@ -43,6 +43,8 @@ namespace ParekGIT.Bridge.Handlers
 
                 _window.SendWebMessage(JsonSerializer.Serialize(response));
             }
+
+            return Task.CompletedTask;
         }
     }
 }

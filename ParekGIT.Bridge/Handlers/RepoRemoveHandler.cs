@@ -1,12 +1,14 @@
-﻿using ParekGIT.Bridge.Data;
+﻿using CliWrap;
+using Microsoft.VisualBasic.FileIO;
+using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
+using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
 using Photino.NET;
-using System.Text.Json;
-using CliWrap;
 using System.Runtime.InteropServices;
-using Microsoft.VisualBasic.FileIO;
+using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -29,12 +31,12 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                ?? throw new ArgumentNullException("repoPath");
+                ?? throw new IpcPayloadException("repoPath");
 
             bool deleteLocal = payload.GetProperty("deleteLocal").GetBoolean();
 
-            var allRepos = await _dbStore.GetAllRepositoriesAsync();
-            var repoToDelete = allRepos.FirstOrDefault(repo =>
+            IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
+            GitRepository? repoToDelete = allRepos.FirstOrDefault(repo =>
                 string.Equals(repo.AbsolutePath, repoPath, StringComparison.OrdinalIgnoreCase));
 
             // Delete from database
@@ -44,6 +46,9 @@ namespace ParekGIT.Bridge.Handlers
             }
 
             // Delete from drive
+            bool localDeleteFailed = false;
+            string? localDeleteError = null;
+
             if (deleteLocal && Directory.Exists(repoPath))
             {
                 try
@@ -52,14 +57,20 @@ namespace ParekGIT.Bridge.Handlers
                 }
                 catch (IOException ioEx)
                 {
+                    localDeleteFailed = true;
+                    localDeleteError = "Directory might be in use.";
                     Console.WriteLine($"Could not delete repo. Directory might be in use: {ioEx}");
                 }
                 catch (UnauthorizedAccessException unAuthEx)
                 {
+                    localDeleteFailed = true;
+                    localDeleteError = "Access denied.";
                     Console.WriteLine($"Access denied: {unAuthEx}");
                 }
                 catch (Exception ex)
                 {
+                    localDeleteFailed = true;
+                    localDeleteError = ex.Message;
                     Console.WriteLine($"Error while deleting repo: {ex}");
                 }
             }
@@ -68,7 +79,12 @@ namespace ParekGIT.Bridge.Handlers
             var response = new IpcMessage
             {
                 Action = "REPO_REMOVED",
-                Payload = JsonSerializer.SerializeToElement(new { absolutePath = repoPath })
+                Payload = JsonSerializer.SerializeToElement(new 
+                { 
+                    absolutePath = repoPath,
+                    localDeleteFailed,
+                    localDeleteError
+                })
             };
 
             _window.SendWebMessage(JsonSerializer.Serialize(response));
