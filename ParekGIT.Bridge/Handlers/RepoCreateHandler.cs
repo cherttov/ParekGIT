@@ -9,7 +9,7 @@ namespace ParekGIT.Bridge.Handlers
 {
     public class RepoCreateHandler : IMessageHandler
     {
-        PhotinoWindow _window;
+        private readonly PhotinoWindow _window;
         private readonly LiteDbStore _dbStore;
         private readonly IGitRunner _gitRunner;
 

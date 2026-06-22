@@ -12,14 +12,15 @@ using System.Threading.Tasks;
 
 namespace ParekGIT.Bridge.Handlers
 {
-    public class HistoryFileDiffHandler : IMessageHandler
+    public class ConfigGlobalSaveHandler : IMessageHandler
     {
         private readonly PhotinoWindow _window;
         private readonly IGitRunner _gitRunner;
 
-        public string Action => "GET_HISTORY_FILE_DIFF";
+        public string Action => "CONFIG_GLOBAL_SAVE";
 
-        public HistoryFileDiffHandler(PhotinoWindow window, IGitRunner gitRunner)
+        // Constructor
+        public ConfigGlobalSaveHandler(PhotinoWindow window, IGitRunner gitRunner)
         {
             _window = window;
             _gitRunner = gitRunner;
@@ -30,19 +31,19 @@ namespace ParekGIT.Bridge.Handlers
             string repoPath = payload.GetProperty("repoPath").GetString()
                               ?? throw new ArgumentNullException("repoPath");
 
-            string commitHash = payload.GetProperty("commitHash").GetString()
-                              ?? throw new ArgumentNullException("commitHash");
+            string name = payload.GetProperty("name").GetString()
+                              ?? throw new ArgumentNullException("name");
 
-            string filePath = payload.GetProperty("filePath").GetString()
-                              ?? throw new ArgumentNullException("filePath");
+            string email = payload.GetProperty("email").GetString()
+                              ?? throw new ArgumentNullException("email");
 
-            string diffText = await _gitRunner.GetHistoryFileDiffAsync(repoPath, commitHash, filePath);
+            await _gitRunner.SaveGlobalConfigAsync(repoPath, name, email);
 
             // Response
             var response = new IpcMessage
             {
-                Action = "HISTORY_FILE_DIFF_LOADED",
-                Payload = JsonSerializer.SerializeToElement(new { diffText = diffText })
+                Action = "CONFIG_GLOBAL_SAVED",
+                Payload = JsonSerializer.SerializeToElement("")
             };
 
             _window.SendWebMessage(JsonSerializer.Serialize(response));

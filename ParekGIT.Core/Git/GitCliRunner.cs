@@ -384,6 +384,31 @@ namespace ParekGIT.Core.Git
             }
         }
 
+        public async Task SaveGlobalConfigAsync(string? repoPath, string name, string email)
+        {
+            // Handle Name
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                await ExecuteCommandAsync(repoPath, "config --global --unset user.name");
+            }
+            else
+            {
+                string safeName = name.Replace("\"", "\\\"");
+                await ExecuteCommandAsync(repoPath, $"config --global user.name \"{safeName}\"");
+            }
+
+            // Handle Email
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                await ExecuteCommandAsync(repoPath, "config --global --unset user.email");
+            }
+            else
+            {
+                string safeEmail = email.Replace("\"", "\\\"");
+                await ExecuteCommandAsync(repoPath, $"config --global user.email \"{safeEmail}\"");
+            }
+        }
+
         // Helpers
         private async Task GenerateGitIgnoreAsync(string path, string type)
         {

@@ -12,9 +12,9 @@ namespace ParekGIT.Bridge.Handlers
 {
     public class RepoRemoveHandler : IMessageHandler
     {
-        PhotinoWindow _window;
-        LiteDbStore _dbStore;
-        IGitRunner _gitRunner;
+        private readonly PhotinoWindow _window;
+        private readonly LiteDbStore _dbStore;
+        private readonly IGitRunner _gitRunner;
 
         public string Action => "REPO_REMOVE";
 

@@ -1,24 +1,21 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Core.Git;
 using ParekGIT.Core.Interfaces;
 using Photino.NET;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ParekGIT.Bridge.Handlers
 {
-    public class RepoFetchHandler : IMessageHandler
+    public class ConfigGlobalGetHandler : IMessageHandler
     {
         private readonly PhotinoWindow _window;
         private readonly IGitRunner _gitRunner;
 
-        public string Action => "REPO_FETCH";
+        public string Action => "CONFIG_GLOBAL_GET";
 
-        public RepoFetchHandler(PhotinoWindow window, IGitRunner gitRunner)
+        // Constructor
+        public ConfigGlobalGetHandler(PhotinoWindow window, IGitRunner gitRunner)
         {
             _window = window;
             _gitRunner = gitRunner;
@@ -27,15 +24,21 @@ namespace ParekGIT.Bridge.Handlers
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("repoPath").GetString()
-                ?? throw new ArgumentNullException("repoPath");
+                              ?? throw new ArgumentNullException("repoPath");
 
-            await _gitRunner.FetchRepositoryAsync(repoPath);
+            var globalConfig = await _gitRunner.GetGlobalConfigAsync();
+
+            var jsPayload = new
+            {
+                globalName = globalConfig.Name,
+                globalEmail = globalConfig.Email
+            };
 
             // Response
             var response = new IpcMessage
             {
-                Action = "REPO_FETCHED",
-                Payload = JsonSerializer.SerializeToElement(new { status = "SUCCESS" })
+                Action = "CONFIG_GLOBAL_LOADED",
+                Payload = JsonSerializer.SerializeToElement(jsPayload)
             };
 
             _window.SendWebMessage(JsonSerializer.Serialize(response));

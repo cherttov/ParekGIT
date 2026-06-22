@@ -10,16 +10,14 @@ namespace ParekGIT.Bridge.Handlers
     public class BranchSelectedHandler : IMessageHandler
     {
         private readonly PhotinoWindow _window;
-        private readonly LiteDbStore _dbStore;
         private readonly IGitRunner _gitRunner;
 
         public string Action => "BRANCH_SELECTED";
 
         // Constructor
-        public BranchSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner)
+        public BranchSelectedHandler(PhotinoWindow window, IGitRunner gitRunner)
         {
             _window = window;
-            _dbStore = dbStore;
             _gitRunner = gitRunner;
         }
 

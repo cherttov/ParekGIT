@@ -1,6 +1,7 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Git;
+using ParekGIT.Core.Interfaces;
 using Photino.NET;
 using System;
 using System.Collections.Generic;
@@ -14,12 +15,12 @@ namespace ParekGIT.Bridge.Handlers
     public class ConfigLocalSaveHandler : IMessageHandler
     {
         private readonly PhotinoWindow _window;
-        private readonly GitCliRunner _gitRunner;
+        private readonly IGitRunner _gitRunner;
 
         public string Action => "CONFIG_LOCAL_SAVE";
 
         // Constructor
-        public ConfigLocalSaveHandler(PhotinoWindow window, GitCliRunner gitRunner)
+        public ConfigLocalSaveHandler(PhotinoWindow window, IGitRunner gitRunner)
         {
             _window = window;
             _gitRunner = gitRunner;

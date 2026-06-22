@@ -32,5 +32,6 @@ namespace ParekGIT.Core.Interfaces
         Task MergeBranchesAsync(string repoPath, string sourceBranch, string targetBranch);
         Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license);
         Task SaveLocalConfigAsync(string repoPath, string name, string email);
+        Task SaveGlobalConfigAsync(string? repoPath, string name, string email);
     }
 }
