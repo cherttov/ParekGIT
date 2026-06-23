@@ -3,7 +3,6 @@ using CliWrap.Buffered;
 using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
-using System.Reflection.Metadata.Ecma335;
 
 namespace ParekGIT.Core.Git
 {

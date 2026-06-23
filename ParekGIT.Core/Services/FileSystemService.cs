@@ -1,9 +1,4 @@
 ﻿using ParekGIT.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ParekGIT.Core.Services
 {
@@ -14,9 +9,20 @@ namespace ParekGIT.Core.Services
             return File.Exists(path);
         }
 
+        public bool DirectoryExists(string path)
+        {
+            return Directory.Exists(path);
+        }
+
         public Task<string> ReadAllTextAsync(string path)
         {
             return File.ReadAllTextAsync(path);
+        }
+        public async Task<IEnumerable<string>> GetFileSystemEntriesAsync(string path, string searchPattern, SearchOption searchOption)
+        {
+            return await Task.Run(() =>
+                Directory.GetFileSystemEntries(path, searchPattern, searchOption)
+            );
         }
     }
 }

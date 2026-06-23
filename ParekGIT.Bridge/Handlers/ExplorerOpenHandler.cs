@@ -1,5 +1,6 @@
 ﻿using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
+using ParekGIT.Core.Interfaces;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json;
@@ -8,7 +9,15 @@ namespace ParekGIT.Bridge.Handlers
 {
     public class ExplorerOpenHandler : IMessageHandler
     {
+        private readonly IFileSystemService _fileSystem;
+
         public string Action => "EXPLORER_OPEN";
+
+        // Constructor
+        public ExplorerOpenHandler(IFileSystemService fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
 
         public Task ExecuteAsync(JsonElement payload)
         {
@@ -19,7 +28,7 @@ namespace ParekGIT.Bridge.Handlers
 
             string normalizedPath = Path.GetFullPath(rawPath);
 
-            if (!Directory.Exists(normalizedPath)) { return Task.CompletedTask; }
+            if (!_fileSystem.DirectoryExists(normalizedPath)) { return Task.CompletedTask; }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {

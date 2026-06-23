@@ -12,14 +12,16 @@ namespace ParekGIT.Bridge.Handlers
     {
         private readonly PhotinoWindow _window;
         private readonly IGitRunner _gitRunner;
+        private readonly IFileSystemService _fileSystem;
 
         public string Action => "GET_REPO_STATUS";
 
         // Constructor
-        public RepoStatusHandler(PhotinoWindow window, IGitRunner gitRunner)
+        public RepoStatusHandler(PhotinoWindow window, IGitRunner gitRunner, IFileSystemService fileSystem)
         {
             _window = window;
             _gitRunner = gitRunner;
+            _fileSystem = fileSystem;
         }
 
         public async Task ExecuteAsync(JsonElement payload)
@@ -28,7 +30,7 @@ namespace ParekGIT.Bridge.Handlers
                 ?? throw new IpcPayloadException("repoPath");
 
             // Invalid repoPath -> empty response
-            if (string.IsNullOrEmpty(repoPath) || !Directory.Exists(repoPath)) 
+            if (string.IsNullOrEmpty(repoPath) || !_fileSystem.DirectoryExists(repoPath)) 
             {
                 var emptyResponse = new IpcMessage
                 {

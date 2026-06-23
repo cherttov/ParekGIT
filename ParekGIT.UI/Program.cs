@@ -16,6 +16,9 @@ namespace ParekGIT.UI
         {
             try
             {
+                // Logger
+                var logger = new FileLogger();
+
                 // Database
                 var dbStore = new LiteDbStore();
 
@@ -41,16 +44,16 @@ namespace ParekGIT.UI
                     .Load("wwwroot/index.html");
 
                 // Setup IPC router
-                var router = new IpcRouter();
+                var router = new IpcRouter(logger);
 
                 router.RegisterHandler(new AppReadyHandler(window, dbStore));
 
                 router.RegisterHandler(new RepoSelectedHandler(window, dbStore, gitRunner, repoWatcher));
-                router.RegisterHandler(new RepoAddHandler(window, dbStore));
+                router.RegisterHandler(new RepoAddHandler(window, dbStore, fileSystem));
                 router.RegisterHandler(new RepoCreateHandler(window, dbStore, gitRunner));
-                router.RegisterHandler(new RepoRemoveHandler(window, dbStore, gitRunner));
-                router.RegisterHandler(new RepoStatusHandler(window, gitRunner));
-                router.RegisterHandler(new RepoTerminalHandler());
+                router.RegisterHandler(new RepoRemoveHandler(window, dbStore, fileSystem));
+                router.RegisterHandler(new RepoStatusHandler(window, gitRunner, fileSystem));
+                router.RegisterHandler(new RepoTerminalHandler(fileSystem));
                 router.RegisterHandler(new RepoCommitHandler(window, gitRunner));
                 router.RegisterHandler(new RepoFetchHandler(window, gitRunner));
                 router.RegisterHandler(new RepoWatcherHandler(window, repoWatcher));
@@ -70,7 +73,7 @@ namespace ParekGIT.UI
                 router.RegisterHandler(new ChangeIgnoreHandler(window, gitRunner));
 
                 router.RegisterHandler(new ExplorerDialogHandler(window));
-                router.RegisterHandler(new ExplorerOpenHandler());
+                router.RegisterHandler(new ExplorerOpenHandler(fileSystem));
 
                 router.RegisterHandler(new SettingsSaveHandler(window, dbStore));
 
@@ -86,6 +89,8 @@ namespace ParekGIT.UI
             }
             catch (Exception ex)
             {
+                string errorMessage = "Error occurred while starting ParekGIT";
+
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     Console.WriteLine("Error occured while starting ParekGIT:");
@@ -97,6 +102,14 @@ namespace ParekGIT.UI
                     Console.WriteLine("Error occured while starting ParekGIT:");
                     Console.WriteLine($"- Message: {ex.Message}");
                 }
+
+                // Try logging startup error
+                try
+                {
+                    var logger = new FileLogger();
+                    logger.LogErrorAsync(errorMessage, ex).GetAwaiter().GetResult();
+                }
+                catch { }
             }
         }
     }

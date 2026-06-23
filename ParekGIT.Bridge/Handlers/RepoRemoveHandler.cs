@@ -16,16 +16,16 @@ namespace ParekGIT.Bridge.Handlers
     {
         private readonly PhotinoWindow _window;
         private readonly LiteDbStore _dbStore;
-        private readonly IGitRunner _gitRunner;
+        private readonly IFileSystemService _fileSystem;
 
         public string Action => "REPO_REMOVE";
 
         // Constructor
-        public RepoRemoveHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner)
+        public RepoRemoveHandler(PhotinoWindow window, LiteDbStore dbStore, IFileSystemService fileSystem)
         {
             _window = window;
             _dbStore = dbStore;
-            _gitRunner = gitRunner;
+            _fileSystem = fileSystem;
         }
 
         public async Task ExecuteAsync(JsonElement payload)
@@ -49,7 +49,7 @@ namespace ParekGIT.Bridge.Handlers
             bool localDeleteFailed = false;
             string? localDeleteError = null;
 
-            if (deleteLocal && Directory.Exists(repoPath))
+            if (deleteLocal && _fileSystem.DirectoryExists(repoPath))
             {
                 try
                 {
@@ -91,7 +91,7 @@ namespace ParekGIT.Bridge.Handlers
         }
 
         // Helpers
-        private async Task MoveToRecycleBinAsync(string path)
+        private async Task MoveToRecycleBinAsync(string path) // Move to Core
         {
             var directory = new DirectoryInfo(path);
 

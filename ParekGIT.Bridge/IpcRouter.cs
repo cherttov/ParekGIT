@@ -1,5 +1,6 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Core.Interfaces;
 using Photino.NET;
 using System.Text.Json;
 
@@ -8,6 +9,13 @@ namespace ParekGIT.Bridge.Ipc
     public class IpcRouter
     {
         private readonly Dictionary<string, IMessageHandler> _handlers = new();
+        private readonly ILogger _logger;
+
+        // Constructor
+        public IpcRouter(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         public void RegisterHandler(IMessageHandler handler)
         {
@@ -32,6 +40,7 @@ namespace ParekGIT.Bridge.Ipc
                 else
                 {
                     string warning = $"No handler found for action: {ipcMessage.Action}";
+                    await _logger.LogWarningAsync(warning);
                     Console.WriteLine(warning);
 
                     var unknownActionError = new IpcMessage
@@ -44,6 +53,7 @@ namespace ParekGIT.Bridge.Ipc
             }
             catch (Exception ex)
             {
+                await _logger.LogErrorAsync("Failed to process IPC Message", ex);
                 Console.WriteLine($"Failed to process IPC Message: {ex.Message}");
 
                 var error = new IpcMessage

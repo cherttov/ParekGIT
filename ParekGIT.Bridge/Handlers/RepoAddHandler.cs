@@ -1,6 +1,7 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
+using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
 using Photino.NET;
@@ -12,14 +13,16 @@ namespace ParekGIT.Bridge.Handlers
     {
         private readonly PhotinoWindow _window;
         private readonly LiteDbStore _dbStore;
+        private readonly IFileSystemService _fileSystem;
 
         public string Action => "REPO_ADD";
 
         // Constructor
-        public RepoAddHandler(PhotinoWindow window, LiteDbStore dbStore)
+        public RepoAddHandler(PhotinoWindow window, LiteDbStore dbStore, IFileSystemService fileSystem)
         {
             _window = window;
             _dbStore = dbStore;
+            _fileSystem = fileSystem;
         }
 
         public async Task ExecuteAsync(JsonElement payload)
@@ -37,7 +40,7 @@ namespace ParekGIT.Bridge.Handlers
 
             // Verify if valid .git repo
             string gitFolderPath = Path.Combine(repoPath, ".git");
-            if (!Directory.Exists(gitFolderPath)) 
+            if (!_fileSystem.DirectoryExists(gitFolderPath)) 
             { 
                 throw new DirectoryNotFoundException("Selected folder is not a valid Git repository."); 
             }
