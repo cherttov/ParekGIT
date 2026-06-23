@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ParekGIT.Core.Interfaces
+﻿namespace ParekGIT.Core.Interfaces
 {
     public interface IFileSystemService
     {
@@ -13,5 +7,6 @@ namespace ParekGIT.Core.Interfaces
 
         Task<string> ReadAllTextAsync(string path);
         Task<IEnumerable<string>> GetFileSystemEntriesAsync(string path, string searchPattern, SearchOption searchOption);
+        Task MoveDirectoryToRecycleBinAsync(string path);
     }
 }

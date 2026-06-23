@@ -53,7 +53,7 @@ namespace ParekGIT.Bridge.Handlers
             {
                 try
                 {
-                    await MoveToRecycleBinAsync(repoPath);
+                    await _fileSystem.MoveDirectoryToRecycleBinAsync(repoPath);
                 }
                 catch (IOException ioEx)
                 {
@@ -88,48 +88,6 @@ namespace ParekGIT.Bridge.Handlers
             };
 
             _window.SendWebMessage(JsonSerializer.Serialize(response));
-        }
-
-        // Helpers
-        private async Task MoveToRecycleBinAsync(string path) // Move to Core
-        {
-            var directory = new DirectoryInfo(path);
-
-            // Strip Read-Only attributes
-            directory.Attributes = FileAttributes.Normal;
-            foreach (var info in directory.GetFileSystemInfos("*", System.IO.SearchOption.AllDirectories))
-            {
-                info.Attributes = FileAttributes.Normal;
-            }
-
-            // Match OS and delete accordingly
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                FileSystem.DeleteDirectory(
-                    path,
-                    UIOption.OnlyErrorDialogs,
-                    RecycleOption.SendToRecycleBin);
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                await Cli.Wrap("osascript")
-                    .WithArguments(["-e", $"tell application \"Finder\" to delete POSIX file \"{path}\""])
-                    .ExecuteAsync();
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                try
-                {
-                    await Cli.Wrap("gio")
-                        .WithArguments(["trash", path])
-                        .ExecuteAsync();
-                }
-                catch
-                {
-                    Console.WriteLine("Trash command not found. Falling back to permanent delete");
-                    directory.Delete(true);
-                }
-            }
         }
     }
 }

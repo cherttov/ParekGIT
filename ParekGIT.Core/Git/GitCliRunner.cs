@@ -239,14 +239,14 @@ namespace ParekGIT.Core.Git
             await ExecuteCommandAsync(repoPath, arguments);
         }
 
-        public async Task IgnoreFolderAsync(string repoPath, string filePath) 
+        public Task IgnoreFolderAsync(string repoPath, string filePath) 
         {
-            await Task.CompletedTask;
+            throw new NotImplementedException();
         }
 
-        public async Task IgnoreExtensionAsync(string repoPath, string filePath) 
+        public Task IgnoreExtensionAsync(string repoPath, string filePath) 
         {
-            await Task.CompletedTask;
+            throw new NotImplementedException();
         }
 
         public async Task CheckoutCommitAsync(string repoPath, string commitHash)
