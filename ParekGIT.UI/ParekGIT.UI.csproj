@@ -15,6 +15,7 @@
     <Product>ParekGIT</Product>
     <Company>cherttov</Company>
     <Description>ParekGIT</Description>
+    <ApplicationIcon>wwwroot/assets/icons/icon.ico</ApplicationIcon>
     
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
