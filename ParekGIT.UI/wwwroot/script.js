@@ -2288,6 +2288,8 @@ configModalConfirmBtn.addEventListener("click", () => {
         name: configModalName.value.trim(),
         email: configModalEmail.value.trim()
     });
+
+    closeAndClearModal(configModal);
 });
 
 // Input boxes (modals)

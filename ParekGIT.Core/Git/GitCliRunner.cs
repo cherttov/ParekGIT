@@ -17,7 +17,7 @@ namespace ParekGIT.Core.Git
         }
 
         // Command executor
-        public async Task<string> ExecuteCommandAsync(string? repoPath, string arguments)
+        public async Task<string> ExecuteCommandAsync(string? repoPath, string arguments, params int[] successExitCodes)
         {
             string safeWorkingDir = string.IsNullOrWhiteSpace(repoPath)
                     ? Environment.CurrentDirectory
@@ -28,14 +28,22 @@ namespace ParekGIT.Core.Git
                 var result = await Cli.Wrap("git")
                     .WithArguments(arguments)
                     .WithWorkingDirectory(safeWorkingDir)
-                    .WithValidation(CommandResultValidation.ZeroExitCode)
+                    .WithValidation(CommandResultValidation.None)
                     .ExecuteBufferedAsync();
+
+                bool isAcceptable = result.ExitCode == 0 || successExitCodes.Contains(result.ExitCode);
+
+                if (!isAcceptable)
+                {
+                    throw new Exception($"Git command failed: exit {result.ExitCode}. {result.StandardError.Trim()}");
+                }
 
                 return result.StandardOutput.TrimEnd();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                throw new Exception($"Git command failed: {ex.Message}");
+                if (ex.Message.StartsWith("Git command failed")) { throw; }
+                throw new Exception($"Git command failed: {ex.Message}", ex);
             }
         }
 
@@ -106,25 +114,19 @@ namespace ParekGIT.Core.Git
 
         public async Task<GitConfigInfo> GetGlobalConfigAsync(string? repoPath = null) 
         {
-            string name = await GetConfigValueAsync(repoPath, "global", "user.name");
-            string email = await GetConfigValueAsync(repoPath, "global", "user.email");
-
             return new GitConfigInfo
             {
-                Name = name,
-                Email = email
+                Name = await ExecuteCommandAsync(repoPath, "config --global user.name", 1),
+                Email = await ExecuteCommandAsync(repoPath, "config --global user.email", 1)
             };
         }
 
         public async Task<GitConfigInfo> GetLocalConfigAsync(string repoPath)
         {
-            string name = await GetConfigValueAsync(repoPath, "local", "user.name");
-            string email = await GetConfigValueAsync(repoPath, "local", "user.email");
-
             return new GitConfigInfo
             {
-                Name = name,
-                Email = email
+                Name = await ExecuteCommandAsync(repoPath, "config --local user.name", 1),
+                Email = await ExecuteCommandAsync(repoPath, "config --local user.email", 1)
             };
         }
 
@@ -363,7 +365,7 @@ namespace ParekGIT.Core.Git
             // Handle Name
             if (string.IsNullOrWhiteSpace(name))
             {
-                await ExecuteCommandAsync(repoPath, "config --local --unset user.name");
+                await ExecuteCommandAsync(repoPath, "config --local --unset user.name", successExitCodes: 5);
             }
             else
             {
@@ -374,7 +376,7 @@ namespace ParekGIT.Core.Git
             // Handle Email
             if (string.IsNullOrWhiteSpace(email))
             {
-                await ExecuteCommandAsync(repoPath, "config --local --unset user.email");
+                await ExecuteCommandAsync(repoPath, "config --local --unset user.email", successExitCodes: 5);
             }
             else
             {
@@ -388,7 +390,7 @@ namespace ParekGIT.Core.Git
             // Handle Name
             if (string.IsNullOrWhiteSpace(name))
             {
-                await ExecuteCommandAsync(repoPath, "config --global --unset user.name");
+                await ExecuteCommandAsync(repoPath, "config --global --unset user.name", successExitCodes: 5);
             }
             else
             {
@@ -399,7 +401,7 @@ namespace ParekGIT.Core.Git
             // Handle Email
             if (string.IsNullOrWhiteSpace(email))
             {
-                await ExecuteCommandAsync(repoPath, "config --global --unset user.email");
+                await ExecuteCommandAsync(repoPath, "config --global --unset user.email", successExitCodes: 5);
             }
             else
             {
@@ -419,32 +421,6 @@ namespace ParekGIT.Core.Git
         {
             // Define licenses
             await File.WriteAllTextAsync(Path.Combine(path, ".gitignore"), "");
-        }
-
-        private async Task<string> GetConfigValueAsync(string? repoPath, string scope, string key)
-        {
-            string safeWorkingDir = string.IsNullOrWhiteSpace(repoPath)
-                ? Environment.CurrentDirectory
-                : repoPath;
-
-            var result = await Cli.Wrap("git")
-                .WithArguments($"config --{scope} {key}")
-                .WithWorkingDirectory(safeWorkingDir)
-                .WithValidation(CommandResultValidation.None)
-                .ExecuteBufferedAsync();
-
-            if (result.ExitCode == 1 && string.IsNullOrWhiteSpace(result.StandardError))
-            {
-                return string.Empty;
-            }
-
-            if (result.ExitCode != 0)
-            {
-                string stderr = result.StandardError.Trim();
-                throw new Exception($"Git command failed: exit {result.ExitCode}");
-            }
-
-            return result.StandardOutput.TrimEnd();
         }
     }
 }

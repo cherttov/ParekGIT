@@ -4,7 +4,7 @@ namespace ParekGIT.Core.Interfaces
 {
     public interface IGitRunner
     {
-        Task<string> ExecuteCommandAsync(string? repoPath, string arguments);
+        Task<string> ExecuteCommandAsync(string? repoPath, string arguments, params int[] successExitCodes);
 
         // Parsers
         Task<IEnumerable<GitBranch>> GetBranchesAsync(string repoPath);
