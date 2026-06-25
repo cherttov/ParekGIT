@@ -23,6 +23,11 @@ namespace ParekGIT.Core.Git
                     ? Environment.CurrentDirectory
                     : repoPath;
 
+            if (!Directory.Exists(safeWorkingDir))
+            {
+                throw new Exception($"Git command failed: working directory does not exist: '{safeWorkingDir}'");
+            }
+
             try
             {
                 var result = await Cli.Wrap("git")
@@ -341,7 +346,7 @@ namespace ParekGIT.Core.Git
             {
                 await GenerateGitIgnoreAsync(fullPath, gitIgnore);
             }
-
+            
             // license if not None
             if (!string.Equals(license, "None", StringComparison.OrdinalIgnoreCase))
             {
@@ -349,7 +354,8 @@ namespace ParekGIT.Core.Git
             }
 
             await ExecuteCommandAsync(fullPath, "add .");
-            await ExecuteCommandAsync(fullPath, "commit -m \"Initial commit\"");
+
+            await ExecuteCommandAsync(fullPath, "commit --allow-empty -m \"Initial commit\"");
 
             return new GitRepository
             {

@@ -17,22 +17,30 @@ namespace ParekGIT.Bridge.Handlers
         private readonly LiteDbStore _dbStore;
         private readonly IGitRunner _gitRunner;
         private readonly RepoWatcher _repoWatcher;
+        private readonly IFileSystemService _fileSystem;
 
         public string Action => "REPO_SELECTED";
 
         // Constructor
-        public RepoSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner, RepoWatcher repoWatcher)
+        public RepoSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner, RepoWatcher repoWatcher, IFileSystemService fileSystem)
         {
             _window = window;
             _dbStore = dbStore;
             _gitRunner = gitRunner;
             _repoWatcher = repoWatcher;
+            _fileSystem = fileSystem;
         }
 
         public async Task ExecuteAsync(JsonElement payload)
         {
             string repoPath = payload.GetProperty("absolutePath").GetString()
                               ?? throw new IpcPayloadException("absolutePath");
+
+            if (!_fileSystem.DirectoryExists(repoPath))
+            {
+                // Make an IPC message that path is missing to resolve
+                throw new Exception($"Error while openning last opened repository. Directory path is invalid: {repoPath}");
+            }
 
             UserSettings currentSettings = await _dbStore.GetUserSettingsAsync();
 
