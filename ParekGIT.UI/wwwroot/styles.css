@@ -373,6 +373,16 @@ select:focus {
     transition: background-color 0.1s ease;
 }
 
+.dropdown-item.invalid {
+    opacity: 0.5;
+    font-style: italic;
+}
+
+.dropdown-item.invalid::after {
+    content: "invalid";
+    margin-left: 6px;
+}
+
 .dropdown-item-text {
     overflow: hidden;
     text-overflow: ellipsis;

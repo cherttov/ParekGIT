@@ -36,10 +36,17 @@ namespace ParekGIT.Bridge.Handlers
             string repoPath = payload.GetProperty("absolutePath").GetString()
                               ?? throw new IpcPayloadException("absolutePath");
 
+            // Failed response
             if (!_fileSystem.DirectoryExists(repoPath))
             {
                 // Make an IPC message that path is missing to resolve
-                throw new Exception($"Error while openning last opened repository. Directory path is invalid: {repoPath}");
+                var missingResponse = new IpcMessage
+                {
+                    Action = "REPO_PATH_MISSING",
+                    Payload = JsonSerializer.SerializeToElement(new { absolutePath = repoPath })
+                };
+                _window.SendWebMessage(JsonSerializer.Serialize(missingResponse));
+                return;
             }
 
             UserSettings currentSettings = await _dbStore.GetUserSettingsAsync();

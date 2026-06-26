@@ -476,6 +476,30 @@
 
         </div>
 
+        <div class="modal-backdrop" id="repo-missing-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Repository not found</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="modal-body-row">
+                        <label>Repository not found at path: </label>
+                        <label class="highlight-name" id="missing-modal-repo-path">{ repo_path }</label>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="confirm-modal-btn">Locate...</button>
+                    <button class="cancel-modal-btn">Remove</button>
+                </div>
+
+            </div>
+
+        </div>
+
         <div class="modal-backdrop" id="error-modal">
             <div class="modal-content">
                 <div class="modal-header">

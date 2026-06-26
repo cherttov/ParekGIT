@@ -136,6 +136,10 @@ const configModalConfirmBtn = configModal.querySelector(".confirm-modal-btn");
 const errorModal = document.getElementById("error-modal");
 const errorModalMessage = document.getElementById("error-modal-message")
 
+const repoMissingModal = document.getElementById("repo-missing-modal");
+const repoMissingModalConfirmBtn = repoMissingModal.querySelector(".confirm-modal-btn");
+const repoMissingModalCancelBtn = repoMissingModal.querySelector(".cancel-modal-btn");
+
 // Context menus
 const repoContextMenu = document.getElementById("repo-context-menu");
 const repoMenuClone = repoContextMenu.querySelector(".context-menu-item.item-clone");
@@ -312,6 +316,10 @@ window.external.receiveMessage(message => {
         case "CONFIG_LOCAL_SAVED":
             break;
 
+        case "REPO_PATH_MISSING":
+            processMissingRepo(data.Payload.absolutePath);
+            break;
+
         default:
             console.warn("Unknown action received: ", data.Action);
     }
@@ -446,17 +454,19 @@ const validateBranchContextMenu = (branchName, renameBtn, deleteBtn) => {
     deleteBtn.disabled = isProtected;
 };
 
-const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn) => {
-    const isRepoSelected = !repoName || repoName.trim() === "";
+const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn, isInvalid = false) => {
+    const isRepoEmpty = !repoName || repoName.trim() === "";
 
-    terminalBtn.classList.toggle("disabled", isRepoSelected);
-    terminalBtn.disabled = isRepoSelected;
+    const disableTools = isRepoEmpty || isInvalid;
 
-    explorerBtn.classList.toggle("disabled", isRepoSelected);
-    explorerBtn.disabled = isRepoSelected;
+    terminalBtn.classList.toggle("disabled", disableTools);
+    terminalBtn.disabled = disableTools;
 
-    removeBtn.classList.toggle("disabled", isRepoSelected);
-    removeBtn.disabled = isRepoSelected;
+    explorerBtn.classList.toggle("disabled", disableTools);
+    explorerBtn.disabled = disableTools;
+
+    removeBtn.classList.toggle("disabled", isRepoEmpty);
+    removeBtn.disabled = isRepoEmpty;
 };
 
 // Modal input boxes validators
@@ -787,6 +797,17 @@ const renderTodoList = () => {
     }, 10);
 };
 
+// Repo dropdown item invalid helper
+function markRepoDropdownItemInvalid(repoPath) {
+    const items = repoPanel.querySelectorAll(".dropdown-item");
+    items.forEach(item => {
+        if (item.dataset.path.toLowerCase() === repoPath.toLowerCase()) {
+            item.classList.add("invalid");
+            item.title = "Repository folder not found";
+        }
+    });
+}
+
 // C# - Load diff text
 function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget) {
     if (!diffText || diffText.trim() === "") {
@@ -882,6 +903,8 @@ function loadRepositoriesIntoDropdown(repositories) {
 
         // LMB - select
         item.addEventListener("click", () => {
+            // Item invalid || already selected
+            if (item.classList.contains("invalid")) { return; }
             if (currentRepoPath.toLowerCase() === repo.AbsolutePath.toLowerCase()) { return; }
 
             currentRepoPath = repo.AbsolutePath;
@@ -918,11 +941,14 @@ function loadRepositoriesIntoDropdown(repositories) {
             repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
             repoItemContextMenu.dataset.targetName = repo.Name;
 
+            const isInvalid = item.classList.contains("invalid");
+
             validateRepoContextMenu(
                 repo.AbsolutePath,
                 repoItemMenuTerminal,
                 repoItemMenuExplorer,
-                repoItemMenuRemove
+                repoItemMenuRemove,
+                isInvalid
             );
 
             repoItemContextMenu.classList.add("show");
@@ -1063,11 +1089,15 @@ function folderSelected(directory) {
 function addRepositoryToDropdown(repo) {
     const item = document.createElement("div");
     item.className = "dropdown-item";
-    item.dataset.path = repo.AbsolutePath;
+    item.dataset.path = repo.AbsolutePath; 
     item.innerHTML = `<span class="dropdown-item-text">${repo.Name}</span>`;
 
     // LMB - select
     item.addEventListener("click", () => {
+        // Item invalid || already selected
+        if (item.classList.contains("invalid")) { return; }
+        if (currentRepoPath.toLowerCase() === repo.AbsolutePath.toLowerCase()) { return; }
+
         currentRepoPath = repo.AbsolutePath;
         currentBranch = "";
 
@@ -1100,11 +1130,14 @@ function addRepositoryToDropdown(repo) {
         repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
         repoItemContextMenu.dataset.targetName = repo.Name;
 
+        const isInvalid = item.classList.contains("invalid");
+
         validateRepoContextMenu(
             repo.AbsolutePath,
             repoItemMenuTerminal,
             repoItemMenuExplorer,
-            repoItemMenuRemove
+            repoItemMenuRemove,
+            isInvalid
         );
 
         repoItemContextMenu.classList.add("show");
@@ -1447,6 +1480,48 @@ function processLocalConfigLoad(configs) {
     configModalEmail.placeholder = configs.globalEmail || "Not set";
 
     configModal.classList.add("show");
+}
+
+// C# - Repo not found (path is invalid)
+function processMissingRepo(repoPath) {
+    document.getElementById("missing-modal-repo-path").textContent = repoPath;
+    repoMissingModal.dataset.targetPath = repoPath;
+    markRepoDropdownItemInvalid(repoPath);
+    repoMissingModal.classList.add("show");
+
+    // Unselect invalid repo if it's current
+    if (currentRepoPath === repoPath) {
+        currentRepoPath = "";
+        currentBranch = "";
+
+        // Reset Topbar
+        const repoBtnValue = repoBtn.querySelector('.btn-value');
+        if (repoBtnValue) { repoBtnValue.textContent = "None"; }
+
+        const branchBtnValue = branchBtn.querySelector('.btn-value');
+        if (branchBtnValue) { branchBtnValue.textContent = "None"; }
+
+        // Disable buttons
+        branchBtn.classList.add("disabled");
+        branchBtn.disabled = true;
+        mergeBtn.classList.add("disabled");
+        todoBtn.classList.add("disabled");
+        configBtn.classList.add("disabled");
+        fetchBtn.classList.add("disabled");
+
+        // Clear UI panels
+        const existingBranches = branchDropdown.querySelectorAll('.dropdown-item');
+        existingBranches.forEach(item => item.remove());
+
+        changesList.innerHTML = "";
+        historyList.innerHTML = "";
+        currentChangesCount = 0;
+        changesCountText.textContent = "0 changed files";
+
+        resetDiffViewer();
+        resetDetailsViewer();
+        toggleCommitButton();
+    }
 }
 
 // ------- EVENT LISTENERS -------
@@ -2267,6 +2342,28 @@ repoRemoveModalConfirmBtn.addEventListener("click", () => {
     closeAndClearModal(repoRemoveModal);
 });
 
+repoMissingModalConfirmBtn.addEventListener("click", () => {
+    const stalePath = repoMissingModal.dataset.targetPath;
+
+    closeAndClearModal(repoMissingModal);
+
+    repoAddModalInputPath.value = stalePath || "";
+    repoAddModal.classList.add("show");
+});
+
+repoMissingModalCancelBtn.addEventListener("click", () => {
+    const stalePath = repoMissingModal.dataset.targetPath;
+
+    if (stalePath) {
+        sendIpcMessage("REPO_REMOVE", {
+            "repoPath": stalePath,
+            "deleteLocal": false
+        });
+    }
+
+    closeAndClearModal(repoMissingModal);
+})
+
 todoModalConfirmBtn.addEventListener("click", () => {
     if (!currentRepoPath) { return; }
 
@@ -2364,7 +2461,7 @@ const setupSelection = (panelSelector, btnValueSelector) => {
     panel.addEventListener('click', (event) => {
         const item = event.target.closest('.dropdown-item');
 
-        if (item) {
+        if (item && !item.classList.contains('invalid')) {
             valueDisplay.textContent = item.textContent;
 
             panel.querySelectorAll('.dropdown-item').forEach(elem => {
