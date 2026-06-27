@@ -9,7 +9,7 @@ namespace ParekGIT.Core.Interfaces
         // Parsers
         Task<IEnumerable<GitBranch>> GetBranchesAsync(string repoPath);
         Task<IEnumerable<GitFileStatus>> GetStatusAsync(string repoPath);
-        Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int limit = 50);
+        Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int skip = 0, int take = 50);
         Task<string> GetFileDiffAsync(string repoPath, string filePath);
         Task<CommitDetailsResult> GetCommitDetailsAsync(string repoPath, string hash);
         Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath);

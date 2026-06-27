@@ -30,12 +30,18 @@ namespace ParekGIT.Bridge.Handlers
             string branchName = payload.GetProperty("branchName").GetString()
                                 ?? throw new IpcPayloadException("branchName");
 
-            IEnumerable<GitCommit> commits = await _gitRunner.GetBranchHistoryAsync(repoPath, branchName);
+            int skip = payload.TryGetProperty("skip", out var skipProperty) && skipProperty.TryGetInt32(out int parsedSkip)
+                ? parsedSkip : 0;
+
+            int take = payload.TryGetProperty("skip", out var takeProperty) && skipProperty.TryGetInt32(out int parsedTake)
+                ? parsedTake : 50;
+
+            IEnumerable<GitCommit> commits = await _gitRunner.GetBranchHistoryAsync(repoPath, branchName, skip, take);
 
             // Response
             var response = new IpcMessage
             {
-                Action = "BRANCH_HISTORY_LOADED",
+                Action = skip > 0 ? "BRANCH_HISTORY_APPENDED" : "BRANCH_HISTORY_LOADED",
                 Payload = JsonSerializer.SerializeToElement(commits)
             };
 

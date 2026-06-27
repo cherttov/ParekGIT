@@ -199,6 +199,10 @@ let fetchStopRequested = false;
 let currentTheme = "catppuccin-mocha";
 let draftTodos = [];
 let activeTodos = [];
+let currentHistorySkip = 0;
+let historyTake = 50;
+let isFetchingHistory = false;
+let hasReachedEndOfHistory = false;
 
 // ------- IPC COMMUNICATION -------
 const sendIpcMessage = (action, payload = {}) => {
@@ -246,7 +250,16 @@ window.external.receiveMessage(message => {
             break;
 
         case "BRANCH_HISTORY_LOADED":
-            renderHistory(data.Payload);
+            currentHistorySkip = 0;
+            isFetchingHistory = false;
+            hasReachedEndOfHistory = data.Payload.length < historyTake;
+            renderHistory(data.Payload, false);
+            break;
+
+        case "BRANCH_HISTORY_APPENDED":
+            isFetchingHistory = false;
+            if (data.Payload.length < historyTake) { hasReachedEndOfHistory = true; }
+            renderHistory(data.Payload, true);
             break;
 
         case "FILE_DIFF_LOADED":
@@ -1273,9 +1286,11 @@ function processCommit() {
     }
 }
 
-// C# - Load commit history into history-tab
-function renderHistory(commits) {
-    historyList.innerHTML = "";
+// C# - Load/append commit history into history-tab
+function renderHistory(commits, isAppending = false) {
+    if (!isAppending) {
+        historyList.innerHTML = "";
+    }
 
     if (!commits || commits.length === 0) {
         updateCustomScrollbar(historyList, historyScrollbar);
@@ -1821,7 +1836,26 @@ commitBtn.addEventListener("click", () => {
 
 // Scrollbar (right-sidebar)
 changesList.addEventListener("scroll", () => { updateCustomScrollbar(changesList, changesScrollbar); });
-historyList.addEventListener("scroll", () => { updateCustomScrollbar(historyList, historyScrollbar); });
+historyList.addEventListener("scroll", () => {
+    updateCustomScrollbar(historyList, historyScrollbar);
+
+    if (isFetchingHistory || hasReachedEndOfHistory || !currentBranch) { return; }
+
+    const threshold = 30; // 30px
+    const isNearBottom = historyList.scrollTop + historyList.clientHeight >= historyList.scrollHeight - threshold;
+
+    if (isNearBottom) {
+        isFetchingHistory = true;
+        currentHistorySkip += historyTake;
+
+        sendIpcMessage("GET_BRANCH_HISTORY", {
+            repoPath: currentRepoPath,
+            branchName: currentBranch,
+            skip: currentHistorySkip,
+            take: historyTake
+        });
+    }
+});
 
 window.addEventListener("resize", () => {
     updateCustomScrollbar(changesList, changesScrollbar);

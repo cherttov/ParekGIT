@@ -71,9 +71,9 @@ namespace ParekGIT.Core.Git
             return GitStatusParser.Parse(rawOutput);
         }
 
-        public async Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int limit = 50)
+        public async Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int skip = 0, int take = 50)
         {
-            string arguments = $"log \"{branchName}\" -n {limit} --pretty=format:\"%H|%s|%an|%ar\"";
+            string arguments = $"log \"{branchName}\" -n {take} --pretty=format:\"%H|%s|%an|%ar\"";
 
             string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
