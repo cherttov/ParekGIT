@@ -354,7 +354,7 @@ namespace ParekGIT.Core.Git
             if (!string.Equals(license, "None", StringComparison.OrdinalIgnoreCase))
             {
                 GitConfigInfo globalConfig = await GetGlobalConfigAsync(null);
-                await _templateService.WriteLicenseAsync(fullPath, license, globalConfig.Name);
+                await _templateService.WriteLicenseAsync(fullPath, license, globalConfig.Name, repoName);
             }
 
             await ExecuteCommandAsync(fullPath, "add .");

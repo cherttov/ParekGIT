@@ -6,13 +6,15 @@ namespace ParekGIT.Core.Services
     public class TemplateService : ITemplateService
     {
         private readonly IFileSystemService _fileSystem;
+        private readonly ILogger _logger;
         private readonly string _gitIgnoreTemplatesDir;
         private readonly string _licenseTemplatesDir;
 
         // Constructor
-        public TemplateService(IFileSystemService fileSystem)
+        public TemplateService(IFileSystemService fileSystem, ILogger logger)
         {
             _fileSystem = fileSystem;
+            _logger = logger;
 
             string baseDir = AppContext.BaseDirectory;
             _gitIgnoreTemplatesDir = Path.Combine(baseDir, "wwwroot", "templates", "gitignore");
@@ -24,13 +26,14 @@ namespace ParekGIT.Core.Services
             await WriteTemplateFileAsync(repoPath, _gitIgnoreTemplatesDir, templateName, ".gitignore", false);
         }
 
-        public async Task WriteLicenseAsync(string repoPath, string templateName, string? organization = null)
+        public async Task WriteLicenseAsync(string repoPath, string templateName, string? organization = null, string? projectName = null)
         {
-            await WriteTemplateFileAsync(repoPath, _licenseTemplatesDir, templateName, "LICENSE", true, organization);
+            await WriteTemplateFileAsync(repoPath, _licenseTemplatesDir, templateName, "LICENSE", true, organization, projectName);
         }
 
         // Helpers
-        private async Task WriteTemplateFileAsync(string repoPath, string templatesDir, string templateName, string destFileName, bool subPlaceholders, string? organization = null)
+        private async Task WriteTemplateFileAsync(string repoPath, string templatesDir, string templateName, string destFileName, 
+            bool subPlaceholders, string? organization = null, string? projectName = null)
         {
 
             string templatePath = Path.Combine(templatesDir, $"{templateName}.txt");
@@ -42,16 +45,23 @@ namespace ParekGIT.Core.Services
 
             string content = await _fileSystem.ReadAllTextAsync(templatePath);
 
-            // Replace license things in licenses
+            // Replace license placeholders in LICENSE file
             if (subPlaceholders)
             {
                 content = content
                     .Replace("{{ year }}", DateTime.Now.Year.ToString())
-                    .Replace("{{ organization }}", string.IsNullOrWhiteSpace(organization) ? "Unknown" : organization);
+                    .Replace("{{ organization }}", string.IsNullOrWhiteSpace(organization) ? "Unknown" : organization)
+                    .Replace("{{ project }}", string.IsNullOrWhiteSpace(projectName) ? "Unknown" : projectName);
+
+                if (content.Contains("{{") && content.Contains("}}"))
+                {
+                    await _logger.LogWarningAsync(
+                        $"Template '{templateName}' may contain unahndled placeholders after substitution."
+                    );
+                }
             }
 
             string destinationPath = Path.Combine(repoPath, destFileName);
-
             await _fileSystem.WriteAllTextAsync(destinationPath, content);
         }
     }
