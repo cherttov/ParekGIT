@@ -7,7 +7,8 @@ namespace ParekGIT.Data.Data
 {
     public class LiteDbStore : IRepositoryStore, ISettingsStore, ITodoStore
     {
-        private readonly string _dbPath;
+        private readonly string _connectionString;
+
         private const string ReposCollectionName = "repositories";
         private const string SettingsCollectionName = "settings";
         private const string TodosCollectionName = "todos";
@@ -15,11 +16,12 @@ namespace ParekGIT.Data.Data
         // Constructor
         public LiteDbStore()
         {
-            var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ParekGIT");
+            string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ParekGIT");
 
             Directory.CreateDirectory(appDataPath);
 
-            _dbPath = Path.Combine(appDataPath, "data.db");
+            string rawPath = Path.Combine(appDataPath, "data.db");
+            _connectionString = $"Filename={rawPath};Connection=Shared";
         }
 
         // Repos db
@@ -27,7 +29,7 @@ namespace ParekGIT.Data.Data
         {
             return Task.Run(() =>
             {
-                using (var db = new LiteDatabase(_dbPath))
+                using (var db = new LiteDatabase(_connectionString))
                 {
                     var collection = db.GetCollection<GitRepository>(ReposCollectionName);
 
@@ -43,7 +45,7 @@ namespace ParekGIT.Data.Data
         {
             return Task.Run(() =>
             {
-                using (var db = new LiteDatabase(_dbPath))
+                using (var db = new LiteDatabase(_connectionString))
                 {
                     var collection = db.GetCollection<GitRepository>(ReposCollectionName);
 
@@ -56,7 +58,7 @@ namespace ParekGIT.Data.Data
         {
             return Task.Run(() =>
             {
-                using (var db = new LiteDatabase(_dbPath))
+                using (var db = new LiteDatabase(_connectionString))
                 {
                     var collection = db.GetCollection<GitRepository>(ReposCollectionName);
 
@@ -69,7 +71,7 @@ namespace ParekGIT.Data.Data
         {
             return Task.Run(() =>
             {
-                using (var db = new LiteDatabase(_dbPath))
+                using (var db = new LiteDatabase(_connectionString))
                 {
                     var collection = db.GetCollection<GitRepository>(ReposCollectionName);
 
@@ -89,7 +91,7 @@ namespace ParekGIT.Data.Data
         {
             return Task.Run(() =>
             {
-                using (var db = new LiteDatabase(_dbPath))
+                using (var db = new LiteDatabase(_connectionString))
                 {
                     var collection = db.GetCollection<UserSettings>(SettingsCollectionName);
                     var settings = collection.FindById(1);
@@ -102,7 +104,7 @@ namespace ParekGIT.Data.Data
         {
             return Task.Run(() =>
             {
-                using (var db = new LiteDatabase(_dbPath))
+                using (var db = new LiteDatabase(_connectionString))
                 {
                     var collection = db.GetCollection<UserSettings>(SettingsCollectionName);
                     collection.Upsert(settings);
@@ -115,7 +117,7 @@ namespace ParekGIT.Data.Data
         {
             return Task.Run(() =>
             {
-                using (var db = new LiteDatabase(_dbPath))
+                using (var db = new LiteDatabase(_connectionString))
                 {
                     var collection = db.GetCollection<TodoItem>(TodosCollectionName);
 
@@ -130,7 +132,7 @@ namespace ParekGIT.Data.Data
         {
             return Task.Run(() =>
             {
-                using (var db = new LiteDatabase(_dbPath))
+                using (var db = new LiteDatabase(_connectionString))
                 {
                     var collection = db.GetCollection<TodoItem>(TodosCollectionName);
 
@@ -145,7 +147,7 @@ namespace ParekGIT.Data.Data
         {
             return Task.Run(() =>
             {
-                using (var db = new LiteDatabase(_dbPath))
+                using (var db = new LiteDatabase(_connectionString))
                 {
                     var collection = db.GetCollection<TodoItem>(TodosCollectionName);
 
@@ -160,7 +162,7 @@ namespace ParekGIT.Data.Data
         {
             return Task.Run(() =>
             {
-                using (var db = new LiteDatabase(_dbPath))
+                using (var db = new LiteDatabase(_connectionString))
                 {
                     var collection = db.GetCollection<TodoItem>(TodosCollectionName);
 
@@ -173,7 +175,7 @@ namespace ParekGIT.Data.Data
         {
             return Task.Run(() =>
             {
-                using (var db = new LiteDatabase(_dbPath))
+                using (var db = new LiteDatabase(_connectionString))
                 {
                     var collection = db.GetCollection<TodoItem>(TodosCollectionName);
 
