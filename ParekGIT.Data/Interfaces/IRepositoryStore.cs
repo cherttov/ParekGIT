@@ -7,5 +7,6 @@ namespace ParekGIT.Data.Interfaces
         Task<IEnumerable<GitRepository>> GetAllRepositoriesAsync();
         Task UpsertRepositoryAsync(GitRepository repository); // Update || Insert
         Task DeleteRepositoryAsync(Guid id);
+        Task UpdateRepositoryValidStateAsync(string absolutePath, bool isValid);
     }
 }

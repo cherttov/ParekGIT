@@ -896,8 +896,13 @@ function loadRepositoriesIntoDropdown(repositories) {
     repositories.forEach(repo => {
         const item = document.createElement("div");
         item.className = "dropdown-item";
-
         item.dataset.path = repo.AbsolutePath;
+
+        // If repoPath is invalid
+        if (!repo.IsValid) {
+            item.classList.add("invalid");
+            item.title = "Repository folder not found";
+        }
 
         item.innerHTML = `<span class="dropdown-item-text">${repo.Name}</span>`;
 
@@ -1088,9 +1093,16 @@ function folderSelected(directory) {
 // C# - Add repository to dropdown
 function addRepositoryToDropdown(repo) {
     const item = document.createElement("div");
+
     item.className = "dropdown-item";
     item.dataset.path = repo.AbsolutePath; 
     item.innerHTML = `<span class="dropdown-item-text">${repo.Name}</span>`;
+
+    // If repoPath is invalid
+    if (!repo.IsValid) {
+        item.classList.add("invalid");
+        item.title = "Repository folder not found";
+    }
 
     // LMB - select
     item.addEventListener("click", () => {
@@ -1146,7 +1158,10 @@ function addRepositoryToDropdown(repo) {
     });
 
     repoList.appendChild(item);
-    item.click();
+
+    if (repo.IsValid) {
+        item.click();
+    }
 }
 
 // C# - Load changed files to right sidebar

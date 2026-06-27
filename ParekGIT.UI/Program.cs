@@ -46,7 +46,7 @@ namespace ParekGIT.UI
                 // Setup IPC router
                 var router = new IpcRouter(logger);
 
-                router.RegisterHandler(new AppReadyHandler(window, dbStore));
+                router.RegisterHandler(new AppReadyHandler(window, dbStore, fileSystem));
 
                 router.RegisterHandler(new RepoSelectedHandler(window, dbStore, gitRunner, repoWatcher, fileSystem));
                 router.RegisterHandler(new RepoAddHandler(window, dbStore, fileSystem));

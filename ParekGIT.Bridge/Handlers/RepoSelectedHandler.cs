@@ -39,6 +39,8 @@ namespace ParekGIT.Bridge.Handlers
             // Failed response
             if (!_fileSystem.DirectoryExists(repoPath))
             {
+                await _dbStore.UpdateRepositoryValidStateAsync(repoPath, false);
+
                 // Make an IPC message that path is missing to resolve
                 var missingResponse = new IpcMessage
                 {

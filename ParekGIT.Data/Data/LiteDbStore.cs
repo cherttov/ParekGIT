@@ -65,6 +65,25 @@ namespace ParekGIT.Data.Data
             });
         }
 
+        public Task UpdateRepositoryValidStateAsync(string absolutePath, bool isValid)
+        {
+            return Task.Run(() =>
+            {
+                using (var db = new LiteDatabase(_dbPath))
+                {
+                    var collection = db.GetCollection<GitRepository>(ReposCollectionName);
+
+                    var repo = collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
+
+                    if (repo != null && repo.IsValid != isValid)
+                    {
+                        repo.IsValid = isValid;
+                        collection.Update(repo);
+                    }
+                }
+            });
+        }
+
         // Settings db
         public Task<UserSettings> GetUserSettingsAsync()
         {
