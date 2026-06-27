@@ -25,8 +25,11 @@ namespace ParekGIT.UI
                 // OS Services
                 var fileSystem = new FileSystemService();
 
+                // Template service (creating .gitignore & LICENSE files)
+                var templateService = new TemplateService(fileSystem);
+
                 // Core runner
-                var gitRunner = new GitCliRunner(fileSystem);
+                var gitRunner = new GitCliRunner(fileSystem, templateService);
 
                 // Repo watcher
                 var repoWatcher = new RepoWatcher();

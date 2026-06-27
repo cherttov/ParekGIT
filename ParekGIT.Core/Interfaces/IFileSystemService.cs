@@ -6,7 +6,10 @@
         bool DirectoryExists(string path);
 
         Task<string> ReadAllTextAsync(string path);
+        Task WriteAllTextAsync(string path, string content);
+
         Task<IEnumerable<string>> GetFileSystemEntriesAsync(string path, string searchPattern, SearchOption searchOption);
+
         Task MoveDirectoryToRecycleBinAsync(string path);
     }
 }

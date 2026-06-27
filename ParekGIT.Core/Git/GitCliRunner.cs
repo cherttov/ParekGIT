@@ -3,17 +3,20 @@ using CliWrap.Buffered;
 using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
+using ParekGIT.Core.Services;
 
 namespace ParekGIT.Core.Git
 {
     public class GitCliRunner : IGitRunner
     {
         private readonly IFileSystemService _fileSystem;
+        private readonly ITemplateService _templateService; 
 
         // Constructor
-        public GitCliRunner(IFileSystemService fileSystem)
+        public GitCliRunner(IFileSystemService fileSystem, ITemplateService templateService)
         {
             _fileSystem = fileSystem;
+            _templateService = templateService;
         }
 
         // Command executor
@@ -344,17 +347,17 @@ namespace ParekGIT.Core.Git
             // gitignore if not None
             if (!string.Equals(gitIgnore, "None", StringComparison.OrdinalIgnoreCase))
             {
-                await GenerateGitIgnoreAsync(fullPath, gitIgnore);
+                await _templateService.WriteGitIgnoreAsync(fullPath, gitIgnore);
             }
             
             // license if not None
             if (!string.Equals(license, "None", StringComparison.OrdinalIgnoreCase))
             {
-                await GenerateLicenseAsync(fullPath, license);
+                GitConfigInfo globalConfig = await GetGlobalConfigAsync(null);
+                await _templateService.WriteLicenseAsync(fullPath, license, globalConfig.Name);
             }
 
             await ExecuteCommandAsync(fullPath, "add .");
-
             await ExecuteCommandAsync(fullPath, "commit --allow-empty -m \"Initial commit\"");
 
             return new GitRepository
@@ -414,19 +417,6 @@ namespace ParekGIT.Core.Git
                 string safeEmail = email.Replace("\"", "\\\"");
                 await ExecuteCommandAsync(repoPath, $"config --global user.email \"{safeEmail}\"");
             }
-        }
-
-        // Helpers
-        private async Task GenerateGitIgnoreAsync(string path, string type)
-        {
-            // Define git ignores templates
-            await File.WriteAllTextAsync(Path.Combine(path, ".gitignore"), "");
-        }
-
-        private async Task GenerateLicenseAsync(string path, string type)
-        {
-            // Define licenses
-            await File.WriteAllTextAsync(Path.Combine(path, ".gitignore"), "");
         }
     }
 }

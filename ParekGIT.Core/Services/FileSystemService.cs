@@ -22,6 +22,12 @@ namespace ParekGIT.Core.Services
         {
             return File.ReadAllTextAsync(path);
         }
+
+        public Task WriteAllTextAsync(string path, string content)
+        {
+            return File.WriteAllTextAsync(path, content);
+        }
+
         public async Task<IEnumerable<string>> GetFileSystemEntriesAsync(string path, string searchPattern, SearchOption searchOption)
         {
             return await Task.Run(() =>
