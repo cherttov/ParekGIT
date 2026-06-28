@@ -10,13 +10,15 @@ namespace ParekGIT.Core.Git
     public class GitCliRunner : IGitRunner
     {
         private readonly IFileSystemService _fileSystem;
-        private readonly ITemplateService _templateService; 
+        private readonly ITemplateService _templateService;
+        private readonly ILogger _logger;
 
         // Constructor
-        public GitCliRunner(IFileSystemService fileSystem, ITemplateService templateService)
+        public GitCliRunner(IFileSystemService fileSystem, ITemplateService templateService, ILogger logger)
         {
             _fileSystem = fileSystem;
             _templateService = templateService;
+            _logger = logger;
         }
 
         // Command executor
@@ -44,6 +46,14 @@ namespace ParekGIT.Core.Git
                 if (!isAcceptable)
                 {
                     throw new Exception($"Git command failed: exit {result.ExitCode}. {result.StandardError.Trim()}");
+                }
+
+                // Just extra log
+                if (result.ExitCode != 0)
+                {
+                    await _logger.LogWarningAsync(
+                        $"git {arguments} exited {result.ExitCode} (acceptable). {result.StandardError.Trim()}"
+                    );
                 }
 
                 return result.StandardOutput.TrimEnd();
@@ -294,6 +304,10 @@ namespace ParekGIT.Core.Git
                 if (ex.Message.Contains("conflict", StringComparison.OrdinalIgnoreCase) ||
                     ex.Message.Contains("could not revert", StringComparison.OrdinalIgnoreCase))
                 {
+                    await _logger.LogWarningAsync(
+                        $"Revert conflict on commit '{commitHash}' in '{repoPath}'. Aborting. Git message: {ex.Message}"
+                    );
+
                     await ExecuteCommandAsync(repoPath, "revert --abort");
 
                     throw new Exception("Merge conflict while reverting changes [RevertCommitAsync]");
@@ -323,6 +337,10 @@ namespace ParekGIT.Core.Git
                 if (ex.Message.Contains("conflict", StringComparison.OrdinalIgnoreCase) ||
                     ex.Message.Contains("merge failed", StringComparison.OrdinalIgnoreCase))
                 {
+                    await _logger.LogWarningAsync(
+                        $"Merge conflict while merging '{sourceBranch}' -> '{targetBranch}'. Aborting. Git message: {ex.Message}"
+                    );
+
                     await ExecuteCommandAsync(repoPath, "merge --abort");
 
                     throw new Exception($"Merge conflict occured while merging '{sourceBranch}' -> '{targetBranch}'. Merge aborted.");

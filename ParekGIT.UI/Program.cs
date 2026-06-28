@@ -23,13 +23,13 @@ namespace ParekGIT.UI
                 var dbStore = new LiteDbStore();
 
                 // OS Services
-                var fileSystem = new FileSystemService();
+                var fileSystem = new FileSystemService(logger);
 
                 // Template service (creating .gitignore & LICENSE files)
                 var templateService = new TemplateService(fileSystem, logger);
 
                 // Core runner
-                var gitRunner = new GitCliRunner(fileSystem, templateService);
+                var gitRunner = new GitCliRunner(fileSystem, templateService, logger);
 
                 // Repo watcher
                 var repoWatcher = new RepoWatcher();
@@ -54,7 +54,7 @@ namespace ParekGIT.UI
                 router.RegisterHandler(new RepoSelectedHandler(window, dbStore, gitRunner, repoWatcher, fileSystem));
                 router.RegisterHandler(new RepoAddHandler(window, dbStore, fileSystem));
                 router.RegisterHandler(new RepoCreateHandler(window, dbStore, gitRunner));
-                router.RegisterHandler(new RepoRemoveHandler(window, dbStore, fileSystem));
+                router.RegisterHandler(new RepoRemoveHandler(window, dbStore, fileSystem, logger));
                 router.RegisterHandler(new RepoStatusHandler(window, gitRunner, fileSystem));
                 router.RegisterHandler(new RepoTerminalHandler(fileSystem));
                 router.RegisterHandler(new RepoCommitHandler(window, gitRunner));

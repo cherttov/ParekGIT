@@ -17,15 +17,17 @@ namespace ParekGIT.Bridge.Handlers
         private readonly PhotinoWindow _window;
         private readonly LiteDbStore _dbStore;
         private readonly IFileSystemService _fileSystem;
+        private readonly ILogger _logger;
 
         public string Action => "REPO_REMOVE";
 
         // Constructor
-        public RepoRemoveHandler(PhotinoWindow window, LiteDbStore dbStore, IFileSystemService fileSystem)
+        public RepoRemoveHandler(PhotinoWindow window, LiteDbStore dbStore, IFileSystemService fileSystem, ILogger logger)
         {
             _window = window;
             _dbStore = dbStore;
             _fileSystem = fileSystem;
+            _logger = logger;
         }
 
         public async Task ExecuteAsync(JsonElement payload)
@@ -59,19 +61,19 @@ namespace ParekGIT.Bridge.Handlers
                 {
                     localDeleteFailed = true;
                     localDeleteError = "Directory might be in use.";
-                    Console.WriteLine($"Could not delete repo. Directory might be in use: {ioEx}");
+                    await _logger.LogErrorAsync($"Could not delete repo at '{repoPath}'. Directory might be in use.", ioEx);
                 }
                 catch (UnauthorizedAccessException unAuthEx)
                 {
                     localDeleteFailed = true;
                     localDeleteError = "Access denied.";
-                    Console.WriteLine($"Access denied: {unAuthEx}");
+                    await _logger.LogErrorAsync($"Access denied while deleting repo at '{repoPath}'.", unAuthEx);
                 }
                 catch (Exception ex)
                 {
                     localDeleteFailed = true;
                     localDeleteError = ex.Message;
-                    Console.WriteLine($"Error while deleting repo: {ex}");
+                    await _logger.LogErrorAsync($"Error while deleting repo at '{repoPath}'.", ex);
                 }
             }
 

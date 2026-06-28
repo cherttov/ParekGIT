@@ -8,6 +8,13 @@ namespace ParekGIT.Core.Services
 {
     public class FileSystemService : IFileSystemService
     {
+        private readonly ILogger _logger;
+
+        public FileSystemService(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public bool FileExists(string path)
         {
             return File.Exists(path);
@@ -68,9 +75,11 @@ namespace ParekGIT.Core.Services
                         .WithArguments(["trash", path])
                         .ExecuteAsync();
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Trash command not found. Falling back to permanent delete");
+                    await _logger.LogWarningAsync(
+                        $"'gio trash' unavailable when deleting '{path}. Falling back to permanent delete. ({ex.Message})"
+                    );
                     directory.Delete(true);
                 }
             }
