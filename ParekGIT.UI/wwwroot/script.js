@@ -121,6 +121,8 @@ const settingsModalThemeSelect = document.getElementById("settings-theme-select"
 const settingsModalConfirmBtn = settingsModal.querySelector(".confirm-modal-btn");
 
 const accountModal = document.getElementById("account-modal");
+const accountModalInputName = accountModal.querySelector(".input-name");
+const accountModalInputEmail = accountModal.querySelector(".input-email");
 const accountModalConfirmBtn = accountModal.querySelector(".confirm-modal-btn");
 
 const todoModal = document.getElementById("todo-modal");
@@ -327,6 +329,13 @@ window.external.receiveMessage(message => {
             break;
 
         case "CONFIG_LOCAL_SAVED":
+            break;
+
+        case "CONFIG_GLOBAL_LOADED":
+            processGlobalConfigLoad(data.Payload);
+            break;
+
+        case "CONFIG_GLOBAL_SAVED":
             break;
 
         case "REPO_PATH_MISSING":
@@ -1512,6 +1521,17 @@ function processLocalConfigLoad(configs) {
     configModal.classList.add("show");
 }
 
+// C# - On global config load
+function processGlobalConfigLoad(config) {
+    accountModalInputName.value = config.globalName || "";
+    accountModalInputEmail.value = config.globalEmail || "";
+
+    accountModalInputName.placeholder = config.globalName || "";
+    accountModalInputEmail.placeholder = config.globalEmail || "";
+
+    accountModal.classList.add("show");
+}
+
 // C# - Repo not found (path is invalid)
 function processMissingRepo(repoPath) {
     document.getElementById("missing-modal-repo-path").textContent = repoPath;
@@ -1614,7 +1634,7 @@ settingsBtn.addEventListener("click", () => {
 });
 
 accountBtn.addEventListener("click", () => {
-    accountModal.classList.add("show");
+    sendIpcMessage("CONFIG_GLOBAL_GET", {});
 });
 
 // Scrollbars (topbar)
@@ -2438,6 +2458,15 @@ configModalConfirmBtn.addEventListener("click", () => {
     closeAndClearModal(configModal);
 });
 
+accountModalConfirmBtn.addEventListener("click", () => {
+    sendIpcMessage("CONFIG_GLOBAL_SAVE", {
+        name: accountModalInputName.value.trim(),
+        email: accountModalInputEmail.value.trim()
+    });
+
+    closeAndClearModal(accountModal);
+});
+
 // Input boxes (modals)
 branchNewModalInputName.addEventListener("keyup", (event) => {
     if (event.key === "Enter") { branchNewModalConfirmBtn.click(); }
@@ -2549,7 +2578,6 @@ analyticsBtn.classList.add("disabled"); // FINISH
 todoBtn.classList.add("disabled");
 configBtn.classList.add("disabled");
 fetchBtn.classList.add("disabled");
-accountBtn.classList.add("disabled"); // FINISH
 
 branchBtn.classList.add("disabled");
 branchBtn.disabled = true;

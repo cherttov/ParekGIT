@@ -1304,7 +1304,38 @@ select:focus {
     pointer-events: none;
 }
 
+.modal-body-divider {
+    border-top: 1px solid var(--border-color);
+    margin: 4px 0;
+}
 
+.linked-account-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    background-color: var(--bg-deep);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.linked-account-name {
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.link-account-btn {
+    padding: 4px 12px;
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: not-allowed;
+}
 
 /* CONTEXT MENUS */
 .context-menu {
