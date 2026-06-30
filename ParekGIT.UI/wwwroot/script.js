@@ -118,6 +118,8 @@ const repoRemoveModalConfirmBtn = repoRemoveModal.querySelector(".confirm-modal-
 
 const settingsModal = document.getElementById("settings-modal");
 const settingsModalThemeSelect = document.getElementById("settings-theme-select");
+const settingsModalLogsView = document.getElementById("settings-logs-view");
+const settingsModalLogsClear = document.getElementById("settings-logs-clear");
 const settingsModalConfirmBtn = settingsModal.querySelector(".confirm-modal-btn");
 
 const accountModal = document.getElementById("account-modal");
@@ -1647,6 +1649,16 @@ todoModalRowsContainer.addEventListener("scroll", () => {
 });
 
 // Settings modal (modals)
+settingsModalLogsView.addEventListener("click", () => {
+    sendIpcMessage("EXPLORER_OPEN", {
+        path: "%APP_DATA%"
+    });
+});
+
+settingsModalLogsClear.addEventListener("click", () => {
+    sendIpcMessage("LOGS_CLEAR", {});
+});
+
 settingsModalConfirmBtn.addEventListener("click", () => {
     const updatedSettings = {
         Id: 1,

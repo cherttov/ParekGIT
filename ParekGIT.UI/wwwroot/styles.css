@@ -1337,6 +1337,33 @@ select:focus {
     cursor: not-allowed;
 }
 
+.button-button-container {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.button-button-container button {
+    flex: 1;
+}
+
+.button-button-container .browse-btn {
+    padding: 4px 12px;
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 0.1s ease;
+}
+
+.browse-btn:hover {
+    background-color: var(--bg-hover);
+}
+
 /* CONTEXT MENUS */
 .context-menu {
     display: flex;

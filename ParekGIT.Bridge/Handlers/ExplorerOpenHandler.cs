@@ -1,6 +1,7 @@
 ﻿using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
+using ParekGIT.Core.Services;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json;
@@ -25,6 +26,16 @@ namespace ParekGIT.Bridge.Handlers
                 ?? throw new IpcPayloadException("path");
 
             if (string.IsNullOrEmpty(rawPath)) { return Task.CompletedTask; }
+
+            if (rawPath == "%APP_DATA%")
+            {
+                rawPath = AppDataPaths.GetLogDirectory();
+
+                if (!_fileSystem.DirectoryExists(rawPath))
+                {
+                    throw new Exception("Couldn't resolve the path of ParekGIT local app data.");
+                }
+            }
 
             string normalizedPath = Path.GetFullPath(rawPath);
 

@@ -88,6 +88,8 @@ namespace ParekGIT.UI
                 router.RegisterHandler(new ConfigGlobalGetHandler(window, gitRunner));
                 router.RegisterHandler(new ConfigGlobalSaveHandler(window, gitRunner));
 
+                router.RegisterHandler(new LogsClearHandler(window, fileSystem, logger));
+
                 window.RegisterWebMessageReceivedHandler(router.HandleMessage!);
 
                 window.WaitForClose();
