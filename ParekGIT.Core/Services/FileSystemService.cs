@@ -84,5 +84,11 @@ namespace ParekGIT.Core.Services
                 }
             }
         }
+
+        public Task DeleteFile(string path)
+        {
+            File.Delete(path);
+            return Task.CompletedTask;
+        } 
     }
 }

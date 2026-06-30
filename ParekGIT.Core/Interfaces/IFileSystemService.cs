@@ -11,5 +11,6 @@
         Task<IEnumerable<string>> GetFileSystemEntriesAsync(string path, string searchPattern, SearchOption searchOption);
 
         Task MoveDirectoryToRecycleBinAsync(string path);
+        Task DeleteFile(string path);
     }
 }

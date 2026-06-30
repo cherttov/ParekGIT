@@ -1,13 +1,10 @@
-﻿using CliWrap;
-using Microsoft.VisualBasic.FileIO;
-using ParekGIT.Bridge.Data;
+﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
 using Photino.NET;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers

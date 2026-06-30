@@ -2,6 +2,7 @@
 using ParekGIT.Data.Interfaces;
 using LiteDB;
 using ParekGIT.Data.Models;
+using ParekGIT.Core.Services;
 
 namespace ParekGIT.Data.Data
 {
@@ -16,7 +17,7 @@ namespace ParekGIT.Data.Data
         // Constructor
         public LiteDbStore()
         {
-            string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ParekGIT");
+            string appDataPath = appDataPath = AppDataPaths.GetAppDataRoot();
 
             Directory.CreateDirectory(appDataPath);
 

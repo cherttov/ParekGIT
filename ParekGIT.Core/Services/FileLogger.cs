@@ -1,6 +1,4 @@
 ﻿using ParekGIT.Core.Interfaces;
-using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ParekGIT.Core.Services
@@ -13,7 +11,7 @@ namespace ParekGIT.Core.Services
 
         public FileLogger()
         {
-            _logDirectory = GetLogDirectory();
+            _logDirectory = AppDataPaths.GetLogDirectory();
             EnsureLogDirectoryExists();
         }
 
@@ -61,35 +59,6 @@ namespace ParekGIT.Core.Services
             {
                 _writeLock.Release();
             }
-        }
-
-        private static string GetLogDirectory()
-        {
-            string appDataPath;
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                // path: %LOCALAPPDATA%\ParekGIT\logs
-                appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                // path: ~/Library/Logs/ParekGIT
-                appDataPath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    "Library/Logs"
-                );
-            }
-            else // Linux
-            {
-                // path: ~/.local/share/ParekGIT
-                appDataPath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    "local/share"
-                );
-            }
-
-            return Path.Combine(appDataPath, "ParekGIT", "logs");
         }
 
         private void EnsureLogDirectoryExists()
