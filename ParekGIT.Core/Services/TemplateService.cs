@@ -26,14 +26,14 @@ namespace ParekGIT.Core.Services
             await WriteTemplateFileAsync(repoPath, _gitIgnoreTemplatesDir, templateName, ".gitignore", false);
         }
 
-        public async Task WriteLicenseAsync(string repoPath, string templateName, string? organization = null, string? projectName = null)
+        public async Task WriteLicenseAsync(string repoPath, string templateName, string year, string organization, string projectName)
         {
             await WriteTemplateFileAsync(repoPath, _licenseTemplatesDir, templateName, "LICENSE", true, organization, projectName);
         }
 
         // Helpers
         private async Task WriteTemplateFileAsync(string repoPath, string templatesDir, string templateName, string destFileName, 
-            bool subPlaceholders, string? organization = null, string? projectName = null)
+            bool subPlaceholders, string? year = null, string? organization = null, string? projectName = null)
         {
 
             string templatePath = Path.Combine(templatesDir, $"{templateName}.txt");
@@ -49,7 +49,7 @@ namespace ParekGIT.Core.Services
             if (subPlaceholders)
             {
                 content = content
-                    .Replace("{{ year }}", DateTime.Now.Year.ToString())
+                    .Replace("{{ year }}", string.IsNullOrWhiteSpace(year) ? DateTime.Now.Year.ToString() : year)
                     .Replace("{{ organization }}", string.IsNullOrWhiteSpace(organization) ? "Unknown" : organization)
                     .Replace("{{ project }}", string.IsNullOrWhiteSpace(projectName) ? "Unknown" : projectName);
 

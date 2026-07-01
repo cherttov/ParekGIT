@@ -30,7 +30,7 @@ namespace ParekGIT.Core.Interfaces
         Task CheckoutCommitAsync(string repoPath, string commitHash);
         Task RevertCommitAsync(string repoPath, string commitHash);
         Task MergeBranchesAsync(string repoPath, string sourceBranch, string targetBranch);
-        Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license);
+        Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license, string? licenseYear, string? licenseOrganization, string? licenseProject);
         Task SaveLocalConfigAsync(string repoPath, string name, string email);
         Task SaveGlobalConfigAsync(string? repoPath, string name, string email);
     }

@@ -104,6 +104,8 @@ const repoCreateModalInputPath = repoCreateModal.querySelector(".input-path");
 const repoCreateModalBrowseBtn = repoCreateModal.querySelector(".browse-btn");
 const repoCreateModalSelectGitIgnore = repoCreateModal.querySelector("#select-git-ignore");
 const repoCreateModalSelectLicense = repoCreateModal.querySelector("#select-git-license");
+const repoCreateModalLicenseEdit = repoCreateModal.querySelector("#license-edit-btn");
+const repoCreateModalLicenseEditPanel = repoCreateModal.querySelector("#license-edit-panel");
 const repoCreateModalConfirmBtn = repoCreateModal.querySelector(".confirm-modal-btn");
 
 const repoAddModal = document.getElementById("repo-add-modal");
@@ -416,8 +418,17 @@ const closeDropdowns = () => {
 
 const closeAndClearModal = (modalElement) => {
     modalElement.classList.remove('show');
+
+    // Clear all text inputs
     const inputs = modalElement.querySelectorAll('input');
     inputs.forEach(input => input.value = "");
+
+    // Reset all select inputs
+    const selects = modalElement.querySelectorAll('select');
+    selects.forEach(select => {
+        select.selectedIndex = 0;
+        select.dispatchEvent(new Event('change'));
+    });
 };
 
 const toggleDropdown = (toShow, toHide, event) => {
@@ -1671,7 +1682,7 @@ settingsModalConfirmBtn.addEventListener("click", () => {
 
     applyTheme(updatedSettings.Theme);
     closeAndClearModal(settingsModal);
-})
+});
 
 // Diff page (main-content)
 diffBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(diffBodyWrapper, diffScrollbar));
@@ -2319,6 +2330,13 @@ window.addEventListener("click", (event) => {
             document.querySelectorAll('.context-active').forEach(el => el.classList.remove('context-active'));
         }
     }
+
+    if (repoCreateModalLicenseEditPanel.classList.contains("open")) {
+        if (!repoCreateModalLicenseEditPanel.contains(event.target) && !repoCreateModalLicenseEdit.contains(event.target)) {
+            repoCreateModalLicenseEditPanel.classList.remove("open");
+            repoCreateModalLicenseEdit.classList.remove("active");
+        }
+    }
 }, true);
 
 // Confirm buttons (modals)
@@ -2387,12 +2405,18 @@ repoCreateModalConfirmBtn.addEventListener("click", () => {
     const localPath = repoCreateModalInputPath.value.trim();
     const gitIgnore = repoCreateModalSelectGitIgnore.value.trim() ?? "None";
     const gitLicense = repoCreateModalSelectLicense.value.trim() ?? "None";
+    const licenseYear = document.getElementById("license-field-year").value.trim();
+    const licenseOrganization = document.getElementById("license-field-organization").value.trim();
+    const licenseProject = document.getElementById("license-field-project").value.trim();
 
     sendIpcMessage("REPO_CREATE", {
-        "repoName": repoName,
-        "localPath": localPath,
-        "gitIgnore": gitIgnore,
-        "gitLicense": gitLicense
+        repoName: repoName,
+        localPath: localPath,
+        gitIgnore: gitIgnore,
+        gitLicense: gitLicense,
+        licenseYear: licenseYear,
+        licenseOrganization: licenseOrganization,
+        licenseProject: licenseProject
     });
 
     closeAndClearModal(repoCreateModal);
@@ -2518,6 +2542,25 @@ repoAddModalBrowseBtn.addEventListener("click", (event) => {
     activeBrowseInput = repoAddModalInputPath;
 
     sendIpcMessage("EXPLORER_OPEN_DIALOG");
+});
+
+// Repo create modal edit btn (modals/repo-create-modal)
+repoCreateModalLicenseEdit.addEventListener("click", (event) => {
+    event.stopPropagation();
+    repoCreateModalLicenseEditPanel.classList.toggle("open");
+    repoCreateModalLicenseEdit.classList.toggle("active");
+});
+
+repoCreateModalSelectLicense.addEventListener("change", (event) => {
+    const isNone = event.target.value === "None";
+
+    repoCreateModalLicenseEdit.disabled = isNone;
+    repoCreateModalLicenseEdit.classList.toggle("disabled", isNone);
+
+    if (isNone) {
+        repoCreateModalLicenseEditPanel.classList.remove("open");
+        repoCreateModalLicenseEdit.classList.remove("active");
+    }
 });
 
 // Search & Selection Setup (dropdowns)

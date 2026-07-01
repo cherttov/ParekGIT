@@ -38,8 +38,19 @@ namespace ParekGIT.Bridge.Handlers
             string gitLicense = payload.GetProperty("gitLicense").GetString()
                                ?? "None";
 
+            string licenseYear = payload.GetProperty("licenseYear").GetString()
+                               ?? "";
+
+            string licenseOrganization = payload.GetProperty("licenseOrganization").GetString()
+                               ?? "";
+
+            string licenseProject = payload.GetProperty("licenseProject").GetString()
+                               ?? "";
+
             // Create repo in git
-            var repository = await _gitRunner.CreateRepositoryAsync(repoName, localPath, gitIgnore, gitLicense);
+            var repository = await _gitRunner.CreateRepositoryAsync(
+                repoName, localPath, gitIgnore, gitLicense, licenseYear, licenseOrganization, licenseProject
+            );
 
             await _dbStore.UpsertRepositoryAsync(repository);
 

@@ -279,7 +279,7 @@
 
                     <div class="modal-body-row">
                         <label>Git ignore</label>
-                        <select id="select-git-ignore" class="modal-input">
+                        <select class="modal-input" id="select-git-ignore">
                             <option value="None">None</option>
                             <option value="angular">Angular</option>
                             <option value="cpp">C++</option>
@@ -312,13 +312,35 @@
 
                     <div class="modal-body-row">
                         <label>License</label>
-                        <select id="select-git-license" class="modal-input">
-                            <option value="None">None</option>
-                            <option value="mit">MIT License</option>
-                            <option value="gpl3">GNU GPLv3</option>
-                            <option value="apache2">Apache License 2.0</option>
-                            <option value="gpl2">GNU GPLv2</option>
-                        </select>
+                        <div class="input-button-container">
+                            <select class="modal-input" id="select-git-license">
+                                <option value="None">None</option>
+                                <option value="mit">MIT License</option>
+                                <option value="gpl3">GNU GPLv3</option>
+                                <option value="apache2">Apache License 2.0</option>
+                                <option value="gpl2">GNU GPLv2</option>
+                            </select>
+
+                            <div class="license-edit-anchor">
+                                <button class="browse-btn disabled" id="license-edit-btn">Edit</button>
+
+                                <div class="license-edit-panel" id="license-edit-panel">
+                                    <div class="license-field-row">
+                                        <label>Year</label>
+                                        <input type="text" class="modal-input" id="license-field-year" />
+                                    </div>
+                                    <div class="license-field-row">
+                                        <label>Author</label>
+                                        <input type="text" class="modal-input" id="license-field-organization" />
+                                    </div>
+                                    <div class="license-field-row">
+                                        <label>Project</label>
+                                        <input type="text" class="modal-input" id="license-field-project" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
 

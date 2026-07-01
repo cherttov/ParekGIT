@@ -1097,6 +1097,56 @@ select:focus {
     width: 100%;
 }
 
+.license-edit-anchor {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.license-edit-panel {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 4px);
+    right: 0;
+    z-index: 10;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(0px);
+    transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s;
+}
+
+.license-edit-panel.open {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(16px);
+}
+
+.license-field-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.license-field-row label {
+    width: 56px;
+    font-size: 13px;
+    color: var(--text-primary);
+    flex-shrink: 0;
+}
+
+.license-field-row .modal-input {
+    flex: 1;
+    min-width: 0;
+}
+
 .input-button-container .modal-input {
     flex: 1;
 }
@@ -1111,7 +1161,24 @@ select:focus {
     font-size: 13px;
     font-weight: 500;
     white-space: nowrap;
-    transition: background-color 0.1s ease;
+    transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+}
+
+.input-button-container .browse-btn.active {
+    background-color: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+}
+
+.input-button-container .browse-btn.active:hover {
+    background-color: var(--accent-hover);
+    color: var(--accent-text-hover);
+}
+
+.browse-btn:disabled,
+.browse-btn.disabled {
+    opacity: 0.4;
+    pointer-events: none;
 }
 
 .browse-btn:hover {

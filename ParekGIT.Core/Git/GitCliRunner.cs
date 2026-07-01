@@ -350,7 +350,8 @@ namespace ParekGIT.Core.Git
             }
         }
 
-        public async Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license)
+        public async Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license,
+            string? licenseYear, string? licenseOrganization, string? licenseProject)
         {
             // Create & check directory
             string fullPath = Path.Combine(localPath, repoName);
@@ -372,7 +373,20 @@ namespace ParekGIT.Core.Git
             if (!string.Equals(license, "None", StringComparison.OrdinalIgnoreCase))
             {
                 GitConfigInfo globalConfig = await GetGlobalConfigAsync(null);
-                await _templateService.WriteLicenseAsync(fullPath, license, globalConfig.Name, repoName);
+
+                string resolvedYear = !string.IsNullOrWhiteSpace(licenseOrganization)
+                    ? licenseOrganization
+                    : (globalConfig.Name);
+
+                string resolvedOrganization = !string.IsNullOrWhiteSpace(licenseOrganization)
+                    ? licenseOrganization
+                    : (globalConfig.Name ?? "Unknown Author");
+
+                string resolvedProject = !string.IsNullOrWhiteSpace(licenseProject)
+                    ? licenseProject
+                    : repoName;
+
+                await _templateService.WriteLicenseAsync(fullPath, license, resolvedYear, resolvedOrganization, resolvedProject);
             }
 
             await ExecuteCommandAsync(fullPath, "add .");
