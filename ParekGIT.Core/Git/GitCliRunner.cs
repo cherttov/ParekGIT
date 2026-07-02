@@ -350,43 +350,35 @@ namespace ParekGIT.Core.Git
             }
         }
 
-        public async Task<GitRepository> CreateRepositoryAsync(string repoName, string localPath, string gitIgnore, string license,
-            string? licenseYear, string? licenseOrganization, string? licenseProject)
+        public async Task<GitRepository> CreateRepositoryAsync(CreateRepoRequest request)
         {
             // Create & check directory
-            string fullPath = Path.Combine(localPath, repoName);
+            string fullPath = Path.Combine(request.LocalPath, request.RepoName);
 
-            if (Directory.Exists(fullPath)) { throw new Exception($"Directory {repoName} already exists."); }
-
-            Directory.CreateDirectory(fullPath);
+            if (Directory.Exists(fullPath)) { throw new Exception($"Directory {request.RepoName} already exists."); }
 
             // Init repo
+            Directory.CreateDirectory(fullPath);
             await ExecuteCommandAsync(fullPath, "init -b main");
 
             // gitignore if not None
-            if (!string.Equals(gitIgnore, "None", StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(request.GitIgnore, "None", StringComparison.OrdinalIgnoreCase))
             {
-                await _templateService.WriteGitIgnoreAsync(fullPath, gitIgnore);
+                await _templateService.WriteGitIgnoreAsync(fullPath, request.GitIgnore);
             }
             
             // license if not None
-            if (!string.Equals(license, "None", StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(request.License, "None", StringComparison.OrdinalIgnoreCase))
             {
                 GitConfigInfo globalConfig = await GetGlobalConfigAsync(null);
 
-                string resolvedYear = !string.IsNullOrWhiteSpace(licenseOrganization)
-                    ? licenseOrganization
-                    : (globalConfig.Name);
-
-                string resolvedOrganization = !string.IsNullOrWhiteSpace(licenseOrganization)
-                    ? licenseOrganization
-                    : (globalConfig.Name ?? "Unknown Author");
-
-                string resolvedProject = !string.IsNullOrWhiteSpace(licenseProject)
-                    ? licenseProject
-                    : repoName;
-
-                await _templateService.WriteLicenseAsync(fullPath, license, resolvedYear, resolvedOrganization, resolvedProject);
+                await _templateService.WriteLicenseAsync(
+                    fullPath,
+                    request.License,
+                    string.IsNullOrWhiteSpace(request.LicenseYear) ? DateTime.Now.Year.ToString() : request.LicenseYear,
+                    string.IsNullOrWhiteSpace(request.LicenseOrganization) ? globalConfig.Name : request.LicenseOrganization,
+                    string.IsNullOrWhiteSpace(request.LicenseProject) ? request.RepoName : request.LicenseProject
+                );
             }
 
             await ExecuteCommandAsync(fullPath, "add .");
@@ -395,7 +387,7 @@ namespace ParekGIT.Core.Git
             return new GitRepository
             {
                 Id = Guid.NewGuid(),
-                Name = repoName,
+                Name = request.RepoName,
                 AbsolutePath = fullPath,
                 LastAccessed = DateTime.UtcNow
             };

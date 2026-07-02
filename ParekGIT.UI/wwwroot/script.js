@@ -2404,7 +2404,7 @@ repoCreateModalConfirmBtn.addEventListener("click", () => {
     const repoName = repoCreateModalInputName.value.trim();
     const localPath = repoCreateModalInputPath.value.trim();
     const gitIgnore = repoCreateModalSelectGitIgnore.value.trim() ?? "None";
-    const gitLicense = repoCreateModalSelectLicense.value.trim() ?? "None";
+    const license = repoCreateModalSelectLicense.value.trim() ?? "None";
     const licenseYear = document.getElementById("license-field-year").value.trim();
     const licenseOrganization = document.getElementById("license-field-organization").value.trim();
     const licenseProject = document.getElementById("license-field-project").value.trim();
@@ -2413,7 +2413,7 @@ repoCreateModalConfirmBtn.addEventListener("click", () => {
         repoName: repoName,
         localPath: localPath,
         gitIgnore: gitIgnore,
-        gitLicense: gitLicense,
+        license: license,
         licenseYear: licenseYear,
         licenseOrganization: licenseOrganization,
         licenseProject: licenseProject

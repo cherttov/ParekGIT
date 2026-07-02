@@ -23,45 +23,45 @@ namespace ParekGIT.Core.Services
 
         public async Task WriteGitIgnoreAsync(string repoPath, string templateName)
         {
-            await WriteTemplateFileAsync(repoPath, _gitIgnoreTemplatesDir, templateName, ".gitignore", false);
-        }
-
-        public async Task WriteLicenseAsync(string repoPath, string templateName, string year, string organization, string projectName)
-        {
-            await WriteTemplateFileAsync(repoPath, _licenseTemplatesDir, templateName, "LICENSE", true, organization, projectName);
-        }
-
-        // Helpers
-        private async Task WriteTemplateFileAsync(string repoPath, string templatesDir, string templateName, string destFileName, 
-            bool subPlaceholders, string? year = null, string? organization = null, string? projectName = null)
-        {
-
-            string templatePath = Path.Combine(templatesDir, $"{templateName}.txt");
+            string templatePath = Path.Combine(_gitIgnoreTemplatesDir, $"{templateName}.txt");
 
             if (!_fileSystem.FileExists(templatePath))
             {
-                throw new FileNotFoundException($"Template '{templateName}' not found.");
+                throw new FileNotFoundException($"GitIgnore template '{templateName}' not found.");
             }
 
             string content = await _fileSystem.ReadAllTextAsync(templatePath);
 
-            // Replace license placeholders in LICENSE file
-            if (subPlaceholders)
-            {
-                content = content
-                    .Replace("{{ year }}", string.IsNullOrWhiteSpace(year) ? DateTime.Now.Year.ToString() : year)
-                    .Replace("{{ organization }}", string.IsNullOrWhiteSpace(organization) ? "Unknown" : organization)
-                    .Replace("{{ project }}", string.IsNullOrWhiteSpace(projectName) ? "Unknown" : projectName);
+            string destinationPath = Path.Combine(repoPath, ".gitignore");
+            await _fileSystem.WriteAllTextAsync(destinationPath, content);
+        }
 
-                if (content.Contains("{{") && content.Contains("}}"))
-                {
-                    await _logger.LogWarningAsync(
-                        $"Template '{templateName}' may contain unahndled placeholders after substitution."
-                    );
-                }
+        public async Task WriteLicenseAsync(string repoPath, string templateName, string year, string organization, string project)
+        {
+            string templatePath = Path.Combine(_licenseTemplatesDir, $"{templateName}.txt");
+
+            if (!_fileSystem.FileExists(templatePath))
+            {
+                throw new FileNotFoundException($"License template '{templateName}' not found.");
             }
 
-            string destinationPath = Path.Combine(repoPath, destFileName);
+            string content = await _fileSystem.ReadAllTextAsync(templatePath);
+
+            // Replace placeholders
+            content = content
+                    .Replace("{{ year }}", string.IsNullOrWhiteSpace(year) ? DateTime.Now.Year.ToString() : year)
+                    .Replace("{{ organization }}", string.IsNullOrWhiteSpace(organization) ? "Unknown Author" : organization)
+                    .Replace("{{ project }}", string.IsNullOrWhiteSpace(project) ? "Unknown Project" : project);
+
+            // Warn about unresolved placeholders
+            if (content.Contains("{{") && content.Contains("}}"))
+            {
+                await _logger.LogWarningAsync(
+                    $"Template '{templateName}' may contain unahndled placeholders after substitution."
+                );
+            }
+
+            string destinationPath = Path.Combine(repoPath, "LICENSE");
             await _fileSystem.WriteAllTextAsync(destinationPath, content);
         }
     }

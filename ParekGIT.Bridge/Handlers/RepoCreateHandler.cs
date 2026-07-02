@@ -2,6 +2,7 @@
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
+using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
 using Photino.NET;
 using System.Text.Json;
@@ -26,32 +27,11 @@ namespace ParekGIT.Bridge.Handlers
 
         public async Task ExecuteAsync(JsonElement payload)
         {
-            string repoName = payload.GetProperty("repoName").GetString()
-                              ?? throw new IpcPayloadException("repoName");
-
-            string localPath = payload.GetProperty("localPath").GetString()
-                               ?? throw new IpcPayloadException("localPath");
-
-            string gitIgnore = payload.GetProperty("gitIgnore").GetString()
-                               ?? "None";
-
-            string gitLicense = payload.GetProperty("gitLicense").GetString()
-                               ?? "None";
-
-            string licenseYear = payload.GetProperty("licenseYear").GetString()
-                               ?? "";
-
-            string licenseOrganization = payload.GetProperty("licenseOrganization").GetString()
-                               ?? "";
-
-            string licenseProject = payload.GetProperty("licenseProject").GetString()
-                               ?? "";
+            var request = payload.Deserialize<CreateRepoRequest>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                ?? throw new IpcPayloadException("Invalid or missing payload (CreatRepoRequest)");
 
             // Create repo in git
-            var repository = await _gitRunner.CreateRepositoryAsync(
-                repoName, localPath, gitIgnore, gitLicense, licenseYear, licenseOrganization, licenseProject
-            );
-
+            var repository = await _gitRunner.CreateRepositoryAsync(request);
             await _dbStore.UpsertRepositoryAsync(repository);
 
             // Response
