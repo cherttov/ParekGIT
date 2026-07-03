@@ -6,3 +6,4 @@
 **Operating System**
 - Windows 10/11 (x64)
 - Linux **(UNTESTED)**
+- MacOS **(UNTESTED/NOT COMPILED)**
