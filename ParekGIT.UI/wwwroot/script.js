@@ -192,6 +192,7 @@ const historyItemMenuCreateBranch = historyItemContextMenu.querySelector(".conte
 const historyItemMenuCopySHA = historyItemContextMenu.querySelector(".context-menu-item.item-copy-sha");
 
 const protectedBranches = ["main", "master"];
+const binaryExts = ['.exe', '.dll', '.bin', '.obj', '.pdb', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.zip', '.tar', '.gz', '.7z', '.pdf'];
 
 // ------- APP STATE -------
 let currentRepoPath = "";
@@ -1250,6 +1251,14 @@ function renderChangedFiles(files) {
             item.classList.add("selected");
 
             diffFilename.textContent = file.Path;
+
+            // Check for binary extensions
+            const ext = file.Path.substring(file.Path.lastIndexOf('.')).toLowerCase();
+            if (binaryExts.includes(ext)) {
+                diffContent.textContent = "Binary file changed (no preview available)";
+                return;
+            }
+
             diffContent.textContent = "Loading changes...";
 
             sendIpcMessage("GET_FILE_DIFF", {
@@ -1477,6 +1486,14 @@ function loadCommitDetails(details) {
             detailsBtnValue.innerHTML = `<span class="change-status ${statusClass}">${file.StatusCode[0]}</span>
                                          <span class="change-path">${file.Path}</span>`;
             closeDropdowns();
+
+            const ext = file.Path.substring(file.Path.lastIndexOf('.').toLowerCase());
+            if (binaryExts.includes(ext)) {
+                detailsContent.innerHTML = `<span class="diff-chunk">Binary file changes (no preview available)</span>`;
+                updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar);
+                return;
+            }
+
             detailsContent.textContent = "Loading diff...";
 
             sendIpcMessage("GET_HISTORY_FILE_DIFF", {
