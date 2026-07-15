@@ -2654,16 +2654,6 @@ fetchBtn.classList.add("disabled");
 branchBtn.classList.add("disabled");
 branchBtn.disabled = true;
 
-// FINISH
-repoMenuClone.classList.add("disabled");
-repoMenuClone.disabled = true;
-topbarRepoMenuClone.classList.add("disabled");
-topbarRepoMenuClone.disabled = true;
-
-// FINISH
-historyItemMenuCreateBranch.classList.add("disabled");
-historyItemMenuCreateBranch.disabled = true;
-
 switchToChangesTab();
 toggleCommitButton();
 resetDetailsViewer();

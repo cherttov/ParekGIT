@@ -244,11 +244,27 @@
                 </div>
 
                 <div class="modal-body">
+                    <div class="modal-body-row">
+                        <label>Repository URL</label>
+                        <input type="text" class="modal-input input-url" placeholder="repository url" />
+                    </div>
+
+                    <div class="modal-body-row checkbox-row">
+                        <label>
+                            <input type="checkbox" class="ui-checkbox" />
+                            Clone as local
+                        </label>
+                    </div>
+
+                    <div class="modal-body-row">
+                        <label>Local path</label>
+                        <input type="text" class="modal-input input-path" placeholder="repository path" />
+                    </div>
 
                 </div>
 
                 <div class="modal-footer">
-                    <button class="confirm-modal-btn">Clone</button>
+                    <button class="confirm-modal-btn">Clone repository</button>
                     <button class="cancel-modal-btn">Cancel</button>
                 </div>
 
