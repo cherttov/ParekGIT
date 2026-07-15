@@ -81,11 +81,17 @@ const branchNewModal = document.getElementById("branch-new-modal");
 const branchNewModalInputName = branchNewModal.querySelector(".modal-input");
 const branchNewModalConfirmBtn = branchNewModal.querySelector(".confirm-modal-btn");
 
+const branchHistoryNewModal = document.getElementById("branch-history-new-modal");
+const branchHistoryNewModalName = document.getElementById("branch-history-modal-commit-name");
+const branchHistoryNewModalInputName = branchHistoryNewModal.querySelector(".modal-input");
+const branchHistoryNewModalConfirmBtn = branchHistoryNewModal.querySelector(".confirm-modal-btn");
+
 const branchRenameModal = document.getElementById("branch-rename-modal");
 const branchRenameModalInputName = branchRenameModal.querySelector(".modal-input");
 const branchRenameModalConfirmBtn = branchRenameModal.querySelector(".confirm-modal-btn");
 
 const branchDeleteModal = document.getElementById("branch-delete-modal");
+const branchDeleteModalName = document.getElementById("delete-modal-branch-name");
 const branchDeleteModalConfirmBtn = branchDeleteModal.querySelector(".confirm-modal-btn");
 
 const branchMergeModal = document.getElementById("branch-merge-modal");
@@ -510,6 +516,12 @@ const validateBranchNewModal = () => {
     const isValid = branchNewModalInputName.value.trim() !== "";
     branchNewModalConfirmBtn.disabled = !isValid;
     branchNewModalConfirmBtn.classList.toggle("disabled", !isValid);
+};
+
+const validateBranchHistoryNewModal = () => {
+    const isValid = branchHistoryNewModalInputName.value.trim() !== "";
+    branchHistoryNewModalConfirmBtn.disabled = !isValid;
+    branchHistoryNewModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
 const validateBranchRenameModal = () => {
@@ -2062,7 +2074,7 @@ topbarBranchMenuDelete.addEventListener("click", (event) => {
     if (!currentRepoPath || !currentBranch) { return; }
 
     branchDeleteModal.dataset.targetName = currentBranch;
-    document.getElementById("delete-modal-branch-name").textContent = currentBranch;
+    branchDeleteModalName.textContent = currentBranch;
 
     branchDeleteModal.classList.add("show");
 });
@@ -2125,7 +2137,7 @@ branchItemMenuDelete.addEventListener("click", (event) => {
     if (branchName) {
         branchDeleteModal.dataset.targetName = branchName;
 
-        document.getElementById("delete-modal-branch-name").textContent = branchName;
+        branchDeleteModalName.textContent = branchName;
         branchDeleteModal.classList.add("show");
     }
 
@@ -2293,14 +2305,15 @@ historyItemMenuRevert.addEventListener("click", (event) => {
     closeDropdowns();
 });
 
-historyItemMenuCreateBranch.addEventListener("click", (event) => { // FINISH
+historyItemMenuCreateBranch.addEventListener("click", (event) => {
     event.stopPropagation();
     const hash = historyItemContextMenu.dataset.targetHash;
     if (hash) {
-        sendIpcMessage("HISTORY_BRANCH_CREATE", { // CHANGE: CONNECT TO MODAL THEN TO BACKEND
-            repoPath: currentRepoPath,
-            commitHash: hash
-        });
+        branchHistoryNewModalName.textContent = hash.substring(0, 7); // hash shortened to 7 chars
+        branchHistoryNewModal.dataset.targetHash = hash;
+        branchHistoryNewModal.classList.add("show");
+        validateBranchHistoryNewModal();
+        setTimeout(() => { branchHistoryNewModalInputName.focus(); }, 100);
     }
     closeDropdowns();
 });
@@ -2368,6 +2381,21 @@ branchNewModalConfirmBtn.addEventListener("click", () => {
     });
 
     closeAndClearModal(branchNewModal);
+});
+
+branchHistoryNewModalConfirmBtn.addEventListener("click", () => {
+    const newBranchName = branchHistoryNewModalInputName.value.trim();
+    const commitHash = branchHistoryNewModal.dataset.targetHash;
+
+    if (newBranchName === "" || !commitHash) { return; }
+
+    sendIpcMessage("BRANCH_HISTORY_CREATE", {
+        repoPath: currentRepoPath,
+        branchName: newBranchName,
+        commitHash: commitHash
+    });
+
+    closeAndClearModal(branchHistoryNewModal);
 });
 
 branchRenameModalConfirmBtn.addEventListener("click", () => {
@@ -2524,6 +2552,9 @@ accountModalConfirmBtn.addEventListener("click", () => {
 branchNewModalInputName.addEventListener("keyup", (event) => {
     if (event.key === "Enter") { branchNewModalConfirmBtn.click(); }
 });
+branchHistoryNewModal.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") { branchHistoryNewModalConfirmBtn.click(); }
+});
 branchRenameModalInputName.addEventListener("keyup", (event) => {
     if (event.key === "Enter") { branchRenameModalConfirmBtn.click(); }
 });
@@ -2539,6 +2570,7 @@ repoAddModalInputPath.addEventListener("keyup", (event) => {
 
 // Confirm toggle (modals)
 branchNewModalInputName.addEventListener("input", validateBranchNewModal);
+branchHistoryNewModalInputName.addEventListener("input", validateBranchHistoryNewModal);
 branchRenameModalInputName.addEventListener("input", validateBranchRenameModal);
 repoCreateModalInputName.addEventListener("input", validateRepoCreateModal);
 repoCreateModalInputPath.addEventListener("input", validateRepoCreateModal);

@@ -166,6 +166,13 @@ namespace ParekGIT.Core.Git
             await ExecuteCommandAsync(repoPath, arguments);
         }
 
+        public async Task CreateBranchFromCommitAsync(string repoPath, string branchName, string commitHash)
+        {
+            string arguments = $"checkout -b \"{branchName}\" {commitHash}";
+
+            await ExecuteCommandAsync(repoPath, arguments);
+        }
+
         public async Task CommitAsync(string repoPath, string message, string desc, IEnumerable<string> files)
         {
             if (files == null) { return; }

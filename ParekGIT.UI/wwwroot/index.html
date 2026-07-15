@@ -154,6 +154,34 @@
 
         </div>
 
+        <div class="modal-backdrop" id="branch-history-new-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Create branch</h3>
+                    <button class="close-modal-icon">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="modal-body-row">
+                        <label>Create a branch from commit:</label>
+                        <label class="highlight-name" id="branch-history-modal-commit-name">{ commit_name }</label>
+                    </div>
+
+                    <div class="modal-body-row">
+                        <label>Name</label>
+                        <input type="text" class="modal-input" placeholder="new branch name" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="confirm-modal-btn">Create branch</button>
+                    <button class="cancel-modal-btn">Cancel</button>
+                </div>
+
+            </div>
+
+        </div>
+
         <div class="modal-backdrop" id="branch-rename-modal">
             <div class="modal-content">
                 <div class="modal-header">
