@@ -1499,7 +1499,7 @@ function loadCommitDetails(details) {
                                          <span class="change-path">${file.Path}</span>`;
             closeDropdowns();
 
-            const ext = file.Path.substring(file.Path.lastIndexOf('.').toLowerCase());
+            const ext = file.Path.substring(file.Path.lastIndexOf('.')).toLowerCase();
             if (binaryExts.includes(ext)) {
                 detailsContent.innerHTML = `<span class="diff-chunk">Binary file changes (no preview available)</span>`;
                 updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar);
