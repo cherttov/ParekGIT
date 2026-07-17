@@ -2442,6 +2442,12 @@ branchMergeModalConfirmBtn.addEventListener("click", () => {
 });
 
 repoCloneModalConfirmBtn.addEventListener("click", () => {
+
+
+    sendIpcMessage("REPO_CLONE", {
+
+    });
+
     closeAndClearModal(repoCloneModal);
 });
 

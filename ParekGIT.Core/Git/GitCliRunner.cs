@@ -198,6 +198,13 @@ namespace ParekGIT.Core.Git
             await ExecuteCommandAsync(repoPath, commitArgs);
         }
 
+        public async Task PushAsync(string repoPath)
+        {
+            string arguments = "push -u origin HEAD";
+
+            await ExecuteCommandAsync(repoPath, arguments);
+        }
+
         public async Task RenameBranchAsync(string repoPath, string oldName, string newName)
         {
             string arguments = $"branch -m {oldName} {newName}";
@@ -399,6 +406,18 @@ namespace ParekGIT.Core.Git
                 AbsolutePath = fullPath,
                 LastAccessed = DateTime.UtcNow
             };
+        }
+
+        public async Task CloneRepositoryAsync(string repoUrl, bool asLocal, string localPath)
+        {
+            string arguments = $"clone \"{repoUrl}\" \"{localPath}\"";
+
+            await ExecuteCommandAsync(null, arguments);
+
+            if (asLocal)
+            {
+                await ExecuteCommandAsync(localPath, "remote remove origin");
+            }
         }
 
         public async Task SaveLocalConfigAsync(string repoPath, string name, string email)

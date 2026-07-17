@@ -21,6 +21,7 @@ namespace ParekGIT.Core.Interfaces
         Task CreateBranchAsync(string repoPath, string branchName);
         Task CreateBranchFromCommitAsync(string repoPath, string branchName, string commitHash);
         Task CommitAsync(string repoPath, string message, string desc, IEnumerable<string> files);
+        Task PushAsync(string repoPath);
         Task RenameBranchAsync(string repoPath, string oldName, string newName);
         Task DeleteBranchAsync(string repoPath, string branchName);
         Task FetchRepositoryAsync(string repoPath);
@@ -32,6 +33,7 @@ namespace ParekGIT.Core.Interfaces
         Task RevertCommitAsync(string repoPath, string commitHash);
         Task MergeBranchesAsync(string repoPath, string sourceBranch, string targetBranch);
         Task<GitRepository> CreateRepositoryAsync(CreateRepoRequest request);
+        Task CloneRepositoryAsync(string repoUrl, bool asLocal, string localPath);
         Task SaveLocalConfigAsync(string repoPath, string name, string email);
         Task SaveGlobalConfigAsync(string? repoPath, string name, string email);
     }
