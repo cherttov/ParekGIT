@@ -102,6 +102,10 @@ const branchMergeModalSelectTarget = document.getElementById("merge-modal-select
 const branchMergeModalConfirmBtn = branchMergeModal.querySelector(".confirm-modal-btn");
 
 const repoCloneModal = document.getElementById("repo-clone-modal");
+const repoCloneModalRepoUrl = repoCloneModal.querySelector(".input-url");
+const repoCloneModalAsLocal = repoCloneModal.querySelector(".ui-checkbox");
+const repoCloneModalInputPath = repoCloneModal.querySelector(".input-path");
+const repoCloneModalBrowseBtn = repoCloneModal.querySelector(".browse-btn");
 const repoCloneModalConfirmBtn = repoCloneModal.querySelector(".confirm-modal-btn");
 
 const repoCreateModal = document.getElementById("repo-create-modal");
@@ -534,6 +538,13 @@ const validateBranchRenameModal = () => {
 
     branchRenameModalConfirmBtn.disabled = !isValid;
     branchRenameModalConfirmBtn.classList.toggle("disabled", !isValid);
+};
+
+const validateRepoCloneModal = () => {
+    const isValid = repoCloneModalRepoUrl.value.trim() !== ""
+        && repoCloneModalInputPath.value.trim() !== "";
+    repoCloneModalConfirmBtn.disabled = !isValid;
+    repoCloneModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
 const validateRepoCreateModal = () => {
@@ -1967,8 +1978,8 @@ topbarRepoMenuClone.addEventListener("click", (event) => {
     event.stopPropagation();
     closeDropdowns();
     repoCloneModal.classList.add("show");
-    // validateRepoCloneModal();
-    // setTimeout(() => { ...; }, 100);
+    validateRepoCloneModal();
+    setTimeout(() => { repoCloneModalRepoUrl.focus(); }, 100);
 });
 
 topbarRepoMenuCreate.addEventListener("click", (event) => {
@@ -2150,8 +2161,8 @@ repoMenuClone.addEventListener("click", (event) => {
     closeDropdowns();
 
     repoCloneModal.classList.add("show");
-    // validateRepoCloneModal();
-    // setTimeout(() => { ...; }, 100);
+    validateRepoCloneModal();
+    setTimeout(() => { repoCloneModalRepoUrl.focus(); }, 100);
 });
 
 repoMenuCreate.addEventListener("click", (event) => {
@@ -2442,10 +2453,16 @@ branchMergeModalConfirmBtn.addEventListener("click", () => {
 });
 
 repoCloneModalConfirmBtn.addEventListener("click", () => {
+    const repoUrl = repoCloneModalRepoUrl.value;
+    const asLocal = repoCloneModalAsLocal.value;
+    const localPath = repoCloneModalInputPath.value;
 
+    if (!repoUrl || !localPath) { return; }
 
     sendIpcMessage("REPO_CLONE", {
-
+        repoUrl: repoUrl,
+        asLocal: asLocal,
+        localPath: localPath
     });
 
     closeAndClearModal(repoCloneModal);
@@ -2578,11 +2595,21 @@ repoAddModalInputPath.addEventListener("keyup", (event) => {
 branchNewModalInputName.addEventListener("input", validateBranchNewModal);
 branchHistoryNewModalInputName.addEventListener("input", validateBranchHistoryNewModal);
 branchRenameModalInputName.addEventListener("input", validateBranchRenameModal);
+repoCloneModalRepoUrl.addEventListener("input", validateRepoCloneModal);
+repoCloneModalInputPath.addEventListener("input", validateRepoCloneModal);
 repoCreateModalInputName.addEventListener("input", validateRepoCreateModal);
 repoCreateModalInputPath.addEventListener("input", validateRepoCreateModal);
 repoAddModalInputPath.addEventListener("input", validateRepoAddModal);
 
 // Browse buttons (modals)
+repoCloneModalBrowseBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    activeBrowseInput = repoCloneModalInputPath;
+
+    sendIpcMessage("EXPLORER_OPEN_DIALOG");
+});
+
 repoCreateModalBrowseBtn.addEventListener("click", (event) => {
     event.preventDefault();
 
