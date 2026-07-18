@@ -42,6 +42,19 @@ namespace ParekGIT.Data.Data
             });
         }
 
+        public Task<GitRepository?> GetRepositoryByPathAsync(string absolutePath)
+        {
+            return Task.Run<GitRepository?>(() =>
+            {
+                using (var db = new LiteDatabase(_connectionString))
+                {
+                    var collection = db.GetCollection<GitRepository>(ReposCollectionName);
+
+                    return (GitRepository)collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
+                }
+            });
+        }
+
         public Task UpsertRepositoryAsync(GitRepository repository)
         {
             return Task.Run(() =>
