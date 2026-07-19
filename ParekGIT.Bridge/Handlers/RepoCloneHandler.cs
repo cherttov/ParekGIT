@@ -32,12 +32,14 @@ namespace ParekGIT.Bridge.Handlers
 
             bool asLocal = payload.GetProperty("asLocal").GetBoolean();
 
-            string localPath = payload.GetProperty("localPath").GetString()
+            string parentPath = payload.GetProperty("localPath").GetString()
                 ?? throw new IpcPayloadException("localPath");
 
-            await _gitRunner.CloneRepositoryAsync(repoUrl, asLocal, localPath);
+            // Get repo name & combine with passed path
+            string repoName = Path.GetFileNameWithoutExtension(repoUrl.TrimEnd('/').Split('/').Last());
+            string localPath = Path.Combine(parentPath, repoName);
 
-            string repoName = Path.GetFileName(localPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+            await _gitRunner.CloneRepositoryAsync(repoUrl, asLocal, localPath);
 
             var clonedRepo = new GitRepository
             {

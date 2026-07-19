@@ -2,8 +2,8 @@
 {
     public record CreateRepoRequest
     {
-        public string RepoName { get; init; }
-        public string LocalPath { get; init; }
+        public required string RepoName { get; init; }
+        public required string LocalPath { get; init; }
         public string GitIgnore { get; init; } = "None";
         public string License { get; init; } = "None";
         public string? LicenseYear { get; init; } = null;

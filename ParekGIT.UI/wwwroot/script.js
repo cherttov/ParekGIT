@@ -242,6 +242,10 @@ window.external.receiveMessage(message => {
             loadBranchesIntoDropdown(data.Payload);
             break;
 
+        case "REPO_CLONED":
+            addRepositoryToDropdown(data.Payload);
+            break;
+
         case "REPO_CREATED":
             addRepositoryToDropdown(data.Payload);
             break;
@@ -2454,7 +2458,7 @@ branchMergeModalConfirmBtn.addEventListener("click", () => {
 
 repoCloneModalConfirmBtn.addEventListener("click", () => {
     const repoUrl = repoCloneModalRepoUrl.value;
-    const asLocal = repoCloneModalAsLocal.value;
+    const asLocal = repoCloneModalAsLocal.checked;
     const localPath = repoCloneModalInputPath.value;
 
     if (!repoUrl || !localPath) { return; }
