@@ -4,6 +4,7 @@ using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
+using ParekGIT.Data.Interfaces;
 using Photino.NET;
 using System.Text.Json;
 
@@ -12,7 +13,7 @@ namespace ParekGIT.Bridge.Handlers
     public class RepoAddHandler : IMessageHandler
     {
         private readonly PhotinoWindow _window;
-        private readonly LiteDbStore _dbStore;
+        private readonly IRepositoryStore _dbStore;
         private readonly IFileSystemService _fileSystem;
 
         public string Action => "REPO_ADD";

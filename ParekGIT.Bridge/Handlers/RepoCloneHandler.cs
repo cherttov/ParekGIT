@@ -4,6 +4,7 @@ using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
+using ParekGIT.Data.Interfaces;
 using Photino.NET;
 using System.Text.Json;
 
@@ -12,13 +13,13 @@ namespace ParekGIT.Bridge.Handlers
     public class RepoCloneHandler : IMessageHandler
     {
         private readonly PhotinoWindow _window;
-        private readonly LiteDbStore _dbStore;
+        private readonly IRepositoryStore _dbStore;
         private readonly IGitRunner _gitRunner;
 
         public string Action => "REPO_CLONE";
 
         // Constructor
-        public RepoCloneHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner)
+        public RepoCloneHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRunner gitRunner)
         {
             _window = window;
             _dbStore = dbStore;

@@ -5,6 +5,7 @@ using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
 using ParekGIT.Core.Services;
 using ParekGIT.Data.Data;
+using ParekGIT.Data.Interfaces;
 using ParekGIT.Data.Models;
 using Photino.NET;
 using System.Text.Json;
