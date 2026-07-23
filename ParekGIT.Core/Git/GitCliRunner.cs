@@ -124,6 +124,15 @@ namespace ParekGIT.Core.Git
             return GitCommitDetailsParser.Parse(rawOutput);
         }
 
+        public async Task<int> GetCommitsBehindAsync(string repoPath)
+        {
+            string arguments = "rev-list --count HEAD..@{u}";
+
+            string output = await ExecuteCommandAsync(repoPath, arguments, 128);
+
+            return int.TryParse(output, out int behindCount) ? behindCount : 0;
+        }
+
         public async Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath)
         {
             string arguments = $"show --format= {commitHash} -- \"{filePath}\"";
@@ -201,6 +210,13 @@ namespace ParekGIT.Core.Git
         public async Task PushAsync(string repoPath)
         {
             string arguments = "push -u origin HEAD";
+
+            await ExecuteCommandAsync(repoPath, arguments);
+        }
+
+        public async Task PullAsync(string repoPath)
+        {
+            string arguments = "pull";
 
             await ExecuteCommandAsync(repoPath, arguments);
         }

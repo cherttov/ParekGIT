@@ -56,6 +56,7 @@ namespace ParekGIT.UI
                 router.RegisterHandler(new RepoAddHandler(window, dbStore, fileSystem));
                 router.RegisterHandler(new RepoCreateHandler(window, dbStore, gitRunner));
                 router.RegisterHandler(new RepoRemoveHandler(window, dbStore, fileSystem, logger));
+                router.RegisterHandler(new RepoPullHandler(window, gitRunner));
                 router.RegisterHandler(new RepoStatusHandler(window, gitRunner, fileSystem));
                 router.RegisterHandler(new RepoTerminalHandler(fileSystem));
                 router.RegisterHandler(new RepoCommitHandler(window, dbStore, gitRunner));

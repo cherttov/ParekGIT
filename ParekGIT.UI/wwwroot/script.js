@@ -220,6 +220,7 @@ let currentHistorySkip = 0;
 let historyTake = 50;
 let isFetchingHistory = false;
 let hasReachedEndOfHistory = false;
+let isPullRequired = false;
 
 // ------- IPC COMMUNICATION -------
 const sendIpcMessage = (action, payload = {}) => {
@@ -258,6 +259,19 @@ window.external.receiveMessage(message => {
             deleteRepoFromDropdown(data.Payload);
             break;
 
+        case "REPO_PULLED": // MOVE TO DEDICATED METHOD
+            isPullRequired = false;
+            if (currentRepoPath) {
+                sendIpcMessage("GET_REPO_STATUS", { repoPath: currentRepoPath });
+                if (currentBranch) {
+                    sendIpcMessage("GET_BRANCH_HISTORY", {
+                        repoPath: currentRepoPath,
+                        branchName: currentBranch
+                    });
+                }
+            }
+            break;
+
         case "FOLDER_SELECTED":
             folderSelected(data.Payload);
             break;
@@ -267,17 +281,20 @@ window.external.receiveMessage(message => {
             break;
 
         case "REPO_COMMITTED":
+            if (data.Payload.pullRequired) {
+                isPullRequired = true;
+            }
             processCommit();
             break;
 
-        case "BRANCH_HISTORY_LOADED":
+        case "BRANCH_HISTORY_LOADED": // MOVE TO DEDICATED METHOD
             currentHistorySkip = 0;
             isFetchingHistory = false;
             hasReachedEndOfHistory = data.Payload.length < historyTake;
             renderHistory(data.Payload, false);
             break;
 
-        case "BRANCH_HISTORY_APPENDED":
+        case "BRANCH_HISTORY_APPENDED": // MOVE TO DEDICATED METHOD
             isFetchingHistory = false;
             if (data.Payload.length < historyTake) { hasReachedEndOfHistory = true; }
             renderHistory(data.Payload, true);
@@ -339,10 +356,6 @@ window.external.receiveMessage(message => {
         case "TODO_SAVED":
             break;
 
-        case "APP_ERROR":
-            showErrorModal(data.Payload.message);
-            break;
-
         case "CONFIG_LOCAL_LOADED":
             processLocalConfigLoad(data.Payload);
             break;
@@ -359,6 +372,10 @@ window.external.receiveMessage(message => {
 
         case "REPO_PATH_MISSING":
             processMissingRepo(data.Payload.absolutePath);
+            break;
+
+        case "APP_ERROR":
+            showErrorModal(data.Payload.message);
             break;
 
         default:
@@ -467,8 +484,6 @@ const toggleDropdown = (toShow, toHide, event) => {
 
 // Commit button disabling/enabling
 const toggleCommitButton = () => {
-    const checkedCount = document.querySelectorAll(".changes-item-checkbox:checked").length;
-
     // Wait for C# to return the branch name
     if (currentBranch === "") {
         commitBtn.disabled = true;
@@ -476,6 +491,15 @@ const toggleCommitButton = () => {
         commitBtn.textContent = "Loading...";
         return;
     }
+
+    if (isPullRequired) {
+        commitBtn.disabled = false;
+        commitBtn.classList.remove("disabled");
+        commitBtn.textContent = "Pull from remote";
+        return;
+    }
+
+    const checkedCount = document.querySelectorAll(".changes-item-checkbox:checked").length;
 
     // Commit state
     const commitText = checkedCount > 0
@@ -1894,6 +1918,19 @@ commitDescriptionInput.addEventListener("input", () => {
 });
 
 commitBtn.addEventListener("click", () => {
+    // Pull
+    if (isPullRequired) {
+        commitBtn.disabled = true;
+        commitBtn.classList.add("disabled");
+        commitBtn.textContent = "Pulling...";
+
+        sendIpcMessage("REPO_PULL", {
+            repoPath: currentRepoPath
+        });
+        return;
+    }
+
+    // Commit
     const message = commitMessageInput.value.trim();
     const description = commitDescriptionInput.value.trim();
 

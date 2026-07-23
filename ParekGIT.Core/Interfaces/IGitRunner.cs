@@ -12,6 +12,7 @@ namespace ParekGIT.Core.Interfaces
         Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int skip = 0, int take = 50);
         Task<string> GetFileDiffAsync(string repoPath, string filePath);
         Task<CommitDetailsResult> GetCommitDetailsAsync(string repoPath, string hash);
+        Task<int> GetCommitsBehindAsync(string repoPath);
         Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath);
         Task<GitConfigInfo> GetGlobalConfigAsync(string? repoPath);
         Task<GitConfigInfo> GetLocalConfigAsync(string repoPath);
@@ -22,6 +23,7 @@ namespace ParekGIT.Core.Interfaces
         Task CreateBranchFromCommitAsync(string repoPath, string branchName, string commitHash);
         Task CommitAsync(string repoPath, string message, string desc, IEnumerable<string> files);
         Task PushAsync(string repoPath);
+        Task PullAsync(string repoPath);
         Task RenameBranchAsync(string repoPath, string oldName, string newName);
         Task DeleteBranchAsync(string repoPath, string branchName);
         Task FetchRepositoryAsync(string repoPath);
