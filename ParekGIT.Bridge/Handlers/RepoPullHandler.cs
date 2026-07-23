@@ -7,34 +7,34 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-    public class RepoPullHandler : IMessageHandler
-    {
-        private readonly PhotinoWindow _window;
-        private readonly IGitRunner _gitRunner;
+	public class RepoPullHandler : IMessageHandler
+	{
+		private readonly PhotinoWindow _window;
+		private readonly IGitRunner _gitRunner;
 
-        public string Action => "REPO_PULL";
+		public string Action => "REPO_PULL";
 
-        // Constructor
-        public RepoPullHandler(PhotinoWindow window, IGitRunner gitRunner)
-        {
-            _window = window;
-            _gitRunner = gitRunner;
-        }
+		// Constructor
+		public RepoPullHandler(PhotinoWindow window, IGitRunner gitRunner)
+		{
+			_window = window;
+			_gitRunner = gitRunner;
+		}
 
-        public async Task ExecuteAsync(JsonElement payload)
-        {
-            string repoPath = payload.GetProperty("repoPath").GetString()
-                ?? throw new IpcPayloadException("repoPath");
+		public async Task ExecuteAsync(JsonElement payload)
+		{
+			string repoPath = payload.GetProperty("repoPath").GetString()
+				?? throw new IpcPayloadException("repoPath");
 
-            await _gitRunner.PullAsync(repoPath);
+			await _gitRunner.PullAsync(repoPath);
 
-            // Response
-            var response = new IpcMessage
-            {
-                Action = "REPO_PULLED",
-                Payload = JsonSerializer.SerializeToElement(new { success = true })
-            };
-            _window.SendWebMessage(JsonSerializer.Serialize(response));
-        }
-    }
+			// Response
+			var response = new IpcMessage
+			{
+				Action = "REPO_PULLED",
+				Payload = JsonSerializer.SerializeToElement(new { success = true })
+			};
+			_window.SendWebMessage(JsonSerializer.Serialize(response));
+		}
+	}
 }

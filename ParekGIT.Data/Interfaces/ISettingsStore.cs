@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ParekGIT.Data.Interfaces
 {
-    public interface ISettingsStore
-    {
-        Task<UserSettings> GetUserSettingsAsync();
-        Task SaveUserSettingsAsync(UserSettings settings);
-    }
+	public interface ISettingsStore
+	{
+		Task<UserSettings> GetUserSettingsAsync();
+		Task SaveUserSettingsAsync(UserSettings settings);
+	}
 }

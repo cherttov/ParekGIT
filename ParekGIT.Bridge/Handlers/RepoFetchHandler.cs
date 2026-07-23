@@ -7,35 +7,35 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-    public class RepoFetchHandler : IMessageHandler
-    {
-        private readonly PhotinoWindow _window;
-        private readonly IGitRunner _gitRunner;
+	public class RepoFetchHandler : IMessageHandler
+	{
+		private readonly PhotinoWindow _window;
+		private readonly IGitRunner _gitRunner;
 
-        public string Action => "REPO_FETCH";
+		public string Action => "REPO_FETCH";
 
-        // Constructor
-        public RepoFetchHandler(PhotinoWindow window, IGitRunner gitRunner)
-        {
-            _window = window;
-            _gitRunner = gitRunner;
-        }
+		// Constructor
+		public RepoFetchHandler(PhotinoWindow window, IGitRunner gitRunner)
+		{
+			_window = window;
+			_gitRunner = gitRunner;
+		}
 
-        public async Task ExecuteAsync(JsonElement payload)
-        {
-            string repoPath = payload.GetProperty("repoPath").GetString()
-                ?? throw new IpcPayloadException("repoPath");
+		public async Task ExecuteAsync(JsonElement payload)
+		{
+			string repoPath = payload.GetProperty("repoPath").GetString()
+				?? throw new IpcPayloadException("repoPath");
 
-            await _gitRunner.FetchRepositoryAsync(repoPath);
+			await _gitRunner.FetchRepositoryAsync(repoPath);
 
-            // Response
-            var response = new IpcMessage
-            {
-                Action = "REPO_FETCHED",
-                Payload = JsonSerializer.SerializeToElement(new { status = "SUCCESS" })
-            };
+			// Response
+			var response = new IpcMessage
+			{
+				Action = "REPO_FETCHED",
+				Payload = JsonSerializer.SerializeToElement(new { status = "SUCCESS" })
+			};
 
-            _window.SendWebMessage(JsonSerializer.Serialize(response));
-        }
-    }
+			_window.SendWebMessage(JsonSerializer.Serialize(response));
+		}
+	}
 }

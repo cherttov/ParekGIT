@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ParekGIT.Core.Interfaces
 {
-    public interface IRepoWatcher : IDisposable
-    {
-        event EventHandler<string> OnFilesChanged;
-        void WatchRepository(string repoPath);
-    }
+	public interface IRepoWatcher : IDisposable
+	{
+		event EventHandler<string> OnFilesChanged;
+		void WatchRepository(string repoPath);
+	}
 }

@@ -7,41 +7,41 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-    public class BranchMergeHandler : IMessageHandler
-    {
-        private readonly PhotinoWindow _window;
-        private readonly IGitRunner _gitRunner;
+	public class BranchMergeHandler : IMessageHandler
+	{
+		private readonly PhotinoWindow _window;
+		private readonly IGitRunner _gitRunner;
 
-        public string Action => "BRANCH_MERGE";
+		public string Action => "BRANCH_MERGE";
 
-        // Constructor
-        public BranchMergeHandler(PhotinoWindow window, IGitRunner gitRunner)
-        {
-            _window = window;
-            _gitRunner = gitRunner;
-        }
+		// Constructor
+		public BranchMergeHandler(PhotinoWindow window, IGitRunner gitRunner)
+		{
+			_window = window;
+			_gitRunner = gitRunner;
+		}
 
-        public async Task ExecuteAsync(JsonElement payload)
-        {
-            string repoPath = payload.GetProperty("repoPath").GetString()
-                              ?? throw new IpcPayloadException("repoPath");
+		public async Task ExecuteAsync(JsonElement payload)
+		{
+			string repoPath = payload.GetProperty("repoPath").GetString()
+							  ?? throw new IpcPayloadException("repoPath");
 
-            string sourceBranch = payload.GetProperty("sourceBranch").GetString()
-                              ?? throw new IpcPayloadException("sourceBranch");
+			string sourceBranch = payload.GetProperty("sourceBranch").GetString()
+							  ?? throw new IpcPayloadException("sourceBranch");
 
-            string targetBranch = payload.GetProperty("targetBranch").GetString()
-                              ?? throw new IpcPayloadException("targetBranch");
+			string targetBranch = payload.GetProperty("targetBranch").GetString()
+							  ?? throw new IpcPayloadException("targetBranch");
 
-            await _gitRunner.MergeBranchesAsync(repoPath, sourceBranch, targetBranch);
+			await _gitRunner.MergeBranchesAsync(repoPath, sourceBranch, targetBranch);
 
-            // Response
-            var response = new IpcMessage
-            {
-                Action = "BRANCH_MERGED",
-                Payload = JsonSerializer.SerializeToElement(new { success = true })
-            };
+			// Response
+			var response = new IpcMessage
+			{
+				Action = "BRANCH_MERGED",
+				Payload = JsonSerializer.SerializeToElement(new { success = true })
+			};
 
-            _window.SendWebMessage(JsonSerializer.Serialize(response));
-        }
-    }
+			_window.SendWebMessage(JsonSerializer.Serialize(response));
+		}
+	}
 }

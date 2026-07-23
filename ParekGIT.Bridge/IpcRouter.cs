@@ -6,63 +6,63 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Ipc
 {
-    public class IpcRouter
-    {
-        private readonly Dictionary<string, IMessageHandler> _handlers = new();
-        private readonly ILogger _logger;
+	public class IpcRouter
+	{
+		private readonly Dictionary<string, IMessageHandler> _handlers = new();
+		private readonly ILogger _logger;
 
-        // Constructor
-        public IpcRouter(ILogger logger)
-        {
-            _logger = logger;
-        }
+		// Constructor
+		public IpcRouter(ILogger logger)
+		{
+			_logger = logger;
+		}
 
-        public void RegisterHandler(IMessageHandler handler)
-        {
-            _handlers[handler.Action] = handler;
-        }
+		public void RegisterHandler(IMessageHandler handler)
+		{
+			_handlers[handler.Action] = handler;
+		}
 
-        public async void HandleMessage(object sender, string message)
-        {
-            var window = (PhotinoWindow)sender;
+		public async void HandleMessage(object sender, string message)
+		{
+			var window = (PhotinoWindow)sender;
 
-            try
-            {
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var ipcMessage = JsonSerializer.Deserialize<IpcMessage>(message, options);
+			try
+			{
+				var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+				var ipcMessage = JsonSerializer.Deserialize<IpcMessage>(message, options);
 
-                if (ipcMessage == null) { return; }
+				if (ipcMessage == null) { return; }
 
-                if (_handlers.TryGetValue(ipcMessage.Action, out var handler))
-                {
-                    await handler.ExecuteAsync(ipcMessage.Payload);
-                }
-                else
-                {
-                    string warning = $"No handler found for action: {ipcMessage.Action}";
-                    await _logger.LogWarningAsync(warning);
-                    Console.WriteLine(warning);
+				if (_handlers.TryGetValue(ipcMessage.Action, out var handler))
+				{
+					await handler.ExecuteAsync(ipcMessage.Payload);
+				}
+				else
+				{
+					string warning = $"No handler found for action: {ipcMessage.Action}";
+					await _logger.LogWarningAsync(warning);
+					Console.WriteLine(warning);
 
-                    var unknownActionError = new IpcMessage
-                    {
-                        Action = "APP_ERROR",
-                        Payload = JsonSerializer.SerializeToElement(new { message = warning })
-                    };
-                    window.SendWebMessage(JsonSerializer.Serialize(unknownActionError));
-                }
-            }
-            catch (Exception ex)
-            {
-                await _logger.LogErrorAsync("Failed to process IPC Message", ex);
-                Console.WriteLine($"Failed to process IPC Message: {ex.Message}");
+					var unknownActionError = new IpcMessage
+					{
+						Action = "APP_ERROR",
+						Payload = JsonSerializer.SerializeToElement(new { message = warning })
+					};
+					window.SendWebMessage(JsonSerializer.Serialize(unknownActionError));
+				}
+			}
+			catch (Exception ex)
+			{
+				await _logger.LogErrorAsync("Failed to process IPC Message", ex);
+				Console.WriteLine($"Failed to process IPC Message: {ex.Message}");
 
-                var error = new IpcMessage
-                {
-                    Action = "APP_ERROR",
-                    Payload = JsonSerializer.SerializeToElement(new { message = ex.Message })
-                };
-                window.SendWebMessage(JsonSerializer.Serialize(error));
-            }
-        }
-    }
+				var error = new IpcMessage
+				{
+					Action = "APP_ERROR",
+					Payload = JsonSerializer.SerializeToElement(new { message = ex.Message })
+				};
+				window.SendWebMessage(JsonSerializer.Serialize(error));
+			}
+		}
+	}
 }

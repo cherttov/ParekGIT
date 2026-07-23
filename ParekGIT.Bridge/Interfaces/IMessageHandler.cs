@@ -2,9 +2,9 @@
 
 namespace ParekGIT.Bridge.Interfaces
 {
-    public interface IMessageHandler
-    {
-        string Action { get; }
-        Task ExecuteAsync(JsonElement payload);
-    }
+	public interface IMessageHandler
+	{
+		string Action { get; }
+		Task ExecuteAsync(JsonElement payload);
+	}
 }

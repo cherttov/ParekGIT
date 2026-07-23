@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ParekGIT.Core.Models
 {
-    public class GitCommit
-    {
-        public string Hash { get; set; }
-        public string Message { get; set; }
-        public string Author { get; set; }
-        public string TimeAgo { get; set; }
-    }
+	public class GitCommit
+	{
+		public string Hash { get; set; }
+		public string Message { get; set; }
+		public string Author { get; set; }
+		public string TimeAgo { get; set; }
+	}
 }
