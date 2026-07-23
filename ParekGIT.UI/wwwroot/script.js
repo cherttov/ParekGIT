@@ -1544,12 +1544,12 @@ function renderChangedFiles(files) {
 		}
 
 		item.innerHTML = `
-            <div class="change-item-left">
-                <div class="change-status ${statusClass}">${statusLetter}</div>
-                <div class="change-path">${file.Path}</div>
-            </div>
-            <input type="checkbox" class="ui-checkbox changes-item-checkbox" checked/>
-        `;
+			<div class="change-item-left">
+				<div class="change-status ${statusClass}">${statusLetter}</div>
+				<div class="change-path">${file.Path}</div>
+			</div>
+			<input type="checkbox" class="ui-checkbox changes-item-checkbox" checked/>
+		`;
 
 		// LMB - Change item clicking
 		item.addEventListener("click", (event) => {
@@ -1655,12 +1655,12 @@ function renderHistory(commits, isAppending = false) {
 		item.dataset.hash = commit.Hash;
 
 		item.innerHTML = `
-            <div class="history-message">${commit.Message}</div>
-            <div class="history-meta">
-                <div class="history-author">${commit.Author}</div>
-                <div class="history-time"">${commit.TimeAgo}</div>
-            </div>
-        `;
+			<div class="history-message">${commit.Message}</div>
+			<div class="history-meta">
+				<div class="history-author">${commit.Author}</div>
+				<div class="history-time"">${commit.TimeAgo}</div>
+			</div>
+		`;
 
 		// LMB - Show commit history details
 		item.addEventListener("click", () => {
@@ -1806,7 +1806,7 @@ function loadCommitDetails(details) {
 		}
 
 		item.innerHTML = `<span class="change-status ${statusClass}">${file.StatusCode[0]}</span>
-                          <span class="change-path">${file.Path}</span>`;
+						  <span class="change-path">${file.Path}</span>`;
 
 		// LMB
 		item.addEventListener("click", (event) => {
@@ -1823,7 +1823,7 @@ function loadCommitDetails(details) {
 			item.classList.add("active");
 
 			detailsBtnValue.innerHTML = `<span class="change-status ${statusClass}">${file.StatusCode[0]}</span>
-                                         <span class="change-path">${file.Path}</span>`;
+										 <span class="change-path">${file.Path}</span>`;
 			closeDropdowns();
 
 			const ext = file.Path.substring(
