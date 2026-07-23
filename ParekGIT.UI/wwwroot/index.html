@@ -1,802 +1,1028 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="styles.css"/>
-</head>
-<body class="loading">
-    <div class="topbar" id="topbar">
-        <div class="topbar-logo">P.GIT</div>
-
-        <div class="topbar-dropdown-container" id="repositories-container">
-            <button class="topbar-btn">
-                <div class="btn-text-group">
-                    <span class="topbar-dropdown btn-label">Current repository: </span>
-                    <span class="topbar-dropdown btn-value">None</span>
-                </div>
-                <div class="btn-arrow"></div>
-            </button>
-
-            <div class="dropdown-panel" id="repository-dropdown-panel">
-                <div class="filter-container" id="repositories-filter">
-                    <div class="icon-filter"></div>
-                    <input type="text" class="filter-input" placeholder="Search" />
-
-                    <button class="topbar-filter-btn btn-add">
-                        Add
-                        <div class="btn-arrow"></div>
-                    </button>
-
-                </div>
-
-                <div class="dropdown-list-wrapper">
-                    <div class="dropdown-list-container" id="repo-topbar-list"></div>
-                    <div class="custom-scrollbar" id="repo-topbar-scrollbar"></div>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="topbar-dropdown-container" id="branches-container">
-            <button class="topbar-btn">
-                <div class="btn-text-group">
-                    <span class="topbar-dropdown btn-label">Current branch: </span>
-                    <span class="topbar-dropdown btn-value">None</span>
-                </div>
-                <div class="btn-arrow"></div>
-            </button>
-
-            <div class="dropdown-panel" id="branch-dropdown-panel">
-                <div class="filter-container" id="branches-filter">
-                    <div class="icon-filter"></div>
-                    <input type="text" class="filter-input" placeholder="Search" />
-
-                    <button class="topbar-filter-btn btn-new">New</button>
-                </div>
-
-                <div class="dropdown-list-wrapper">
-                    <div class="dropdown-list-container" id="branch-topbar-list"></div>
-                    <div class="custom-scrollbar" id="branch-topbar-scrollbar"></div>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="dropdown-backdrop" id="dropdown-backdrop"></div>
-
-    <div class="context-menu" id="repo-context-menu">
-        <button class="context-menu-item item-clone">Clone repository</button>
-        <button class="context-menu-item item-create">Create new repository</button>
-        <button class="context-menu-item item-add">Add existing repository</button>
-    </div>
-
-    <div class="context-menu" id="repo-item-context-menu">
-        <button class="context-menu-item item-terminal">Open in terminal</button>
-        <button class="context-menu-item item-explorer">Show in explorer</button>
-        <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-remove">Remove</button>
-    </div>
-
-    <div class="context-menu" id="branch-item-context-menu">
-        <button class="context-menu-item item-rename">Rename</button>
-        <button class="context-menu-item item-copy">Copy branch name</button>
-        <button class="context-menu-item item-merge">Merge branch</button>
-        <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-delete">Delete</button>
-    </div>
-
-    <div class="context-menu" id="topbar-repo-context-menu">
-        <button class="context-menu-item item-clone">Clone repository</button>
-        <button class="context-menu-item item-create">Create new repository</button>
-        <button class="context-menu-item item-add">Add existing repository</button>
-        <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-terminal">Open in terminal</button>
-        <button class="context-menu-item item-explorer">Show in explorer</button>
-        <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-remove">Remove</button>
-    </div>
-
-    <div class="context-menu" id="topbar-branch-context-menu">
-        <button class="context-menu-item item-new">New</button>
-        <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-rename">Rename</button>
-        <button class="context-menu-item item-copy">Copy branch name</button>
-        <button class="context-menu-item item-merge">Merge branch</button>
-        <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-delete">Delete</button>
-    </div>
-
-    <div class="context-menu" id="changes-item-context-menu">
-        <button class="context-menu-item item-discard">Discard changes</button>
-        <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-ignore-file">Ignore file (add to .gitignore)</button>
-        <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-copy-abs-path">Copy absolute file path</button>
-        <button class="context-menu-item item-copy-rel-path">Copy relative file path</button>
-        <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-explorer">Show in explorer</button>
-    </div>
-
-    <div class="context-menu" id="history-item-context-menu">
-        <button class="context-menu-item item-checkout">Checkout commit</button>
-        <button class="context-menu-item item-revert">Revert changes in commit</button>
-        <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-create-branch">Create branch from commit</button>
-        <div class="context-menu-divider"></div>
-        <button class="context-menu-item item-copy-sha">Copy SHA</button>
-    </div>
-
-    <div class="modals">
-        <div class="modal-backdrop" id="branch-new-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Create new branch</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Name</label>
-                        <input type="text" class="modal-input" placeholder="new branch name" />
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Create branch</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="branch-history-new-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Create branch</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Create a branch from commit:</label>
-                        <label class="highlight-name" id="branch-history-modal-commit-name">{ commit_name }</label>
-                    </div>
-
-                    <div class="modal-body-row">
-                        <label>Name</label>
-                        <input type="text" class="modal-input" placeholder="new branch name" />
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Create branch</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="branch-rename-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Rename branch</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Name</label>
-                        <input type="text" class="modal-input" placeholder="new branch name" />
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Rename branch</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="branch-delete-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Delete branch</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Are you sure you want to delete this branch?</label>
-                        <label class="highlight-name" id="delete-modal-branch-name">{ branch_name }</label>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Delete branch</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="branch-merge-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Merge branches</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>
-                            Are you sure you want to merge
-                            <span class="highlight-name merge-branch-inline" id="merge-modal-source-branch">{ branch1 }</span>
-                            into
-                            <span class="highlight-name merge-branch-inline" id="merge-modal-target-branch">{ branch2 }</span>
-                        </label>
-                    </div>
-
-                    <div class="modal-body-row">
-                        <div class="merge-branch-selector">
-                            <select class="modal-input modal-select" id="merge-modal-select-source"></select>
-                            <div class="merge-arrow-icon"></div>
-                            <select class="modal-input modal-select" id="merge-modal-select-target"></select>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Merge branches</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="repo-clone-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Clone a repository</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Repository URL</label>
-                        <input type="text" class="modal-input input-url" placeholder="repository url" />
-                    </div>
-
-                    <div class="modal-body-row checkbox-row">
-                        <label>
-                            <input type="checkbox" class="ui-checkbox" />
-                            Clone as local
-                        </label>
-                    </div>
-
-                    <div class="modal-body-row">
-                        <label>Local path</label>
-                        <div class="input-button-container">
-                            <input type="text" class="modal-input input-path" placeholder="local path"/>
-                            <button class="browse-btn">Browse</button>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Clone repository</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="repo-create-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Create a new repository</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Name</label>
-                        <input type="text" class="modal-input input-name" placeholder="repository name" />
-                    </div>
-
-                    <div class="modal-body-row">
-                        <label>Local path</label>
-                        <div class="input-button-container">
-                            <input type="text" class="modal-input input-path" placeholder="repository path" />
-                            <button class="browse-btn">Browse</button>
-                        </div>
-                    </div>
-
-                    <div class="modal-body-row">
-                        <label>Git ignore</label>
-                        <select class="modal-input" id="select-git-ignore">
-                            <option value="None">None</option>
-                            <option value="angular">Angular</option>
-                            <option value="cpp">C++</option>
-                            <option value="c">C</option>
-                            <option value="cmake">CMake</option>
-                            <option value="dotnet">Dotnet</option>
-                            <option value="go">Go</option>
-                            <option value="godot">Godot</option>
-                            <option value="haskell">Haskell</option>
-                            <option value="java">Java</option>
-                            <option value="kotlin">Kotlin</option>
-                            <option value="lua">Lua</option>
-                            <option value="luau">Luau</option>
-                            <option value="nextjs">Nextjs</option>
-                            <option value="nim">Nim</option>
-                            <option value="node">Node</option>
-                            <option value="python">Python</option>
-                            <option value="rails">Rails</option>
-                            <option value="rust">Rust</option>
-                            <option value="sass">Sass</option>
-                            <option value="scala">Scala</option>
-                            <option value="swift">Swift</option>
-                            <option value="unity">Unity</option>
-                            <option value="unreal-engine">Unreal Engine</option>
-                            <option value="visual-basic">Visual Basic</option>
-                            <option value="visual-studio">Visual Studio</option>
-                            <option value="zig">Zig</option>
-                        </select>
-                    </div>
-
-                    <div class="modal-body-row">
-                        <label>License</label>
-                        <div class="input-button-container">
-                            <select class="modal-input" id="select-git-license">
-                                <option value="None">None</option>
-                                <option value="mit">MIT License</option>
-                                <option value="gpl3">GNU GPLv3</option>
-                                <option value="apache2">Apache License 2.0</option>
-                                <option value="gpl2">GNU GPLv2</option>
-                            </select>
-
-                            <div class="license-edit-anchor">
-                                <button class="browse-btn disabled" id="license-edit-btn">Edit</button>
-
-                                <div class="license-edit-panel" id="license-edit-panel">
-                                    <div class="license-field-row">
-                                        <label>Year</label>
-                                        <input type="text" class="modal-input" id="license-field-year" />
-                                    </div>
-                                    <div class="license-field-row">
-                                        <label>Author</label>
-                                        <input type="text" class="modal-input" id="license-field-organization" />
-                                    </div>
-                                    <div class="license-field-row">
-                                        <label>Project</label>
-                                        <input type="text" class="modal-input" id="license-field-project" />
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Create repository</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="repo-add-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Add local repository</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Local path</label>
-                        <div class="input-button-container">
-                            <input type="text" class="modal-input" placeholder="repository path" />
-                            <button class="browse-btn">Browse</button>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Add repository</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="repo-remove-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Remove repository</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Are you sure you want to remove this repository from ParekGIT?</label>
-                        <label class="highlight-name" id="remove-modal-repo-name">{ repository_name }</label>
-                    </div>
-
-                    <div class="modal-body-row checkbox-row">
-                        <label>
-                            <input type="checkbox" class="ui-checkbox" />
-                            Also move this repository to recycle bin
-                        </label>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Remove</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="settings-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Settings</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Theme: </label>
-                        <select class="modal-input" id="settings-theme-select">
-                            <option value="catppuccin-mocha">Catppuccin Mocha</option>
-                            <option value="catppuccin-macchiato">Catppuccin Macchiato</option>
-                            <option value="catppuccin-frappe">Catppuccin Frappé</option>
-                            <option value="catppuccin-latte">Catppuccin Latte</option>
-                        </select>
-                    </div>
-
-                    <div class="modal-body-row">
-                        <label>Logs</label>
-                        <div class="button-button-container">
-                            <button class="browse-btn view-logs" id="settings-logs-view">View logs</button>
-                            <button class="browse-btn clear-logs" id="settings-logs-clear">Clear logs</button>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Save</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="account-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Account</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Name</label>
-                        <input type="text" class="modal-input input-name" placeholder="{ author-name }" />
-                    </div>
-
-                    <div class="modal-body-row">
-                        <label>Email</label>
-                        <input type="text" class="modal-input input-email" placeholder="{ author-email }" />
-                    </div>
-
-                    <div class="modal-body-divider"></div>
-
-                    <div class="modal-body-row">
-                        <label>Linked accounts</label>
-
-                        <div class="linked-account-row" data-provider="github">
-                            <span class="linked-account-name">GitHub</span>
-                            <button class="link-account-btn" disabled>Link</button>
-                        </div>
-
-                        <div class="linked-account-row" data-provider="codeberg">
-                            <span class="linked-account-name">Codeberg</span>
-                            <button class="link-account-btn" disabled>Link</button>
-                        </div>
-
-                        <div class="linked-account-row" data-provider="gitlab">
-                            <span class="linked-account-name">GitLab</span>
-                            <button class="link-account-btn" disabled>Link</button>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Save</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="todo-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>To Do List</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body" style="padding: 0; gap: 0;">
-                    <div class="todo-list-wrapper">
-                        <div class="todo-rows-container" id="todo-rows-container"></div>
-                        <div class="custom-scrollbar" id="todo-scrollbar"></div>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Save</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="config-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Config</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Name</label>
-                        <input type="text" class="modal-input input-name" placeholder="{ author-name }" />
-                    </div>
-
-                    <div class="modal-body-row">
-                        <label>Email</label>
-                        <input type="text" class="modal-input input-email" placeholder="{ author-email }" />
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Save</button>
-                    <button class="cancel-modal-btn">Cancel</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="repo-missing-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Repository not found</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <label>Repository not found at path: </label>
-                        <label class="highlight-name" id="missing-modal-repo-path">{ repo_path }</label>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="confirm-modal-btn">Locate...</button>
-                    <button class="cancel-modal-btn">Remove</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-backdrop" id="error-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Error</h3>
-                    <button class="close-modal-icon">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body-row">
-                        <pre id="error-modal-message"></pre>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="cancel-modal-btn">Close</button>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="app-container">
-        <div class="left-sidebar" id="left-sidebar">
-            <button class="left-sidebar-btn btn-file" style="display: none;">
-                <div class="btn-icon icon-file"></div>
-            </button>
-
-            <button class="left-sidebar-btn btn-merge">
-                <div class="btn-icon icon-merge"></div>
-            </button>
-
-            <button class="left-sidebar-btn btn-branches" style="display: none;">
-                <div class="btn-icon icon-branches"></div>
-            </button>
-
-            <button class="left-sidebar-btn btn-analytics" style="display: none;">
-                <div class="btn-icon icon-analytics"></div>
-            </button>
-
-            <button class="left-sidebar-btn btn-todo">
-                <div class="btn-icon icon-todo"></div>
-            </button>
-
-            <button class="left-sidebar-btn btn-config">
-                <div class="btn-icon icon-config"></div>
-            </button>
-
-            <button class="left-sidebar-btn btn-fetch">
-                <div class="btn-icon icon-fetch"></div>
-            </button>
-
-            <button class="left-sidebar-btn btn-settings">
-                <div class="btn-icon icon-settings"></div>
-            </button>
-
-            <button class="left-sidebar-btn btn-account">
-                <div class="btn-icon icon-account"></div>
-            </button>
-
-        </div>
-
-        <div class="split-container">
-            <div class="main-content" id="main-content">
-
-                <div class="diff-viewer" id="diff-viewer">
-                    <div class="diff-header" id="diff-header">
-                        <span id="diff-filename">Select a file to view changes</span>
-                    </div>
-
-
-                    <div class="diff-body-wrapper" id="diff-body-wrapper">
-                        <pre class="diff-content" id="diff-content"></pre>
-                        <div class="custom-scrollbar" id="diff-scrollbar"></div>
-                    </div>
-
-                </div>
-
-                <div class="details-viewer" id="details-viewer">
-                    <div class="details-header" id="details-header">
-                        <div class="details-header-left">
-                            <span id="details-commit-message">Select a commit to view details</span>
-                        </div>
-
-                        <div class="details-header-right">
-                            <span id="details-commit-stats"></span>
-                        </div>
-
-                    </div>
-
-                    <div class="details-body-wrapper" id="details-body-wrapper">
-                        <pre class="diff-content" id="details-content"></pre>
-                        <div class="custom-scrollbar" id="details-scrollbar"></div>
-                    </div>
-
-                    <div class="details-footer" id="details-footer">
-                        <div class="details-footer-container" id="details-footer-container">
-
-                            <button class="topbar-btn details-footer-btn">
-                                <div class="btn-text-group">
-                                    <span class="topbar-dropdown btn-value">No files available</span>
-                                </div>
-                                <div class="btn-arrow"></div>
-                            </button>
-
-                            <div class="dropdown-panel" id="details-footer-panel">
-                                <div class="dropdown-list-wrapper">
-                                    <div class="dropdown-list-container" id="details-file-list"></div>
-                                    <div class="custom-scrollbar" id="details-file-scrollbar"></div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="resizer" id="resizer"></div>
-
-            <div class="right-sidebar" id="right-sidebar">
-                <div class="tab-selector">
-                    <button class="tab-btn active" id="tab-btn-changes">Changes</button>
-                    <button class="tab-btn" id="tab-btn-history">History</button>
-                </div>
-
-                <div class="history-tab" id="history-tab">
-                    <div class="history-list-wrapper">
-                        <div class="history-list-container" id="history-list">
-
-                        </div>
-
-                        <div class="custom-scrollbar" id="history-scrollbar"></div>
-
-                    </div>
-
-                </div>
-
-                <div class="changes-tab" id="changes-tab">
-                    <div class="changes-header" id="changes-header">
-                        <span id="changes-count-text">0 changed files</span>
-                        <input type="checkbox" class="ui-checkbox" id="changes-master-checkbox" checked />
-                    </div>
-
-                    <div class="changes-list-wrapper">
-                        <div class="changes-list-container" id="changes-list">
-
-                        </div>
-
-                        <div class="custom-scrollbar" id="changes-scrollbar"></div>
-
-                    </div>
-
-                    <div class="right-sidebar-bottom">
-                        <input type="text" class="commit-input message-input" id="commit-name-input" placeholder="Message (required)" />
-                        <textarea class="commit-input description-input" id="commit-desc-input" placeholder="Description"></textarea>
-                        <button class="commit-btn" id="commit-btn">
-                            Commit X files to <strong>[branch]</strong>
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <script src="script.js"></script>
-</body>
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body class="loading">
+		<div class="topbar" id="topbar">
+			<div class="topbar-logo">P.GIT</div>
+
+			<div class="topbar-dropdown-container" id="repositories-container">
+				<button class="topbar-btn">
+					<div class="btn-text-group">
+						<span class="topbar-dropdown btn-label"
+							>Current repository:
+						</span>
+						<span class="topbar-dropdown btn-value">None</span>
+					</div>
+					<div class="btn-arrow"></div>
+				</button>
+
+				<div class="dropdown-panel" id="repository-dropdown-panel">
+					<div class="filter-container" id="repositories-filter">
+						<div class="icon-filter"></div>
+						<input
+							type="text"
+							class="filter-input"
+							placeholder="Search"
+						/>
+
+						<button class="topbar-filter-btn btn-add">
+							Add
+							<div class="btn-arrow"></div>
+						</button>
+					</div>
+
+					<div class="dropdown-list-wrapper">
+						<div
+							class="dropdown-list-container"
+							id="repo-topbar-list"
+						></div>
+						<div
+							class="custom-scrollbar"
+							id="repo-topbar-scrollbar"
+						></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="topbar-dropdown-container" id="branches-container">
+				<button class="topbar-btn">
+					<div class="btn-text-group">
+						<span class="topbar-dropdown btn-label"
+							>Current branch:
+						</span>
+						<span class="topbar-dropdown btn-value">None</span>
+					</div>
+					<div class="btn-arrow"></div>
+				</button>
+
+				<div class="dropdown-panel" id="branch-dropdown-panel">
+					<div class="filter-container" id="branches-filter">
+						<div class="icon-filter"></div>
+						<input
+							type="text"
+							class="filter-input"
+							placeholder="Search"
+						/>
+
+						<button class="topbar-filter-btn btn-new">New</button>
+					</div>
+
+					<div class="dropdown-list-wrapper">
+						<div
+							class="dropdown-list-container"
+							id="branch-topbar-list"
+						></div>
+						<div
+							class="custom-scrollbar"
+							id="branch-topbar-scrollbar"
+						></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="dropdown-backdrop" id="dropdown-backdrop"></div>
+
+		<div class="context-menu" id="repo-context-menu">
+			<button class="context-menu-item item-clone">
+				Clone repository
+			</button>
+			<button class="context-menu-item item-create">
+				Create new repository
+			</button>
+			<button class="context-menu-item item-add">
+				Add existing repository
+			</button>
+		</div>
+
+		<div class="context-menu" id="repo-item-context-menu">
+			<button class="context-menu-item item-terminal">
+				Open in terminal
+			</button>
+			<button class="context-menu-item item-explorer">
+				Show in explorer
+			</button>
+			<div class="context-menu-divider"></div>
+			<button class="context-menu-item item-remove">Remove</button>
+		</div>
+
+		<div class="context-menu" id="branch-item-context-menu">
+			<button class="context-menu-item item-rename">Rename</button>
+			<button class="context-menu-item item-copy">
+				Copy branch name
+			</button>
+			<button class="context-menu-item item-merge">Merge branch</button>
+			<div class="context-menu-divider"></div>
+			<button class="context-menu-item item-delete">Delete</button>
+		</div>
+
+		<div class="context-menu" id="topbar-repo-context-menu">
+			<button class="context-menu-item item-clone">
+				Clone repository
+			</button>
+			<button class="context-menu-item item-create">
+				Create new repository
+			</button>
+			<button class="context-menu-item item-add">
+				Add existing repository
+			</button>
+			<div class="context-menu-divider"></div>
+			<button class="context-menu-item item-terminal">
+				Open in terminal
+			</button>
+			<button class="context-menu-item item-explorer">
+				Show in explorer
+			</button>
+			<div class="context-menu-divider"></div>
+			<button class="context-menu-item item-remove">Remove</button>
+		</div>
+
+		<div class="context-menu" id="topbar-branch-context-menu">
+			<button class="context-menu-item item-new">New</button>
+			<div class="context-menu-divider"></div>
+			<button class="context-menu-item item-rename">Rename</button>
+			<button class="context-menu-item item-copy">
+				Copy branch name
+			</button>
+			<button class="context-menu-item item-merge">Merge branch</button>
+			<div class="context-menu-divider"></div>
+			<button class="context-menu-item item-delete">Delete</button>
+		</div>
+
+		<div class="context-menu" id="changes-item-context-menu">
+			<button class="context-menu-item item-discard">
+				Discard changes
+			</button>
+			<div class="context-menu-divider"></div>
+			<button class="context-menu-item item-ignore-file">
+				Ignore file (add to .gitignore)
+			</button>
+			<div class="context-menu-divider"></div>
+			<button class="context-menu-item item-copy-abs-path">
+				Copy absolute file path
+			</button>
+			<button class="context-menu-item item-copy-rel-path">
+				Copy relative file path
+			</button>
+			<div class="context-menu-divider"></div>
+			<button class="context-menu-item item-explorer">
+				Show in explorer
+			</button>
+		</div>
+
+		<div class="context-menu" id="history-item-context-menu">
+			<button class="context-menu-item item-checkout">
+				Checkout commit
+			</button>
+			<button class="context-menu-item item-revert">
+				Revert changes in commit
+			</button>
+			<div class="context-menu-divider"></div>
+			<button class="context-menu-item item-create-branch">
+				Create branch from commit
+			</button>
+			<div class="context-menu-divider"></div>
+			<button class="context-menu-item item-copy-sha">Copy SHA</button>
+		</div>
+
+		<div class="modals">
+			<div class="modal-backdrop" id="branch-new-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Create new branch</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>Name</label>
+							<input
+								type="text"
+								class="modal-input"
+								placeholder="new branch name"
+							/>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">Create branch</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="branch-history-new-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Create branch</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>Create a branch from commit:</label>
+							<label
+								class="highlight-name"
+								id="branch-history-modal-commit-name"
+								>{ commit_name }</label
+							>
+						</div>
+
+						<div class="modal-body-row">
+							<label>Name</label>
+							<input
+								type="text"
+								class="modal-input"
+								placeholder="new branch name"
+							/>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">Create branch</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="branch-rename-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Rename branch</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>Name</label>
+							<input
+								type="text"
+								class="modal-input"
+								placeholder="new branch name"
+							/>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">Rename branch</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="branch-delete-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Delete branch</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label
+								>Are you sure you want to delete this
+								branch?</label
+							>
+							<label
+								class="highlight-name"
+								id="delete-modal-branch-name"
+								>{ branch_name }</label
+							>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">Delete branch</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="branch-merge-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Merge branches</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>
+								Are you sure you want to merge
+								<span
+									class="highlight-name merge-branch-inline"
+									id="merge-modal-source-branch"
+									>{ branch1 }</span
+								>
+								into
+								<span
+									class="highlight-name merge-branch-inline"
+									id="merge-modal-target-branch"
+									>{ branch2 }</span
+								>
+							</label>
+						</div>
+
+						<div class="modal-body-row">
+							<div class="merge-branch-selector">
+								<select
+									class="modal-input modal-select"
+									id="merge-modal-select-source"
+								></select>
+								<div class="merge-arrow-icon"></div>
+								<select
+									class="modal-input modal-select"
+									id="merge-modal-select-target"
+								></select>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">
+							Merge branches
+						</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="repo-clone-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Clone a repository</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>Repository URL</label>
+							<input
+								type="text"
+								class="modal-input input-url"
+								placeholder="repository url"
+							/>
+						</div>
+
+						<div class="modal-body-row checkbox-row">
+							<label>
+								<input type="checkbox" class="ui-checkbox" />
+								Clone as local
+							</label>
+						</div>
+
+						<div class="modal-body-row">
+							<label>Local path</label>
+							<div class="input-button-container">
+								<input
+									type="text"
+									class="modal-input input-path"
+									placeholder="local path"
+								/>
+								<button class="browse-btn">Browse</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">
+							Clone repository
+						</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="repo-create-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Create a new repository</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>Name</label>
+							<input
+								type="text"
+								class="modal-input input-name"
+								placeholder="repository name"
+							/>
+						</div>
+
+						<div class="modal-body-row">
+							<label>Local path</label>
+							<div class="input-button-container">
+								<input
+									type="text"
+									class="modal-input input-path"
+									placeholder="repository path"
+								/>
+								<button class="browse-btn">Browse</button>
+							</div>
+						</div>
+
+						<div class="modal-body-row">
+							<label>Git ignore</label>
+							<select class="modal-input" id="select-git-ignore">
+								<option value="None">None</option>
+								<option value="angular">Angular</option>
+								<option value="cpp">C++</option>
+								<option value="c">C</option>
+								<option value="cmake">CMake</option>
+								<option value="dotnet">Dotnet</option>
+								<option value="go">Go</option>
+								<option value="godot">Godot</option>
+								<option value="haskell">Haskell</option>
+								<option value="java">Java</option>
+								<option value="kotlin">Kotlin</option>
+								<option value="lua">Lua</option>
+								<option value="luau">Luau</option>
+								<option value="nextjs">Nextjs</option>
+								<option value="nim">Nim</option>
+								<option value="node">Node</option>
+								<option value="python">Python</option>
+								<option value="rails">Rails</option>
+								<option value="rust">Rust</option>
+								<option value="sass">Sass</option>
+								<option value="scala">Scala</option>
+								<option value="swift">Swift</option>
+								<option value="unity">Unity</option>
+								<option value="unreal-engine">
+									Unreal Engine
+								</option>
+								<option value="visual-basic">
+									Visual Basic
+								</option>
+								<option value="visual-studio">
+									Visual Studio
+								</option>
+								<option value="zig">Zig</option>
+							</select>
+						</div>
+
+						<div class="modal-body-row">
+							<label>License</label>
+							<div class="input-button-container">
+								<select
+									class="modal-input"
+									id="select-git-license"
+								>
+									<option value="None">None</option>
+									<option value="mit">MIT License</option>
+									<option value="gpl3">GNU GPLv3</option>
+									<option value="apache2">
+										Apache License 2.0
+									</option>
+									<option value="gpl2">GNU GPLv2</option>
+								</select>
+
+								<div class="license-edit-anchor">
+									<button
+										class="browse-btn disabled"
+										id="license-edit-btn"
+									>
+										Edit
+									</button>
+
+									<div
+										class="license-edit-panel"
+										id="license-edit-panel"
+									>
+										<div class="license-field-row">
+											<label>Year</label>
+											<input
+												type="text"
+												class="modal-input"
+												id="license-field-year"
+											/>
+										</div>
+										<div class="license-field-row">
+											<label>Author</label>
+											<input
+												type="text"
+												class="modal-input"
+												id="license-field-organization"
+											/>
+										</div>
+										<div class="license-field-row">
+											<label>Project</label>
+											<input
+												type="text"
+												class="modal-input"
+												id="license-field-project"
+											/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">
+							Create repository
+						</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="repo-add-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Add local repository</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>Local path</label>
+							<div class="input-button-container">
+								<input
+									type="text"
+									class="modal-input"
+									placeholder="repository path"
+								/>
+								<button class="browse-btn">Browse</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">
+							Add repository
+						</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="repo-remove-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Remove repository</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label
+								>Are you sure you want to remove this repository
+								from ParekGIT?</label
+							>
+							<label
+								class="highlight-name"
+								id="remove-modal-repo-name"
+								>{ repository_name }</label
+							>
+						</div>
+
+						<div class="modal-body-row checkbox-row">
+							<label>
+								<input type="checkbox" class="ui-checkbox" />
+								Also move this repository to recycle bin
+							</label>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">Remove</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="settings-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Settings</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>Theme: </label>
+							<select
+								class="modal-input"
+								id="settings-theme-select"
+							>
+								<option value="catppuccin-mocha">
+									Catppuccin Mocha
+								</option>
+								<option value="catppuccin-macchiato">
+									Catppuccin Macchiato
+								</option>
+								<option value="catppuccin-frappe">
+									Catppuccin Frappé
+								</option>
+								<option value="catppuccin-latte">
+									Catppuccin Latte
+								</option>
+							</select>
+						</div>
+
+						<div class="modal-body-row">
+							<label>Logs</label>
+							<div class="button-button-container">
+								<button
+									class="browse-btn view-logs"
+									id="settings-logs-view"
+								>
+									View logs
+								</button>
+								<button
+									class="browse-btn clear-logs"
+									id="settings-logs-clear"
+								>
+									Clear logs
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">Save</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="account-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Account</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>Name</label>
+							<input
+								type="text"
+								class="modal-input input-name"
+								placeholder="{ author-name }"
+							/>
+						</div>
+
+						<div class="modal-body-row">
+							<label>Email</label>
+							<input
+								type="text"
+								class="modal-input input-email"
+								placeholder="{ author-email }"
+							/>
+						</div>
+
+						<div class="modal-body-divider"></div>
+
+						<div class="modal-body-row">
+							<label>Linked accounts</label>
+
+							<div
+								class="linked-account-row"
+								data-provider="github"
+							>
+								<span class="linked-account-name">GitHub</span>
+								<button class="link-account-btn" disabled>
+									Link
+								</button>
+							</div>
+
+							<div
+								class="linked-account-row"
+								data-provider="codeberg"
+							>
+								<span class="linked-account-name"
+									>Codeberg</span
+								>
+								<button class="link-account-btn" disabled>
+									Link
+								</button>
+							</div>
+
+							<div
+								class="linked-account-row"
+								data-provider="gitlab"
+							>
+								<span class="linked-account-name">GitLab</span>
+								<button class="link-account-btn" disabled>
+									Link
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">Save</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="todo-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>To Do List</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body" style="padding: 0; gap: 0">
+						<div class="todo-list-wrapper">
+							<div
+								class="todo-rows-container"
+								id="todo-rows-container"
+							></div>
+							<div
+								class="custom-scrollbar"
+								id="todo-scrollbar"
+							></div>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">Save</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="config-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Config</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>Name</label>
+							<input
+								type="text"
+								class="modal-input input-name"
+								placeholder="{ author-name }"
+							/>
+						</div>
+
+						<div class="modal-body-row">
+							<label>Email</label>
+							<input
+								type="text"
+								class="modal-input input-email"
+								placeholder="{ author-email }"
+							/>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">Save</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="repo-missing-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Repository not found</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>Repository not found at path: </label>
+							<label
+								class="highlight-name"
+								id="missing-modal-repo-path"
+								>{ repo_path }</label
+							>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">Locate...</button>
+						<button class="cancel-modal-btn">Remove</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="error-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Error</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<pre id="error-modal-message"></pre>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="cancel-modal-btn">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="app-container">
+			<div class="left-sidebar" id="left-sidebar">
+				<button class="left-sidebar-btn btn-file" style="display: none">
+					<div class="btn-icon icon-file"></div>
+				</button>
+
+				<button class="left-sidebar-btn btn-merge">
+					<div class="btn-icon icon-merge"></div>
+				</button>
+
+				<button
+					class="left-sidebar-btn btn-branches"
+					style="display: none"
+				>
+					<div class="btn-icon icon-branches"></div>
+				</button>
+
+				<button
+					class="left-sidebar-btn btn-analytics"
+					style="display: none"
+				>
+					<div class="btn-icon icon-analytics"></div>
+				</button>
+
+				<button class="left-sidebar-btn btn-todo">
+					<div class="btn-icon icon-todo"></div>
+				</button>
+
+				<button class="left-sidebar-btn btn-config">
+					<div class="btn-icon icon-config"></div>
+				</button>
+
+				<button class="left-sidebar-btn btn-fetch">
+					<div class="btn-icon icon-fetch"></div>
+				</button>
+
+				<button class="left-sidebar-btn btn-settings">
+					<div class="btn-icon icon-settings"></div>
+				</button>
+
+				<button class="left-sidebar-btn btn-account">
+					<div class="btn-icon icon-account"></div>
+				</button>
+			</div>
+
+			<div class="split-container">
+				<div class="main-content" id="main-content">
+					<div class="diff-viewer" id="diff-viewer">
+						<div class="diff-header" id="diff-header">
+							<span id="diff-filename"
+								>Select a file to view changes</span
+							>
+						</div>
+
+						<div class="diff-body-wrapper" id="diff-body-wrapper">
+							<pre class="diff-content" id="diff-content"></pre>
+							<div
+								class="custom-scrollbar"
+								id="diff-scrollbar"
+							></div>
+						</div>
+					</div>
+
+					<div class="details-viewer" id="details-viewer">
+						<div class="details-header" id="details-header">
+							<div class="details-header-left">
+								<span id="details-commit-message"
+									>Select a commit to view details</span
+								>
+							</div>
+
+							<div class="details-header-right">
+								<span id="details-commit-stats"></span>
+							</div>
+						</div>
+
+						<div
+							class="details-body-wrapper"
+							id="details-body-wrapper"
+						>
+							<pre
+								class="diff-content"
+								id="details-content"
+							></pre>
+							<div
+								class="custom-scrollbar"
+								id="details-scrollbar"
+							></div>
+						</div>
+
+						<div class="details-footer" id="details-footer">
+							<div
+								class="details-footer-container"
+								id="details-footer-container"
+							>
+								<button class="topbar-btn details-footer-btn">
+									<div class="btn-text-group">
+										<span class="topbar-dropdown btn-value"
+											>No files available</span
+										>
+									</div>
+									<div class="btn-arrow"></div>
+								</button>
+
+								<div
+									class="dropdown-panel"
+									id="details-footer-panel"
+								>
+									<div class="dropdown-list-wrapper">
+										<div
+											class="dropdown-list-container"
+											id="details-file-list"
+										></div>
+										<div
+											class="custom-scrollbar"
+											id="details-file-scrollbar"
+										></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="resizer" id="resizer"></div>
+
+				<div class="right-sidebar" id="right-sidebar">
+					<div class="tab-selector">
+						<button class="tab-btn active" id="tab-btn-changes">
+							Changes
+						</button>
+						<button class="tab-btn" id="tab-btn-history">
+							History
+						</button>
+					</div>
+
+					<div class="history-tab" id="history-tab">
+						<div class="history-list-wrapper">
+							<div
+								class="history-list-container"
+								id="history-list"
+							></div>
+
+							<div
+								class="custom-scrollbar"
+								id="history-scrollbar"
+							></div>
+						</div>
+					</div>
+
+					<div class="changes-tab" id="changes-tab">
+						<div class="changes-header" id="changes-header">
+							<span id="changes-count-text">0 changed files</span>
+							<input
+								type="checkbox"
+								class="ui-checkbox"
+								id="changes-master-checkbox"
+								checked
+							/>
+						</div>
+
+						<div class="changes-list-wrapper">
+							<div
+								class="changes-list-container"
+								id="changes-list"
+							></div>
+
+							<div
+								class="custom-scrollbar"
+								id="changes-scrollbar"
+							></div>
+						</div>
+
+						<div class="right-sidebar-bottom">
+							<input
+								type="text"
+								class="commit-input message-input"
+								id="commit-name-input"
+								placeholder="Message (required)"
+							/>
+							<textarea
+								class="commit-input description-input"
+								id="commit-desc-input"
+								placeholder="Description"
+							></textarea>
+							<button class="commit-btn" id="commit-btn">
+								Commit X files to <strong>[branch]</strong>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="script.js"></script>
+	</body>
 </html>
