@@ -26,13 +26,17 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 				?? throw new IpcPayloadException("repoPath");
 
+			bool pullRequired = false;
+
 			await _gitRunner.FetchRepositoryAsync(repoPath);
+
+			pullRequired = await _gitRunner.GetCommitsBehindAsync(repoPath) > 0;
 
 			// Response
 			var response = new IpcMessage
 			{
 				Action = "REPO_FETCHED",
-				Payload = JsonSerializer.SerializeToElement(new { status = "SUCCESS" })
+				Payload = JsonSerializer.SerializeToElement(new { success = true, pullRequired })
 			};
 
 			_window.SendWebMessage(JsonSerializer.Serialize(response));

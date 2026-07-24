@@ -452,6 +452,9 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case "REPO_FETCHED":
+			if (data.Payload.pullRequired) {
+				isPullRequired = true;
+			}
 			fetchRepo(data.Payload);
 			break;
 
@@ -1759,6 +1762,8 @@ function fetchRepo(repo) {
 			});
 		}
 	}
+
+	toggleCommitButton();
 }
 
 // C# - Repo files changed
