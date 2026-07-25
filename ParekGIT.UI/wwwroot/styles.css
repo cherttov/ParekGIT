@@ -392,6 +392,18 @@ select:focus {
 	margin-left: 6px;
 }
 
+.dropdown-item.remote::after {
+	content: "(remote)";
+	font-style: italic;
+	opacity: 0.5;
+	margin-left: 6px;
+}
+
+.dropdown-item.invalid.remote::after {
+	content: "invalid, remote";
+	margin-left: 6px;
+}
+
 .dropdown-item-text {
 	overflow: hidden;
 	text-overflow: ellipsis;

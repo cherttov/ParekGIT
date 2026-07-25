@@ -1005,6 +1005,9 @@ function loadRepositoriesIntoDropdown(repositories) {
 			item.title = "Repository folder not found";
 		}
 
+		// If repo is remote
+		if (repo.IsRemote) { item.classList.add("remote"); }
+
 		item.innerHTML = `<span class="dropdown-item-text">${repo.Name}</span>`;
 
 		// LMB - select
@@ -1197,6 +1200,9 @@ function addRepositoryToDropdown(repo) {
 		item.classList.add("invalid");
 		item.title = "Repository folder not found";
 	}
+
+	// If repo is remote
+	if (repo.IsRemote) { item.classList.add("remote"); }
 
 	// LMB - select
 	item.addEventListener("click", () => {
