@@ -15,3 +15,9 @@ Git GUI Client that's focused on simplicity
 - Linux: [WebKitGTK2](https://webkitgtk.org)
 - MacOS: [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview)
 > **NOTE:** Unlike **Windows** and **MacOS**, **Linux** might not come with a pre-installed WebKitGTK2
+
+## AI Usage ##
+AI was used to refactor the code, improve overall code structure and test edge cases.
+
+## License ##
+Distributed under the MIT License. See [LICENSE](https://github.com/cherttov/godot-dev-console/blob/main/LICENSE) for more information.
