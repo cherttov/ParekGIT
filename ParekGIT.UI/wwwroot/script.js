@@ -226,6 +226,7 @@ let historyTake = 50;
 let isFetchingHistory = false;
 let hasReachedEndOfHistory = false;
 let isPullRequired = false;
+let commitsBehind = 0;
 
 // ------- IPC COMMUNICATION -------
 const sendIpcMessage = (action, payload = {}) => {
@@ -266,14 +267,13 @@ window.external.receiveMessage((message) => {
 
 		case "REPO_PULLED": // MOVE TO DEDICATED METHOD
 			isPullRequired = false;
+			commitsBehind = 0;
 			if (currentRepoPath) {
-				sendIpcMessage("GET_REPO_STATUS", {
-					repoPath: currentRepoPath,
-				});
+				sendIpcMessage("GET_REPO_STATUS", { repoPath: currentRepoPath });
 				if (currentBranch) {
 					sendIpcMessage("GET_BRANCH_HISTORY", {
 						repoPath: currentRepoPath,
-						branchName: currentBranch,
+						branchName: currentBranch
 					});
 				}
 			}
@@ -288,9 +288,8 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case "REPO_COMMITTED":
-			if (data.Payload.pullRequired) {
-				isPullRequired = true;
-			}
+			commitsBehind = data.Payload.commitsBehind;
+			isPullRequired = commitsBehinds > 0;
 			processCommit();
 			break;
 
@@ -310,12 +309,7 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case "FILE_DIFF_LOADED":
-			renderFileDiff(
-				data.Payload.diffText,
-				diffContent,
-				diffBodyWrapper,
-				diffScrollbar,
-			);
+			renderFileDiff(data.Payload.diffText, diffContent, diffBodyWrapper, diffScrollbar);
 			break;
 
 		case "BRANCH_DELETED":
@@ -327,9 +321,8 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case "REPO_FETCHED":
-			if (data.Payload.pullRequired) {
-				isPullRequired = true;
-			}
+			commitsBehind = data.Payload.commitsBehind;
+			isPullRequired = commitsBehind > 0;
 			fetchRepo(data.Payload);
 			break;
 
@@ -342,12 +335,7 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case "HISTORY_FILE_DIFF_LOADED":
-			renderFileDiff(
-				data.Payload.diffText,
-				detailsContent,
-				detailsBodyWrapper,
-				detailsScrollbar,
-			);
+			renderFileDiff(data.Payload.diffText, detailsContent, detailsBodyWrapper, detailsScrollbar);
 			break;
 
 		case "CHANGE_DISCARDED": // FINISH
@@ -513,7 +501,7 @@ const toggleCommitButton = () => {
 	if (isPullRequired) {
 		commitBtn.disabled = false;
 		commitBtn.classList.remove("disabled");
-		commitBtn.textContent = "Pull from remote";
+		commitBtn.textContent = `Pull (${commitsBehind} commit${commitsBehind === 1 ? "" : "s"} behind)`;
 		return;
 	}
 

@@ -51,15 +51,14 @@ namespace ParekGIT.Bridge.Handlers
 			// Remote push if not remote
 			GitRepository? repo = await _dbStore.GetRepositoryByPathAsync(repoPath);
 			bool pushed = false;
-			bool pullRequired = false;
+			int commitsBehind = 0;
 
 			if (repo?.IsRemote == true)
 			{
 				await _gitRunner.FetchRepositoryAsync(repoPath);
+				commitsBehind = await _gitRunner.GetCommitsBehindAsync(repoPath);
 
-				pullRequired = await _gitRunner.GetCommitsBehindAsync(repoPath) > 0;
-
-				if (!pullRequired)
+				if (commitsBehind == 0)
 				{
 					await _gitRunner.PushAsync(repoPath);
 					pushed = true;
@@ -70,7 +69,7 @@ namespace ParekGIT.Bridge.Handlers
 			var response = new IpcMessage
 			{
 				Action = "REPO_COMMITTED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true, pushed, pullRequired })
+				Payload = JsonSerializer.SerializeToElement(new { success = true, pushed, commitsBehind })
 			};
 
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
