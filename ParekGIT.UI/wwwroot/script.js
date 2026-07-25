@@ -4,9 +4,7 @@ const repoContainer = document.getElementById("repositories-container");
 const repoDropdown = document.getElementById("repository-dropdown-panel");
 const repoNewBtn = document.querySelector("#repositories-container .btn-add");
 const repoBtn = document.querySelector("#repositories-container .topbar-btn");
-const repoPanel = document.querySelector(
-	"#repositories-container .dropdown-panel",
-);
+const repoPanel = document.querySelector("#repositories-container .dropdown-panel");
 const repoList = document.getElementById("repo-topbar-list");
 const repoScrollbar = document.getElementById("repo-topbar-scrollbar");
 
@@ -14,9 +12,7 @@ const branchContainer = document.getElementById("branches-container");
 const branchDropdown = document.getElementById("branch-dropdown-panel");
 const branchNewBtn = document.querySelector("#branches-container .btn-new");
 const branchBtn = document.querySelector("#branches-container .topbar-btn");
-const branchPanel = document.querySelector(
-	"#branches-container .dropdown-panel",
-);
+const branchPanel = document.querySelector("#branches-container .dropdown-panel");
 const branchList = document.getElementById("branch-topbar-list");
 const branchScrollbar = document.getElementById("branch-topbar-scrollbar");
 
@@ -67,9 +63,7 @@ const tabHistory = document.getElementById("history-tab");
 
 const changesHeader = document.getElementById("changes-header");
 const changesCountText = document.getElementById("changes-count-text");
-const changesMasterCheckbox = document.getElementById(
-	"changes-master-checkbox",
-);
+const changesMasterCheckbox = document.getElementById("changes-master-checkbox");
 const changesList = document.getElementById("changes-list");
 const changesScrollbar = document.getElementById("changes-scrollbar");
 const commitMessageInput = document.getElementById("commit-name-input");
@@ -81,79 +75,48 @@ const historyScrollbar = document.getElementById("history-scrollbar");
 
 // Modals
 const modalBackdrops = document.querySelectorAll(".modal-backdrop");
-const modalCloseTriggers = document.querySelectorAll(
-	".close-modal-icon, .cancel-modal-btn",
-);
+const modalCloseTriggers = document.querySelectorAll(".close-modal-icon, .cancel-modal-btn");
 
 const branchNewModal = document.getElementById("branch-new-modal");
 const branchNewModalInputName = branchNewModal.querySelector(".modal-input");
-const branchNewModalConfirmBtn =
-	branchNewModal.querySelector(".confirm-modal-btn");
+const branchNewModalConfirmBtn = branchNewModal.querySelector(".confirm-modal-btn");
 
-const branchHistoryNewModal = document.getElementById(
-	"branch-history-new-modal",
-);
-const branchHistoryNewModalName = document.getElementById(
-	"branch-history-modal-commit-name",
-);
-const branchHistoryNewModalInputName =
-	branchHistoryNewModal.querySelector(".modal-input");
-const branchHistoryNewModalConfirmBtn =
-	branchHistoryNewModal.querySelector(".confirm-modal-btn");
+const branchHistoryNewModal = document.getElementById("branch-history-new-modal");
+const branchHistoryNewModalName = document.getElementById("branch-history-modal-commit-name");
+const branchHistoryNewModalInputName = branchHistoryNewModal.querySelector(".modal-input");
+const branchHistoryNewModalConfirmBtn = branchHistoryNewModal.querySelector(".confirm-modal-btn");
 
 const branchRenameModal = document.getElementById("branch-rename-modal");
-const branchRenameModalInputName =
-	branchRenameModal.querySelector(".modal-input");
-const branchRenameModalConfirmBtn =
-	branchRenameModal.querySelector(".confirm-modal-btn");
+const branchRenameModalInputName = branchRenameModal.querySelector(".modal-input");
+const branchRenameModalConfirmBtn = branchRenameModal.querySelector(".confirm-modal-btn");
 
 const branchDeleteModal = document.getElementById("branch-delete-modal");
-const branchDeleteModalName = document.getElementById(
-	"delete-modal-branch-name",
-);
-const branchDeleteModalConfirmBtn =
-	branchDeleteModal.querySelector(".confirm-modal-btn");
+const branchDeleteModalName = document.getElementById("delete-modal-branch-name");
+const branchDeleteModalConfirmBtn = branchDeleteModal.querySelector(".confirm-modal-btn");
 
 const branchMergeModal = document.getElementById("branch-merge-modal");
-const branchMergeModalSourceLabel = document.getElementById(
-	"merge-modal-source-branch",
-);
-const branchMergeModalTargetLabel = document.getElementById(
-	"merge-modal-target-branch",
-);
-const branchMergeModalSelectSource = document.getElementById(
-	"merge-modal-select-source",
-);
-const branchMergeModalSelectTarget = document.getElementById(
-	"merge-modal-select-target",
-);
-const branchMergeModalConfirmBtn =
-	branchMergeModal.querySelector(".confirm-modal-btn");
+const branchMergeModalSourceLabel = document.getElementById("merge-modal-source-branch");
+const branchMergeModalTargetLabel = document.getElementById("merge-modal-target-branch");
+const branchMergeModalSelectSource = document.getElementById("merge-modal-select-source");
+const branchMergeModalSelectTarget = document.getElementById("merge-modal-select-target");
+const branchMergeModalConfirmBtn = branchMergeModal.querySelector(".confirm-modal-btn");
 
 const repoCloneModal = document.getElementById("repo-clone-modal");
 const repoCloneModalRepoUrl = repoCloneModal.querySelector(".input-url");
 const repoCloneModalAsLocal = repoCloneModal.querySelector(".ui-checkbox");
 const repoCloneModalInputPath = repoCloneModal.querySelector(".input-path");
 const repoCloneModalBrowseBtn = repoCloneModal.querySelector(".browse-btn");
-const repoCloneModalConfirmBtn =
-	repoCloneModal.querySelector(".confirm-modal-btn");
+const repoCloneModalConfirmBtn = repoCloneModal.querySelector(".confirm-modal-btn");
 
 const repoCreateModal = document.getElementById("repo-create-modal");
 const repoCreateModalInputName = repoCreateModal.querySelector(".input-name");
 const repoCreateModalInputPath = repoCreateModal.querySelector(".input-path");
 const repoCreateModalBrowseBtn = repoCreateModal.querySelector(".browse-btn");
-const repoCreateModalSelectGitIgnore =
-	repoCreateModal.querySelector("#select-git-ignore");
-const repoCreateModalSelectLicense = repoCreateModal.querySelector(
-	"#select-git-license",
-);
-const repoCreateModalLicenseEdit =
-	repoCreateModal.querySelector("#license-edit-btn");
-const repoCreateModalLicenseEditPanel = repoCreateModal.querySelector(
-	"#license-edit-panel",
-);
-const repoCreateModalConfirmBtn =
-	repoCreateModal.querySelector(".confirm-modal-btn");
+const repoCreateModalSelectGitIgnore = repoCreateModal.querySelector("#select-git-ignore");
+const repoCreateModalSelectLicense = repoCreateModal.querySelector("#select-git-license");
+const repoCreateModalLicenseEdit = repoCreateModal.querySelector("#license-edit-btn");
+const repoCreateModalLicenseEditPanel = repoCreateModal.querySelector("#license-edit-panel");
+const repoCreateModalConfirmBtn = repoCreateModal.querySelector(".confirm-modal-btn");
 
 const repoAddModal = document.getElementById("repo-add-modal");
 const repoAddModalInputPath = repoAddModal.querySelector(".modal-input");
@@ -162,19 +125,14 @@ const repoAddModalConfirmBtn = repoAddModal.querySelector(".confirm-modal-btn");
 
 const repoRemoveModal = document.getElementById("repo-remove-modal");
 const repoRemoveModalName = document.getElementById("remove-modal-repo-name");
-const repoRemoveModalLocalCheckbox =
-	repoRemoveModal.querySelector(".ui-checkbox");
-const repoRemoveModalConfirmBtn =
-	repoRemoveModal.querySelector(".confirm-modal-btn");
+const repoRemoveModalLocalCheckbox = repoRemoveModal.querySelector(".ui-checkbox");
+const repoRemoveModalConfirmBtn = repoRemoveModal.querySelector(".confirm-modal-btn");
 
 const settingsModal = document.getElementById("settings-modal");
-const settingsModalThemeSelect = document.getElementById(
-	"settings-theme-select",
-);
+const settingsModalThemeSelect = document.getElementById("settings-theme-select");
 const settingsModalLogsView = document.getElementById("settings-logs-view");
 const settingsModalLogsClear = document.getElementById("settings-logs-clear");
-const settingsModalConfirmBtn =
-	settingsModal.querySelector(".confirm-modal-btn");
+const settingsModalConfirmBtn = settingsModal.querySelector(".confirm-modal-btn");
 
 const accountModal = document.getElementById("account-modal");
 const accountModalInputName = accountModal.querySelector(".input-name");
@@ -195,143 +153,60 @@ const errorModal = document.getElementById("error-modal");
 const errorModalMessage = document.getElementById("error-modal-message");
 
 const repoMissingModal = document.getElementById("repo-missing-modal");
-const repoMissingModalConfirmBtn =
-	repoMissingModal.querySelector(".confirm-modal-btn");
-const repoMissingModalCancelBtn =
-	repoMissingModal.querySelector(".cancel-modal-btn");
+const repoMissingModalConfirmBtn = repoMissingModal.querySelector(".confirm-modal-btn");
+const repoMissingModalCancelBtn = repoMissingModal.querySelector(".cancel-modal-btn");
 
 // Context menus
 const repoContextMenu = document.getElementById("repo-context-menu");
-const repoMenuClone = repoContextMenu.querySelector(
-	".context-menu-item.item-clone",
-);
-const repoMenuCreate = repoContextMenu.querySelector(
-	".context-menu-item.item-create",
-);
-const repoMenuAdd = repoContextMenu.querySelector(
-	".context-menu-item.item-add",
-);
+const repoMenuClone = repoContextMenu.querySelector(".context-menu-item.item-clone");
+const repoMenuCreate = repoContextMenu.querySelector(".context-menu-item.item-create");
+const repoMenuAdd = repoContextMenu.querySelector(".context-menu-item.item-add");
 
 const repoItemContextMenu = document.getElementById("repo-item-context-menu");
-const repoItemMenuTerminal = repoItemContextMenu.querySelector(
-	".context-menu-item.item-terminal",
-);
-const repoItemMenuExplorer = repoItemContextMenu.querySelector(
-	".context-menu-item.item-explorer",
-);
-const repoItemMenuRemove = repoItemContextMenu.querySelector(
-	".context-menu-item.item-remove",
-);
+const repoItemMenuTerminal = repoItemContextMenu.querySelector(".context-menu-item.item-terminal");
+const repoItemMenuExplorer = repoItemContextMenu.querySelector(".context-menu-item.item-explorer");
+const repoItemMenuRemove = repoItemContextMenu.querySelector(".context-menu-item.item-remove");
 
-const branchItemContextMenu = document.getElementById(
-	"branch-item-context-menu",
-);
-const branchItemMenuRename = branchItemContextMenu.querySelector(
-	".context-menu-item.item-rename",
-);
-const branchItemMenuCopy = branchItemContextMenu.querySelector(
-	".context-menu-item.item-copy",
-);
-const branchItemMenuMerge = branchItemContextMenu.querySelector(
-	".context-menu-item.item-merge",
-);
-const branchItemMenuDelete = branchItemContextMenu.querySelector(
-	".context-menu-item.item-delete",
-);
+const branchItemContextMenu = document.getElementById("branch-item-context-menu");
+const branchItemMenuRename = branchItemContextMenu.querySelector(".context-menu-item.item-rename");
+const branchItemMenuCopy = branchItemContextMenu.querySelector(".context-menu-item.item-copy");
+const branchItemMenuMerge = branchItemContextMenu.querySelector(".context-menu-item.item-merge");
+const branchItemMenuDelete = branchItemContextMenu.querySelector(".context-menu-item.item-delete");
 
-const topbarRepoContextMenu = document.getElementById(
-	"topbar-repo-context-menu",
-);
-const topbarRepoMenuClone = topbarRepoContextMenu.querySelector(
-	".context-menu-item.item-clone",
-);
-const topbarRepoMenuCreate = topbarRepoContextMenu.querySelector(
-	".context-menu-item.item-create",
-);
-const topbarRepoMenuAdd = topbarRepoContextMenu.querySelector(
-	".context-menu-item.item-add",
-);
-const topbarRepoMenuTerminal = topbarRepoContextMenu.querySelector(
-	".context-menu-item.item-terminal",
-);
-const topbarRepoMenuExplorer = topbarRepoContextMenu.querySelector(
-	".context-menu-item.item-explorer",
-);
-const topbarRepoMenuRemove = topbarRepoContextMenu.querySelector(
-	".context-menu-item.item-remove",
-);
+const topbarRepoContextMenu = document.getElementById("topbar-repo-context-menu");
+const topbarRepoMenuClone = topbarRepoContextMenu.querySelector(".context-menu-item.item-clone");
+const topbarRepoMenuCreate = topbarRepoContextMenu.querySelector(".context-menu-item.item-create");
+const topbarRepoMenuAdd = topbarRepoContextMenu.querySelector(".context-menu-item.item-add");
+const topbarRepoMenuTerminal = topbarRepoContextMenu.querySelector(".context-menu-item.item-terminal");
+const topbarRepoMenuExplorer = topbarRepoContextMenu.querySelector(".context-menu-item.item-explorer");
+const topbarRepoMenuRemove = topbarRepoContextMenu.querySelector(".context-menu-item.item-remove");
 
-const topbarBranchContextMenu = document.getElementById(
-	"topbar-branch-context-menu",
-);
-const topbarBranchMenuNew = topbarBranchContextMenu.querySelector(
-	".context-menu-item.item-new",
-);
-const topbarBranchMenuRename = topbarBranchContextMenu.querySelector(
-	".context-menu-item.item-rename",
-);
-const topbarBranchMenuCopy = topbarBranchContextMenu.querySelector(
-	".context-menu-item.item-copy",
-);
-const topbarBranchMenuMerge = topbarBranchContextMenu.querySelector(
-	".context-menu-item.item-merge",
-);
-const topbarBranchMenuDelete = topbarBranchContextMenu.querySelector(
-	".context-menu-item.item-delete",
-);
+const topbarBranchContextMenu = document.getElementById("topbar-branch-context-menu");
+const topbarBranchMenuNew = topbarBranchContextMenu.querySelector(".context-menu-item.item-new");
+const topbarBranchMenuRename = topbarBranchContextMenu.querySelector(".context-menu-item.item-rename");
+const topbarBranchMenuCopy = topbarBranchContextMenu.querySelector(".context-menu-item.item-copy");
+const topbarBranchMenuMerge = topbarBranchContextMenu.querySelector(".context-menu-item.item-merge");
+const topbarBranchMenuDelete = topbarBranchContextMenu.querySelector(".context-menu-item.item-delete");
 
-const changesItemContextMenu = document.getElementById(
-	"changes-item-context-menu",
-);
-const changesItemMenuDiscard = changesItemContextMenu.querySelector(
-	".context-menu-item.item-discard",
-);
-const changesItemMenuIgnoreFile = changesItemContextMenu.querySelector(
-	".context-menu-item.item-ignore-file",
-);
-const changesItemMenuCopyAbsPath = changesItemContextMenu.querySelector(
-	".context-menu-item.item-copy-abs-path",
-);
-const changesItemMenuCopyRelPath = changesItemContextMenu.querySelector(
-	".context-menu-item.item-copy-rel-path",
-);
-const changesItemMenuExplorer = changesItemContextMenu.querySelector(
-	".context-menu-item.item-explorer",
-);
+const changesItemContextMenu = document.getElementById("changes-item-context-menu");
+const changesItemMenuDiscard = changesItemContextMenu.querySelector(".context-menu-item.item-discard");
+const changesItemMenuIgnoreFile = changesItemContextMenu.querySelector(".context-menu-item.item-ignore-file");
+const changesItemMenuCopyAbsPath = changesItemContextMenu.querySelector(".context-menu-item.item-copy-abs-path");
+const changesItemMenuCopyRelPath = changesItemContextMenu.querySelector(".context-menu-item.item-copy-rel-path");
+const changesItemMenuExplorer = changesItemContextMenu.querySelector(".context-menu-item.item-explorer");
 
-const historyItemContextMenu = document.getElementById(
-	"history-item-context-menu",
-);
-const historyItemMenuCheckout = historyItemContextMenu.querySelector(
-	".context-menu-item.item-checkout",
-);
-const historyItemMenuRevert = historyItemContextMenu.querySelector(
-	".context-menu-item.item-revert",
-);
-const historyItemMenuCreateBranch = historyItemContextMenu.querySelector(
-	".context-menu-item.item-create-branch",
-);
-const historyItemMenuCopySHA = historyItemContextMenu.querySelector(
-	".context-menu-item.item-copy-sha",
-);
+const historyItemContextMenu = document.getElementById("history-item-context-menu");
+const historyItemMenuCheckout = historyItemContextMenu.querySelector(".context-menu-item.item-checkout");
+const historyItemMenuRevert = historyItemContextMenu.querySelector(".context-menu-item.item-revert");
+const historyItemMenuCreateBranch = historyItemContextMenu.querySelector(".context-menu-item.item-create-branch");
+const historyItemMenuCopySHA = historyItemContextMenu.querySelector(".context-menu-item.item-copy-sha");
 
 const protectedBranches = ["main", "master"];
 const binaryExts = [
-	".exe",
-	".dll",
-	".bin",
-	".obj",
-	".pdb",
-	".png",
-	".jpg",
-	".jpeg",
-	".gif",
-	".ico",
-	".zip",
-	".tar",
-	".gz",
-	".7z",
-	".pdf",
+	".exe", ".dll", ".bin", ".obj",
+	".pdb", ".png", ".jpg", ".jpeg",
+	".gif", ".ico", ".zip", ".tar",
+	".gz", ".7z", ".pdf",
 ];
 
 // ------- APP STATE -------
@@ -531,8 +406,7 @@ window.external.receiveMessage((message) => {
 });
 
 // ------- UI FUNCTIONS & HELPERS -------
-let minRightWidth = 0,
-	maxRightWidth = 0;
+let minRightWidth = 0, maxRightWidth = 0;
 let isResizing = false;
 
 // Keep panel widths in sync (match their parents)
@@ -544,17 +418,14 @@ const updatePanelWidths = () => {
 
 const stopFetchAnimation = () => {
 	const icon = fetchBtn.querySelector(".icon-fetch");
-	if (!icon || !fetchBtn.classList.contains("fetching")) {
-		return;
-	}
+	if (!icon || !fetchBtn.classList.contains("fetching")) { return; }
 
 	const currentTransform = window.getComputedStyle(icon).transform;
 	fetchBtn.classList.remove("fetching");
 	icon.style.transform = currentTransform;
 	void icon.offsetWidth;
 
-	icon.style.transition =
-		"transform 0.5s ease-out, background-color 0.3s ease";
+	icon.style.transition = "transform 0.5s ease-out, background-color 0.3s ease";
 	icon.style.transform = "rotate(-45deg)";
 
 	setTimeout(() => {
@@ -571,12 +442,8 @@ const placeContextMenu = (event, contextMenu) => {
 	const menuWidth = contextMenu.offsetWidth;
 	const menuHeight = contextMenu.offsetHeight;
 
-	if (mouseX + menuWidth > window.innerWidth) {
-		mouseX = mouseX - menuWidth;
-	}
-	if (mouseY + menuHeight > window.innerHeight) {
-		mouseY = mouseY - menuHeight;
-	}
+	if (mouseX + menuWidth > window.innerWidth) { mouseX = mouseX - menuWidth; }
+	if (mouseY + menuHeight > window.innerHeight) { mouseY = mouseY - menuHeight; }
 
 	contextMenu.style.left = `${mouseX}px`;
 	contextMenu.style.top = `${mouseY}px`;
@@ -596,9 +463,7 @@ const closeDropdowns = () => {
 	historyItemContextMenu.classList.remove("show");
 	detailsPanel.classList.remove("show");
 
-	document
-		.querySelectorAll(".context-active")
-		.forEach((el) => el.classList.remove("context-active"));
+	document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 };
 
 const closeAndClearModal = (modalElement) => {
@@ -622,21 +487,15 @@ const toggleDropdown = (toShow, toHide, event) => {
 	toHide.classList.remove("show");
 	detailsPanel.classList.remove("show");
 
-	document
-		.querySelectorAll(".context-active")
-		.forEach((el) => el.classList.remove("context-active"));
+	document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 
 	const isOpening = toShow.classList.toggle("show");
 	backdrop.classList.toggle("show", isOpening);
 
 	if (isOpening) {
 		setTimeout(() => {
-			if (toShow === repoPanel) {
-				updateCustomScrollbar(repoList, repoScrollbar);
-			}
-			if (toShow === branchPanel) {
-				updateCustomScrollbar(branchList, branchScrollbar);
-			}
+			if (toShow === repoPanel) { updateCustomScrollbar(repoList, repoScrollbar); }
+			if (toShow === branchPanel) { updateCustomScrollbar(branchList, branchScrollbar); }
 		}, 10);
 	}
 };
@@ -658,15 +517,12 @@ const toggleCommitButton = () => {
 		return;
 	}
 
-	const checkedCount = document.querySelectorAll(
-		".changes-item-checkbox:checked",
-	).length;
+	const checkedCount = document.querySelectorAll(".changes-item-checkbox:checked",).length;
 
 	// Commit state
-	const commitText =
-		checkedCount > 0
-			? `Commit ${checkedCount} file${checkedCount === 1 ? "" : "s"} to ${currentBranch}`
-			: `Commit`;
+	const commitText = checkedCount > 0
+		? `Commit ${checkedCount} file${checkedCount === 1 ? "" : "s"} to ${currentBranch}`
+		: `Commit`;
 
 	if (commitMessageInput.value.trim() === "" || checkedCount === 0) {
 		commitBtn.disabled = true;
@@ -690,13 +546,7 @@ const validateBranchContextMenu = (branchName, renameBtn, deleteBtn) => {
 	deleteBtn.disabled = isProtected;
 };
 
-const validateRepoContextMenu = (
-	repoName,
-	terminalBtn,
-	explorerBtn,
-	removeBtn,
-	isInvalid = false,
-) => {
+const validateRepoContextMenu = ( repoName, terminalBtn, explorerBtn, removeBtn, isInvalid = false) => {
 	const isRepoEmpty = !repoName || repoName.trim() === "";
 
 	const disableTools = isRepoEmpty || isInvalid;
@@ -728,27 +578,24 @@ const validateBranchRenameModal = () => {
 	const newName = branchRenameModalInputName.value.trim();
 	const oldName = branchRenameModal.dataset.targetName || currentBranch;
 
-	const isValid =
-		newName !== "" &&
-		newName !== oldName &&
-		!protectedBranches.includes(newName);
+	const isValid = newName !== ""
+		&& newName !== oldName
+		&& !protectedBranches.includes(newName);
 
 	branchRenameModalConfirmBtn.disabled = !isValid;
 	branchRenameModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
 const validateRepoCloneModal = () => {
-	const isValid =
-		repoCloneModalRepoUrl.value.trim() !== "" &&
-		repoCloneModalInputPath.value.trim() !== "";
+	const isValid = repoCloneModalRepoUrl.value.trim() !== ""
+		&& repoCloneModalInputPath.value.trim() !== "";
 	repoCloneModalConfirmBtn.disabled = !isValid;
 	repoCloneModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
 const validateRepoCreateModal = () => {
-	const isValid =
-		repoCreateModalInputName.value.trim() !== "" &&
-		repoCreateModalInputPath.value.trim() !== "";
+	const isValid = repoCreateModalInputName.value.trim() !== ""
+		&& repoCreateModalInputPath.value.trim() !== "";
 	repoCreateModalConfirmBtn.disabled = !isValid;
 	repoCreateModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
@@ -763,10 +610,9 @@ const validateBranchMergeModal = () => {
 	const sourceBranch = branchMergeModalSelectSource.value;
 	const targetBranch = branchMergeModalSelectTarget.value;
 
-	const isValid =
-		sourceBranch !== "" &&
-		targetBranch !== "" &&
-		sourceBranch !== targetBranch;
+	const isValid = sourceBranch !== ""
+		&& targetBranch !== ""
+		&& sourceBranch !== targetBranch;
 
 	branchMergeModalConfirmBtn.classList.toggle("disabled", !isValid);
 	branchMergeModalConfirmBtn.disabled = !isValid;
@@ -774,12 +620,8 @@ const validateBranchMergeModal = () => {
 
 // Changes header checkbox updater
 const updateMasterCheckboxState = () => {
-	const allFileCheckboxes = Array.from(
-		document.querySelectorAll(".changes-item-checkbox"),
-	);
-	if (allFileCheckboxes.length === 0) {
-		return;
-	}
+	const allFileCheckboxes = Array.from(document.querySelectorAll(".changes-item-checkbox"));
+	if (allFileCheckboxes.length === 0) { return; }
 
 	const allChecked = allFileCheckboxes.every((box) => box.checked);
 	changesMasterCheckbox.checked = allChecked;
@@ -810,9 +652,7 @@ const switchToHistoryTab = () => {
 // Update custom scrollbar
 const updateCustomScrollbar = (container, scrollbar) => {
 	// If should be visible
-	if (!container || !scrollbar) {
-		return;
-	}
+	if (!container || !scrollbar) { return; }
 
 	const containerH = container.clientHeight;
 	const contentH = container.scrollHeight;
@@ -847,9 +687,7 @@ const interactCustomScrollbar = (container, scrollbar) => {
 	let startScrollTop;
 
 	scrollbar.addEventListener("mousedown", (e) => {
-		if (e.button !== 0) {
-			return;
-		}
+		if (e.button !== 0) { return; }
 
 		isDragging = true;
 		startY = e.clientY;
@@ -863,9 +701,7 @@ const interactCustomScrollbar = (container, scrollbar) => {
 	});
 
 	const onMouseMove = (e) => {
-		if (!isDragging) {
-			return;
-		}
+		if (!isDragging) { return; }
 
 		const deltaY = e.clientY - startY;
 
@@ -878,9 +714,7 @@ const interactCustomScrollbar = (container, scrollbar) => {
 		const thumbHeight = Math.max(heightRatio * usableTrackHeight, 30);
 		const maxThumbTop = usableTrackHeight - thumbHeight;
 
-		if (maxThumbTop <= 0) {
-			return;
-		}
+		if (maxThumbTop <= 0) { return; }
 
 		const scrollRatio = (contentH - containerH) / maxThumbTop;
 		container.scrollTop = startScrollTop + deltaY * scrollRatio;
@@ -898,27 +732,21 @@ const interactCustomScrollbar = (container, scrollbar) => {
 // Apply app theme
 const applyTheme = (themeName) => {
 	document.body.className = document.body.className.replace(/theme-\S+/g, "");
-	if (themeName) {
-		document.body.classList.add(`theme-${themeName}`);
-	}
+	if (themeName) { document.body.classList.add(`theme-${themeName}`); }
 };
 
 // Draft memory helpers
 const saveDraft = () => {
-	if (!currentRepoPath) {
-		return;
-	}
+	if (!currentRepoPath) { return; }
 
 	repoDrafts[currentRepoPath] = {
 		message: commitMessageInput.value,
-		description: commitDescriptionInput.value,
+		description: commitDescriptionInput.value
 	};
 };
 
 const loadDraft = () => {
-	if (!currentRepoPath) {
-		return;
-	}
+	if (!currentRepoPath) { return; }
 
 	const draft = repoDrafts[currentRepoPath];
 
@@ -972,9 +800,7 @@ const setupMergeModal = (preselectedTarget) => {
 	const branchItems = branchDropdown.querySelectorAll(".dropdown-item");
 	branchItems.forEach((item) => {
 		const branchName = item.dataset.branchName;
-		if (!branchName) {
-			return;
-		}
+		if (!branchName) { return; }
 
 		const optionSource = document.createElement("option");
 		optionSource.value = branchName;
@@ -990,8 +816,7 @@ const setupMergeModal = (preselectedTarget) => {
 	branchMergeModalSelectTarget.value = preselectedTarget || currentBranch;
 
 	branchMergeModalSourceLabel.textContent = "{ none }";
-	branchMergeModalTargetLabel.textContent =
-		branchMergeModalSelectTarget.value;
+	branchMergeModalTargetLabel.textContent = branchMergeModalSelectTarget.value;
 
 	branchMergeModalSelectSource.onchange = (e) => {
 		branchMergeModalSourceLabel.textContent = e.target.value;
@@ -1022,11 +847,8 @@ const renderTodoList = () => {
 		checkbox.addEventListener("click", () => {
 			todo.isCompleted = checkbox.checked;
 
-			if (todo.isCompleted) {
-				label.classList.add("done");
-			} else {
-				label.classList.remove("done");
-			}
+			if (todo.isCompleted) { label.classList.add("done"); }
+			else { label.classList.remove("done"); }
 		});
 
 		// Label
@@ -1062,17 +884,13 @@ const renderTodoList = () => {
 		if (e.key === "Enter" && newInput.value.trim() !== "") {
 			draftTodos.push({
 				text: newInput.value.trim(),
-				isCompleted: false,
+				isCompleted: false
 			});
 			renderTodoList();
 
 			// Refocus on new task input
-			const newInputs = todoModalRowsContainer.querySelectorAll(
-				".todo-row .modal-input",
-			);
-			if (newInputs.length > 0) {
-				newInputs[newInputs.length - 1].focus();
-			}
+			const newInputs = todoModalRowsContainer.querySelectorAll(".todo-row .modal-input");
+			if (newInputs.length > 0) { newInputs[newInputs.length - 1].focus(); }
 		}
 	});
 
@@ -1096,12 +914,7 @@ function markRepoDropdownItemInvalid(repoPath) {
 }
 
 // C# - Load diff text
-function renderFileDiff(
-	diffText,
-	contentTarget,
-	wrapperTarget,
-	scrollbarTarget,
-) {
+function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget) {
 	if (!diffText || diffText.trim() === "") {
 		contentTarget.textContent = "(No changes or binary file)";
 		updateCustomScrollbar(wrapperTarget, scrollbarTarget);
@@ -1122,16 +935,11 @@ function renderFileDiff(
 	for (let line of lines) {
 		// skip git diff headers
 		if (!hitFirstChunk) {
-			if (line.startsWith("@@")) {
-				hitFirstChunk = true;
-			} else {
-				continue;
-			}
+			if (line.startsWith("@@")) { hitFirstChunk = true; }
+			else { continue; }
 		}
 
-		if (line.startsWith("\\")) {
-			continue;
-		}
+		if (line.startsWith("\\")) { continue; }
 
 		let safeLine = escapeHtml(line);
 
@@ -1183,13 +991,9 @@ function appInit(data) {
 	if (data.Settings.LastRepoPath) {
 		const cssPath = data.Settings.LastRepoPath.replace(/\\/g, "\\\\");
 
-		const lastRepoItem = repoDropdown.querySelector(
-			`.dropdown-item[data-path="${cssPath}"]`,
-		);
+		const lastRepoItem = repoDropdown.querySelector(`.dropdown-item[data-path="${cssPath}"]`);
 
-		if (lastRepoItem) {
-			lastRepoItem.click();
-		}
+		if (lastRepoItem) { lastRepoItem.click(); }
 	}
 
 	document.body.classList.remove("loading");
@@ -1200,9 +1004,7 @@ function loadRepositoriesIntoDropdown(repositories) {
 	const existingItems = repoDropdown.querySelectorAll(".dropdown-item");
 	existingItems.forEach((item) => item.remove());
 
-	if (repositories.length === 0) {
-		return;
-	}
+	if (repositories.length === 0) { return; }
 
 	repositories.forEach((repo) => {
 		const item = document.createElement("div");
@@ -1220,15 +1022,8 @@ function loadRepositoriesIntoDropdown(repositories) {
 		// LMB - select
 		item.addEventListener("click", () => {
 			// Item invalid || already selected
-			if (item.classList.contains("invalid")) {
-				return;
-			}
-			if (
-				currentRepoPath.toLowerCase() ===
-				repo.AbsolutePath.toLowerCase()
-			) {
-				return;
-			}
+			if (item.classList.contains("invalid")) { return; }
+			if (currentRepoPath.toLowerCase() === repo.AbsolutePath.toLowerCase()) { return; }
 
 			currentRepoPath = repo.AbsolutePath;
 			currentBranch = "";
@@ -1240,9 +1035,7 @@ function loadRepositoriesIntoDropdown(repositories) {
 			resetDetailsViewer();
 			activeTodos = [];
 
-			sendIpcMessage("REPO_SELECTED", {
-				absolutePath: repo.AbsolutePath,
-			});
+			sendIpcMessage("REPO_SELECTED", { absolutePath: repo.AbsolutePath });
 			sendIpcMessage("GET_REPO_STATUS", { repoPath: repo.AbsolutePath });
 			sendIpcMessage("TODO_LOAD", { repoPath: repo.AbsolutePath });
 
@@ -1260,9 +1053,7 @@ function loadRepositoriesIntoDropdown(repositories) {
 			event.stopPropagation();
 
 			repoContextMenu.classList.remove("show");
-			repoDropdown
-				.querySelectorAll(".context-active")
-				.forEach((el) => el.classList.remove("context-active"));
+			repoDropdown.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 			item.classList.add("context-active");
 
 			repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
@@ -1270,13 +1061,7 @@ function loadRepositoriesIntoDropdown(repositories) {
 
 			const isInvalid = item.classList.contains("invalid");
 
-			validateRepoContextMenu(
-				repo.AbsolutePath,
-				repoItemMenuTerminal,
-				repoItemMenuExplorer,
-				repoItemMenuRemove,
-				isInvalid,
-			);
+			validateRepoContextMenu(repo.AbsolutePath, repoItemMenuTerminal, repoItemMenuExplorer, repoItemMenuRemove, isInvalid);
 
 			repoItemContextMenu.classList.add("show");
 
@@ -1292,9 +1077,7 @@ function loadBranchesIntoDropdown(branches) {
 	const existingItems = branchDropdown.querySelectorAll(".dropdown-item");
 	existingItems.forEach((item) => item.remove());
 
-	const branchBtnValue = document.querySelector(
-		"#branches-container .btn-value",
-	);
+	const branchBtnValue = document.querySelector("#branches-container .btn-value");
 
 	if (branches.length === 0) {
 		branchBtnValue.textContent = "No branches";
@@ -1320,9 +1103,7 @@ function loadBranchesIntoDropdown(branches) {
 
 		// LMB - select
 		item.addEventListener("click", () => {
-			if (currentBranch.toLowerCase() === branch.Name.toLowerCase()) {
-				return;
-			}
+			if (currentBranch.toLowerCase() === branch.Name.toLowerCase()) { return; }
 
 			resetDiffViewer();
 			resetDetailsViewer();
@@ -1333,7 +1114,7 @@ function loadBranchesIntoDropdown(branches) {
 			sendIpcMessage("BRANCH_SELECTED", {
 				absolutePath: currentRepoPath,
 				branchName: branch.Name,
-				isRemote: branch.IsRemote,
+				isRemote: branch.IsRemote
 			});
 		});
 
@@ -1345,16 +1126,10 @@ function loadBranchesIntoDropdown(branches) {
 			branchItemContextMenu.dataset.targetPath = currentRepoPath;
 			branchItemContextMenu.dataset.targetName = branch.Name;
 
-			validateBranchContextMenu(
-				branch.Name,
-				branchItemMenuRename,
-				branchItemMenuDelete,
-			);
+			validateBranchContextMenu(branch.Name, branchItemMenuRename, branchItemMenuDelete);
 
 			branchItemContextMenu.classList.add("show");
-			branchDropdown
-				.querySelectorAll(".context-active")
-				.forEach((el) => el.classList.remove("context-active"));
+			branchDropdown.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 			item.classList.add("context-active");
 
 			placeContextMenu(event, branchItemContextMenu);
@@ -1374,7 +1149,7 @@ function loadBranchesIntoDropdown(branches) {
 		if (currentBranch) {
 			sendIpcMessage("GET_BRANCH_HISTORY", {
 				repoPath: currentRepoPath,
-				branchName: currentBranch,
+				branchName: currentBranch
 			});
 		}
 	}
@@ -1383,26 +1158,18 @@ function loadBranchesIntoDropdown(branches) {
 // C# - Delete repo
 function deleteRepoFromDropdown(repository) {
 	const removedPath = repository.absolutePath;
-	if (!removedPath) {
-		return;
-	}
+	if (!removedPath) { return; }
 
 	const cssPath = removedPath.replace(/\\/g, "\\\\");
-	const itemToRemove = repoDropdown.querySelector(
-		`.dropdown-item[data-path="${cssPath}"]`,
-	);
+	const itemToRemove = repoDropdown.querySelector(`.dropdown-item[data-path="${cssPath}"]`);
 
-	if (itemToRemove) {
-		itemToRemove.remove();
-	}
+	if (itemToRemove) { itemToRemove.remove(); }
 
 	if (currentRepoPath === removedPath) {
 		currentRepoPath = "";
 
 		const repoBtnValue = repoBtn.querySelector(".btn-value");
-		if (repoBtnValue) {
-			repoBtnValue.textContent = "None";
-		}
+		if (repoBtnValue) { repoBtnValue.textContent = "None"; }
 
 		branchBtn.classList.add("disabled");
 		branchBtn.disabled = true;
@@ -1412,12 +1179,9 @@ function deleteRepoFromDropdown(repository) {
 		fetchBtn.classList.add("disabled");
 
 		const branchBtnValue = branchBtn.querySelector(".btn-value");
-		if (branchBtnValue) {
-			branchBtnValue.textContent = "None";
-		}
+		if (branchBtnValue) { branchBtnValue.textContent = "None"; }
 
-		const existingBranches =
-			branchDropdown.querySelectorAll(".dropdown-item");
+		const existingBranches = branchDropdown.querySelectorAll(".dropdown-item");
 		existingBranches.forEach((item) => item.remove());
 	}
 }
@@ -1449,12 +1213,8 @@ function addRepositoryToDropdown(repo) {
 	// LMB - select
 	item.addEventListener("click", () => {
 		// Item invalid || already selected
-		if (item.classList.contains("invalid")) {
-			return;
-		}
-		if (currentRepoPath.toLowerCase() === repo.AbsolutePath.toLowerCase()) {
-			return;
-		}
+		if (item.classList.contains("invalid")) { return; }
+		if (currentRepoPath.toLowerCase() === repo.AbsolutePath.toLowerCase()) { return; }
 
 		currentRepoPath = repo.AbsolutePath;
 		currentBranch = "";
@@ -1482,9 +1242,7 @@ function addRepositoryToDropdown(repo) {
 		event.stopPropagation();
 
 		repoContextMenu.classList.remove("show");
-		repoDropdown
-			.querySelectorAll(".context-active")
-			.forEach((el) => el.classList.remove("context-active"));
+		repoDropdown.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 		item.classList.add("context-active");
 
 		repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
@@ -1497,7 +1255,7 @@ function addRepositoryToDropdown(repo) {
 			repoItemMenuTerminal,
 			repoItemMenuExplorer,
 			repoItemMenuRemove,
-			isInvalid,
+			isInvalid
 		);
 
 		repoItemContextMenu.classList.add("show");
@@ -1507,9 +1265,7 @@ function addRepositoryToDropdown(repo) {
 
 	repoList.appendChild(item);
 
-	if (repo.IsValid) {
-		item.click();
-	}
+	if (repo.IsValid) { item.click(); }
 }
 
 // C# - Load changed files to right sidebar
@@ -1556,27 +1312,18 @@ function renderChangedFiles(files) {
 
 		// LMB - Change item clicking
 		item.addEventListener("click", (event) => {
-			if (event.target.classList.contains("changes-item-checkbox")) {
-				return;
-			}
-			if (item.classList.contains("selected")) {
-				return;
-			}
+			if (event.target.classList.contains("changes-item-checkbox")) { return; }
+			if (item.classList.contains("selected")) { return; }
 
-			document
-				.querySelectorAll(".change-item")
-				.forEach((el) => el.classList.remove("selected"));
+			document.querySelectorAll(".change-item").forEach((el) => el.classList.remove("selected"));
 			item.classList.add("selected");
 
 			diffFilename.textContent = file.Path;
 
 			// Check for binary extensions
-			const ext = file.Path.substring(
-				file.Path.lastIndexOf("."),
-			).toLowerCase();
+			const ext = file.Path.substring(file.Path.lastIndexOf(".")).toLowerCase();
 			if (binaryExts.includes(ext)) {
-				diffContent.textContent =
-					"Binary file changed (no preview available)";
+				diffContent.textContent = "Binary file changed (no preview available)";
 				return;
 			}
 
@@ -1584,14 +1331,12 @@ function renderChangedFiles(files) {
 
 			sendIpcMessage("GET_FILE_DIFF", {
 				repoPath: currentRepoPath,
-				filePath: file.Path,
+				filePath: file.Path
 			});
 		});
 
 		const checkbox = item.querySelector(".changes-item-checkbox");
-		checkbox.addEventListener("change", () => {
-			updateMasterCheckboxState();
-		});
+		checkbox.addEventListener("change", () => { updateMasterCheckboxState(); });
 
 		// RMB - Change item context menu
 		item.addEventListener("contextmenu", (event) => {
@@ -1601,9 +1346,7 @@ function renderChangedFiles(files) {
 
 			changesItemContextMenu.dataset.targetPath = file.Path;
 
-			document
-				.querySelectorAll(".change-item")
-				.forEach((el) => el.classList.remove("context-active"));
+			document.querySelectorAll(".change-item").forEach((el) => el.classList.remove("context-active"));
 			item.classList.add("context-active");
 
 			changesItemContextMenu.classList.add("show");
@@ -1634,7 +1377,7 @@ function processCommit() {
 		if (currentBranch) {
 			sendIpcMessage("GET_BRANCH_HISTORY", {
 				repoPath: currentRepoPath,
-				branchName: currentBranch,
+				branchName: currentBranch
 			});
 		}
 	}
@@ -1667,13 +1410,9 @@ function renderHistory(commits, isAppending = false) {
 
 		// LMB - Show commit history details
 		item.addEventListener("click", () => {
-			if (item.classList.contains("selected")) {
-				return;
-			}
+			if (item.classList.contains("selected")) { return; }
 
-			document
-				.querySelectorAll(".history-item")
-				.forEach((el) => el.classList.remove("selected"));
+			document.querySelectorAll(".history-item").forEach((el) => el.classList.remove("selected"));
 			item.classList.add("selected");
 
 			activeHistoryHash = commit.Hash;
@@ -1687,7 +1426,7 @@ function renderHistory(commits, isAppending = false) {
 
 			sendIpcMessage("GET_COMMIT_DETAILS", {
 				repoPath: currentRepoPath,
-				commitHash: commit.Hash,
+				commitHash: commit.Hash
 			});
 		});
 
@@ -1699,9 +1438,7 @@ function renderHistory(commits, isAppending = false) {
 
 			historyItemContextMenu.dataset.targetHash = commit.Hash;
 
-			document
-				.querySelectorAll(".history-item")
-				.forEach((el) => el.classList.remove("context-active"));
+			document.querySelectorAll(".history-item").forEach((el) => el.classList.remove("context-active"));
 			item.classList.add("context-active");
 
 			historyItemContextMenu.classList.add("show");
@@ -1739,8 +1476,7 @@ function renameBranchInDropdown(payload) {
 
 	if (currentBranch === oldName) {
 		currentBranch = newName;
-		document.querySelector("#branches-container .btn-value").textContent =
-			newName;
+		document.querySelector("#branches-container .btn-value").textContent = newName;
 		toggleCommitButton();
 	}
 
@@ -1758,7 +1494,7 @@ function fetchRepo(repo) {
 		if (currentBranch) {
 			sendIpcMessage("GET_BRANCH_HISTORY", {
 				repoPath: currentRepoPath,
-				branchName: currentBranch,
+				branchName: currentBranch
 			});
 		}
 	}
@@ -1822,18 +1558,14 @@ function loadCommitDetails(details) {
 			activeDetailsFile = file.Path;
 
 			event.stopPropagation();
-			detailsFileList
-				.querySelectorAll(".dropdown-item")
-				.forEach((el) => el.classList.remove("active"));
+			detailsFileList.querySelectorAll(".dropdown-item").forEach((el) => el.classList.remove("active"));
 			item.classList.add("active");
 
 			detailsBtnValue.innerHTML = `<span class="change-status ${statusClass}">${file.StatusCode[0]}</span>
 										 <span class="change-path">${file.Path}</span>`;
 			closeDropdowns();
 
-			const ext = file.Path.substring(
-				file.Path.lastIndexOf("."),
-			).toLowerCase();
+			const ext = file.Path.substring(file.Path.lastIndexOf(".")).toLowerCase();
 			if (binaryExts.includes(ext)) {
 				detailsContent.innerHTML = `<span class="diff-chunk">Binary file changes (no preview available)</span>`;
 				updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar);
@@ -1845,15 +1577,13 @@ function loadCommitDetails(details) {
 			sendIpcMessage("GET_HISTORY_FILE_DIFF", {
 				repoPath: currentRepoPath,
 				commitHash: activeHistoryHash,
-				filePath: file.Path,
+				filePath: file.Path
 			});
 		});
 
 		detailsFileList.appendChild(item);
 
-		if (index === 0) {
-			item.click();
-		}
+		if (index === 0) { item.click(); }
 	});
 
 	updateCustomScrollbar(detailsFileList, detailsFileScrollbar);
@@ -1871,7 +1601,7 @@ function processBranchesMerged() {
 		if (currentBranch) {
 			sendIpcMessage("GET_BRANCH_HISTORY", {
 				repoPath: currentRepoPath,
-				branchName: currentBranch,
+				branchName: currentBranch
 			});
 		}
 	}
@@ -1924,14 +1654,10 @@ function processMissingRepo(repoPath) {
 
 		// Reset Topbar
 		const repoBtnValue = repoBtn.querySelector(".btn-value");
-		if (repoBtnValue) {
-			repoBtnValue.textContent = "None";
-		}
+		if (repoBtnValue) { repoBtnValue.textContent = "None"; }
 
 		const branchBtnValue = branchBtn.querySelector(".btn-value");
-		if (branchBtnValue) {
-			branchBtnValue.textContent = "None";
-		}
+		if (branchBtnValue) { branchBtnValue.textContent = "None"; }
 
 		// Disable buttons
 		branchBtn.classList.add("disabled");
@@ -1942,8 +1668,7 @@ function processMissingRepo(repoPath) {
 		fetchBtn.classList.add("disabled");
 
 		// Clear UI panels
-		const existingBranches =
-			branchDropdown.querySelectorAll(".dropdown-item");
+		const existingBranches = branchDropdown.querySelectorAll(".dropdown-item");
 		existingBranches.forEach((item) => item.remove());
 
 		changesList.innerHTML = "";
@@ -1959,15 +1684,9 @@ function processMissingRepo(repoPath) {
 
 // ------- EVENT LISTENERS -------
 // Global overrides
-document.addEventListener(
-	"wheel",
-	(event) => {
-		if (event.ctrlKey || event.metaKey) {
-			event.preventDefault();
-		}
-	},
-	{ passive: false },
-);
+document.addEventListener("wheel", (event) => {
+	if (event.ctrlKey || event.metaKey) { event.preventDefault(); }
+}, { passive: false });
 
 document.addEventListener("keydown", (event) => {
 	if (event.key === "Escape") {
@@ -1983,9 +1702,7 @@ document.addEventListener("keydown", (event) => {
 
 // Left sidebar buttons (left-sidebar)
 mergeBtn.addEventListener("click", () => {
-	if (!currentRepoPath || !currentBranch) {
-		return;
-	}
+	if (!currentRepoPath || !currentBranch) { return; }
 
 	setupMergeModal(currentBranch);
 	branchMergeModal.dataset.targetName = currentBranch;
@@ -1993,9 +1710,7 @@ mergeBtn.addEventListener("click", () => {
 });
 
 todoBtn.addEventListener("click", () => {
-	if (!currentRepoPath) {
-		return;
-	}
+	if (!currentRepoPath) { return; }
 
 	draftTodos = JSON.parse(JSON.stringify(activeTodos));
 
@@ -2004,17 +1719,13 @@ todoBtn.addEventListener("click", () => {
 });
 
 configBtn.addEventListener("click", () => {
-	if (!currentRepoPath) {
-		return;
-	}
+	if (!currentRepoPath) { return; }
 
 	sendIpcMessage("CONFIG_LOCAL_GET", { repoPath: currentRepoPath });
 });
 
 fetchBtn.addEventListener("click", () => {
-	if (!currentRepoPath || fetchBtn.classList.contains("fetching")) {
-		return;
-	}
+	if (!currentRepoPath || fetchBtn.classList.contains("fetching")) { return; }
 
 	fetchBtn.classList.add("fetching");
 
@@ -2028,38 +1739,38 @@ settingsBtn.addEventListener("click", () => {
 	settingsModal.classList.add("show");
 });
 
-accountBtn.addEventListener("click", () => {
-	sendIpcMessage("CONFIG_GLOBAL_GET", {});
-});
+accountBtn.addEventListener("click", () =>
+	sendIpcMessage("CONFIG_GLOBAL_GET", {})
+);
 
 // Scrollbars (topbar)
 repoList.addEventListener("scroll", () =>
-	updateCustomScrollbar(repoList, repoScrollbar),
+	updateCustomScrollbar(repoList, repoScrollbar)
 );
 branchList.addEventListener("scroll", () =>
-	updateCustomScrollbar(branchList, branchScrollbar),
+	updateCustomScrollbar(branchList, branchScrollbar)
 );
 
 // Todo list scrollbar (scrollbar/modals)
-todoModalRowsContainer.addEventListener("scroll", () => {
-	updateCustomScrollbar(todoModalRowsContainer, todoScrollbar);
-});
+todoModalRowsContainer.addEventListener("scroll", () =>
+	updateCustomScrollbar(todoModalRowsContainer, todoScrollbar)
+);
 
 // Settings modal (modals)
-settingsModalLogsView.addEventListener("click", () => {
+settingsModalLogsView.addEventListener("click", () =>
 	sendIpcMessage("EXPLORER_OPEN", {
-		path: "%APP_DATA%",
-	});
-});
+		path: "%APP_DATA%"
+	})
+);
 
-settingsModalLogsClear.addEventListener("click", () => {
-	sendIpcMessage("LOGS_CLEAR", {});
-});
+settingsModalLogsClear.addEventListener("click", () =>
+	sendIpcMessage("LOGS_CLEAR", {})
+);
 
 settingsModalConfirmBtn.addEventListener("click", () => {
 	const updatedSettings = {
 		Id: 1,
-		Theme: settingsModalThemeSelect.value,
+		Theme: settingsModalThemeSelect.value
 	};
 
 	sendIpcMessage("SETTINGS_SAVE", updatedSettings);
@@ -2071,21 +1782,17 @@ settingsModalConfirmBtn.addEventListener("click", () => {
 });
 
 // Diff page (main-content)
-diffBodyWrapper.addEventListener("scroll", () =>
-	updateCustomScrollbar(diffBodyWrapper, diffScrollbar),
-);
+diffBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(diffBodyWrapper, diffScrollbar));
 
 // History details page (main-content)
 detailsBodyWrapper.addEventListener("scroll", () =>
-	updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar),
+	updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar)
 );
 detailsFileList.addEventListener("scroll", () =>
-	updateCustomScrollbar(detailsFileList, detailsFileScrollbar),
+	updateCustomScrollbar(detailsFileList, detailsFileScrollbar)
 );
 detailsBtn.addEventListener("click", (event) => {
-	if (detailsBtn.disabled || detailsBtn.classList.contains("disabled")) {
-		return;
-	}
+	if (detailsBtn.disabled || detailsBtn.classList.contains("disabled")) { return; }
 
 	event.stopPropagation();
 	repoPanel.classList.remove("show");
@@ -2094,49 +1801,36 @@ detailsBtn.addEventListener("click", (event) => {
 	backdrop.classList.toggle("show", isOpening);
 
 	if (isOpening) {
-		setTimeout(() =>
-			updateCustomScrollbar(detailsFileList, detailsFileScrollbar),
-		);
+		setTimeout(() => updateCustomScrollbar(detailsFileList, detailsFileScrollbar));
 	}
 });
 
 // Toggles (dropdowns)
 repoBtn.addEventListener("click", (event) =>
-	toggleDropdown(repoPanel, branchPanel, event),
+	toggleDropdown(repoPanel, branchPanel, event)
 );
 repoBtn.addEventListener("contextmenu", (event) => {
 	event.preventDefault();
 	event.stopPropagation();
 	closeDropdowns();
 
-	validateRepoContextMenu(
-		currentRepoPath,
-		topbarRepoMenuTerminal,
-		topbarRepoMenuExplorer,
-		topbarRepoMenuRemove,
-	);
+	validateRepoContextMenu(currentRepoPath, topbarRepoMenuTerminal, topbarRepoMenuExplorer, topbarRepoMenuRemove);
 
 	topbarRepoContextMenu.classList.add("show");
 	placeContextMenu(event, topbarRepoContextMenu);
 });
 
 branchBtn.addEventListener("click", (event) =>
-	toggleDropdown(branchPanel, repoPanel, event),
+	toggleDropdown(branchPanel, repoPanel, event)
 );
 branchBtn.addEventListener("contextmenu", (event) => {
 	event.preventDefault();
 	event.stopPropagation();
 
-	if (branchBtn.classList.contains("disabled")) {
-		return;
-	}
+	if (branchBtn.classList.contains("disabled")) { return; }
 	closeDropdowns();
 
-	validateBranchContextMenu(
-		currentBranch,
-		topbarBranchMenuRename,
-		topbarBranchMenuDelete,
-	);
+	validateBranchContextMenu(currentBranch, topbarBranchMenuRename, topbarBranchMenuDelete);
 
 	topbarBranchContextMenu.classList.add("show");
 	placeContextMenu(event, topbarBranchContextMenu);
@@ -2149,17 +1843,13 @@ window.addEventListener("click", closeDropdowns);
 // Close triggers (modals)
 modalBackdrops.forEach((backdrop) => {
 	backdrop.addEventListener("click", (event) => {
-		if (event.target === backdrop) {
-			closeAndClearModal(backdrop);
-		}
+		if (event.target === backdrop) { closeAndClearModal(backdrop); }
 	});
 });
 modalCloseTriggers.forEach((trigger) => {
 	trigger.addEventListener("click", (event) => {
 		const parentModal = event.target.closest(".modal-backdrop");
-		if (parentModal) {
-			closeAndClearModal(parentModal);
-		}
+		if (parentModal) { closeAndClearModal(parentModal); }
 	});
 });
 
@@ -2176,11 +1866,7 @@ window.addEventListener("resize", () => {
 	const rightCSS = window.getComputedStyle(rightSidebar);
 	const fallbackMinRight = parseInt(rightCSS.minWidth) || 192;
 
-	const currentMaxRightWidth =
-		window.innerWidth -
-		leftSidebar.offsetWidth -
-		minMainWidth -
-		resizer.offsetWidth;
+	const currentMaxRightWidth = window.innerWidth - leftSidebar.offsetWidth - minMainWidth - resizer.offsetWidth;
 	let currentRightWidth = parseInt(rightCSS.width);
 
 	if (currentRightWidth > currentMaxRightWidth) {
@@ -2203,11 +1889,7 @@ resizer.addEventListener("mousedown", (event) => {
 	minRightWidth = parseInt(rightCSS.minWidth) || 192;
 	const minMainWidth = parseInt(mainCSS.minWidth) || 360;
 
-	maxRightWidth =
-		window.innerWidth -
-		leftSidebar.offsetWidth -
-		minMainWidth -
-		resizer.offsetWidth;
+	maxRightWidth = window.innerWidth - leftSidebar.offsetWidth - minMainWidth - resizer.offsetWidth;
 
 	document.addEventListener("mousemove", resize);
 	document.addEventListener("mouseup", stopResize);
@@ -2215,15 +1897,10 @@ resizer.addEventListener("mousedown", (event) => {
 });
 
 function resize(event) {
-	if (!isResizing) {
-		return;
-	}
+	if (!isResizing) { return; }
 
 	let targetWidth = window.innerWidth - event.clientX;
-	let newWidth = Math.max(
-		minRightWidth,
-		Math.min(targetWidth, maxRightWidth),
-	);
+	let newWidth = Math.max(minRightWidth, Math.min(targetWidth, maxRightWidth));
 
 	// Calculate always visible
 	rightSidebar.style.width = `${newWidth}px`;
@@ -2254,9 +1931,7 @@ tabBtnHistory.addEventListener("click", switchToHistoryTab);
 // Master checkbox logic (right-sidebar/changes-header)
 changesMasterCheckbox.addEventListener("change", (event) => {
 	const isChecked = event.target.checked;
-	const allFileCheckboxes = document.querySelectorAll(
-		".changes-item-checkbox",
-	);
+	const allFileCheckboxes = document.querySelectorAll(".changes-item-checkbox");
 	allFileCheckboxes.forEach((box) => {
 		box.checked = isChecked;
 	});
@@ -2282,7 +1957,7 @@ commitBtn.addEventListener("click", () => {
 		commitBtn.textContent = "Pulling...";
 
 		sendIpcMessage("REPO_PULL", {
-			repoPath: currentRepoPath,
+			repoPath: currentRepoPath
 		});
 		return;
 	}
@@ -2291,14 +1966,10 @@ commitBtn.addEventListener("click", () => {
 	const message = commitMessageInput.value.trim();
 	const description = commitDescriptionInput.value.trim();
 
-	if (message === "" || currentRepoPath === "" || currentChangesCount === 0) {
-		return;
-	}
+	if (message === "" || currentRepoPath === "" || currentChangesCount === 0) { return; }
 
 	const selectedFiles = [];
-	const allFileCheckboxes = document.querySelectorAll(
-		".changes-item-checkbox:checked",
-	);
+	const allFileCheckboxes = document.querySelectorAll(".changes-item-checkbox:checked");
 
 	allFileCheckboxes.forEach((checkbox) => {
 		const itemRow = checkbox.closest(".change-item");
@@ -2306,9 +1977,7 @@ commitBtn.addEventListener("click", () => {
 		selectedFiles.push(filePath);
 	});
 
-	if (selectedFiles.length === 0) {
-		return;
-	}
+	if (selectedFiles.length === 0) { return; }
 
 	commitBtn.disabled = true;
 	commitBtn.classList.add("disabled");
@@ -2317,7 +1986,7 @@ commitBtn.addEventListener("click", () => {
 		repoPath: currentRepoPath,
 		message: message,
 		description: description,
-		files: selectedFiles,
+		files: selectedFiles
 	});
 });
 
@@ -2328,14 +1997,10 @@ changesList.addEventListener("scroll", () => {
 historyList.addEventListener("scroll", () => {
 	updateCustomScrollbar(historyList, historyScrollbar);
 
-	if (isFetchingHistory || hasReachedEndOfHistory || !currentBranch) {
-		return;
-	}
+	if (isFetchingHistory || hasReachedEndOfHistory || !currentBranch) { return; }
 
 	const threshold = 30; // 30px
-	const isNearBottom =
-		historyList.scrollTop + historyList.clientHeight >=
-		historyList.scrollHeight - threshold;
+	const isNearBottom = historyList.scrollTop + historyList.clientHeight >= historyList.scrollHeight - threshold;
 
 	if (isNearBottom) {
 		isFetchingHistory = true;
@@ -2345,7 +2010,7 @@ historyList.addEventListener("scroll", () => {
 			repoPath: currentRepoPath,
 			branchName: currentBranch,
 			skip: currentHistorySkip,
-			take: historyTake,
+			take: historyTake
 		});
 	}
 });
@@ -2360,12 +2025,8 @@ const listResizeObserver = new ResizeObserver(() => {
 	updateCustomScrollbar(historyList, historyScrollbar);
 });
 
-if (changesList) {
-	listResizeObserver.observe(changesList);
-}
-if (historyList) {
-	listResizeObserver.observe(historyList);
-}
+if (changesList) { listResizeObserver.observe(changesList); }
+if (historyList) { listResizeObserver.observe(historyList); }
 
 // Add/new buttons (dropdowns)
 repoNewBtn.addEventListener("click", (event) => {
@@ -2424,7 +2085,7 @@ topbarRepoMenuTerminal.addEventListener("click", (event) => {
 	event.stopPropagation();
 	if (currentRepoPath) {
 		sendIpcMessage("REPO_TERMINAL", {
-			repoPath: currentRepoPath,
+			repoPath: currentRepoPath
 		});
 	}
 	closeDropdowns();
@@ -2434,7 +2095,7 @@ topbarRepoMenuExplorer.addEventListener("click", (event) => {
 	event.stopPropagation();
 	if (currentRepoPath) {
 		sendIpcMessage("EXPLORER_OPEN", {
-			path: currentRepoPath,
+			path: currentRepoPath
 		});
 	}
 	closeDropdowns();
@@ -2445,9 +2106,7 @@ topbarRepoMenuRemove.addEventListener("click", (event) => {
 	const pathToRepo = currentRepoPath;
 	if (pathToRepo) {
 		repoRemoveModal.dataset.targetPath = currentRepoPath;
-		repoRemoveModalName.textContent = document.querySelector(
-			"#repositories-container .btn-value",
-		).textContent;
+		repoRemoveModalName.textContent = document.querySelector("#repositories-container .btn-value").textContent;
 		repoRemoveModalLocalCheckbox.checked = false;
 		repoRemoveModal.classList.add("show");
 	}
@@ -2468,23 +2127,18 @@ topbarBranchMenuCopy.addEventListener("click", (event) => {
 	event.stopPropagation();
 	closeDropdowns();
 	if (currentBranch) {
-		navigator.clipboard
-			.writeText(currentBranch)
-			.then(() => {
-				console.log(`Copied '${currentBranch}' to clipboard.`);
-			})
-			.catch((err) => {
-				console.error("Failed to copy text: ", err);
-			});
+		navigator.clipboard.writeText(currentBranch).then(() => {
+			console.log(`Copied '${currentBranch}' to clipboard.`);
+		}).catch((err) => {
+			console.error("Failed to copy text: ", err);
+		});
 	}
 });
 
 topbarBranchMenuMerge.addEventListener("click", (event) => {
 	event.stopPropagation();
 	closeDropdowns();
-	if (!currentRepoPath || !currentBranch) {
-		return;
-	}
+	if (!currentRepoPath || !currentBranch) { return; }
 
 	setupMergeModal(currentBranch);
 	branchMergeModal.dataset.targetName = currentBranch;
@@ -2495,9 +2149,7 @@ topbarBranchMenuRename.addEventListener("click", (event) => {
 	event.stopPropagation();
 	closeDropdowns();
 
-	if (!currentRepoPath || !currentBranch) {
-		return;
-	}
+	if (!currentRepoPath || !currentBranch) { return; }
 
 	branchRenameModal.dataset.targetName = currentBranch;
 	branchRenameModalInputName.value = currentBranch;
@@ -2515,9 +2167,7 @@ topbarBranchMenuDelete.addEventListener("click", (event) => {
 	event.stopPropagation();
 	closeDropdowns();
 
-	if (!currentRepoPath || !currentBranch) {
-		return;
-	}
+	if (!currentRepoPath || !currentBranch) {  return; }
 
 	branchDeleteModal.dataset.targetName = currentBranch;
 	branchDeleteModalName.textContent = currentBranch;
@@ -2551,14 +2201,11 @@ branchItemMenuCopy.addEventListener("click", (event) => {
 	const branchName = branchItemContextMenu.dataset.targetName;
 
 	if (branchName) {
-		navigator.clipboard
-			.writeText(branchName)
-			.then(() => {
-				console.log(`Copied '${branchName}' to clipboard.`);
-			})
-			.catch((err) => {
-				console.error("Failed to copy text: ", err);
-			});
+		navigator.clipboard.writeText(branchName).then(() => {
+			console.log(`Copied '${branchName}' to clipboard.`);
+		}).catch((err) => {
+			console.error("Failed to copy text: ", err);
+		});
 	}
 
 	branchItemContextMenu.classList.remove("show");
@@ -2633,7 +2280,7 @@ repoItemMenuTerminal.addEventListener("click", (event) => {
 	const pathToRepo = repoItemContextMenu.dataset.targetPath;
 	if (pathToRepo) {
 		sendIpcMessage("REPO_TERMINAL", {
-			repoPath: pathToRepo,
+			repoPath: pathToRepo
 		});
 	}
 	closeDropdowns();
@@ -2645,7 +2292,7 @@ repoItemMenuExplorer.addEventListener("click", (event) => {
 	const pathToRepo = repoItemContextMenu.dataset.targetPath;
 	if (pathToRepo) {
 		sendIpcMessage("EXPLORER_OPEN", {
-			path: pathToRepo,
+			path: pathToRepo
 		});
 	}
 	closeDropdowns();
@@ -2674,7 +2321,7 @@ changesItemMenuDiscard.addEventListener("click", (event) => {
 	if (filePath) {
 		sendIpcMessage("CHANGE_DISCARD", {
 			repoPath: currentRepoPath,
-			filePath: filePath,
+			filePath: filePath
 		});
 	}
 	closeDropdowns();
@@ -2687,7 +2334,7 @@ changesItemMenuIgnoreFile.addEventListener("click", (event) => {
 		sendIpcMessage("CHANGE_IGNORE", {
 			repoPath: currentRepoPath,
 			filePath: filePath,
-			ignoreType: "file",
+			ignoreType: "file"
 		});
 	}
 	closeDropdowns();
@@ -2701,15 +2348,10 @@ changesItemMenuCopyAbsPath.addEventListener("click", (event) => {
 
 		const isWindows = currentRepoPath.includes("\\");
 
-		if (isWindows) {
-			absPath = absPath.replace(/\//g, "\\").replace(/\\\\/g, "\\");
-		} else {
-			absPath = absPath.replace(/\\/g, "/").replace(/\/\//g, "/");
-		}
+		if (isWindows) { absPath = absPath.replace(/\//g, "\\").replace(/\\\\/g, "\\"); }
+		else { absPath = absPath.replace(/\\/g, "/").replace(/\/\//g, "/"); }
 
-		navigator.clipboard
-			.writeText(absPath)
-			.then(() => console.log(`Copied '${absPath}'`));
+		navigator.clipboard.writeText(absPath).then(() => console.log(`Copied '${absPath}'`));
 	}
 	closeDropdowns();
 });
@@ -2734,7 +2376,7 @@ changesItemMenuExplorer.addEventListener("click", (event) => {
 		let dirPath = rawPath.substring(0, lastSlashIndex);
 
 		sendIpcMessage("EXPLORER_OPEN", {
-			path: dirPath,
+			path: dirPath
 		});
 	}
 	closeDropdowns();
@@ -2746,7 +2388,7 @@ historyItemMenuCheckout.addEventListener("click", (event) => {
 	if (hash) {
 		sendIpcMessage("HISTORY_CHECKOUT", {
 			repoPath: currentRepoPath,
-			commitHash: hash,
+			commitHash: hash
 		});
 	}
 	closeDropdowns();
@@ -2758,7 +2400,7 @@ historyItemMenuRevert.addEventListener("click", (event) => {
 	if (hash) {
 		sendIpcMessage("HISTORY_REVERT", {
 			repoPath: currentRepoPath,
-			commitHash: hash,
+			commitHash: hash
 		});
 	}
 	closeDropdowns();
@@ -2783,86 +2425,64 @@ historyItemMenuCopySHA.addEventListener("click", (event) => {
 	event.stopPropagation();
 	const hash = historyItemContextMenu.dataset.targetHash;
 	if (hash) {
-		navigator.clipboard
-			.writeText(hash)
-			.then(() => console.log(`Copied '${hash}'`));
+		navigator.clipboard.writeText(hash).then(() => console.log(`Copied '${hash}'`));
 	}
 	closeDropdowns();
 });
 
 // Force close (context-menu)
-window.addEventListener(
-	"click",
-	(event) => {
-		if (repoContextMenu.classList.contains("show")) {
-			if (
-				!repoContextMenu.contains(event.target) &&
-				!repoNewBtn.contains(event.target)
-			) {
-				repoContextMenu.classList.remove("show");
-			}
+window.addEventListener("click", (event) => {
+	if (repoContextMenu.classList.contains("show")) {
+		if (!repoContextMenu.contains(event.target) && !repoNewBtn.contains(event.target)) {
+			repoContextMenu.classList.remove("show");
 		}
+	}
 
-		if (repoItemContextMenu.classList.contains("show")) {
-			if (!repoItemContextMenu.contains(event.target)) {
-				repoItemContextMenu.classList.remove("show");
-				document
-					.querySelectorAll(".context-active")
-					.forEach((el) => el.classList.remove("context-active"));
-			}
+	if (repoItemContextMenu.classList.contains("show")) {
+		if (!repoItemContextMenu.contains(event.target)) {
+			repoItemContextMenu.classList.remove("show");
+			document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 		}
+	}
 
-		if (branchItemContextMenu.classList.contains("show")) {
-			if (!branchItemContextMenu.contains(event.target)) {
-				branchItemContextMenu.classList.remove("show");
-				document
-					.querySelectorAll(".context-active")
-					.forEach((el) => el.classList.remove("context-active"));
-			}
+	if (branchItemContextMenu.classList.contains("show")) {
+		if (!branchItemContextMenu.contains(event.target)) {
+			branchItemContextMenu.classList.remove("show");
+			document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 		}
+	}
 
-		if (topbarRepoContextMenu.classList.contains("show")) {
-			if (!topbarRepoContextMenu.contains(event.target)) {
-				topbarRepoContextMenu.classList.remove("show");
-				document
-					.querySelectorAll(".context-active")
-					.forEach((el) => el.classList.remove("context-active"));
-			}
+	if (topbarRepoContextMenu.classList.contains("show")) {
+		if (!topbarRepoContextMenu.contains(event.target)) {
+			topbarRepoContextMenu.classList.remove("show");
+			document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 		}
+	}
 
-		if (topbarBranchContextMenu.classList.contains("show")) {
-			if (!topbarBranchContextMenu.contains(event.target)) {
-				topbarBranchContextMenu.classList.remove("show");
-				document
-					.querySelectorAll(".context-active")
-					.forEach((el) => el.classList.remove("context-active"));
-			}
+	if (topbarBranchContextMenu.classList.contains("show")) {
+		if (!topbarBranchContextMenu.contains(event.target)) {
+			topbarBranchContextMenu.classList.remove("show");
+			document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 		}
+	}
 
-		if (repoCreateModalLicenseEditPanel.classList.contains("open")) {
-			if (
-				!repoCreateModalLicenseEditPanel.contains(event.target) &&
-				!repoCreateModalLicenseEdit.contains(event.target)
-			) {
-				repoCreateModalLicenseEditPanel.classList.remove("open");
-				repoCreateModalLicenseEdit.classList.remove("active");
-			}
+	if (repoCreateModalLicenseEditPanel.classList.contains("open")) {
+		if (!repoCreateModalLicenseEditPanel.contains(event.target) && !repoCreateModalLicenseEdit.contains(event.target)) {
+			repoCreateModalLicenseEditPanel.classList.remove("open");
+			repoCreateModalLicenseEdit.classList.remove("active");
 		}
-	},
-	true,
-);
+	}
+}, true);
 
 // Confirm buttons (modals)
 branchNewModalConfirmBtn.addEventListener("click", () => {
 	const newBranchName = branchNewModalInputName.value.trim();
 
-	if (newBranchName === "") {
-		return;
-	}
+	if (newBranchName === "") { return; }
 
 	sendIpcMessage("BRANCH_CREATE", {
 		repoPath: currentRepoPath,
-		branchName: newBranchName,
+		branchName: newBranchName
 	});
 
 	closeAndClearModal(branchNewModal);
@@ -2872,14 +2492,12 @@ branchHistoryNewModalConfirmBtn.addEventListener("click", () => {
 	const newBranchName = branchHistoryNewModalInputName.value.trim();
 	const commitHash = branchHistoryNewModal.dataset.targetHash;
 
-	if (newBranchName === "" || !commitHash) {
-		return;
-	}
+	if (newBranchName === "" || !commitHash) { return; }
 
 	sendIpcMessage("BRANCH_HISTORY_CREATE", {
 		repoPath: currentRepoPath,
 		branchName: newBranchName,
-		commitHash: commitHash,
+		commitHash: commitHash
 	});
 
 	closeAndClearModal(branchHistoryNewModal);
@@ -2889,14 +2507,12 @@ branchRenameModalConfirmBtn.addEventListener("click", () => {
 	const newBranchName = branchRenameModalInputName.value.trim();
 	const oldBranchName = branchRenameModal.dataset.targetName;
 
-	if (newBranchName === "" || !oldBranchName) {
-		return;
-	}
+	if (newBranchName === "" || !oldBranchName) { return; }
 
 	sendIpcMessage("BRANCH_RENAME", {
 		repoPath: currentRepoPath,
 		oldName: oldBranchName,
-		newName: newBranchName,
+		newName: newBranchName
 	});
 
 	closeAndClearModal(branchRenameModal);
@@ -2905,13 +2521,11 @@ branchRenameModalConfirmBtn.addEventListener("click", () => {
 branchDeleteModalConfirmBtn.addEventListener("click", () => {
 	const branchName = branchDeleteModal.dataset.targetName;
 
-	if (!branchName) {
-		return;
-	}
+	if (!branchName) { return; }
 
 	sendIpcMessage("BRANCH_DELETE", {
 		repoPath: currentRepoPath,
-		branchName: branchName,
+		branchName: branchName
 	});
 
 	closeAndClearModal(branchDeleteModal);
@@ -2921,19 +2535,12 @@ branchMergeModalConfirmBtn.addEventListener("click", () => {
 	const sourceBranch = branchMergeModalSelectSource.value;
 	const targetBranch = branchMergeModalSelectTarget.value;
 
-	if (
-		!sourceBranch ||
-		!targetBranch ||
-		!currentRepoPath ||
-		sourceBranch === targetBranch
-	) {
-		return;
-	}
+	if (!sourceBranch || !targetBranch || !currentRepoPath || sourceBranch === targetBranch) { return; }
 
 	sendIpcMessage("BRANCH_MERGE", {
 		repoPath: currentRepoPath,
 		sourceBranch: sourceBranch,
-		targetBranch: targetBranch,
+		targetBranch: targetBranch
 	});
 
 	closeAndClearModal(branchMergeModal);
@@ -2944,14 +2551,12 @@ repoCloneModalConfirmBtn.addEventListener("click", () => {
 	const asLocal = repoCloneModalAsLocal.checked;
 	const localPath = repoCloneModalInputPath.value;
 
-	if (!repoUrl || !localPath) {
-		return;
-	}
+	if (!repoUrl || !localPath) { return; }
 
 	sendIpcMessage("REPO_CLONE", {
 		repoUrl: repoUrl,
 		asLocal: asLocal,
-		localPath: localPath,
+		localPath: localPath
 	});
 
 	closeAndClearModal(repoCloneModal);
@@ -2962,15 +2567,9 @@ repoCreateModalConfirmBtn.addEventListener("click", () => {
 	const localPath = repoCreateModalInputPath.value.trim();
 	const gitIgnore = repoCreateModalSelectGitIgnore.value.trim() ?? "None";
 	const license = repoCreateModalSelectLicense.value.trim() ?? "None";
-	const licenseYear = document
-		.getElementById("license-field-year")
-		.value.trim();
-	const licenseOrganization = document
-		.getElementById("license-field-organization")
-		.value.trim();
-	const licenseProject = document
-		.getElementById("license-field-project")
-		.value.trim();
+	const licenseYear = document.getElementById("license-field-year").value.trim();
+	const licenseOrganization = document.getElementById("license-field-organization").value.trim();
+	const licenseProject = document.getElementById("license-field-project").value.trim();
 
 	sendIpcMessage("REPO_CREATE", {
 		repoName: repoName,
@@ -2979,7 +2578,7 @@ repoCreateModalConfirmBtn.addEventListener("click", () => {
 		license: license,
 		licenseYear: licenseYear,
 		licenseOrganization: licenseOrganization,
-		licenseProject: licenseProject,
+		licenseProject: licenseProject
 	});
 
 	closeAndClearModal(repoCreateModal);
@@ -2989,7 +2588,7 @@ repoAddModalConfirmBtn.addEventListener("click", () => {
 	const repoPath = repoAddModalInputPath.value.trim();
 
 	sendIpcMessage("REPO_ADD", {
-		repoPath: repoPath,
+		repoPath: repoPath
 	});
 
 	closeAndClearModal(repoAddModal);
@@ -3003,7 +2602,7 @@ repoRemoveModalConfirmBtn.addEventListener("click", () => {
 
 		sendIpcMessage("REPO_REMOVE", {
 			repoPath: repoPath,
-			deleteLocal: deleteLocal,
+			deleteLocal: deleteLocal
 		});
 	}
 
@@ -3025,7 +2624,7 @@ repoMissingModalCancelBtn.addEventListener("click", () => {
 	if (stalePath) {
 		sendIpcMessage("REPO_REMOVE", {
 			repoPath: stalePath,
-			deleteLocal: false,
+			deleteLocal: false
 		});
 	}
 
@@ -3033,29 +2632,25 @@ repoMissingModalCancelBtn.addEventListener("click", () => {
 });
 
 todoModalConfirmBtn.addEventListener("click", () => {
-	if (!currentRepoPath) {
-		return;
-	}
+	if (!currentRepoPath) { return; }
 
 	activeTodos = JSON.parse(JSON.stringify(draftTodos));
 
 	sendIpcMessage("TODO_SAVE", {
 		repoPath: currentRepoPath,
-		todos: activeTodos,
+		todos: activeTodos
 	});
 
 	closeAndClearModal(todoModal);
 });
 
 configModalConfirmBtn.addEventListener("click", () => {
-	if (!currentRepoPath) {
-		return;
-	}
+	if (!currentRepoPath) { return; }
 
 	sendIpcMessage("CONFIG_LOCAL_SAVE", {
 		repoPath: currentRepoPath,
 		name: configModalName.value.trim(),
-		email: configModalEmail.value.trim(),
+		email: configModalEmail.value.trim()
 	});
 
 	closeAndClearModal(configModal);
@@ -3064,7 +2659,7 @@ configModalConfirmBtn.addEventListener("click", () => {
 accountModalConfirmBtn.addEventListener("click", () => {
 	sendIpcMessage("CONFIG_GLOBAL_SAVE", {
 		name: accountModalInputName.value.trim(),
-		email: accountModalInputEmail.value.trim(),
+		email: accountModalInputEmail.value.trim()
 	});
 
 	closeAndClearModal(accountModal);
@@ -3072,42 +2667,27 @@ accountModalConfirmBtn.addEventListener("click", () => {
 
 // Input boxes (modals)
 branchNewModalInputName.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") {
-		branchNewModalConfirmBtn.click();
-	}
+	if (event.key === "Enter") { branchNewModalConfirmBtn.click(); }
 });
 branchHistoryNewModal.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") {
-		branchHistoryNewModalConfirmBtn.click();
-	}
+	if (event.key === "Enter") { branchHistoryNewModalConfirmBtn.click(); }
 });
 branchRenameModalInputName.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") {
-		branchRenameModalConfirmBtn.click();
-	}
+	if (event.key === "Enter") { branchRenameModalConfirmBtn.click(); }
 });
 repoCreateModalInputName.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") {
-		repoCreateModalConfirmBtn.click();
-	}
+	if (event.key === "Enter") { repoCreateModalConfirmBtn.click(); }
 });
 repoCreateModalInputPath.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") {
-		repoCreateModalConfirmBtn.click();
-	}
+	if (event.key === "Enter") { repoCreateModalConfirmBtn.click(); }
 });
 repoAddModalInputPath.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") {
-		repoAddModalConfirmBtn.click();
-	}
+	if (event.key === "Enter") { repoAddModalConfirmBtn.click(); }
 });
 
 // Confirm toggle (modals)
 branchNewModalInputName.addEventListener("input", validateBranchNewModal);
-branchHistoryNewModalInputName.addEventListener(
-	"input",
-	validateBranchHistoryNewModal,
-);
+branchHistoryNewModalInputName.addEventListener("input", validateBranchHistoryNewModal);
 branchRenameModalInputName.addEventListener("input", validateBranchRenameModal);
 repoCloneModalRepoUrl.addEventListener("input", validateRepoCloneModal);
 repoCloneModalInputPath.addEventListener("input", validateRepoCloneModal);
@@ -3166,18 +2746,13 @@ const setupFilter = (inputSelector, panelSelector) => {
 	searchInput.addEventListener("input", (event) => {
 		const searchTerm = event.target.value.toLowerCase();
 
-		const dropdownItems = document.querySelectorAll(
-			`${panelSelector} .dropdown-item`,
-		);
+		const dropdownItems = document.querySelectorAll(`${panelSelector} .dropdown-item`);
 
 		dropdownItems.forEach((item) => {
 			const itemText = item.textContent.toLowerCase();
 
-			if (itemText.includes(searchTerm)) {
-				item.style.display = "";
-			} else {
-				item.style.display = "none";
-			}
+			if (itemText.includes(searchTerm)) { item.style.display = ""; }
+			else { item.style.display = "none"; }
 		});
 
 		updateCustomScrollbar(repoList, repoScrollbar);
@@ -3195,9 +2770,7 @@ const setupSelection = (panelSelector, btnValueSelector) => {
 		if (item && !item.classList.contains("invalid")) {
 			valueDisplay.textContent = item.textContent;
 
-			panel.querySelectorAll(".dropdown-item").forEach((elem) => {
-				elem.classList.remove("active");
-			});
+			panel.querySelectorAll(".dropdown-item").forEach((elem) => { elem.classList.remove("active"); });
 
 			item.classList.add("active");
 
@@ -3209,10 +2782,7 @@ const setupSelection = (panelSelector, btnValueSelector) => {
 setupFilter("#repositories-filter .filter-input", "#repository-dropdown-panel");
 setupFilter("#branches-filter .filter-input", "#branch-dropdown-panel");
 
-setupSelection(
-	"#repository-dropdown-panel",
-	"#repositories-container .btn-value",
-);
+setupSelection("#repository-dropdown-panel", "#repositories-container .btn-value");
 setupSelection("#branch-dropdown-panel", "#branches-container .btn-value");
 
 // ------- APP INIT -------
