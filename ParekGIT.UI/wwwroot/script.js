@@ -288,8 +288,6 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case "REPO_COMMITTED":
-			commitsBehind = data.Payload.commitsBehind;
-			isPullRequired = commitsBehinds > 0;
 			processCommit();
 			break;
 
@@ -321,8 +319,6 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case "REPO_FETCHED":
-			commitsBehind = data.Payload.commitsBehind;
-			isPullRequired = commitsBehind > 0;
 			fetchRepo(data.Payload);
 			break;
 
@@ -353,6 +349,12 @@ window.external.receiveMessage((message) => {
 
 		case "BRANCH_MERGED":
 			processBranchesMerged();
+			break;
+
+		case "REMOTE_SYNC_STATUS":
+			commitsBehind = data.Payload.commitsBehind;
+			isPullRequired = commitsBehind > 0;
+			toggleCommitButton();
 			break;
 
 		case "SETTINGS_SAVED":

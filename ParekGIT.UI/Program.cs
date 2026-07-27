@@ -6,6 +6,7 @@ using ParekGIT.Bridge.Handlers;
 using ParekGIT.Core.Git;
 using ParekGIT.Core.Services;
 using System.Runtime.InteropServices;
+using ParekGIT.Bridge.Services;
 
 namespace ParekGIT.UI
 {
@@ -45,6 +46,9 @@ namespace ParekGIT.UI
 					.SetDevToolsEnabled(true) // later false
 					.SetJavascriptClipboardAccessEnabled(true)
 					.Load("wwwroot/index.html");
+
+				// Repo sync notifier
+				var syncNotifier = new RemoteSyncNotifier(window, gitRunner);
 
 				// Setup IPC router
 				var router = new IpcRouter(logger);

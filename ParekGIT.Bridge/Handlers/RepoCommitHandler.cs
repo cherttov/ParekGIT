@@ -15,15 +15,17 @@ namespace ParekGIT.Bridge.Handlers
 		private readonly PhotinoWindow _window;
 		private readonly IRepositoryStore _dbStore;
 		private readonly IGitRunner _gitRunner;
+		private readonly IRemoteSyncNotifier _syncNotifier;
 
 		public string Action => "REPO_COMMIT";
 
 		// Constructor
-		public RepoCommitHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRunner gitRunner)
+		public RepoCommitHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRunner gitRunner, IRemoteSyncNotifier syncNotifier)
 		{
 			_window = window;
 			_gitRunner = gitRunner;
 			_dbStore = dbStore;
+			_syncNotifier = syncNotifier;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -51,12 +53,12 @@ namespace ParekGIT.Bridge.Handlers
 			// Remote push if not remote
 			GitRepository? repo = await _dbStore.GetRepositoryByPathAsync(repoPath);
 			bool pushed = false;
-			int commitsBehind = 0;
 
 			if (repo?.IsRemote == true)
 			{
 				await _gitRunner.FetchRepositoryAsync(repoPath);
-				commitsBehind = await _gitRunner.GetCommitsBehindAsync(repoPath);
+				int commitsBehind = await _gitRunner.GetCommitsBehindAsync(repoPath);
+				_syncNotifier.NotifyCommitsBehind(repoPath, commitsBehind);
 
 				if (commitsBehind == 0)
 				{
@@ -69,7 +71,7 @@ namespace ParekGIT.Bridge.Handlers
 			var response = new IpcMessage
 			{
 				Action = "REPO_COMMITTED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true, pushed, commitsBehind })
+				Payload = JsonSerializer.SerializeToElement(new { success = true, pushed })
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
