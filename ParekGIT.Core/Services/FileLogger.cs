@@ -1,5 +1,4 @@
 ﻿using ParekGIT.Core.Interfaces;
-using System.Runtime.InteropServices;
 
 namespace ParekGIT.Core.Services
 {

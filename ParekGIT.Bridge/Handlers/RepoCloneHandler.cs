@@ -59,7 +59,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "REPO_CLONED",
 				Payload = JsonSerializer.SerializeToElement(clonedRepo)
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

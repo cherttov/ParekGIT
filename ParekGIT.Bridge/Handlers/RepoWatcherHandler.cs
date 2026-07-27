@@ -34,7 +34,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "REPO_FILES_CHANGED",
 				Payload = new { repoPath = repoPath }
 			};
-
 			string jsonMessage = JsonSerializer.Serialize(envelope);
 			_window.SendWebMessage(jsonMessage);
 		}

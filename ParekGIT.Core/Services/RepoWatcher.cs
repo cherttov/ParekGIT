@@ -1,5 +1,4 @@
 ﻿using ParekGIT.Core.Interfaces;
-using System.Timers;
 using Timer = System.Timers.Timer;
 
 namespace ParekGIT.Core.Services

@@ -37,7 +37,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "CHANGE_DISCARDED",
 				Payload = JsonSerializer.SerializeToElement("")
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

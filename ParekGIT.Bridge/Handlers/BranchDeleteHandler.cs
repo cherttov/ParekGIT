@@ -43,7 +43,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "BRANCH_DELETED",
 				Payload = JsonSerializer.SerializeToElement(responsePayload)
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

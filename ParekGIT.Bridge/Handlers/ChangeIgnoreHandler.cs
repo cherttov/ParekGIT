@@ -55,7 +55,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "CHANGE_IGNORED",
 				Payload = JsonSerializer.SerializeToElement(new { repoPath = repoPath })
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

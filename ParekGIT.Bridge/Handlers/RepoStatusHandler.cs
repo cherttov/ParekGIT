@@ -49,7 +49,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "REPO_STATUS_LOADED",
 				Payload = JsonSerializer.SerializeToElement(changedFiles)
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

@@ -41,7 +41,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "TODO_LOADED",
 				Payload = JsonSerializer.SerializeToElement(new { todos = todos })
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

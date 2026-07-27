@@ -43,7 +43,6 @@ namespace ParekGIT.Bridge.Handlers
 
 				_window.SendWebMessage(JsonSerializer.Serialize(response));
 			}
-
 			return Task.CompletedTask;
 		}
 	}

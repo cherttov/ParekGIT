@@ -41,7 +41,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "REPO_CREATED",
 				Payload = JsonSerializer.SerializeToElement(repository)
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

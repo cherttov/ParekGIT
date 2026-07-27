@@ -71,7 +71,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "REPO_COMMITTED",
 				Payload = JsonSerializer.SerializeToElement(new { success = true, pushed, commitsBehind })
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

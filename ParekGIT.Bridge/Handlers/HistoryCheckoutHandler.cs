@@ -37,7 +37,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "HISTORY_CHECKED_OUT",
 				Payload = JsonSerializer.SerializeToElement(new { success = true })
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

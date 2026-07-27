@@ -42,7 +42,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "BRANCHES_LOADED", // maybe make a distinct "BRANCH_CREATED" action
 				Payload = JsonSerializer.SerializeToElement(branches)
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

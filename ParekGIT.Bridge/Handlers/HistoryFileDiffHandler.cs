@@ -40,7 +40,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "HISTORY_FILE_DIFF_LOADED",
 				Payload = JsonSerializer.SerializeToElement(new { diffText = diffText })
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

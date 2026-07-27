@@ -53,7 +53,6 @@ namespace ParekGIT.Bridge.Handlers
 					UseShellExecute = true
 				});
 			}
-
 			return Task.CompletedTask;
 		}
 	}

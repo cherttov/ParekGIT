@@ -40,7 +40,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "BRANCH_MERGED",
 				Payload = JsonSerializer.SerializeToElement(new { success = true })
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

@@ -47,7 +47,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "BRANCH_RENAMED",
 				Payload = JsonSerializer.SerializeToElement(responsePayload)
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

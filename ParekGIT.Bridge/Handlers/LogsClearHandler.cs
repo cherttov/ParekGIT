@@ -60,7 +60,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "LOGS_CLEARED",
 				Payload = JsonSerializer.SerializeToElement(new { deletedCount, failedCount })
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

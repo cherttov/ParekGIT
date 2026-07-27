@@ -86,7 +86,6 @@ namespace ParekGIT.Bridge.Handlers
 					localDeleteError
 				})
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

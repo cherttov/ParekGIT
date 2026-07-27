@@ -44,7 +44,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "CONFIG_LOCAL_LOADED",
 				Payload = JsonSerializer.SerializeToElement(jsPayload)
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

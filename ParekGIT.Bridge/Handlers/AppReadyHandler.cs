@@ -56,7 +56,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = "APP_INITIALIZED",
 				Payload = JsonSerializer.SerializeToElement(bootData)
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

@@ -48,7 +48,6 @@ namespace ParekGIT.Bridge.Handlers
 
 				Process.Start(processInfo);
 			}
-
 			return Task.CompletedTask;
 		}
 	}

@@ -44,7 +44,6 @@ namespace ParekGIT.Bridge.Handlers
 				Action = skip > 0 ? "BRANCH_HISTORY_APPENDED" : "BRANCH_HISTORY_LOADED",
 				Payload = JsonSerializer.SerializeToElement(commits)
 			};
-
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}
