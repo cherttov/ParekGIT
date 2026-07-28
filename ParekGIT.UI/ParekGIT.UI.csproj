@@ -1,50 +1,50 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <Platforms>AnyCPU</Platforms>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	<OutputType>Exe</OutputType>
+	<TargetFramework>net10.0</TargetFramework>
+	<Platforms>AnyCPU</Platforms>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
 
-    <Version>1.0.0-alpha.3</Version>
-    <FileVersion>1.0.0</FileVersion>
-    <AssemblyName>ParekGIT</AssemblyName>
-    <AssemblyTitle>ParekGIT</AssemblyTitle>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <Product>ParekGIT</Product>
-    <Company>cherttov</Company>
-    <Description>ParekGIT</Description>
-    <ApplicationIcon>wwwroot/assets/icons/icon.ico</ApplicationIcon>
-    
-    <SelfContained>true</SelfContained>
-    <PublishSingleFile>true</PublishSingleFile>
-    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-    <EnableDefaultContent>false</EnableDefaultContent>
-    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+	<Version>1.0.0-alpha.3</Version>
+	<FileVersion>1.0.0</FileVersion>
+	<AssemblyName>ParekGIT</AssemblyName>
+	<AssemblyTitle>ParekGIT</AssemblyTitle>
+	<AssemblyVersion>1.0.0</AssemblyVersion>
+	<Product>ParekGIT</Product>
+	<Company>cherttov</Company>
+	<Description>ParekGIT</Description>
+	<ApplicationIcon>wwwroot/assets/icons/icon.ico</ApplicationIcon>
+	
+	<SelfContained>true</SelfContained>
+	<PublishSingleFile>true</PublishSingleFile>
+	<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+	<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+	<EnableDefaultContent>false</EnableDefaultContent>
+	<EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="wwwroot/**" CopyToOutputDirectory="PreserveNewest" />
+	<Content Include="wwwroot/**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Photino.NET" Version="4.0.16" />
+	<PackageReference Include="Photino.NET" Version="4.0.16" />
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\ParekGIT.Core\ParekGIT.Core.csproj" />
-    <ProjectReference Include="..\ParekGIT.Data\ParekGIT.Data.csproj" />
-    <ProjectReference Include="..\ParekGIT.Bridge\ParekGIT.Bridge.csproj" />
+	<ProjectReference Include="..\ParekGIT.Core\ParekGIT.Core.csproj" />
+	<ProjectReference Include="..\ParekGIT.Data\ParekGIT.Data.csproj" />
+	<ProjectReference Include="..\ParekGIT.Bridge\ParekGIT.Bridge.csproj" />
   </ItemGroup>
 
   <Target AfterTargets="Publish" Name="MovePublishedSingleFile">
-    <ItemGroup>
-      <PublishFile Include="$(PublishDir)\*" />
-    </ItemGroup>
+	<ItemGroup>
+	  <PublishFile Include="$(PublishDir)\*" />
+	</ItemGroup>
 
-    <Move SourceFiles="@(PublishFile)" DestinationFolder="$(ProjectDir)\publish\build\$(AssemblyName).$(Version).$(RuntimeIdentifier)" />
+	<Move SourceFiles="@(PublishFile)" DestinationFolder="$(ProjectDir)\publish\build\$(AssemblyName).$(Version).$(RuntimeIdentifier)" />
   </Target>
 
 </Project>
