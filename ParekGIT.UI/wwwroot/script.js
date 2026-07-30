@@ -702,7 +702,7 @@ const switchToHistoryTab = () => {
 };
 
 // Enable/disable repo left-sidebar tools
-const setRepoToolsEnabled = (enable) => {
+const setRepoToolsEnabled = (enabled) => {
 	branchBtn.classList.toggle("disabled", !enabled);
 	branchBtn.disabled = !enabled;
 	mergeBtn.classList.toggle("disabled", !enabled);
