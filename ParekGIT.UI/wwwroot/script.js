@@ -1,4 +1,4 @@
-// ------- DOM ELEMENTS -------
+// --------------- DOM ELEMENTS ---------------
 // Topbar
 const repoContainer = document.getElementById("repositories-container");
 const repoDropdown = document.getElementById("repository-dropdown-panel");
@@ -209,7 +209,7 @@ const binaryExts = [
 	".gz", ".7z", ".pdf",
 ];
 
-// ------- APP STATE -------
+// --------------- APP STATE ---------------
 let currentRepoPath = "";
 let currentBranch = "";
 let activeHistoryHash = "";
@@ -228,7 +228,10 @@ let hasReachedEndOfHistory = false;
 let isPullRequired = false;
 let commitsBehind = 0;
 
-// ------- IPC ACTIONS -------
+let minRightWidth = 0, maxRightWidth = 0;
+let isResizing = false;
+
+// --------------- IPC ACTIONS ---------------
 const IpcActions = {
 	// Outgoing (frontend -> C#)
 	APP_READY: "APP_READY",
@@ -305,7 +308,7 @@ const IpcActions = {
 	SETTINGS_SAVED: "SETTINGS_SAVED",
 };
 
-// ------- IPC COMMUNICATION -------
+// --------------- IPC COMMUNICATION ---------------
 const sendIpcMessage = (action, payload = {}) => {
 	const envelope = {
 		Action: action,
@@ -457,12 +460,9 @@ window.external.receiveMessage((message) => {
 	}
 });
 
-// ------- UI FUNCTIONS & HELPERS -------
-let minRightWidth = 0, maxRightWidth = 0;
-let isResizing = false;
-
-// Keep panel widths in sync (match their parents)
+// --------------- GENERIC UI HELPERS ---------------
 const updatePanelWidths = () => {
+	// Keep panel widths in sync (match their parents)
 	repoPanel.style.width = `${repoContainer.offsetWidth}px`;
 	repoPanel.style.left = `${repoContainer.offsetLeft}px`;
 	branchPanel.style.width = window.getComputedStyle(rightSidebar).width;
@@ -486,7 +486,6 @@ const stopFetchAnimation = () => {
 	}, 500);
 };
 
-// Context menu position
 const placeContextMenu = (event, contextMenu) => {
 	let mouseX = event.clientX;
 	let mouseY = event.clientY;
@@ -501,7 +500,6 @@ const placeContextMenu = (event, contextMenu) => {
 	contextMenu.style.top = `${mouseY}px`;
 };
 
-// Close everything
 const closeDropdowns = () => {
 	repoPanel.classList.remove("show");
 	branchPanel.classList.remove("show");
@@ -552,166 +550,6 @@ const toggleDropdown = (toShow, toHide, event) => {
 	}
 };
 
-// Commit button disabling/enabling
-const toggleCommitButton = () => {
-	// Wait for C# to return the branch name
-	if (currentBranch === "") {
-		commitBtn.disabled = true;
-		commitBtn.classList.add("disabled");
-		commitBtn.textContent = "Loading...";
-		return;
-	}
-
-	if (isPullRequired) {
-		commitBtn.disabled = false;
-		commitBtn.classList.remove("disabled");
-		commitBtn.textContent = `Pull (${commitsBehind} commit${commitsBehind === 1 ? "" : "s"} behind)`;
-		return;
-	}
-
-	const checkedCount = document.querySelectorAll(".changes-item-checkbox:checked",).length;
-
-	// Commit state
-	const commitText = checkedCount > 0
-		? `Commit ${checkedCount} file${checkedCount === 1 ? "" : "s"} to ${currentBranch}`
-		: `Commit`;
-
-	if (commitMessageInput.value.trim() === "" || checkedCount === 0) {
-		commitBtn.disabled = true;
-		commitBtn.classList.add("disabled");
-		commitBtn.textContent = commitText;
-	} else {
-		commitBtn.disabled = false;
-		commitBtn.classList.remove("disabled");
-		commitBtn.textContent = commitText;
-	}
-};
-
-// Context menu validators
-const validateBranchContextMenu = (branchName, renameBtn, deleteBtn) => {
-	const isProtected = protectedBranches.includes(branchName.toLowerCase());
-
-	renameBtn.classList.toggle("disabled", isProtected);
-	renameBtn.disabled = isProtected;
-
-	deleteBtn.classList.toggle("disabled", isProtected);
-	deleteBtn.disabled = isProtected;
-};
-
-const validateRepoContextMenu = ( repoName, terminalBtn, explorerBtn, removeBtn, isInvalid = false) => {
-	const isRepoEmpty = !repoName || repoName.trim() === "";
-
-	const disableTools = isRepoEmpty || isInvalid;
-
-	terminalBtn.classList.toggle("disabled", disableTools);
-	terminalBtn.disabled = disableTools;
-
-	explorerBtn.classList.toggle("disabled", disableTools);
-	explorerBtn.disabled = disableTools;
-
-	removeBtn.classList.toggle("disabled", isRepoEmpty);
-	removeBtn.disabled = isRepoEmpty;
-};
-
-// Modal input boxes validators
-const validateBranchNewModal = () => {
-	const isValid = branchNewModalInputName.value.trim() !== "";
-	branchNewModalConfirmBtn.disabled = !isValid;
-	branchNewModalConfirmBtn.classList.toggle("disabled", !isValid);
-};
-
-const validateBranchHistoryNewModal = () => {
-	const isValid = branchHistoryNewModalInputName.value.trim() !== "";
-	branchHistoryNewModalConfirmBtn.disabled = !isValid;
-	branchHistoryNewModalConfirmBtn.classList.toggle("disabled", !isValid);
-};
-
-const validateBranchRenameModal = () => {
-	const newName = branchRenameModalInputName.value.trim();
-	const oldName = branchRenameModal.dataset.targetName || currentBranch;
-
-	const isValid = newName !== ""
-		&& newName !== oldName
-		&& !protectedBranches.includes(newName);
-
-	branchRenameModalConfirmBtn.disabled = !isValid;
-	branchRenameModalConfirmBtn.classList.toggle("disabled", !isValid);
-};
-
-const validateRepoCloneModal = () => {
-	const isValid = repoCloneModalRepoUrl.value.trim() !== ""
-		&& repoCloneModalInputPath.value.trim() !== "";
-	repoCloneModalConfirmBtn.disabled = !isValid;
-	repoCloneModalConfirmBtn.classList.toggle("disabled", !isValid);
-};
-
-const validateRepoCreateModal = () => {
-	const isValid = repoCreateModalInputName.value.trim() !== ""
-		&& repoCreateModalInputPath.value.trim() !== "";
-	repoCreateModalConfirmBtn.disabled = !isValid;
-	repoCreateModalConfirmBtn.classList.toggle("disabled", !isValid);
-};
-
-const validateRepoAddModal = () => {
-	const isValid = repoAddModalInputPath.value.trim() !== "";
-	repoAddModalConfirmBtn.disabled = !isValid;
-	repoAddModalConfirmBtn.classList.toggle("disabled", !isValid);
-};
-
-const validateBranchMergeModal = () => {
-	const sourceBranch = branchMergeModalSelectSource.value;
-	const targetBranch = branchMergeModalSelectTarget.value;
-
-	const isValid = sourceBranch !== ""
-		&& targetBranch !== ""
-		&& sourceBranch !== targetBranch;
-
-	branchMergeModalConfirmBtn.classList.toggle("disabled", !isValid);
-	branchMergeModalConfirmBtn.disabled = !isValid;
-};
-
-// Changes header checkbox updater
-const updateMasterCheckboxState = () => {
-	const allFileCheckboxes = Array.from(document.querySelectorAll(".changes-item-checkbox"));
-	if (allFileCheckboxes.length === 0) { return; }
-
-	const allChecked = allFileCheckboxes.every((box) => box.checked);
-	changesMasterCheckbox.checked = allChecked;
-
-	toggleCommitButton();
-};
-
-// Tab switching helpers
-const switchToChangesTab = () => {
-	tabBtnChanges.classList.add("active");
-	tabBtnHistory.classList.remove("active");
-	tabChanges.classList.add("active");
-	tabHistory.classList.remove("active");
-
-	diffViewer.style.display = "flex";
-	detailsViewer.style.display = "none";
-};
-const switchToHistoryTab = () => {
-	tabBtnChanges.classList.remove("active");
-	tabBtnHistory.classList.add("active");
-	tabChanges.classList.remove("active");
-	tabHistory.classList.add("active");
-
-	diffViewer.style.display = "none";
-	detailsViewer.style.display = "flex";
-};
-
-// Enable/disable repo left-sidebar tools
-const setRepoToolsEnabled = (enabled) => {
-	branchBtn.classList.toggle("disabled", !enabled);
-	branchBtn.disabled = !enabled;
-	mergeBtn.classList.toggle("disabled", !enabled);
-	todoBtn.classList.toggle("disabled", !enabled);
-	configBtn.classList.toggle("disabled", !enabled);
-	fetchBtn.classList.toggle("disabled", !enabled);
-};
-
-// Update custom scrollbar
 const updateCustomScrollbar = (container, scrollbar) => {
 	// If should be visible
 	if (!container || !scrollbar) { return; }
@@ -791,51 +629,9 @@ const interactCustomScrollbar = (container, scrollbar) => {
 	};
 };
 
-// Apply app theme
 const applyTheme = (themeName) => {
 	document.body.className = document.body.className.replace(/theme-\S+/g, "");
 	if (themeName) { document.body.classList.add(`theme-${themeName}`); }
-};
-
-// Draft memory helpers
-const saveDraft = () => {
-	if (!currentRepoPath) { return; }
-
-	repoDrafts[currentRepoPath] = {
-		message: commitMessageInput.value,
-		description: commitDescriptionInput.value
-	};
-};
-
-const loadDraft = () => {
-	if (!currentRepoPath) { return; }
-
-	const draft = repoDrafts[currentRepoPath];
-
-	if (draft) {
-		commitMessageInput.value = draft.message;
-		commitDescriptionInput.value = draft.description;
-	} else {
-		commitMessageInput.value = "";
-		commitDescriptionInput.value = "";
-	}
-};
-
-const resetDiffViewer = () => {
-	diffFilename.textContent = "Select a file to view changes";
-	diffContent.textContent = "";
-	updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
-};
-
-const resetDetailsViewer = () => {
-	detailsCommitMessage.textContent = "Select a commit to view details";
-	detailsCommitStats.textContent = "";
-	detailsContent.textContent = "";
-
-	detailsBtnValue.textContent = "No commit selected";
-	detailsBtn.disabled = true;
-	detailsBtn.classList.add("disabled");
-	detailsFileList.innerHTML = "";
 };
 
 const escapeHtml = (unsafeText) => {
@@ -847,219 +643,119 @@ const escapeHtml = (unsafeText) => {
 		.replace(/'/g, "&#039");
 };
 
-// Merge modal helper
-const setupMergeModal = (preselectedTarget) => {
-	branchMergeModalSelectSource.innerHTML = "";
-	branchMergeModalSelectTarget.innerHTML = "";
+const switchToChangesTab = () => {
+	tabBtnChanges.classList.add("active");
+	tabBtnHistory.classList.remove("active");
+	tabChanges.classList.add("active");
+	tabHistory.classList.remove("active");
 
-	const defaultSourceOption = document.createElement("option");
-	defaultSourceOption.value = "";
-	defaultSourceOption.textContent = "Select source...";
-	defaultSourceOption.disabled = true;
-	defaultSourceOption.selected = true;
-	branchMergeModalSelectSource.appendChild(defaultSourceOption);
-
-	const branchItems = branchDropdown.querySelectorAll(".dropdown-item");
-	branchItems.forEach((item) => {
-		const branchName = item.dataset.branchName;
-		if (!branchName) { return; }
-
-		const optionSource = document.createElement("option");
-		optionSource.value = branchName;
-		optionSource.textContent = branchName;
-		branchMergeModalSelectSource.appendChild(optionSource);
-
-		const optionTarget = document.createElement("option");
-		optionTarget.value = branchName;
-		optionTarget.textContent = branchName;
-		branchMergeModalSelectTarget.appendChild(optionTarget);
-	});
-
-	branchMergeModalSelectTarget.value = preselectedTarget || currentBranch;
-
-	branchMergeModalSourceLabel.textContent = "{ none }";
-	branchMergeModalTargetLabel.textContent = branchMergeModalSelectTarget.value;
-
-	branchMergeModalSelectSource.onchange = (e) => {
-		branchMergeModalSourceLabel.textContent = e.target.value;
-		validateBranchMergeModal();
-	};
-	branchMergeModalSelectTarget.onchange = (e) => {
-		branchMergeModalTargetLabel.textContent = e.target.value;
-		validateBranchMergeModal();
-	};
-
-	validateBranchMergeModal();
+	diffViewer.style.display = "flex";
+	detailsViewer.style.display = "none";
 };
 
-// Todo modal container list
-const renderTodoList = () => {
-	todoModalRowsContainer.innerHTML = "";
+const switchToHistoryTab = () => {
+	tabBtnChanges.classList.remove("active");
+	tabBtnHistory.classList.add("active");
+	tabChanges.classList.remove("active");
+	tabHistory.classList.add("active");
 
-	// Render all existing todo items
-	draftTodos.forEach((todo, index) => {
-		const row = document.createElement("div");
-		row.className = "todo-row";
-
-		// Checkbox
-		const checkbox = document.createElement("input");
-		checkbox.type = "checkbox";
-		checkbox.className = "ui-checkbox todo-checkbox";
-		checkbox.checked = todo.isCompleted;
-		checkbox.addEventListener("click", () => {
-			todo.isCompleted = checkbox.checked;
-
-			if (todo.isCompleted) { label.classList.add("done"); }
-			else { label.classList.remove("done"); }
-		});
-
-		// Label
-		const label = document.createElement("span");
-		label.className = `todo-label ${todo.isCompleted ? "done" : ""}`;
-		label.textContent = todo.text;
-
-		// Delete
-		const deleteBtn = document.createElement("button");
-		deleteBtn.className = "todo-remove-btn";
-		deleteBtn.innerHTML = "&times;";
-		deleteBtn.addEventListener("click", () => {
-			draftTodos.splice(index, 1);
-			renderTodoList();
-		});
-
-		row.appendChild(checkbox);
-		row.appendChild(label);
-		row.appendChild(deleteBtn);
-		todoModalRowsContainer.appendChild(row);
-	});
-
-	// Render constant new task row
-	const newRow = document.createElement("div");
-	newRow.className = "todo-row";
-
-	const newInput = document.createElement("input");
-	newInput.type = "text";
-	newInput.className = "modal-input";
-	newInput.placeholder = "Add new task (press enter)";
-
-	newInput.addEventListener("keyup", (e) => {
-		if (e.key === "Enter" && newInput.value.trim() !== "") {
-			draftTodos.push({
-				text: newInput.value.trim(),
-				isCompleted: false
-			});
-			renderTodoList();
-
-			// Refocus on new task input
-			const newInputs = todoModalRowsContainer.querySelectorAll(".todo-row .modal-input");
-			if (newInputs.length > 0) { newInputs[newInputs.length - 1].focus(); }
-		}
-	});
-
-	newRow.appendChild(newInput);
-	todoModalRowsContainer.appendChild(newRow);
-
-	setTimeout(() => {
-		updateCustomScrollbar(todoModalRowsContainer, todoScrollbar);
-	}, 10);
+	diffViewer.style.display = "none";
+	detailsViewer.style.display = "flex";
 };
 
-// Repo dropdown item invalid helper
-function markRepoDropdownItemInvalid(repoPath) {
-	const items = repoPanel.querySelectorAll(".dropdown-item");
-	items.forEach((item) => {
-		if (item.dataset.path.toLowerCase() === repoPath.toLowerCase()) {
-			item.classList.add("invalid");
-			item.title = "Repository folder not found";
-		}
-	});
-}
+// --------------- MODAL VALIDATORS ---------------
+const validateBranchNewModal = () => {
+	const isValid = branchNewModalInputName.value.trim() !== "";
+	branchNewModalConfirmBtn.disabled = !isValid;
+	branchNewModalConfirmBtn.classList.toggle("disabled", !isValid);
+};
 
-// C# - Load diff text
-function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget) {
-	if (!diffText || diffText.trim() === "") {
-		contentTarget.textContent = "(No changes or binary file)";
-		updateCustomScrollbar(wrapperTarget, scrollbarTarget);
-		return;
-	}
+const validateBranchHistoryNewModal = () => {
+	const isValid = branchHistoryNewModalInputName.value.trim() !== "";
+	branchHistoryNewModalConfirmBtn.disabled = !isValid;
+	branchHistoryNewModalConfirmBtn.classList.toggle("disabled", !isValid);
+};
 
-	// Intercept binary files
-	if (diffText.includes("Binary files ")) {
-		contentTarget.innerHTML = `<span class="diff-chunk">Binary file changed (no preview available)</span>`;
-		updateCustomScrollbar(wrapperTarget, scrollbarTarget);
-		return;
-	}
+const validateBranchRenameModal = () => {
+	const newName = branchRenameModalInputName.value.trim();
+	const oldName = branchRenameModal.dataset.targetName || currentBranch;
 
-	const lines = diffText.split("\n");
-	const formattedLines = [];
-	let hitFirstChunk = !diffText.startsWith("diff --git");
+	const isValid = newName !== ""
+		&& newName !== oldName
+		&& !protectedBranches.includes(newName);
 
-	for (let line of lines) {
-		// skip git diff headers
-		if (!hitFirstChunk) {
-			if (line.startsWith("@@")) { hitFirstChunk = true; }
-			else { continue; }
-		}
+	branchRenameModalConfirmBtn.disabled = !isValid;
+	branchRenameModalConfirmBtn.classList.toggle("disabled", !isValid);
+};
 
-		if (line.startsWith("\\")) { continue; }
+const validateRepoCloneModal = () => {
+	const isValid = repoCloneModalRepoUrl.value.trim() !== ""
+		&& repoCloneModalInputPath.value.trim() !== "";
+	repoCloneModalConfirmBtn.disabled = !isValid;
+	repoCloneModalConfirmBtn.classList.toggle("disabled", !isValid);
+};
 
-		let safeLine = escapeHtml(line);
+const validateRepoCreateModal = () => {
+	const isValid = repoCreateModalInputName.value.trim() !== ""
+		&& repoCreateModalInputPath.value.trim() !== "";
+	repoCreateModalConfirmBtn.disabled = !isValid;
+	repoCreateModalConfirmBtn.classList.toggle("disabled", !isValid);
+};
 
-		// Apply classes based on character (1 spaces)
-		if (safeLine.startsWith("+")) {
-			formattedLines.push(
-				`<span class="diff-add">+ ${safeLine.substring(1)}</span>`,
-			);
-		} else if (safeLine.startsWith("-")) {
-			formattedLines.push(
-				`<span class="diff-remove">- ${safeLine.substring(1)}</span>`,
-			);
-		} else if (safeLine.startsWith("@@")) {
-			formattedLines.push(
-				`<span class="diff-chunk">${safeLine.substring(1)}</span>`,
-			);
-		} else if (safeLine.startsWith(" ")) {
-			formattedLines.push(
-				`<span class="diff-normal">  ${safeLine.substring(1)}</span>`,
-			);
-		} else {
-			formattedLines.push(
-				`<span class="diff-normal">  ${safeLine.substring(1)}</span>`,
-			);
-		}
-	}
+const validateRepoAddModal = () => {
+	const isValid = repoAddModalInputPath.value.trim() !== "";
+	repoAddModalConfirmBtn.disabled = !isValid;
+	repoAddModalConfirmBtn.classList.toggle("disabled", !isValid);
+};
 
-	// Inject colored html
-	if (formattedLines.length === 0) {
-		contentTarget.innerHTML = `<span class="diff-chunk">Empty file (no content to preview)</span>`;
-	} else {
-		contentTarget.innerHTML = formattedLines.join("");
-	}
+const validateBranchMergeModal = () => {
+	const sourceBranch = branchMergeModalSelectSource.value;
+	const targetBranch = branchMergeModalSelectTarget.value;
 
-	updateCustomScrollbar(wrapperTarget, scrollbarTarget);
-}
+	const isValid = sourceBranch !== ""
+		&& targetBranch !== ""
+		&& sourceBranch !== targetBranch;
 
-// C# - App init
-function appInit(data) {
-	// Visuals
-	currentTheme = data.Settings.Theme;
-	applyTheme(data.Settings.Theme);
-	settingsModalThemeSelect.value = data.Settings.Theme;
+	branchMergeModalConfirmBtn.classList.toggle("disabled", !isValid);
+	branchMergeModalConfirmBtn.disabled = !isValid;
+};
 
-	// Data
-	loadRepositoriesIntoDropdown(data.Repositories);
+// --------------- CONTEXT MENU VALIDATORS ---------------
+const validateBranchContextMenu = (branchName, renameBtn, deleteBtn) => {
+	const isProtected = protectedBranches.includes(branchName.toLowerCase());
 
-	// Load last repo
-	if (data.Settings.LastRepoPath) {
-		const cssPath = data.Settings.LastRepoPath.replace(/\\/g, "\\\\");
+	renameBtn.classList.toggle("disabled", isProtected);
+	renameBtn.disabled = isProtected;
 
-		const lastRepoItem = repoDropdown.querySelector(`.dropdown-item[data-path="${cssPath}"]`);
+	deleteBtn.classList.toggle("disabled", isProtected);
+	deleteBtn.disabled = isProtected;
+};
 
-		if (lastRepoItem) { lastRepoItem.click(); }
-	}
+const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn, isInvalid = false) => {
+	const isRepoEmpty = !repoName || repoName.trim() === "";
 
-	document.body.classList.remove("loading");
-}
+	const disableTools = isRepoEmpty || isInvalid;
+
+	terminalBtn.classList.toggle("disabled", disableTools);
+	terminalBtn.disabled = disableTools;
+
+	explorerBtn.classList.toggle("disabled", disableTools);
+	explorerBtn.disabled = disableTools;
+
+	removeBtn.classList.toggle("disabled", isRepoEmpty);
+	removeBtn.disabled = isRepoEmpty;
+};
+
+// --------------- REPO HELPERS ---------------
+// Enable/disable repo left-sidebar tools
+function setRepoToolsEnabled(enabled) {
+	branchBtn.classList.toggle("disabled", !enabled);
+	branchBtn.disabled = !enabled;
+	mergeBtn.classList.toggle("disabled", !enabled);
+	todoBtn.classList.toggle("disabled", !enabled);
+	configBtn.classList.toggle("disabled", !enabled);
+	fetchBtn.classList.toggle("disabled", !enabled);
+};
 
 // Build a repo dropdown item
 function createRepoDropdownItem(repo) {
@@ -1086,8 +782,7 @@ function createRepoDropdownItem(repo) {
 		loadDraft();
 		toggleCommitButton();
 		switchToChangesTab();
-		resetDiffViewer();
-		resetDetailsViewer();
+		resetViewers();
 		activeTodos = [];
 
 		sendIpcMessage(IpcActions.REPO_SELECTED, { absolutePath: repo.AbsolutePath });
@@ -1134,6 +829,120 @@ function loadRepositoriesIntoDropdown(repositories) {
 	});
 }
 
+// C# - Add repository to dropdown
+function addRepositoryToDropdown(repo) {
+	const item = createRepoDropdownItem(repo);
+	repoList.appendChild(item);
+
+	if (repo.IsValid) { item.click(); }
+}
+
+// C# - Delete repo
+function deleteRepoFromDropdown(repository) {
+	const removedPath = repository.absolutePath;
+	if (!removedPath) { return; }
+
+	const cssPath = removedPath.replace(/\\/g, "\\\\");
+	const itemToRemove = repoDropdown.querySelector(`.dropdown-item[data-path="${cssPath}"]`);
+
+	if (itemToRemove) { itemToRemove.remove(); }
+
+	if (currentRepoPath === removedPath) {
+		currentRepoPath = "";
+
+		const repoBtnValue = repoBtn.querySelector(".btn-value");
+		if (repoBtnValue) { repoBtnValue.textContent = "None"; }
+
+		setRepoToolsEnabled(false);
+
+		const branchBtnValue = branchBtn.querySelector(".btn-value");
+		if (branchBtnValue) { branchBtnValue.textContent = "None"; }
+
+		const existingBranches = branchDropdown.querySelectorAll(".dropdown-item");
+		existingBranches.forEach((item) => item.remove());
+	}
+}
+
+// Repo dropdown item invalid helper
+function markRepoDropdownItemInvalid(repoPath) {
+	const items = repoPanel.querySelectorAll(".dropdown-item");
+	items.forEach((item) => {
+		if (item.dataset.path.toLowerCase() === repoPath.toLowerCase()) {
+			item.classList.add("invalid");
+			item.title = "Repository folder not found";
+		}
+	});
+}
+
+// C# - Repo not found (path is invalid)
+function processMissingRepo(repoPath) {
+	document.getElementById("missing-modal-repo-path").textContent = repoPath;
+	repoMissingModal.dataset.targetPath = repoPath;
+	markRepoDropdownItemInvalid(repoPath);
+	repoMissingModal.classList.add("show");
+
+	// Unselect invalid repo if it's current
+	if (currentRepoPath === repoPath) {
+		currentRepoPath = "";
+		currentBranch = "";
+
+		// Reset Topbar
+		const repoBtnValue = repoBtn.querySelector(".btn-value");
+		if (repoBtnValue) { repoBtnValue.textContent = "None"; }
+
+		const branchBtnValue = branchBtn.querySelector(".btn-value");
+		if (branchBtnValue) { branchBtnValue.textContent = "None"; }
+
+		// Disable buttons
+		setRepoToolsEnabled(false);
+
+		// Clear UI panels
+		const existingBranches = branchDropdown.querySelectorAll(".dropdown-item");
+		existingBranches.forEach((item) => item.remove());
+
+		changesList.innerHTML = "";
+		historyList.innerHTML = "";
+		currentChangesCount = 0;
+		changesCountText.textContent = "0 changed files";
+
+		resetViewers();
+		toggleCommitButton();
+	}
+}
+
+// C# - Folder selected
+function folderSelected(directory) {
+	if (activeBrowseInput) {
+		activeBrowseInput.value = directory.path;
+		activeBrowseInput.dispatchEvent(new Event("input"));
+		activeBrowseInput.focus();
+		activeBrowseInput = null;
+	}
+}
+
+// C# - App init
+function appInit(data) {
+	// Visuals
+	currentTheme = data.Settings.Theme;
+	applyTheme(data.Settings.Theme);
+	settingsModalThemeSelect.value = data.Settings.Theme;
+
+	// Data
+	loadRepositoriesIntoDropdown(data.Repositories);
+
+	// Load last repo
+	if (data.Settings.LastRepoPath) {
+		const cssPath = data.Settings.LastRepoPath.replace(/\\/g, "\\\\");
+
+		const lastRepoItem = repoDropdown.querySelector(`.dropdown-item[data-path="${cssPath}"]`);
+
+		if (lastRepoItem) { lastRepoItem.click(); }
+	}
+
+	document.body.classList.remove("loading");
+}
+
+// --------------- BRANCH HELPERS ---------------
 // C# - Load branches
 function loadBranchesIntoDropdown(branches) {
 	const existingItems = branchDropdown.querySelectorAll(".dropdown-item");
@@ -1167,8 +976,7 @@ function loadBranchesIntoDropdown(branches) {
 		item.addEventListener("click", () => {
 			if (currentBranch.toLowerCase() === branch.Name.toLowerCase()) { return; }
 
-			resetDiffViewer();
-			resetDetailsViewer();
+			resetViewers();
 
 			historyList.innerHTML = "";
 			changesList.innerHTML = "";
@@ -1207,49 +1015,140 @@ function loadBranchesIntoDropdown(branches) {
 	refreshRepoState();
 }
 
-// C# - Delete repo
-function deleteRepoFromDropdown(repository) {
-	const removedPath = repository.absolutePath;
-	if (!removedPath) { return; }
+// C# - Remove branch from dropdown
+function removeBranchFromDropdown(payload) {
+	const items = branchDropdown.querySelectorAll(".dropdown-item");
+	items.forEach((item) => {
+		if (item.dataset.branchName === payload.branchName) {
+			item.remove();
+		}
+	});
+}
 
-	const cssPath = removedPath.replace(/\\/g, "\\\\");
-	const itemToRemove = repoDropdown.querySelector(`.dropdown-item[data-path="${cssPath}"]`);
+// C# - Rename branch in dropdown
+function renameBranchInDropdown(payload) {
+	const oldName = payload.oldName;
+	const newName = payload.newName;
 
-	if (itemToRemove) { itemToRemove.remove(); }
+	const items = branchDropdown.querySelectorAll(".dropdown-item");
+	items.forEach((item) => {
+		if (item.dataset.branchName === oldName) {
+			item.querySelector(".dropdown-item-text").textContent = newName;
+			item.dataset.branchName = newName;
+		}
+	});
 
-	if (currentRepoPath === removedPath) {
-		currentRepoPath = "";
+	if (currentBranch === oldName) {
+		currentBranch = newName;
+		document.querySelector("#branches-container .btn-value").textContent = newName;
+		toggleCommitButton();
+	}
 
-		const repoBtnValue = repoBtn.querySelector(".btn-value");
-		if (repoBtnValue) { repoBtnValue.textContent = "None"; }
-
-		setRepoToolsEnabled(false);
-
-		const branchBtnValue = branchBtn.querySelector(".btn-value");
-		if (branchBtnValue) { branchBtnValue.textContent = "None"; }
-
-		const existingBranches = branchDropdown.querySelectorAll(".dropdown-item");
-		existingBranches.forEach((item) => item.remove());
+	if (currentRepoPath) {
+		sendIpcMessage(IpcActions.REPO_SELECTED, { absolutePath: currentRepoPath });
 	}
 }
 
-// C# - Folder selected
-function folderSelected(directory) {
-	if (activeBrowseInput) {
-		activeBrowseInput.value = directory.path;
-		activeBrowseInput.dispatchEvent(new Event("input"));
-		activeBrowseInput.focus();
-		activeBrowseInput = null;
+// Merge modal helper
+function setupMergeModal(preselectedTarget) {
+	branchMergeModalSelectSource.innerHTML = "";
+	branchMergeModalSelectTarget.innerHTML = "";
+
+	const defaultSourceOption = document.createElement("option");
+	defaultSourceOption.value = "";
+	defaultSourceOption.textContent = "Select source...";
+	defaultSourceOption.disabled = true;
+	defaultSourceOption.selected = true;
+	branchMergeModalSelectSource.appendChild(defaultSourceOption);
+
+	const branchItems = branchDropdown.querySelectorAll(".dropdown-item");
+	branchItems.forEach((item) => {
+		const branchName = item.dataset.branchName;
+		if (!branchName) { return; }
+
+		const optionSource = document.createElement("option");
+		optionSource.value = branchName;
+		optionSource.textContent = branchName;
+		branchMergeModalSelectSource.appendChild(optionSource);
+
+		const optionTarget = document.createElement("option");
+		optionTarget.value = branchName;
+		optionTarget.textContent = branchName;
+		branchMergeModalSelectTarget.appendChild(optionTarget);
+	});
+
+	branchMergeModalSelectTarget.value = preselectedTarget || currentBranch;
+
+	branchMergeModalSourceLabel.textContent = "{ none }";
+	branchMergeModalTargetLabel.textContent = branchMergeModalSelectTarget.value;
+
+	branchMergeModalSelectSource.onchange = (e) => {
+		branchMergeModalSourceLabel.textContent = e.target.value;
+		validateBranchMergeModal();
+	};
+	branchMergeModalSelectTarget.onchange = (e) => {
+		branchMergeModalTargetLabel.textContent = e.target.value;
+		validateBranchMergeModal();
+	};
+
+	validateBranchMergeModal();
+};
+
+// C# - Branches merged handler
+function processBranchesMerged() {
+	resetViewers();
+
+	if (currentRepoPath) {
+		sendIpcMessage(IpcActions.GET_BRANCHES, { absolutePath: currentRepoPath });
 	}
+
+	refreshRepoState();
 }
 
-// C# - Add repository to dropdown
-function addRepositoryToDropdown(repo) {
-	const item = createRepoDropdownItem(repo);
-	repoList.appendChild(item);
+// --------------- CHANGES & COMMIT HELPERS ---------------
+function toggleCommitButton() {
+	// Wait for C# to return the branch name
+	if (currentBranch === "") {
+		commitBtn.disabled = true;
+		commitBtn.classList.add("disabled");
+		commitBtn.textContent = "Loading...";
+		return;
+	}
 
-	if (repo.IsValid) { item.click(); }
-}
+	if (isPullRequired) {
+		commitBtn.disabled = false;
+		commitBtn.classList.remove("disabled");
+		commitBtn.textContent = `Pull (${commitsBehind} commit${commitsBehind === 1 ? "" : "s"} behind)`;
+		return;
+	}
+
+	const checkedCount = document.querySelectorAll(".changes-item-checkbox:checked",).length;
+
+	// Commit state
+	const commitText = checkedCount > 0
+		? `Commit ${checkedCount} file${checkedCount === 1 ? "" : "s"} to ${currentBranch}`
+		: `Commit`;
+
+	if (commitMessageInput.value.trim() === "" || checkedCount === 0) {
+		commitBtn.disabled = true;
+		commitBtn.classList.add("disabled");
+		commitBtn.textContent = commitText;
+	} else {
+		commitBtn.disabled = false;
+		commitBtn.classList.remove("disabled");
+		commitBtn.textContent = commitText;
+	}
+};
+
+function updateMasterCheckboxState() {
+	const allFileCheckboxes = Array.from(document.querySelectorAll(".changes-item-checkbox"));
+	if (allFileCheckboxes.length === 0) { return; }
+
+	const allChecked = allFileCheckboxes.every((box) => box.checked);
+	changesMasterCheckbox.checked = allChecked;
+
+	toggleCommitButton();
+};
 
 // C# - Load changed files to right sidebar
 function renderChangedFiles(files) {
@@ -1350,14 +1249,13 @@ function processCommit() {
 
 	saveDraft();
 
-	resetDiffViewer();
+	resetViewers();
 	toggleCommitButton();
-	resetDetailsViewer();
 
 	refreshRepoState();
 }
 
-// Refresh changes + history for the current reop/branch
+// Refresh changes + history for the current repo/branch
 function refreshRepoState() {
 	if (!currentRepoPath) { return; }
 
@@ -1371,6 +1269,46 @@ function refreshRepoState() {
 	}
 }
 
+// C# - Repo fetching
+function fetchRepo(repo) {
+	stopFetchAnimation();
+	refreshRepoState();
+	toggleCommitButton();
+}
+
+// C# - Repo files changed
+function processFileChanges(repo) {
+	if (currentRepoPath === repo.repoPath) {
+		sendIpcMessage(IpcActions.GET_REPO_STATUS, { repoPath: currentRepoPath });
+	} else {
+		console.warn("RepoWatcher is watching unnecessary repositories.");
+	}
+}
+
+function saveDraft() {
+	if (!currentRepoPath) { return; }
+
+	repoDrafts[currentRepoPath] = {
+		message: commitMessageInput.value,
+		description: commitDescriptionInput.value
+	};
+};
+
+function loadDraft() {
+	if (!currentRepoPath) { return; }
+
+	const draft = repoDrafts[currentRepoPath];
+
+	if (draft) {
+		commitMessageInput.value = draft.message;
+		commitDescriptionInput.value = draft.description;
+	} else {
+		commitMessageInput.value = "";
+		commitDescriptionInput.value = "";
+	}
+};
+
+// --------------- HISTORY & DIFF HELPERS ---------------
 // C# - Load/append commit history into history-tab
 function renderHistory(commits, isAppending = false) {
 	if (!isAppending) {
@@ -1439,54 +1377,21 @@ function renderHistory(commits, isAppending = false) {
 	updateCustomScrollbar(historyList, historyScrollbar);
 }
 
-// C# - Remove branch from dropdown
-function removeBranchFromDropdown(payload) {
-	const items = branchDropdown.querySelectorAll(".dropdown-item");
-	items.forEach((item) => {
-		if (item.dataset.branchName === payload.branchName) {
-			item.remove();
-		}
-	});
+// C# - Initial branch history load
+function processBranchHistoryLoaded(commits) {
+	currentHistorySkip = 0;
+	isFetchingHistory = false;
+	hasReachedEndOfHistory = commits.length < historyTake;
+	renderHistory(commits, false);
 }
 
-// C# - Rename branch in dropdown
-function renameBranchInDropdown(payload) {
-	const oldName = payload.oldName;
-	const newName = payload.newName;
-
-	const items = branchDropdown.querySelectorAll(".dropdown-item");
-	items.forEach((item) => {
-		if (item.dataset.branchName === oldName) {
-			item.querySelector(".dropdown-item-text").textContent = newName;
-			item.dataset.branchName = newName;
-		}
-	});
-
-	if (currentBranch === oldName) {
-		currentBranch = newName;
-		document.querySelector("#branches-container .btn-value").textContent = newName;
-		toggleCommitButton();
+// C# - Paginated branch history load (infinite scroll)
+function processBranchHistoryAppended(commits) {
+	isFetchingHistory = false;
+	if (commits.length < historyTake) {
+		hasReachedEndOfHistory = true;
 	}
-
-	if (currentRepoPath) {
-		sendIpcMessage(IpcActions.REPO_SELECTED, { absolutePath: currentRepoPath });
-	}
-}
-
-// C# - Repo fetching
-function fetchRepo(repo) {
-	stopFetchAnimation();
-	refreshRepoState();
-	toggleCommitButton();
-}
-
-// C# - Repo files changed
-function processFileChanges(repo) {
-	if (currentRepoPath === repo.repoPath) {
-		sendIpcMessage(IpcActions.GET_REPO_STATUS, { repoPath: currentRepoPath });
-	} else {
-		console.warn("RepoWatcher is watching unnecessary repositories.");
-	}
+	renderHistory(commits, true);
 }
 
 // C# - History commit details
@@ -1567,29 +1472,170 @@ function loadCommitDetails(details) {
 	updateCustomScrollbar(detailsFileList, detailsFileScrollbar);
 }
 
-// C# - Branches merged handler
-function processBranchesMerged() {
-	resetDiffViewer();
-	resetDetailsViewer();
-
-	if (currentRepoPath) {
-		sendIpcMessage(IpcActions.GET_BRANCHES, { absolutePath: currentRepoPath });
+// C# - Load diff text
+function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget) {
+	if (!diffText || diffText.trim() === "") {
+		contentTarget.textContent = "(No changes or binary file)";
+		updateCustomScrollbar(wrapperTarget, scrollbarTarget);
+		return;
 	}
 
-	refreshRepoState();
+	// Intercept binary files
+	if (diffText.includes("Binary files ")) {
+		contentTarget.innerHTML = `<span class="diff-chunk">Binary file changed (no preview available)</span>`;
+		updateCustomScrollbar(wrapperTarget, scrollbarTarget);
+		return;
+	}
+
+	const lines = diffText.split("\n");
+	const formattedLines = [];
+	let hitFirstChunk = !diffText.startsWith("diff --git");
+
+	for (let line of lines) {
+		// skip git diff headers
+		if (!hitFirstChunk) {
+			if (line.startsWith("@@")) { hitFirstChunk = true; }
+			else { continue; }
+		}
+
+		if (line.startsWith("\\")) { continue; }
+
+		let safeLine = escapeHtml(line);
+
+		// Apply classes based on character (1 spaces)
+		if (safeLine.startsWith("+")) {
+			formattedLines.push(
+				`<span class="diff-add">+ ${safeLine.substring(1)}</span>`,
+			);
+		} else if (safeLine.startsWith("-")) {
+			formattedLines.push(
+				`<span class="diff-remove">- ${safeLine.substring(1)}</span>`,
+			);
+		} else if (safeLine.startsWith("@@")) {
+			formattedLines.push(
+				`<span class="diff-chunk">${safeLine.substring(1)}</span>`,
+			);
+		} else if (safeLine.startsWith(" ")) {
+			formattedLines.push(
+				`<span class="diff-normal">  ${safeLine.substring(1)}</span>`,
+			);
+		} else {
+			formattedLines.push(
+				`<span class="diff-normal">  ${safeLine.substring(1)}</span>`,
+			);
+		}
+	}
+
+	// Inject colored html
+	if (formattedLines.length === 0) {
+		contentTarget.innerHTML = `<span class="diff-chunk">Empty file (no content to preview)</span>`;
+	} else {
+		contentTarget.innerHTML = formattedLines.join("");
+	}
+
+	updateCustomScrollbar(wrapperTarget, scrollbarTarget);
 }
+
+function resetDiffViewer() {
+	diffFilename.textContent = "Select a file to view changes";
+	diffContent.textContent = "";
+	updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
+};
+
+function resetDetailsViewer() {
+	detailsCommitMessage.textContent = "Select a commit to view details";
+	detailsCommitStats.textContent = "";
+	detailsContent.textContent = "";
+
+	detailsBtnValue.textContent = "No commit selected";
+	detailsBtn.disabled = true;
+	detailsBtn.classList.add("disabled");
+	detailsFileList.innerHTML = "";
+};
+
+function resetViewers() {
+	resetDiffViewer();
+	resetDetailsViewer();
+};
+
+// --------------- TODO HELPERS ---------------
+function renderTodoList() {
+	todoModalRowsContainer.innerHTML = "";
+
+	// Render all existing todo items
+	draftTodos.forEach((todo, index) => {
+		const row = document.createElement("div");
+		row.className = "todo-row";
+
+		// Checkbox
+		const checkbox = document.createElement("input");
+		checkbox.type = "checkbox";
+		checkbox.className = "ui-checkbox todo-checkbox";
+		checkbox.checked = todo.isCompleted;
+		checkbox.addEventListener("click", () => {
+			todo.isCompleted = checkbox.checked;
+
+			if (todo.isCompleted) { label.classList.add("done"); }
+			else { label.classList.remove("done"); }
+		});
+
+		// Label
+		const label = document.createElement("span");
+		label.className = `todo-label ${todo.isCompleted ? "done" : ""}`;
+		label.textContent = todo.text;
+
+		// Delete
+		const deleteBtn = document.createElement("button");
+		deleteBtn.className = "todo-remove-btn";
+		deleteBtn.innerHTML = "&times;";
+		deleteBtn.addEventListener("click", () => {
+			draftTodos.splice(index, 1);
+			renderTodoList();
+		});
+
+		row.appendChild(checkbox);
+		row.appendChild(label);
+		row.appendChild(deleteBtn);
+		todoModalRowsContainer.appendChild(row);
+	});
+
+	// Render constant new task row
+	const newRow = document.createElement("div");
+	newRow.className = "todo-row";
+
+	const newInput = document.createElement("input");
+	newInput.type = "text";
+	newInput.className = "modal-input";
+	newInput.placeholder = "Add new task (press enter)";
+
+	newInput.addEventListener("keyup", (e) => {
+		if (e.key === "Enter" && newInput.value.trim() !== "") {
+			draftTodos.push({
+				text: newInput.value.trim(),
+				isCompleted: false
+			});
+			renderTodoList();
+
+			// Refocus on new task input
+			const newInputs = todoModalRowsContainer.querySelectorAll(".todo-row .modal-input");
+			if (newInputs.length > 0) { newInputs[newInputs.length - 1].focus(); }
+		}
+	});
+
+	newRow.appendChild(newInput);
+	todoModalRowsContainer.appendChild(newRow);
+
+	setTimeout(() => {
+		updateCustomScrollbar(todoModalRowsContainer, todoScrollbar);
+	}, 10);
+};
 
 // C# - Load todos
 function loadTodos(todos) {
 	activeTodos = todos || [];
 }
 
-// C# - Handle backend errors
-function showErrorModal(message) {
-	errorModalMessage.textContent = message || "An unknown error occured.";
-	errorModal.classList.add("show");
-}
-
+// --------------- CONFIG & SETTINGS HELPERS ---------------
 // C# - On local config load
 function processLocalConfigLoad(configs) {
 	configModalName.value = configs.localName || "";
@@ -1612,61 +1658,13 @@ function processGlobalConfigLoad(config) {
 	accountModal.classList.add("show");
 }
 
-// C# - Repo not found (path is invalid)
-function processMissingRepo(repoPath) {
-	document.getElementById("missing-modal-repo-path").textContent = repoPath;
-	repoMissingModal.dataset.targetPath = repoPath;
-	markRepoDropdownItemInvalid(repoPath);
-	repoMissingModal.classList.add("show");
-
-	// Unselect invalid repo if it's current
-	if (currentRepoPath === repoPath) {
-		currentRepoPath = "";
-		currentBranch = "";
-
-		// Reset Topbar
-		const repoBtnValue = repoBtn.querySelector(".btn-value");
-		if (repoBtnValue) { repoBtnValue.textContent = "None"; }
-
-		const branchBtnValue = branchBtn.querySelector(".btn-value");
-		if (branchBtnValue) { branchBtnValue.textContent = "None"; }
-
-		// Disable buttons
-		setRepoToolsEnabled(false);
-
-		// Clear UI panels
-		const existingBranches = branchDropdown.querySelectorAll(".dropdown-item");
-		existingBranches.forEach((item) => item.remove());
-
-		changesList.innerHTML = "";
-		historyList.innerHTML = "";
-		currentChangesCount = 0;
-		changesCountText.textContent = "0 changed files";
-
-		resetDiffViewer();
-		resetDetailsViewer();
-		toggleCommitButton();
-	}
+// C# - Handle backend errors
+function showErrorModal(message) {
+	errorModalMessage.textContent = message || "An unknown error occurred.";
+	errorModal.classList.add("show");
 }
 
-// C# - Initial branch history load
-function processBranchHistoryLoaded(commits) {
-	currentHistorySkip = 0;
-	isFetchingHistory = false;
-	hasReachedEndOfHistory = commits.length < historyTake;
-	renderHistory(commits, false);
-}
-
-// C# - Paginated branch history load (infinite scroll)
-function processBranchHistoryAppended(commits) {
-	isFetchingHistory = false;
-	if (commits.length < historyTake) {
-		hasReachedEndOfHistory = true;
-	}
-	renderHistory(commits, true);
-}
-
-// ------- EVENT LISTENERS -------
+// --------------- EVENT LISTENERS ---------------
 // Global overrides
 document.addEventListener("wheel", (event) => {
 	if (event.ctrlKey || event.metaKey) { event.preventDefault(); }
@@ -2769,7 +2767,7 @@ setupFilter("#branches-filter .filter-input", "#branch-dropdown-panel");
 setupSelection("#repository-dropdown-panel", "#repositories-container .btn-value");
 setupSelection("#branch-dropdown-panel", "#branches-container .btn-value");
 
-// ------- APP INIT -------
+// --------------- APP INIT ---------------
 updatePanelWidths();
 
 interactCustomScrollbar(repoList, repoScrollbar);
@@ -2785,9 +2783,6 @@ fileBtn.classList.add("disabled"); // FINISH
 branchesBtn.classList.add("disabled"); // FINISH
 analyticsBtn.classList.add("disabled"); // FINISH
 setRepoToolsEnabled(false);
-
-branchBtn.classList.add("disabled");
-branchBtn.disabled = true;
 
 switchToChangesTab();
 toggleCommitButton();
