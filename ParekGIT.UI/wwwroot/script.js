@@ -1,4 +1,4 @@
-// --------------- DOM ELEMENTS ---------------
+// ======================== DOM ELEMENTS ========================
 // Topbar
 const repoContainer = document.getElementById("repositories-container");
 const repoDropdown = document.getElementById("repository-dropdown-panel");
@@ -201,6 +201,7 @@ const historyItemMenuRevert = historyItemContextMenu.querySelector(".context-men
 const historyItemMenuCreateBranch = historyItemContextMenu.querySelector(".context-menu-item.item-create-branch");
 const historyItemMenuCopySHA = historyItemContextMenu.querySelector(".context-menu-item.item-copy-sha");
 
+const contextMenus = [repoContextMenu, repoItemContextMenu, branchItemContextMenu, topbarRepoContextMenu, topbarBranchContextMenu];
 const protectedBranches = ["main", "master"];
 const binaryExts = [
 	".exe", ".dll", ".bin", ".obj",
@@ -209,7 +210,7 @@ const binaryExts = [
 	".gz", ".7z", ".pdf",
 ];
 
-// --------------- APP STATE ---------------
+// ======================== APP STATE ========================
 let currentRepoPath = "";
 let currentBranch = "";
 let activeHistoryHash = "";
@@ -231,7 +232,7 @@ let commitsBehind = 0;
 let minRightWidth = 0, maxRightWidth = 0;
 let isResizing = false;
 
-// --------------- IPC ACTIONS ---------------
+// ======================== IPC ACTIONS ========================
 const IpcActions = {
 	// Outgoing (frontend -> C#)
 	APP_READY: "APP_READY",
@@ -308,7 +309,7 @@ const IpcActions = {
 	SETTINGS_SAVED: "SETTINGS_SAVED",
 };
 
-// --------------- IPC COMMUNICATION ---------------
+// ======================== IPC COMMUNICATION ========================
 const sendIpcMessage = (action, payload = {}) => {
 	const envelope = {
 		Action: action,
@@ -460,7 +461,7 @@ window.external.receiveMessage((message) => {
 	}
 });
 
-// --------------- GENERIC UI HELPERS ---------------
+// ======================== GENERIC UI HELPERS ========================
 const updatePanelWidths = () => {
 	// Keep panel widths in sync (match their parents)
 	repoPanel.style.width = `${repoContainer.offsetWidth}px`;
@@ -663,7 +664,36 @@ const switchToHistoryTab = () => {
 	detailsViewer.style.display = "flex";
 };
 
-// --------------- MODAL VALIDATORS ---------------
+const openModalWithFocus = (modal, validator, focusInput, selectText = false) => {
+	closeDropdowns();
+	modal.classList.add("show");
+	if (validator) { validator(); }
+	setTimeout(() => {
+		focusInput.focus();
+		if (selectText) { focusInput.select(); }
+	}, 100);
+};
+
+const copyToClipboard = (text) => {
+	navigator.clipboard.writeText(text)
+		.then(() => console.log(`Copied '${text}' to clipboard.`))
+		.catch((err) => console.error("Failed to copy text: ", err));
+};
+
+const closeContextMenusOnOutsideClick = (event) => {
+	if (repoContextMenu.classList.contains("show") && !repoContextMenu.contains(event.target) && !repoNewBtn.contains(event.target)) {
+		repoContextMenu.classList.remove("show");
+	}
+
+	contextMenus.forEach((menu) => {
+		if (menu.classList.contains("show") && !menu.contains(event.target)) {
+			menu.classList.remove("show");
+			document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
+		}
+	});
+};
+
+// ======================== MODAL VALIDATORS ========================
 const validateBranchNewModal = () => {
 	const isValid = branchNewModalInputName.value.trim() !== "";
 	branchNewModalConfirmBtn.disabled = !isValid;
@@ -720,7 +750,7 @@ const validateBranchMergeModal = () => {
 	branchMergeModalConfirmBtn.disabled = !isValid;
 };
 
-// --------------- CONTEXT MENU VALIDATORS ---------------
+// ======================== CONTEXT MENU VALIDATORS ========================
 const validateBranchContextMenu = (branchName, renameBtn, deleteBtn) => {
 	const isProtected = protectedBranches.includes(branchName.toLowerCase());
 
@@ -746,7 +776,7 @@ const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn, 
 	removeBtn.disabled = isRepoEmpty;
 };
 
-// --------------- REPO HELPERS ---------------
+// ======================== REPO HELPERS ========================
 // Enable/disable repo left-sidebar tools
 function setRepoToolsEnabled(enabled) {
 	branchBtn.classList.toggle("disabled", !enabled);
@@ -755,7 +785,7 @@ function setRepoToolsEnabled(enabled) {
 	todoBtn.classList.toggle("disabled", !enabled);
 	configBtn.classList.toggle("disabled", !enabled);
 	fetchBtn.classList.toggle("disabled", !enabled);
-};
+}
 
 // Build a repo dropdown item
 function createRepoDropdownItem(repo) {
@@ -942,7 +972,7 @@ function appInit(data) {
 	document.body.classList.remove("loading");
 }
 
-// --------------- BRANCH HELPERS ---------------
+// ======================== BRANCH HELPERS ========================
 // C# - Load branches
 function loadBranchesIntoDropdown(branches) {
 	const existingItems = branchDropdown.querySelectorAll(".dropdown-item");
@@ -1092,7 +1122,7 @@ function setupMergeModal(preselectedTarget) {
 	};
 
 	validateBranchMergeModal();
-};
+}
 
 // C# - Branches merged handler
 function processBranchesMerged() {
@@ -1105,7 +1135,7 @@ function processBranchesMerged() {
 	refreshRepoState();
 }
 
-// --------------- CHANGES & COMMIT HELPERS ---------------
+// ======================== CHANGES & COMMIT HELPERS ========================
 function toggleCommitButton() {
 	// Wait for C# to return the branch name
 	if (currentBranch === "") {
@@ -1138,7 +1168,7 @@ function toggleCommitButton() {
 		commitBtn.classList.remove("disabled");
 		commitBtn.textContent = commitText;
 	}
-};
+}
 
 function updateMasterCheckboxState() {
 	const allFileCheckboxes = Array.from(document.querySelectorAll(".changes-item-checkbox"));
@@ -1148,7 +1178,7 @@ function updateMasterCheckboxState() {
 	changesMasterCheckbox.checked = allChecked;
 
 	toggleCommitButton();
-};
+}
 
 // C# - Load changed files to right sidebar
 function renderChangedFiles(files) {
@@ -1292,7 +1322,7 @@ function saveDraft() {
 		message: commitMessageInput.value,
 		description: commitDescriptionInput.value
 	};
-};
+}
 
 function loadDraft() {
 	if (!currentRepoPath) { return; }
@@ -1306,9 +1336,9 @@ function loadDraft() {
 		commitMessageInput.value = "";
 		commitDescriptionInput.value = "";
 	}
-};
+}
 
-// --------------- HISTORY & DIFF HELPERS ---------------
+// ======================== HISTORY & DIFF HELPERS ========================
 // C# - Load/append commit history into history-tab
 function renderHistory(commits, isAppending = false) {
 	if (!isAppending) {
@@ -1540,7 +1570,7 @@ function resetDiffViewer() {
 	diffFilename.textContent = "Select a file to view changes";
 	diffContent.textContent = "";
 	updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
-};
+}
 
 function resetDetailsViewer() {
 	detailsCommitMessage.textContent = "Select a commit to view details";
@@ -1551,14 +1581,14 @@ function resetDetailsViewer() {
 	detailsBtn.disabled = true;
 	detailsBtn.classList.add("disabled");
 	detailsFileList.innerHTML = "";
-};
+}
 
 function resetViewers() {
 	resetDiffViewer();
 	resetDetailsViewer();
-};
+}
 
-// --------------- TODO HELPERS ---------------
+// ======================== TODO HELPERS ========================
 function renderTodoList() {
 	todoModalRowsContainer.innerHTML = "";
 
@@ -1628,14 +1658,14 @@ function renderTodoList() {
 	setTimeout(() => {
 		updateCustomScrollbar(todoModalRowsContainer, todoScrollbar);
 	}, 10);
-};
+}
 
 // C# - Load todos
 function loadTodos(todos) {
 	activeTodos = todos || [];
 }
 
-// --------------- CONFIG & SETTINGS HELPERS ---------------
+// ======================== CONFIG & SETTINGS HELPERS ========================
 // C# - On local config load
 function processLocalConfigLoad(configs) {
 	configModalName.value = configs.localName || "";
@@ -1664,7 +1694,7 @@ function showErrorModal(message) {
 	errorModal.classList.add("show");
 }
 
-// --------------- EVENT LISTENERS ---------------
+// ======================== GLOBAL & GENERIC LISTENERS ========================
 // Global overrides
 document.addEventListener("wheel", (event) => {
 	if (event.ctrlKey || event.metaKey) { event.preventDefault(); }
@@ -1677,113 +1707,7 @@ document.addEventListener("keydown", (event) => {
 			closeAndClearModal(activeModal);
 			return;
 		}
-
 		closeDropdowns();
-	}
-});
-
-// Left sidebar buttons (left-sidebar)
-mergeBtn.addEventListener("click", () => {
-	if (!currentRepoPath || !currentBranch) { return; }
-
-	setupMergeModal(currentBranch);
-	branchMergeModal.dataset.targetName = currentBranch;
-	branchMergeModal.classList.add("show");
-});
-
-todoBtn.addEventListener("click", () => {
-	if (!currentRepoPath) { return; }
-
-	draftTodos = JSON.parse(JSON.stringify(activeTodos));
-
-	renderTodoList();
-	todoModal.classList.add("show");
-});
-
-configBtn.addEventListener("click", () => {
-	if (!currentRepoPath) { return; }
-
-	sendIpcMessage(IpcActions.CONFIG_LOCAL_GET, { repoPath: currentRepoPath });
-});
-
-fetchBtn.addEventListener("click", () => {
-	if (!currentRepoPath || fetchBtn.classList.contains("fetching")) { return; }
-
-	fetchBtn.classList.add("fetching");
-
-	sendIpcMessage(IpcActions.REPO_FETCH, {
-		repoPath: currentRepoPath,
-	});
-});
-
-settingsBtn.addEventListener("click", () => {
-	settingsModalThemeSelect.value = currentTheme;
-	settingsModal.classList.add("show");
-});
-
-accountBtn.addEventListener("click", () =>
-	sendIpcMessage(IpcActions.CONFIG_GLOBAL_GET, {})
-);
-
-// Scrollbars (topbar)
-repoList.addEventListener("scroll", () =>
-	updateCustomScrollbar(repoList, repoScrollbar)
-);
-branchList.addEventListener("scroll", () =>
-	updateCustomScrollbar(branchList, branchScrollbar)
-);
-
-// Todo list scrollbar (scrollbar/modals)
-todoModalRowsContainer.addEventListener("scroll", () =>
-	updateCustomScrollbar(todoModalRowsContainer, todoScrollbar)
-);
-
-// Settings modal (modals)
-settingsModalLogsView.addEventListener("click", () =>
-	sendIpcMessage(IpcActions.EXPLORER_OPEN, {
-		path: "%APP_DATA%"
-	})
-);
-
-settingsModalLogsClear.addEventListener("click", () =>
-	sendIpcMessage(IpcActions.LOGS_CLEAR, {})
-);
-
-settingsModalConfirmBtn.addEventListener("click", () => {
-	const updatedSettings = {
-		Id: 1,
-		Theme: settingsModalThemeSelect.value
-	};
-
-	sendIpcMessage(IpcActions.SETTINGS_SAVE, updatedSettings);
-
-	currentTheme = updatedSettings.Theme;
-
-	applyTheme(updatedSettings.Theme);
-	closeAndClearModal(settingsModal);
-});
-
-// Diff page (main-content)
-diffBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(diffBodyWrapper, diffScrollbar));
-
-// History details page (main-content)
-detailsBodyWrapper.addEventListener("scroll", () =>
-	updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar)
-);
-detailsFileList.addEventListener("scroll", () =>
-	updateCustomScrollbar(detailsFileList, detailsFileScrollbar)
-);
-detailsBtn.addEventListener("click", (event) => {
-	if (detailsBtn.disabled || detailsBtn.classList.contains("disabled")) { return; }
-
-	event.stopPropagation();
-	repoPanel.classList.remove("show");
-	branchPanel.classList.remove("show");
-	const isOpening = detailsPanel.classList.toggle("show");
-	backdrop.classList.toggle("show", isOpening);
-
-	if (isOpening) {
-		setTimeout(() => updateCustomScrollbar(detailsFileList, detailsFileScrollbar));
 	}
 });
 
@@ -1791,6 +1715,7 @@ detailsBtn.addEventListener("click", (event) => {
 repoBtn.addEventListener("click", (event) =>
 	toggleDropdown(repoPanel, branchPanel, event)
 );
+
 repoBtn.addEventListener("contextmenu", (event) => {
 	event.preventDefault();
 	event.stopPropagation();
@@ -1805,6 +1730,7 @@ repoBtn.addEventListener("contextmenu", (event) => {
 branchBtn.addEventListener("click", (event) =>
 	toggleDropdown(branchPanel, repoPanel, event)
 );
+
 branchBtn.addEventListener("contextmenu", (event) => {
 	event.preventDefault();
 	event.stopPropagation();
@@ -1820,6 +1746,7 @@ branchBtn.addEventListener("contextmenu", (event) => {
 
 // Close triggers (dropdowns)
 backdrop.addEventListener("click", closeDropdowns);
+
 window.addEventListener("click", closeDropdowns);
 
 // Close triggers (modals)
@@ -1828,6 +1755,7 @@ modalBackdrops.forEach((backdrop) => {
 		if (event.target === backdrop) { closeAndClearModal(backdrop); }
 	});
 });
+
 modalCloseTriggers.forEach((trigger) => {
 	trigger.addEventListener("click", (event) => {
 		const parentModal = event.target.closest(".modal-backdrop");
@@ -1921,80 +1849,49 @@ changesMasterCheckbox.addEventListener("change", (event) => {
 	toggleCommitButton();
 });
 
-// Commit section (right-sidebar)
-commitMessageInput.addEventListener("input", () => {
-	saveDraft();
-	toggleCommitButton();
-});
+// Scrollbars (topbar)
+repoList.addEventListener("scroll", () =>
+	updateCustomScrollbar(repoList, repoScrollbar)
+);
 
-commitDescriptionInput.addEventListener("input", () => {
-	saveDraft();
-});
+branchList.addEventListener("scroll", () =>
+	updateCustomScrollbar(branchList, branchScrollbar)
+);
 
-commitBtn.addEventListener("click", () => {
-	// Pull
-	if (isPullRequired) {
-		commitBtn.disabled = true;
-		commitBtn.classList.add("disabled");
-		commitBtn.textContent = "Pulling...";
+// Todo list scrollbar (scrollbar/modals)
+todoModalRowsContainer.addEventListener("scroll", () =>
+	updateCustomScrollbar(todoModalRowsContainer, todoScrollbar)
+);
 
-		sendIpcMessage(IpcActions.REPO_PULL, {
-			repoPath: currentRepoPath
-		});
-		return;
+// Diff page (main-content)
+diffBodyWrapper.addEventListener("scroll", () => updateCustomScrollbar(diffBodyWrapper, diffScrollbar));
+
+// History details page (main-content)
+detailsBodyWrapper.addEventListener("scroll", () =>
+	updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar)
+);
+
+detailsFileList.addEventListener("scroll", () =>
+	updateCustomScrollbar(detailsFileList, detailsFileScrollbar)
+);
+
+detailsBtn.addEventListener("click", (event) => {
+	if (detailsBtn.disabled || detailsBtn.classList.contains("disabled")) { return; }
+
+	event.stopPropagation();
+	repoPanel.classList.remove("show");
+	branchPanel.classList.remove("show");
+	const isOpening = detailsPanel.classList.toggle("show");
+	backdrop.classList.toggle("show", isOpening);
+
+	if (isOpening) {
+		setTimeout(() => updateCustomScrollbar(detailsFileList, detailsFileScrollbar));
 	}
-
-	// Commit
-	const message = commitMessageInput.value.trim();
-	const description = commitDescriptionInput.value.trim();
-
-	if (message === "" || currentRepoPath === "" || currentChangesCount === 0) { return; }
-
-	const selectedFiles = [];
-	const allFileCheckboxes = document.querySelectorAll(".changes-item-checkbox:checked");
-
-	allFileCheckboxes.forEach((checkbox) => {
-		const itemRow = checkbox.closest(".change-item");
-		const filePath = itemRow.dataset.path;
-		selectedFiles.push(filePath);
-	});
-
-	if (selectedFiles.length === 0) { return; }
-
-	commitBtn.disabled = true;
-	commitBtn.classList.add("disabled");
-
-	sendIpcMessage(IpcActions.REPO_COMMIT, {
-		repoPath: currentRepoPath,
-		message: message,
-		description: description,
-		files: selectedFiles
-	});
 });
 
 // Scrollbar (right-sidebar)
 changesList.addEventListener("scroll", () => {
 	updateCustomScrollbar(changesList, changesScrollbar);
-});
-historyList.addEventListener("scroll", () => {
-	updateCustomScrollbar(historyList, historyScrollbar);
-
-	if (isFetchingHistory || hasReachedEndOfHistory || !currentBranch) { return; }
-
-	const threshold = 30; // 30px
-	const isNearBottom = historyList.scrollTop + historyList.clientHeight >= historyList.scrollHeight - threshold;
-
-	if (isNearBottom) {
-		isFetchingHistory = true;
-		currentHistorySkip += historyTake;
-
-		sendIpcMessage(IpcActions.GET_BRANCH_HISTORY, {
-			repoPath: currentRepoPath,
-			branchName: currentBranch,
-			skip: currentHistorySkip,
-			take: historyTake
-		});
-	}
 });
 
 window.addEventListener("resize", () => {
@@ -2010,6 +1907,65 @@ const listResizeObserver = new ResizeObserver(() => {
 if (changesList) { listResizeObserver.observe(changesList); }
 if (historyList) { listResizeObserver.observe(historyList); }
 
+// Force close (context-menu)
+window.addEventListener("click", closeContextMenusOnOutsideClick, true);
+
+window.addEventListener("click", (event) => {
+	if (repoCreateModalLicenseEditPanel.classList.contains("open")) {
+		if (!repoCreateModalLicenseEditPanel.contains(event.target) && !repoCreateModalLicenseEdit.contains(event.target)) {
+			repoCreateModalLicenseEditPanel.classList.remove("open");
+			repoCreateModalLicenseEdit.classList.remove("active");
+		}
+	}
+}, true);
+
+// Search & Selection Setup (dropdowns)
+const setupFilter = (inputSelector, panelSelector) => {
+	const searchInput = document.querySelector(inputSelector);
+
+	searchInput.addEventListener("input", (event) => {
+		const searchTerm = event.target.value.toLowerCase();
+
+		const dropdownItems = document.querySelectorAll(`${panelSelector} .dropdown-item`);
+
+		dropdownItems.forEach((item) => {
+			const itemText = item.textContent.toLowerCase();
+
+			if (itemText.includes(searchTerm)) { item.style.display = ""; }
+			else { item.style.display = "none"; }
+		});
+
+		updateCustomScrollbar(repoList, repoScrollbar);
+		updateCustomScrollbar(branchList, branchScrollbar);
+	});
+};
+
+const setupSelection = (panelSelector, btnValueSelector) => {
+	const panel = document.querySelector(panelSelector);
+	const valueDisplay = document.querySelector(btnValueSelector);
+
+	panel.addEventListener("click", (event) => {
+		const item = event.target.closest(".dropdown-item");
+
+		if (item && !item.classList.contains("invalid")) {
+			valueDisplay.textContent = item.textContent;
+
+			panel.querySelectorAll(".dropdown-item").forEach((elem) => { elem.classList.remove("active"); });
+
+			item.classList.add("active");
+
+			closeDropdowns();
+		}
+	});
+};
+
+setupFilter("#repositories-filter .filter-input", "#repository-dropdown-panel");
+setupFilter("#branches-filter .filter-input", "#branch-dropdown-panel");
+
+setupSelection("#repository-dropdown-panel", "#repositories-container .btn-value");
+setupSelection("#branch-dropdown-panel", "#branches-container .btn-value");
+
+// ======================== REPO LISTENERS ========================
 // Add/new buttons (dropdowns)
 repoNewBtn.addEventListener("click", (event) => {
 	event.stopPropagation();
@@ -2021,46 +1977,20 @@ repoNewBtn.addEventListener("click", (event) => {
 	placeContextMenu(event, repoContextMenu);
 });
 
-branchNewBtn.addEventListener("click", (event) => {
-	event.stopPropagation();
-	closeDropdowns();
-
-	branchNewModal.classList.add("show");
-	validateBranchNewModal();
-	setTimeout(() => {
-		branchNewModalInputName.focus();
-	}, 100);
-});
-
 // Context menu options (context-menu)
 topbarRepoMenuClone.addEventListener("click", (event) => {
 	event.stopPropagation();
-	closeDropdowns();
-	repoCloneModal.classList.add("show");
-	validateRepoCloneModal();
-	setTimeout(() => {
-		repoCloneModalRepoUrl.focus();
-	}, 100);
+	openModalWithFocus(repoCloneModal, validateRepoCloneModal, repoCloneModalRepoUrl);
 });
 
 topbarRepoMenuCreate.addEventListener("click", (event) => {
 	event.stopPropagation();
-	closeDropdowns();
-	repoCreateModal.classList.add("show");
-	validateRepoCreateModal();
-	setTimeout(() => {
-		repoCreateModalInputName.focus();
-	}, 100);
+	openModalWithFocus(repoCreateModal, validateRepoCreateModal, repoCreateModalInputName);
 });
 
 topbarRepoMenuAdd.addEventListener("click", (event) => {
 	event.stopPropagation();
-	closeDropdowns();
-	repoAddModal.classList.add("show");
-	validateRepoAddModal();
-	setTimeout(() => {
-		repoAddModalInputPath.focus();
-	}, 100);
+	openModalWithFocus(repoAddModal, validateRepoAddModal, repoAddModalInputPath);
 });
 
 topbarRepoMenuTerminal.addEventListener("click", (event) => {
@@ -2095,165 +2025,19 @@ topbarRepoMenuRemove.addEventListener("click", (event) => {
 	closeDropdowns();
 });
 
-topbarBranchMenuNew.addEventListener("click", (event) => {
-	event.stopPropagation();
-	closeDropdowns();
-	branchNewModal.classList.add("show");
-	validateBranchNewModal();
-	setTimeout(() => {
-		branchNewModalInputName.focus();
-	}, 100);
-});
-
-topbarBranchMenuCopy.addEventListener("click", (event) => {
-	event.stopPropagation();
-	closeDropdowns();
-	if (currentBranch) {
-		navigator.clipboard.writeText(currentBranch).then(() => {
-			console.log(`Copied '${currentBranch}' to clipboard.`);
-		}).catch((err) => {
-			console.error("Failed to copy text: ", err);
-		});
-	}
-});
-
-topbarBranchMenuMerge.addEventListener("click", (event) => {
-	event.stopPropagation();
-	closeDropdowns();
-	if (!currentRepoPath || !currentBranch) { return; }
-
-	setupMergeModal(currentBranch);
-	branchMergeModal.dataset.targetName = currentBranch;
-	branchMergeModal.classList.add("show");
-});
-
-topbarBranchMenuRename.addEventListener("click", (event) => {
-	event.stopPropagation();
-	closeDropdowns();
-
-	if (!currentRepoPath || !currentBranch) { return; }
-
-	branchRenameModal.dataset.targetName = currentBranch;
-	branchRenameModalInputName.value = currentBranch;
-
-	branchRenameModal.classList.add("show");
-	validateBranchRenameModal();
-
-	setTimeout(() => {
-		branchRenameModalInputName.focus();
-		branchRenameModalInputName.select();
-	}, 100);
-});
-
-topbarBranchMenuDelete.addEventListener("click", (event) => {
-	event.stopPropagation();
-	closeDropdowns();
-
-	if (!currentRepoPath || !currentBranch) {  return; }
-
-	branchDeleteModal.dataset.targetName = currentBranch;
-	branchDeleteModalName.textContent = currentBranch;
-
-	branchDeleteModal.classList.add("show");
-});
-
-branchItemMenuRename.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const branchName = branchItemContextMenu.dataset.targetName;
-
-	if (branchName) {
-		branchRenameModal.dataset.targetName = branchName;
-		branchRenameModalInputName.value = branchName;
-
-		branchRenameModal.classList.add("show");
-		validateBranchRenameModal();
-
-		setTimeout(() => {
-			branchRenameModalInputName.focus();
-			branchRenameModalInputName.select();
-		}, 100);
-	}
-
-	branchItemContextMenu.classList.remove("show");
-	closeDropdowns();
-});
-
-branchItemMenuCopy.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const branchName = branchItemContextMenu.dataset.targetName;
-
-	if (branchName) {
-		navigator.clipboard.writeText(branchName).then(() => {
-			console.log(`Copied '${branchName}' to clipboard.`);
-		}).catch((err) => {
-			console.error("Failed to copy text: ", err);
-		});
-	}
-
-	branchItemContextMenu.classList.remove("show");
-	closeDropdowns();
-});
-
-branchItemMenuMerge.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const branchName = branchItemContextMenu.dataset.targetName;
-
-	if (branchName) {
-		setupMergeModal(branchName);
-		branchMergeModal.dataset.targetName = branchName;
-		branchMergeModal.classList.add("show");
-	}
-
-	branchItemContextMenu.classList.remove("show");
-	closeDropdowns();
-});
-
-branchItemMenuDelete.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const branchName = branchItemContextMenu.dataset.targetName;
-
-	if (branchName) {
-		branchDeleteModal.dataset.targetName = branchName;
-
-		branchDeleteModalName.textContent = branchName;
-		branchDeleteModal.classList.add("show");
-	}
-
-	branchItemContextMenu.classList.remove("show");
-	closeDropdowns();
-});
-
 repoMenuClone.addEventListener("click", (event) => {
 	event.stopPropagation();
-	closeDropdowns();
-
-	repoCloneModal.classList.add("show");
-	validateRepoCloneModal();
-	setTimeout(() => {
-		repoCloneModalRepoUrl.focus();
-	}, 100);
+	openModalWithFocus(repoCloneModal, validateRepoCloneModal, repoCloneModalRepoUrl);
 });
 
 repoMenuCreate.addEventListener("click", (event) => {
 	event.stopPropagation();
-	closeDropdowns();
-
-	repoCreateModal.classList.add("show");
-	validateRepoCreateModal();
-	setTimeout(() => {
-		repoCreateModalInputName.focus();
-	}, 100);
+	openModalWithFocus(repoCreateModal, validateRepoCreateModal, repoCreateModalInputName);
 });
 
 repoMenuAdd.addEventListener("click", (event) => {
 	event.stopPropagation();
-	closeDropdowns();
-
-	repoAddModal.classList.add("show");
-	validateRepoAddModal();
-	setTimeout(() => {
-		repoAddModalInputPath.focus();
-	}, 100);
+	openModalWithFocus(repoAddModal, validateRepoAddModal, repoAddModalInputPath);
 });
 
 repoItemMenuTerminal.addEventListener("click", (event) => {
@@ -2295,237 +2079,6 @@ repoItemMenuRemove.addEventListener("click", (event) => {
 		repoRemoveModal.classList.add("show");
 	}
 	closeDropdowns();
-});
-
-changesItemMenuDiscard.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const filePath = changesItemContextMenu.dataset.targetPath;
-	if (filePath) {
-		sendIpcMessage(IpcActions.CHANGE_DISCARD, {
-			repoPath: currentRepoPath,
-			filePath: filePath
-		});
-	}
-	closeDropdowns();
-});
-
-changesItemMenuIgnoreFile.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const filePath = changesItemContextMenu.dataset.targetPath;
-	if (filePath) {
-		sendIpcMessage(IpcActions.CHANGE_IGNORE, {
-			repoPath: currentRepoPath,
-			filePath: filePath,
-			ignoreType: "file"
-		});
-	}
-	closeDropdowns();
-});
-
-changesItemMenuCopyAbsPath.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const filePath = changesItemContextMenu.dataset.targetPath;
-	if (filePath) {
-		let absPath = `${currentRepoPath}/${filePath}`;
-
-		const isWindows = currentRepoPath.includes("\\");
-
-		if (isWindows) { absPath = absPath.replace(/\//g, "\\").replace(/\\\\/g, "\\"); }
-		else { absPath = absPath.replace(/\\/g, "/").replace(/\/\//g, "/"); }
-
-		navigator.clipboard.writeText(absPath).then(() => console.log(`Copied '${absPath}'`));
-	}
-	closeDropdowns();
-});
-
-changesItemMenuCopyRelPath.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const filePath = changesItemContextMenu.dataset.targetPath;
-	if (filePath) {
-		navigator.clipboard
-			.writeText(filePath)
-			.then(() => console.log(`Copied '${filePath}'`));
-	}
-	closeDropdowns();
-});
-
-changesItemMenuExplorer.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const filePath = changesItemContextMenu.dataset.targetPath;
-	if (filePath) {
-		let rawPath = `${currentRepoPath}/${filePath}`;
-		let lastSlashIndex = rawPath.lastIndexOf("/");
-		let dirPath = rawPath.substring(0, lastSlashIndex);
-
-		sendIpcMessage(IpcActions.EXPLORER_OPEN, {
-			path: dirPath
-		});
-	}
-	closeDropdowns();
-});
-
-historyItemMenuCheckout.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const hash = historyItemContextMenu.dataset.targetHash;
-	if (hash) {
-		sendIpcMessage(IpcActions.HISTORY_CHECKOUT, {
-			repoPath: currentRepoPath,
-			commitHash: hash
-		});
-	}
-	closeDropdowns();
-});
-
-historyItemMenuRevert.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const hash = historyItemContextMenu.dataset.targetHash;
-	if (hash) {
-		sendIpcMessage(IpcActions.HISTORY_REVERT, {
-			repoPath: currentRepoPath,
-			commitHash: hash
-		});
-	}
-	closeDropdowns();
-});
-
-historyItemMenuCreateBranch.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const hash = historyItemContextMenu.dataset.targetHash;
-	if (hash) {
-		branchHistoryNewModalName.textContent = hash.substring(0, 7); // hash shortened to 7 chars
-		branchHistoryNewModal.dataset.targetHash = hash;
-		branchHistoryNewModal.classList.add("show");
-		validateBranchHistoryNewModal();
-		setTimeout(() => {
-			branchHistoryNewModalInputName.focus();
-		}, 100);
-	}
-	closeDropdowns();
-});
-
-historyItemMenuCopySHA.addEventListener("click", (event) => {
-	event.stopPropagation();
-	const hash = historyItemContextMenu.dataset.targetHash;
-	if (hash) {
-		navigator.clipboard.writeText(hash).then(() => console.log(`Copied '${hash}'`));
-	}
-	closeDropdowns();
-});
-
-// Force close (context-menu)
-window.addEventListener("click", (event) => {
-	if (repoContextMenu.classList.contains("show")) {
-		if (!repoContextMenu.contains(event.target) && !repoNewBtn.contains(event.target)) {
-			repoContextMenu.classList.remove("show");
-		}
-	}
-
-	if (repoItemContextMenu.classList.contains("show")) {
-		if (!repoItemContextMenu.contains(event.target)) {
-			repoItemContextMenu.classList.remove("show");
-			document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
-		}
-	}
-
-	if (branchItemContextMenu.classList.contains("show")) {
-		if (!branchItemContextMenu.contains(event.target)) {
-			branchItemContextMenu.classList.remove("show");
-			document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
-		}
-	}
-
-	if (topbarRepoContextMenu.classList.contains("show")) {
-		if (!topbarRepoContextMenu.contains(event.target)) {
-			topbarRepoContextMenu.classList.remove("show");
-			document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
-		}
-	}
-
-	if (topbarBranchContextMenu.classList.contains("show")) {
-		if (!topbarBranchContextMenu.contains(event.target)) {
-			topbarBranchContextMenu.classList.remove("show");
-			document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
-		}
-	}
-
-	if (repoCreateModalLicenseEditPanel.classList.contains("open")) {
-		if (!repoCreateModalLicenseEditPanel.contains(event.target) && !repoCreateModalLicenseEdit.contains(event.target)) {
-			repoCreateModalLicenseEditPanel.classList.remove("open");
-			repoCreateModalLicenseEdit.classList.remove("active");
-		}
-	}
-}, true);
-
-// Confirm buttons (modals)
-branchNewModalConfirmBtn.addEventListener("click", () => {
-	const newBranchName = branchNewModalInputName.value.trim();
-
-	if (newBranchName === "") { return; }
-
-	sendIpcMessage(IpcActions.BRANCH_CREATE, {
-		repoPath: currentRepoPath,
-		branchName: newBranchName
-	});
-
-	closeAndClearModal(branchNewModal);
-});
-
-branchHistoryNewModalConfirmBtn.addEventListener("click", () => {
-	const newBranchName = branchHistoryNewModalInputName.value.trim();
-	const commitHash = branchHistoryNewModal.dataset.targetHash;
-
-	if (newBranchName === "" || !commitHash) { return; }
-
-	sendIpcMessage(IpcActions.BRANCH_HISTORY_CREATE, {
-		repoPath: currentRepoPath,
-		branchName: newBranchName,
-		commitHash: commitHash
-	});
-
-	closeAndClearModal(branchHistoryNewModal);
-});
-
-branchRenameModalConfirmBtn.addEventListener("click", () => {
-	const newBranchName = branchRenameModalInputName.value.trim();
-	const oldBranchName = branchRenameModal.dataset.targetName;
-
-	if (newBranchName === "" || !oldBranchName) { return; }
-
-	sendIpcMessage(IpcActions.BRANCH_RENAME, {
-		repoPath: currentRepoPath,
-		oldName: oldBranchName,
-		newName: newBranchName
-	});
-
-	closeAndClearModal(branchRenameModal);
-});
-
-branchDeleteModalConfirmBtn.addEventListener("click", () => {
-	const branchName = branchDeleteModal.dataset.targetName;
-
-	if (!branchName) { return; }
-
-	sendIpcMessage(IpcActions.BRANCH_DELETE, {
-		repoPath: currentRepoPath,
-		branchName: branchName
-	});
-
-	closeAndClearModal(branchDeleteModal);
-});
-
-branchMergeModalConfirmBtn.addEventListener("click", () => {
-	const sourceBranch = branchMergeModalSelectSource.value;
-	const targetBranch = branchMergeModalSelectTarget.value;
-
-	if (!sourceBranch || !targetBranch || !currentRepoPath || sourceBranch === targetBranch) { return; }
-
-	sendIpcMessage(IpcActions.BRANCH_MERGE, {
-		repoPath: currentRepoPath,
-		sourceBranch: sourceBranch,
-		targetBranch: targetBranch
-	});
-
-	closeAndClearModal(branchMergeModal);
 });
 
 repoCloneModalConfirmBtn.addEventListener("click", () => {
@@ -2613,68 +2166,26 @@ repoMissingModalCancelBtn.addEventListener("click", () => {
 	closeAndClearModal(repoMissingModal);
 });
 
-todoModalConfirmBtn.addEventListener("click", () => {
-	if (!currentRepoPath) { return; }
-
-	activeTodos = JSON.parse(JSON.stringify(draftTodos));
-
-	sendIpcMessage(IpcActions.TODO_SAVE, {
-		repoPath: currentRepoPath,
-		todos: activeTodos
-	});
-
-	closeAndClearModal(todoModal);
-});
-
-configModalConfirmBtn.addEventListener("click", () => {
-	if (!currentRepoPath) { return; }
-
-	sendIpcMessage(IpcActions.CONFIG_LOCAL_SAVE, {
-		repoPath: currentRepoPath,
-		name: configModalName.value.trim(),
-		email: configModalEmail.value.trim()
-	});
-
-	closeAndClearModal(configModal);
-});
-
-accountModalConfirmBtn.addEventListener("click", () => {
-	sendIpcMessage(IpcActions.CONFIG_GLOBAL_SAVE, {
-		name: accountModalInputName.value.trim(),
-		email: accountModalInputEmail.value.trim()
-	});
-
-	closeAndClearModal(accountModal);
-});
-
-// Input boxes (modals)
-branchNewModalInputName.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") { branchNewModalConfirmBtn.click(); }
-});
-branchHistoryNewModal.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") { branchHistoryNewModalConfirmBtn.click(); }
-});
-branchRenameModalInputName.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") { branchRenameModalConfirmBtn.click(); }
-});
 repoCreateModalInputName.addEventListener("keyup", (event) => {
 	if (event.key === "Enter") { repoCreateModalConfirmBtn.click(); }
 });
+
 repoCreateModalInputPath.addEventListener("keyup", (event) => {
 	if (event.key === "Enter") { repoCreateModalConfirmBtn.click(); }
 });
+
 repoAddModalInputPath.addEventListener("keyup", (event) => {
 	if (event.key === "Enter") { repoAddModalConfirmBtn.click(); }
 });
 
-// Confirm toggle (modals)
-branchNewModalInputName.addEventListener("input", validateBranchNewModal);
-branchHistoryNewModalInputName.addEventListener("input", validateBranchHistoryNewModal);
-branchRenameModalInputName.addEventListener("input", validateBranchRenameModal);
 repoCloneModalRepoUrl.addEventListener("input", validateRepoCloneModal);
+
 repoCloneModalInputPath.addEventListener("input", validateRepoCloneModal);
+
 repoCreateModalInputName.addEventListener("input", validateRepoCreateModal);
+
 repoCreateModalInputPath.addEventListener("input", validateRepoCreateModal);
+
 repoAddModalInputPath.addEventListener("input", validateRepoAddModal);
 
 // Browse buttons (modals)
@@ -2721,53 +2232,488 @@ repoCreateModalSelectLicense.addEventListener("change", (event) => {
 	}
 });
 
-// Search & Selection Setup (dropdowns)
-const setupFilter = (inputSelector, panelSelector) => {
-	const searchInput = document.querySelector(inputSelector);
+// ======================== BRANCH LISTENERS ========================
+branchNewBtn.addEventListener("click", (event) => {
+	event.stopPropagation();
+	openModalWithFocus(branchNewModal, validateBranchNewModal, branchNewModalInputName);
+});
 
-	searchInput.addEventListener("input", (event) => {
-		const searchTerm = event.target.value.toLowerCase();
+topbarBranchMenuNew.addEventListener("click", (event) => {
+	event.stopPropagation();
+	openModalWithFocus(branchNewModal, validateBranchNewModal, branchNewModalInputName);
+});
 
-		const dropdownItems = document.querySelectorAll(`${panelSelector} .dropdown-item`);
+topbarBranchMenuCopy.addEventListener("click", (event) => {
+	event.stopPropagation();
+	closeDropdowns();
+	if (currentBranch) { copyToClipboard(currentBranch); }
+});
 
-		dropdownItems.forEach((item) => {
-			const itemText = item.textContent.toLowerCase();
+topbarBranchMenuMerge.addEventListener("click", (event) => {
+	event.stopPropagation();
+	closeDropdowns();
+	if (!currentRepoPath || !currentBranch) { return; }
 
-			if (itemText.includes(searchTerm)) { item.style.display = ""; }
-			else { item.style.display = "none"; }
+	setupMergeModal(currentBranch);
+	branchMergeModal.dataset.targetName = currentBranch;
+	branchMergeModal.classList.add("show");
+});
+
+topbarBranchMenuRename.addEventListener("click", (event) => {
+	event.stopPropagation();
+
+	if (!currentRepoPath || !currentBranch) { return; }
+
+	branchRenameModal.dataset.targetName = currentBranch;
+	branchRenameModalInputName.value = currentBranch;
+
+	openModalWithFocus(branchRenameModal, validateBranchRenameModal, branchRenameModalInputName, true);
+});
+
+topbarBranchMenuDelete.addEventListener("click", (event) => {
+	event.stopPropagation();
+	closeDropdowns();
+
+	if (!currentRepoPath || !currentBranch) { return; }
+
+	branchDeleteModal.dataset.targetName = currentBranch;
+	branchDeleteModalName.textContent = currentBranch;
+
+	branchDeleteModal.classList.add("show");
+});
+
+branchItemMenuRename.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const branchName = branchItemContextMenu.dataset.targetName;
+
+	if (branchName) {
+		branchRenameModal.dataset.targetName = branchName;
+		branchRenameModalInputName.value = branchName;
+
+		openModalWithFocus(branchRenameModal, validateBranchRenameModal, branchRenameModalInputName, true);
+	}
+
+	branchItemContextMenu.classList.remove("show");
+	closeDropdowns();
+});
+
+branchItemMenuCopy.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const branchName = branchItemContextMenu.dataset.targetName;
+
+	if (branchName) { copyToClipboard(branchName); }
+
+	branchItemContextMenu.classList.remove("show");
+	closeDropdowns();
+});
+
+branchItemMenuMerge.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const branchName = branchItemContextMenu.dataset.targetName;
+
+	if (branchName) {
+		setupMergeModal(branchName);
+		branchMergeModal.dataset.targetName = branchName;
+		branchMergeModal.classList.add("show");
+	}
+
+	branchItemContextMenu.classList.remove("show");
+	closeDropdowns();
+});
+
+branchItemMenuDelete.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const branchName = branchItemContextMenu.dataset.targetName;
+
+	if (branchName) {
+		branchDeleteModal.dataset.targetName = branchName;
+
+		branchDeleteModalName.textContent = branchName;
+		branchDeleteModal.classList.add("show");
+	}
+
+	branchItemContextMenu.classList.remove("show");
+	closeDropdowns();
+});
+
+// Left sidebar buttons (left-sidebar)
+mergeBtn.addEventListener("click", () => {
+	if (!currentRepoPath || !currentBranch) { return; }
+
+	setupMergeModal(currentBranch);
+	branchMergeModal.dataset.targetName = currentBranch;
+	branchMergeModal.classList.add("show");
+});
+
+// Confirm buttons (modals)
+branchNewModalConfirmBtn.addEventListener("click", () => {
+	const newBranchName = branchNewModalInputName.value.trim();
+
+	if (newBranchName === "") { return; }
+
+	sendIpcMessage(IpcActions.BRANCH_CREATE, {
+		repoPath: currentRepoPath,
+		branchName: newBranchName
+	});
+
+	closeAndClearModal(branchNewModal);
+});
+
+branchHistoryNewModalConfirmBtn.addEventListener("click", () => {
+	const newBranchName = branchHistoryNewModalInputName.value.trim();
+	const commitHash = branchHistoryNewModal.dataset.targetHash;
+
+	if (newBranchName === "" || !commitHash) { return; }
+
+	sendIpcMessage(IpcActions.BRANCH_HISTORY_CREATE, {
+		repoPath: currentRepoPath,
+		branchName: newBranchName,
+		commitHash: commitHash
+	});
+
+	closeAndClearModal(branchHistoryNewModal);
+});
+
+branchRenameModalConfirmBtn.addEventListener("click", () => {
+	const newBranchName = branchRenameModalInputName.value.trim();
+	const oldBranchName = branchRenameModal.dataset.targetName;
+
+	if (newBranchName === "" || !oldBranchName) { return; }
+
+	sendIpcMessage(IpcActions.BRANCH_RENAME, {
+		repoPath: currentRepoPath,
+		oldName: oldBranchName,
+		newName: newBranchName
+	});
+
+	closeAndClearModal(branchRenameModal);
+});
+
+branchDeleteModalConfirmBtn.addEventListener("click", () => {
+	const branchName = branchDeleteModal.dataset.targetName;
+
+	if (!branchName) { return; }
+
+	sendIpcMessage(IpcActions.BRANCH_DELETE, {
+		repoPath: currentRepoPath,
+		branchName: branchName
+	});
+
+	closeAndClearModal(branchDeleteModal);
+});
+
+branchMergeModalConfirmBtn.addEventListener("click", () => {
+	const sourceBranch = branchMergeModalSelectSource.value;
+	const targetBranch = branchMergeModalSelectTarget.value;
+
+	if (!sourceBranch || !targetBranch || !currentRepoPath || sourceBranch === targetBranch) { return; }
+
+	sendIpcMessage(IpcActions.BRANCH_MERGE, {
+		repoPath: currentRepoPath,
+		sourceBranch: sourceBranch,
+		targetBranch: targetBranch
+	});
+
+	closeAndClearModal(branchMergeModal);
+});
+
+// Input boxes (modals)
+branchNewModalInputName.addEventListener("keyup", (event) => {
+	if (event.key === "Enter") { branchNewModalConfirmBtn.click(); }
+});
+
+branchHistoryNewModal.addEventListener("keyup", (event) => {
+	if (event.key === "Enter") { branchHistoryNewModalConfirmBtn.click(); }
+});
+
+branchRenameModalInputName.addEventListener("keyup", (event) => {
+	if (event.key === "Enter") { branchRenameModalConfirmBtn.click(); }
+});
+
+// Confirm toggle (modals)
+branchNewModalInputName.addEventListener("input", validateBranchNewModal);
+
+branchHistoryNewModalInputName.addEventListener("input", validateBranchHistoryNewModal);
+
+branchRenameModalInputName.addEventListener("input", validateBranchRenameModal);
+
+// ======================== CHANGES & COMMIT LISTENERS ========================
+// Commit section (right-sidebar)
+commitMessageInput.addEventListener("input", () => {
+	saveDraft();
+	toggleCommitButton();
+});
+
+commitDescriptionInput.addEventListener("input", () => {
+	saveDraft();
+});
+
+commitBtn.addEventListener("click", () => {
+	// Pull
+	if (isPullRequired) {
+		commitBtn.disabled = true;
+		commitBtn.classList.add("disabled");
+		commitBtn.textContent = "Pulling...";
+
+		sendIpcMessage(IpcActions.REPO_PULL, {
+			repoPath: currentRepoPath
 		});
+		return;
+	}
 
-		updateCustomScrollbar(repoList, repoScrollbar);
-		updateCustomScrollbar(branchList, branchScrollbar);
+	// Commit
+	const message = commitMessageInput.value.trim();
+	const description = commitDescriptionInput.value.trim();
+
+	if (message === "" || currentRepoPath === "" || currentChangesCount === 0) { return; }
+
+	const selectedFiles = [];
+	const allFileCheckboxes = document.querySelectorAll(".changes-item-checkbox:checked");
+
+	allFileCheckboxes.forEach((checkbox) => {
+		const itemRow = checkbox.closest(".change-item");
+		const filePath = itemRow.dataset.path;
+		selectedFiles.push(filePath);
 	});
-};
 
-const setupSelection = (panelSelector, btnValueSelector) => {
-	const panel = document.querySelector(panelSelector);
-	const valueDisplay = document.querySelector(btnValueSelector);
+	if (selectedFiles.length === 0) { return; }
 
-	panel.addEventListener("click", (event) => {
-		const item = event.target.closest(".dropdown-item");
+	commitBtn.disabled = true;
+	commitBtn.classList.add("disabled");
 
-		if (item && !item.classList.contains("invalid")) {
-			valueDisplay.textContent = item.textContent;
-
-			panel.querySelectorAll(".dropdown-item").forEach((elem) => { elem.classList.remove("active"); });
-
-			item.classList.add("active");
-
-			closeDropdowns();
-		}
+	sendIpcMessage(IpcActions.REPO_COMMIT, {
+		repoPath: currentRepoPath,
+		message: message,
+		description: description,
+		files: selectedFiles
 	});
-};
+});
 
-setupFilter("#repositories-filter .filter-input", "#repository-dropdown-panel");
-setupFilter("#branches-filter .filter-input", "#branch-dropdown-panel");
+// Changes section
+changesItemMenuDiscard.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const filePath = changesItemContextMenu.dataset.targetPath;
+	if (filePath) {
+		sendIpcMessage(IpcActions.CHANGE_DISCARD, {
+			repoPath: currentRepoPath,
+			filePath: filePath
+		});
+	}
+	closeDropdowns();
+});
 
-setupSelection("#repository-dropdown-panel", "#repositories-container .btn-value");
-setupSelection("#branch-dropdown-panel", "#branches-container .btn-value");
+changesItemMenuIgnoreFile.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const filePath = changesItemContextMenu.dataset.targetPath;
+	if (filePath) {
+		sendIpcMessage(IpcActions.CHANGE_IGNORE, {
+			repoPath: currentRepoPath,
+			filePath: filePath,
+			ignoreType: "file"
+		});
+	}
+	closeDropdowns();
+});
 
-// --------------- APP INIT ---------------
+changesItemMenuCopyAbsPath.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const filePath = changesItemContextMenu.dataset.targetPath;
+	if (filePath) {
+		let absPath = `${currentRepoPath}/${filePath}`;
+
+		const isWindows = currentRepoPath.includes("\\");
+
+		if (isWindows) { absPath = absPath.replace(/\//g, "\\").replace(/\\\\/g, "\\"); }
+		else { absPath = absPath.replace(/\\/g, "/").replace(/\/\//g, "/"); }
+
+		navigator.clipboard.writeText(absPath).then(() => console.log(`Copied '${absPath}'`));
+	}
+	closeDropdowns();
+});
+
+changesItemMenuCopyRelPath.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const filePath = changesItemContextMenu.dataset.targetPath;
+	if (filePath) { copyToClipboard(filePath); }
+	closeDropdowns();
+});
+
+changesItemMenuExplorer.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const filePath = changesItemContextMenu.dataset.targetPath;
+	if (filePath) {
+		let rawPath = `${currentRepoPath}/${filePath}`;
+		let lastSlashIndex = rawPath.lastIndexOf("/");
+		let dirPath = rawPath.substring(0, lastSlashIndex);
+
+		sendIpcMessage(IpcActions.EXPLORER_OPEN, {
+			path: dirPath
+		});
+	}
+	closeDropdowns();
+});
+
+// ======================== HISTORY LISTENERS ========================
+historyList.addEventListener("scroll", () => {
+	updateCustomScrollbar(historyList, historyScrollbar);
+
+	if (isFetchingHistory || hasReachedEndOfHistory || !currentBranch) { return; }
+
+	const threshold = 30; // 30px
+	const isNearBottom = historyList.scrollTop + historyList.clientHeight >= historyList.scrollHeight - threshold;
+
+	if (isNearBottom) {
+		isFetchingHistory = true;
+		currentHistorySkip += historyTake;
+
+		sendIpcMessage(IpcActions.GET_BRANCH_HISTORY, {
+			repoPath: currentRepoPath,
+			branchName: currentBranch,
+			skip: currentHistorySkip,
+			take: historyTake
+		});
+	}
+});
+
+historyItemMenuCheckout.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const hash = historyItemContextMenu.dataset.targetHash;
+	if (hash) {
+		sendIpcMessage(IpcActions.HISTORY_CHECKOUT, {
+			repoPath: currentRepoPath,
+			commitHash: hash
+		});
+	}
+	closeDropdowns();
+});
+
+historyItemMenuRevert.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const hash = historyItemContextMenu.dataset.targetHash;
+	if (hash) {
+		sendIpcMessage(IpcActions.HISTORY_REVERT, {
+			repoPath: currentRepoPath,
+			commitHash: hash
+		});
+	}
+	closeDropdowns();
+});
+
+historyItemMenuCreateBranch.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const hash = historyItemContextMenu.dataset.targetHash;
+	if (hash) {
+		branchHistoryNewModalName.textContent = hash.substring(0, 7); // hash shortened to 7 chars
+		branchHistoryNewModal.dataset.targetHash = hash;
+		openModalWithFocus(branchHistoryNewModal, validateBranchHistoryNewModal, branchHistoryNewModalInputName);
+	}
+	closeDropdowns();
+});
+
+historyItemMenuCopySHA.addEventListener("click", (event) => {
+	event.stopPropagation();
+	const hash = historyItemContextMenu.dataset.targetHash;
+	if (hash) { copyToClipboard(hash); }
+	closeDropdowns();
+});
+
+// ======================== TODO LISTENERS ========================
+todoBtn.addEventListener("click", () => {
+	if (!currentRepoPath) { return; }
+
+	draftTodos = JSON.parse(JSON.stringify(activeTodos));
+
+	renderTodoList();
+	todoModal.classList.add("show");
+});
+
+todoModalConfirmBtn.addEventListener("click", () => {
+	if (!currentRepoPath) { return; }
+
+	activeTodos = JSON.parse(JSON.stringify(draftTodos));
+
+	sendIpcMessage(IpcActions.TODO_SAVE, {
+		repoPath: currentRepoPath,
+		todos: activeTodos
+	});
+
+	closeAndClearModal(todoModal);
+});
+
+// ======================== CONFIG & SETTINGS LISTENERS ========================
+configBtn.addEventListener("click", () => {
+	if (!currentRepoPath) { return; }
+
+	sendIpcMessage(IpcActions.CONFIG_LOCAL_GET, { repoPath: currentRepoPath });
+});
+
+settingsBtn.addEventListener("click", () => {
+	settingsModalThemeSelect.value = currentTheme;
+	settingsModal.classList.add("show");
+});
+
+accountBtn.addEventListener("click", () =>
+	sendIpcMessage(IpcActions.CONFIG_GLOBAL_GET, {})
+);
+
+// Settings modal (modals)
+settingsModalLogsView.addEventListener("click", () =>
+	sendIpcMessage(IpcActions.EXPLORER_OPEN, {
+		path: "%APP_DATA%"
+	})
+);
+
+settingsModalLogsClear.addEventListener("click", () =>
+	sendIpcMessage(IpcActions.LOGS_CLEAR, {})
+);
+
+settingsModalConfirmBtn.addEventListener("click", () => {
+	const updatedSettings = {
+		Id: 1,
+		Theme: settingsModalThemeSelect.value
+	};
+
+	sendIpcMessage(IpcActions.SETTINGS_SAVE, updatedSettings);
+
+	currentTheme = updatedSettings.Theme;
+
+	applyTheme(updatedSettings.Theme);
+	closeAndClearModal(settingsModal);
+});
+
+configModalConfirmBtn.addEventListener("click", () => {
+	if (!currentRepoPath) { return; }
+
+	sendIpcMessage(IpcActions.CONFIG_LOCAL_SAVE, {
+		repoPath: currentRepoPath,
+		name: configModalName.value.trim(),
+		email: configModalEmail.value.trim()
+	});
+
+	closeAndClearModal(configModal);
+});
+
+accountModalConfirmBtn.addEventListener("click", () => {
+	sendIpcMessage(IpcActions.CONFIG_GLOBAL_SAVE, {
+		name: accountModalInputName.value.trim(),
+		email: accountModalInputEmail.value.trim()
+	});
+
+	closeAndClearModal(accountModal);
+});
+
+// ======================== FETCH LISTENERS ========================
+fetchBtn.addEventListener("click", () => {
+	if (!currentRepoPath || fetchBtn.classList.contains("fetching")) { return; }
+
+	fetchBtn.classList.add("fetching");
+
+	sendIpcMessage(IpcActions.REPO_FETCH, {
+		repoPath: currentRepoPath,
+	});
+});
+
+// ======================== APP INIT ========================
 updatePanelWidths();
 
 interactCustomScrollbar(repoList, repoScrollbar);
