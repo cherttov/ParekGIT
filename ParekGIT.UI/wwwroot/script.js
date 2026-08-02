@@ -1,5 +1,5 @@
 // ======================== DOM ELEMENTS ========================
-// Topbar
+// Topbar repo
 const repoContainer = document.getElementById("repositories-container");
 const repoDropdown = document.getElementById("repository-dropdown-panel");
 const repoNewBtn = document.querySelector("#repositories-container .btn-add");
@@ -8,6 +8,7 @@ const repoPanel = document.querySelector("#repositories-container .dropdown-pane
 const repoList = document.getElementById("repo-topbar-list");
 const repoScrollbar = document.getElementById("repo-topbar-scrollbar");
 
+// Topbar branch
 const branchContainer = document.getElementById("branches-container");
 const branchDropdown = document.getElementById("branch-dropdown-panel");
 const branchNewBtn = document.querySelector("#branches-container .btn-new");
@@ -16,11 +17,13 @@ const branchPanel = document.querySelector("#branches-container .dropdown-panel"
 const branchList = document.getElementById("branch-topbar-list");
 const branchScrollbar = document.getElementById("branch-topbar-scrollbar");
 
-const backdrop = document.getElementById("dropdown-backdrop");
+// Backdrop for dropdowns (darkened background)
+const dropdownBackdrop = document.getElementById("dropdown-backdrop");
 
-// Left Sidebar
+// LeftSidebar
 const leftSidebar = document.getElementById("left-sidebar");
 
+// LeftSidebar buttons
 const fileBtn = leftSidebar.querySelector(".btn-file");
 const mergeBtn = leftSidebar.querySelector(".btn-merge");
 const branchesBtn = leftSidebar.querySelector(".btn-branches");
@@ -31,15 +34,17 @@ const fetchBtn = leftSidebar.querySelector(".btn-fetch");
 const settingsBtn = leftSidebar.querySelector(".btn-settings");
 const accountBtn = leftSidebar.querySelector(".btn-account");
 
-// Main Content
+// MainContent
 const mainContent = document.getElementById("main-content");
 
+// MainContent file diff viewer
 const diffViewer = document.getElementById("diff-viewer");
 const diffFilename = document.getElementById("diff-filename");
 const diffContent = document.getElementById("diff-content");
 const diffBodyWrapper = document.getElementById("diff-body-wrapper");
 const diffScrollbar = document.getElementById("diff-scrollbar");
 
+// MainContent commit details viewer
 const detailsViewer = document.getElementById("details-viewer");
 const detailsCommitMessage = document.getElementById("details-commit-message");
 const detailsCommitStats = document.getElementById("details-commit-stats");
@@ -52,15 +57,17 @@ const detailsPanel = document.getElementById("details-footer-panel");
 const detailsFileList = document.getElementById("details-file-list");
 const detailsFileScrollbar = document.getElementById("details-file-scrollbar");
 
-// Right Sidebar + SplitContainer
+// RightSidebar + SplitContainer
 const rightSidebar = document.getElementById("right-sidebar");
 const resizer = document.getElementById("resizer");
 
+// RightSidebar header
 const tabBtnChanges = document.getElementById("tab-btn-changes");
 const tabBtnHistory = document.getElementById("tab-btn-history");
 const tabChanges = document.getElementById("changes-tab");
 const tabHistory = document.getElementById("history-tab");
 
+// RightSidebar changes tab
 const changesHeader = document.getElementById("changes-header");
 const changesCountText = document.getElementById("changes-count-text");
 const changesMasterCheckbox = document.getElementById("changes-master-checkbox");
@@ -70,30 +77,38 @@ const commitMessageInput = document.getElementById("commit-name-input");
 const commitDescriptionInput = document.getElementById("commit-desc-input");
 const commitBtn = document.getElementById("commit-btn");
 
+// RightSidebar history tab
 const historyList = document.getElementById("history-list");
 const historyScrollbar = document.getElementById("history-scrollbar");
 
-// Modals
+// Backdrop for modals (darkened background)
 const modalBackdrops = document.querySelectorAll(".modal-backdrop");
+
+// Uniform Modal Close Triggers (CancelButton and 'X' symbol top-right)
 const modalCloseTriggers = document.querySelectorAll(".close-modal-icon, .cancel-modal-btn");
 
+// New Branch Modal
 const branchNewModal = document.getElementById("branch-new-modal");
 const branchNewModalInputName = branchNewModal.querySelector(".modal-input");
 const branchNewModalConfirmBtn = branchNewModal.querySelector(".confirm-modal-btn");
 
+// New Branch from Commit Modal
 const branchHistoryNewModal = document.getElementById("branch-history-new-modal");
 const branchHistoryNewModalName = document.getElementById("branch-history-modal-commit-name");
 const branchHistoryNewModalInputName = branchHistoryNewModal.querySelector(".modal-input");
 const branchHistoryNewModalConfirmBtn = branchHistoryNewModal.querySelector(".confirm-modal-btn");
 
+// Rename Branch Modal
 const branchRenameModal = document.getElementById("branch-rename-modal");
 const branchRenameModalInputName = branchRenameModal.querySelector(".modal-input");
 const branchRenameModalConfirmBtn = branchRenameModal.querySelector(".confirm-modal-btn");
 
+// Delete Branch Modal
 const branchDeleteModal = document.getElementById("branch-delete-modal");
 const branchDeleteModalName = document.getElementById("delete-modal-branch-name");
 const branchDeleteModalConfirmBtn = branchDeleteModal.querySelector(".confirm-modal-btn");
 
+// Merge Branch Modal
 const branchMergeModal = document.getElementById("branch-merge-modal");
 const branchMergeModalSourceLabel = document.getElementById("merge-modal-source-branch");
 const branchMergeModalTargetLabel = document.getElementById("merge-modal-target-branch");
@@ -101,6 +116,7 @@ const branchMergeModalSelectSource = document.getElementById("merge-modal-select
 const branchMergeModalSelectTarget = document.getElementById("merge-modal-select-target");
 const branchMergeModalConfirmBtn = branchMergeModal.querySelector(".confirm-modal-btn");
 
+// Clone Repo Modal
 const repoCloneModal = document.getElementById("repo-clone-modal");
 const repoCloneModalRepoUrl = repoCloneModal.querySelector(".input-url");
 const repoCloneModalAsLocal = repoCloneModal.querySelector(".ui-checkbox");
@@ -108,6 +124,7 @@ const repoCloneModalInputPath = repoCloneModal.querySelector(".input-path");
 const repoCloneModalBrowseBtn = repoCloneModal.querySelector(".browse-btn");
 const repoCloneModalConfirmBtn = repoCloneModal.querySelector(".confirm-modal-btn");
 
+// Create Repo Modal
 const repoCreateModal = document.getElementById("repo-create-modal");
 const repoCreateModalInputName = repoCreateModal.querySelector(".input-name");
 const repoCreateModalInputPath = repoCreateModal.querySelector(".input-path");
@@ -118,61 +135,72 @@ const repoCreateModalLicenseEdit = repoCreateModal.querySelector("#license-edit-
 const repoCreateModalLicenseEditPanel = repoCreateModal.querySelector("#license-edit-panel");
 const repoCreateModalConfirmBtn = repoCreateModal.querySelector(".confirm-modal-btn");
 
+// Add Repo Modal
 const repoAddModal = document.getElementById("repo-add-modal");
 const repoAddModalInputPath = repoAddModal.querySelector(".modal-input");
 const repoAddModalBrowseBtn = repoAddModal.querySelector(".browse-btn");
 const repoAddModalConfirmBtn = repoAddModal.querySelector(".confirm-modal-btn");
 
+// Remove/Delete Repo Modal
 const repoRemoveModal = document.getElementById("repo-remove-modal");
 const repoRemoveModalName = document.getElementById("remove-modal-repo-name");
 const repoRemoveModalLocalCheckbox = repoRemoveModal.querySelector(".ui-checkbox");
 const repoRemoveModalConfirmBtn = repoRemoveModal.querySelector(".confirm-modal-btn");
 
+// Settings Modal
 const settingsModal = document.getElementById("settings-modal");
 const settingsModalThemeSelect = document.getElementById("settings-theme-select");
 const settingsModalLogsView = document.getElementById("settings-logs-view");
 const settingsModalLogsClear = document.getElementById("settings-logs-clear");
 const settingsModalConfirmBtn = settingsModal.querySelector(".confirm-modal-btn");
 
+// Account Modal
 const accountModal = document.getElementById("account-modal");
 const accountModalInputName = accountModal.querySelector(".input-name");
 const accountModalInputEmail = accountModal.querySelector(".input-email");
 const accountModalConfirmBtn = accountModal.querySelector(".confirm-modal-btn");
 
+// Todo Modal
 const todoModal = document.getElementById("todo-modal");
 const todoModalRowsContainer = document.getElementById("todo-rows-container");
 const todoScrollbar = document.getElementById("todo-scrollbar");
 const todoModalConfirmBtn = todoModal.querySelector(".confirm-modal-btn");
 
+// Config Modal
 const configModal = document.getElementById("config-modal");
 const configModalName = configModal.querySelector(".input-name");
 const configModalEmail = configModal.querySelector(".input-email");
 const configModalConfirmBtn = configModal.querySelector(".confirm-modal-btn");
 
+// Uniform Error Modal
 const errorModal = document.getElementById("error-modal");
 const errorModalMessage = document.getElementById("error-modal-message");
 
+// Repo Missing Error Modal
 const repoMissingModal = document.getElementById("repo-missing-modal");
 const repoMissingModalConfirmBtn = repoMissingModal.querySelector(".confirm-modal-btn");
 const repoMissingModalCancelBtn = repoMissingModal.querySelector(".cancel-modal-btn");
 
-// Context menus
+// Dropdown 'ADD' Button ContextMenu
 const repoContextMenu = document.getElementById("repo-context-menu");
 const repoMenuClone = repoContextMenu.querySelector(".context-menu-item.item-clone");
 const repoMenuCreate = repoContextMenu.querySelector(".context-menu-item.item-create");
 const repoMenuAdd = repoContextMenu.querySelector(".context-menu-item.item-add");
 
+// Repo Dropdown ContextMenu
 const repoItemContextMenu = document.getElementById("repo-item-context-menu");
 const repoItemMenuTerminal = repoItemContextMenu.querySelector(".context-menu-item.item-terminal");
 const repoItemMenuExplorer = repoItemContextMenu.querySelector(".context-menu-item.item-explorer");
 const repoItemMenuRemove = repoItemContextMenu.querySelector(".context-menu-item.item-remove");
 
+// Branch Dropdown ContextMenu
 const branchItemContextMenu = document.getElementById("branch-item-context-menu");
 const branchItemMenuRename = branchItemContextMenu.querySelector(".context-menu-item.item-rename");
 const branchItemMenuCopy = branchItemContextMenu.querySelector(".context-menu-item.item-copy");
 const branchItemMenuMerge = branchItemContextMenu.querySelector(".context-menu-item.item-merge");
 const branchItemMenuDelete = branchItemContextMenu.querySelector(".context-menu-item.item-delete");
 
+// Current Repo Topbar ContextMenu
 const topbarRepoContextMenu = document.getElementById("topbar-repo-context-menu");
 const topbarRepoMenuClone = topbarRepoContextMenu.querySelector(".context-menu-item.item-clone");
 const topbarRepoMenuCreate = topbarRepoContextMenu.querySelector(".context-menu-item.item-create");
@@ -181,6 +209,7 @@ const topbarRepoMenuTerminal = topbarRepoContextMenu.querySelector(".context-men
 const topbarRepoMenuExplorer = topbarRepoContextMenu.querySelector(".context-menu-item.item-explorer");
 const topbarRepoMenuRemove = topbarRepoContextMenu.querySelector(".context-menu-item.item-remove");
 
+// Current Branch Topbar ContextMenu
 const topbarBranchContextMenu = document.getElementById("topbar-branch-context-menu");
 const topbarBranchMenuNew = topbarBranchContextMenu.querySelector(".context-menu-item.item-new");
 const topbarBranchMenuRename = topbarBranchContextMenu.querySelector(".context-menu-item.item-rename");
@@ -188,6 +217,7 @@ const topbarBranchMenuCopy = topbarBranchContextMenu.querySelector(".context-men
 const topbarBranchMenuMerge = topbarBranchContextMenu.querySelector(".context-menu-item.item-merge");
 const topbarBranchMenuDelete = topbarBranchContextMenu.querySelector(".context-menu-item.item-delete");
 
+// Change Item LeftSidebar ChangesTab ContextMenu
 const changesItemContextMenu = document.getElementById("changes-item-context-menu");
 const changesItemMenuDiscard = changesItemContextMenu.querySelector(".context-menu-item.item-discard");
 const changesItemMenuIgnoreFile = changesItemContextMenu.querySelector(".context-menu-item.item-ignore-file");
@@ -195,12 +225,14 @@ const changesItemMenuCopyAbsPath = changesItemContextMenu.querySelector(".contex
 const changesItemMenuCopyRelPath = changesItemContextMenu.querySelector(".context-menu-item.item-copy-rel-path");
 const changesItemMenuExplorer = changesItemContextMenu.querySelector(".context-menu-item.item-explorer");
 
+// Commit Item LeftSidebar HistoryTab ContextMenu
 const historyItemContextMenu = document.getElementById("history-item-context-menu");
 const historyItemMenuCheckout = historyItemContextMenu.querySelector(".context-menu-item.item-checkout");
 const historyItemMenuRevert = historyItemContextMenu.querySelector(".context-menu-item.item-revert");
 const historyItemMenuCreateBranch = historyItemContextMenu.querySelector(".context-menu-item.item-create-branch");
 const historyItemMenuCopySHA = historyItemContextMenu.querySelector(".context-menu-item.item-copy-sha");
 
+// ContextMenu list, ProtectedBranches list, Known BinaryExtensions list
 const contextMenus = [repoContextMenu, repoItemContextMenu, branchItemContextMenu, topbarRepoContextMenu, topbarBranchContextMenu];
 const protectedBranches = ["main", "master"];
 const binaryExts = [
@@ -310,6 +342,7 @@ const IpcActions = {
 };
 
 // ======================== IPC COMMUNICATION ========================
+// Wraps a payload in the {Action, Payload} envelope and sends it to C# over the IPC Bridge
 const sendIpcMessage = (action, payload = {}) => {
 	const envelope = {
 		Action: action,
@@ -318,6 +351,7 @@ const sendIpcMessage = (action, payload = {}) => {
 	window.external.sendMessage(JSON.stringify(envelope));
 };
 
+// Dispatches every incoming C# message to its handler (based on the 'Action')
 window.external.receiveMessage((message) => {
 	const data = JSON.parse(message);
 
@@ -462,13 +496,16 @@ window.external.receiveMessage((message) => {
 });
 
 // ======================== GENERIC UI HELPERS ========================
+// UI methods with no single owner.
+
+// Updates width of Topbar dropdowns
 const updatePanelWidths = () => {
-	// Keep panel widths in sync (match their parents)
 	repoPanel.style.width = `${repoContainer.offsetWidth}px`;
 	repoPanel.style.left = `${repoContainer.offsetLeft}px`;
 	branchPanel.style.width = window.getComputedStyle(rightSidebar).width;
 };
 
+// Stops LeftSidebar fetchBtn animation
 const stopFetchAnimation = () => {
 	const icon = fetchBtn.querySelector(".icon-fetch");
 	if (!icon || !fetchBtn.classList.contains("fetching")) { return; }
@@ -487,6 +524,7 @@ const stopFetchAnimation = () => {
 	}, 500);
 };
 
+// Places context menu to stay in viewport (based on position)
 const placeContextMenu = (event, contextMenu) => {
 	let mouseX = event.clientX;
 	let mouseY = event.clientY;
@@ -501,10 +539,11 @@ const placeContextMenu = (event, contextMenu) => {
 	contextMenu.style.top = `${mouseY}px`;
 };
 
+// Closes all dropdowns
 const closeDropdowns = () => {
 	repoPanel.classList.remove("show");
 	branchPanel.classList.remove("show");
-	backdrop.classList.remove("show");
+	dropdownBackdrop.classList.remove("show");
 	repoContextMenu.classList.remove("show");
 	repoItemContextMenu.classList.remove("show");
 	branchItemContextMenu.classList.remove("show");
@@ -517,6 +556,7 @@ const closeDropdowns = () => {
 	document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 };
 
+// Closes and clears given modal
 const closeAndClearModal = (modalElement) => {
 	modalElement.classList.remove("show");
 
@@ -532,6 +572,7 @@ const closeAndClearModal = (modalElement) => {
 	});
 };
 
+// Toggles 1st dropdown to visible & 2nd to hidden
 const toggleDropdown = (toShow, toHide, event) => {
 	event.stopPropagation();
 	updatePanelWidths();
@@ -541,7 +582,7 @@ const toggleDropdown = (toShow, toHide, event) => {
 	document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 
 	const isOpening = toShow.classList.toggle("show");
-	backdrop.classList.toggle("show", isOpening);
+	dropdownBackdrop.classList.toggle("show", isOpening);
 
 	if (isOpening) {
 		setTimeout(() => {
@@ -551,6 +592,7 @@ const toggleDropdown = (toShow, toHide, event) => {
 	}
 };
 
+// Updates CustomScrollbar height & range
 const updateCustomScrollbar = (container, scrollbar) => {
 	// If should be visible
 	if (!container || !scrollbar) { return; }
@@ -582,6 +624,7 @@ const updateCustomScrollbar = (container, scrollbar) => {
 	scrollbar.style.transform = `translateY(${thumbTop}px)`;
 };
 
+// Allows to scroll using the scrollbar
 const interactCustomScrollbar = (container, scrollbar) => {
 	let isDragging = false;
 	let startY;
@@ -630,11 +673,13 @@ const interactCustomScrollbar = (container, scrollbar) => {
 	};
 };
 
+// Swaps the active `theme-*` class in <body> to the given theme name (config)
 const applyTheme = (themeName) => {
 	document.body.className = document.body.className.replace(/theme-\S+/g, "");
 	if (themeName) { document.body.classList.add(`theme-${themeName}`); }
 };
 
+// Escapes HTML-significant characters for safe injection via innerHTML
 const escapeHtml = (unsafeText) => {
 	return unsafeText
 		.replace(/&/g, "&amp;")
@@ -644,6 +689,7 @@ const escapeHtml = (unsafeText) => {
 		.replace(/'/g, "&#039");
 };
 
+// Switches from HistoryTab to ChangesTab in the RightSidebar
 const switchToChangesTab = () => {
 	tabBtnChanges.classList.add("active");
 	tabBtnHistory.classList.remove("active");
@@ -654,6 +700,7 @@ const switchToChangesTab = () => {
 	detailsViewer.style.display = "none";
 };
 
+// Switches from ChangesTab to HistoryTab in the RightSidebar
 const switchToHistoryTab = () => {
 	tabBtnChanges.classList.remove("active");
 	tabBtnHistory.classList.add("active");
@@ -664,6 +711,7 @@ const switchToHistoryTab = () => {
 	detailsViewer.style.display = "flex";
 };
 
+// Opens the given modal, validates its input and focuses the InputBox + selects text if set to true
 const openModalWithFocus = (modal, validator, focusInput, selectText = false) => {
 	closeDropdowns();
 	modal.classList.add("show");
@@ -674,12 +722,14 @@ const openModalWithFocus = (modal, validator, focusInput, selectText = false) =>
 	}, 100);
 };
 
+// Copies text to clipboard
 const copyToClipboard = (text) => {
 	navigator.clipboard.writeText(text)
 		.then(() => console.log(`Copied '${text}' to clipboard.`))
 		.catch((err) => console.error("Failed to copy text: ", err));
 };
 
+// Closes ContextMenu when clicking outside of it
 const closeContextMenusOnOutsideClick = (event) => {
 	if (repoContextMenu.classList.contains("show") && !repoContextMenu.contains(event.target) && !repoNewBtn.contains(event.target)) {
 		repoContextMenu.classList.remove("show");
@@ -694,18 +744,23 @@ const closeContextMenusOnOutsideClick = (event) => {
 };
 
 // ======================== MODAL VALIDATORS ========================
+// Enable/disable modal's confirm button based on whether its input is valid.
+
+// Enables the NewBranchModal confirmBtn once a name is entered
 const validateBranchNewModal = () => {
 	const isValid = branchNewModalInputName.value.trim() !== "";
 	branchNewModalConfirmBtn.disabled = !isValid;
 	branchNewModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
+// Enables the NewBranchModal (from commit) confirmBtn once a name is entered
 const validateBranchHistoryNewModal = () => {
 	const isValid = branchHistoryNewModalInputName.value.trim() !== "";
 	branchHistoryNewModalConfirmBtn.disabled = !isValid;
 	branchHistoryNewModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
+// Enables the BranchRenameModal confirmBtn once the new name is entered
 const validateBranchRenameModal = () => {
 	const newName = branchRenameModalInputName.value.trim();
 	const oldName = branchRenameModal.dataset.targetName || currentBranch;
@@ -718,6 +773,7 @@ const validateBranchRenameModal = () => {
 	branchRenameModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
+// Enables the CloneRepoModal confirmBtn once the URL and localPath are entered 
 const validateRepoCloneModal = () => {
 	const isValid = repoCloneModalRepoUrl.value.trim() !== ""
 		&& repoCloneModalInputPath.value.trim() !== "";
@@ -725,6 +781,7 @@ const validateRepoCloneModal = () => {
 	repoCloneModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
+// Enables the CreateRepoModal confirmBtn once the name and localPath are entered
 const validateRepoCreateModal = () => {
 	const isValid = repoCreateModalInputName.value.trim() !== ""
 		&& repoCreateModalInputPath.value.trim() !== "";
@@ -732,12 +789,14 @@ const validateRepoCreateModal = () => {
 	repoCreateModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
+// Enables the AddRepoModal confirmBtn once a path is entered
 const validateRepoAddModal = () => {
 	const isValid = repoAddModalInputPath.value.trim() !== "";
 	repoAddModalConfirmBtn.disabled = !isValid;
 	repoAddModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
+// Enables the MergeBranchModal confirmBtn once a source is selected and different from the target
 const validateBranchMergeModal = () => {
 	const sourceBranch = branchMergeModalSelectSource.value;
 	const targetBranch = branchMergeModalSelectTarget.value;
@@ -751,6 +810,9 @@ const validateBranchMergeModal = () => {
 };
 
 // ======================== CONTEXT MENU VALIDATORS ========================
+// Enable/disable individual ContextMenu options based on state (e.g. protected branch, invalid repo).
+
+// Disables Rename/Delete on a branch's context menu if it's protected (main/master)
 const validateBranchContextMenu = (branchName, renameBtn, deleteBtn) => {
 	const isProtected = protectedBranches.includes(branchName.toLowerCase());
 
@@ -761,6 +823,7 @@ const validateBranchContextMenu = (branchName, renameBtn, deleteBtn) => {
 	deleteBtn.disabled = isProtected;
 };
 
+// Disables Terminal/Explorer if the repo is empty/invalid + Remove if the repo is empty
 const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn, isInvalid = false) => {
 	const isRepoEmpty = !repoName || repoName.trim() === "";
 
@@ -777,6 +840,8 @@ const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn, 
 };
 
 // ======================== REPO HELPERS ========================
+// Functions and handlers scoped to repository selection, RepoDropdown and repo lifecycle (add/clone/create/remove).
+
 // Enable/disable repo left-sidebar tools
 function setRepoToolsEnabled(enabled) {
 	branchBtn.classList.toggle("disabled", !enabled);
@@ -893,7 +958,7 @@ function deleteRepoFromDropdown(repository) {
 	}
 }
 
-// Repo dropdown item invalid helper
+// Marks a repo in the Topbar dropdown as invalid
 function markRepoDropdownItemInvalid(repoPath) {
 	const items = repoPanel.querySelectorAll(".dropdown-item");
 	items.forEach((item) => {
@@ -973,6 +1038,8 @@ function appInit(data) {
 }
 
 // ======================== BRANCH HELPERS ========================
+// Functions and handlers scoped to branch selection, BranchDropdown and branch lifecycle (create/rename/delete/merge).
+
 // C# - Load branches
 function loadBranchesIntoDropdown(branches) {
 	const existingItems = branchDropdown.querySelectorAll(".dropdown-item");
@@ -1079,7 +1146,7 @@ function renameBranchInDropdown(payload) {
 	}
 }
 
-// Merge modal helper
+// Sets up the MergeModal (doesn't make it visible)
 function setupMergeModal(preselectedTarget) {
 	branchMergeModalSelectSource.innerHTML = "";
 	branchMergeModalSelectTarget.innerHTML = "";
@@ -1136,6 +1203,9 @@ function processBranchesMerged() {
 }
 
 // ======================== CHANGES & COMMIT HELPERS ========================
+// Functions scoped to the working-tree changes list, commit drafting and the commit/pull button.
+
+// Toggles CommitButton if a commit is possible || acts as a PullButton if there are changes on remote
 function toggleCommitButton() {
 	// Wait for C# to return the branch name
 	if (currentBranch === "") {
@@ -1170,6 +1240,7 @@ function toggleCommitButton() {
 	}
 }
 
+// Updates MasterCheckbox in the ChangesTab in RightSidebar
 function updateMasterCheckboxState() {
 	const allFileCheckboxes = Array.from(document.querySelectorAll(".changes-item-checkbox"));
 	if (allFileCheckboxes.length === 0) { return; }
@@ -1315,6 +1386,7 @@ function processFileChanges(repo) {
 	}
 }
 
+// Saves Commit message & description 
 function saveDraft() {
 	if (!currentRepoPath) { return; }
 
@@ -1324,6 +1396,7 @@ function saveDraft() {
 	};
 }
 
+// Loads saved Commit message & description
 function loadDraft() {
 	if (!currentRepoPath) { return; }
 
@@ -1339,6 +1412,8 @@ function loadDraft() {
 }
 
 // ======================== HISTORY & DIFF HELPERS ========================
+// Functions scoped to commit history, commit details and rendering file diffs.
+
 // C# - Load/append commit history into history-tab
 function renderHistory(commits, isAppending = false) {
 	if (!isAppending) {
@@ -1566,12 +1641,14 @@ function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget)
 	updateCustomScrollbar(wrapperTarget, scrollbarTarget);
 }
 
+// Resets the file-diff viewer to its empty/placeholder state
 function resetDiffViewer() {
 	diffFilename.textContent = "Select a file to view changes";
 	diffContent.textContent = "";
 	updateCustomScrollbar(diffBodyWrapper, diffScrollbar);
 }
 
+// Resets the commit-details viewer to its empty/placeholder state
 function resetDetailsViewer() {
 	detailsCommitMessage.textContent = "Select a commit to view details";
 	detailsCommitStats.textContent = "";
@@ -1583,12 +1660,16 @@ function resetDetailsViewer() {
 	detailsFileList.innerHTML = "";
 }
 
+// Resets both main-content viewers together
 function resetViewers() {
 	resetDiffViewer();
 	resetDetailsViewer();
 }
 
 // ======================== TODO HELPERS ========================
+// Functions scoped to the per-repo TodoList modal.
+
+// Rebuilds the TodoModal task list + extra "add new task" row at the end/bottom
 function renderTodoList() {
 	todoModalRowsContainer.innerHTML = "";
 
@@ -1666,6 +1747,8 @@ function loadTodos(todos) {
 }
 
 // ======================== CONFIG & SETTINGS HELPERS ========================
+// Functions scoped to local/global git config and app settings.
+
 // C# - On local config load
 function processLocalConfigLoad(configs) {
 	configModalName.value = configs.localName || "";
@@ -1695,7 +1778,9 @@ function showErrorModal(message) {
 }
 
 // ======================== GLOBAL & GENERIC LISTENERS ========================
-// Global overrides
+// Listeners with no single domain owner, window/document, dropdown/modal mechanics, scrollbars, app-wide shortcuts.
+
+// Global overrides (prevent scroll-zoom & close modals/context-menus on ESC key)
 document.addEventListener("wheel", (event) => {
 	if (event.ctrlKey || event.metaKey) { event.preventDefault(); }
 }, { passive: false });
@@ -1745,7 +1830,7 @@ branchBtn.addEventListener("contextmenu", (event) => {
 });
 
 // Close triggers (dropdowns)
-backdrop.addEventListener("click", closeDropdowns);
+dropdownBackdrop.addEventListener("click", closeDropdowns);
 
 window.addEventListener("click", closeDropdowns);
 
@@ -1763,7 +1848,7 @@ modalCloseTriggers.forEach((trigger) => {
 	});
 });
 
-// Prevent closing when inside (dropdowns)
+// Prevent closing when inside (dropdowns/context-menus)
 document.querySelectorAll(".dropdown-panel, .context-menu").forEach((panel) => {
 	panel.addEventListener("click", (event) => event.stopPropagation());
 });
@@ -1882,7 +1967,7 @@ detailsBtn.addEventListener("click", (event) => {
 	repoPanel.classList.remove("show");
 	branchPanel.classList.remove("show");
 	const isOpening = detailsPanel.classList.toggle("show");
-	backdrop.classList.toggle("show", isOpening);
+	dropdownBackdrop.classList.toggle("show", isOpening);
 
 	if (isOpening) {
 		setTimeout(() => updateCustomScrollbar(detailsFileList, detailsFileScrollbar));
@@ -1966,7 +2051,9 @@ setupSelection("#repository-dropdown-panel", "#repositories-container .btn-value
 setupSelection("#branch-dropdown-panel", "#branches-container .btn-value");
 
 // ======================== REPO LISTENERS ========================
-// Add/new buttons (dropdowns)
+// Click/Input listeners scoped to the RepoDropdown items, repo ContextMenus and RepoModals.
+
+// New button (dropdown)
 repoNewBtn.addEventListener("click", (event) => {
 	event.stopPropagation();
 
@@ -1977,7 +2064,23 @@ repoNewBtn.addEventListener("click", (event) => {
 	placeContextMenu(event, repoContextMenu);
 });
 
-// Context menu options (context-menu)
+// New button context-menu options (dropdown/context-menu)
+repoMenuClone.addEventListener("click", (event) => {
+	event.stopPropagation();
+	openModalWithFocus(repoCloneModal, validateRepoCloneModal, repoCloneModalRepoUrl);
+});
+
+repoMenuCreate.addEventListener("click", (event) => {
+	event.stopPropagation();
+	openModalWithFocus(repoCreateModal, validateRepoCreateModal, repoCreateModalInputName);
+});
+
+repoMenuAdd.addEventListener("click", (event) => {
+	event.stopPropagation();
+	openModalWithFocus(repoAddModal, validateRepoAddModal, repoAddModalInputPath);
+});
+
+// Topbar context-menu options (topbar/context-menu)
 topbarRepoMenuClone.addEventListener("click", (event) => {
 	event.stopPropagation();
 	openModalWithFocus(repoCloneModal, validateRepoCloneModal, repoCloneModalRepoUrl);
@@ -2025,21 +2128,7 @@ topbarRepoMenuRemove.addEventListener("click", (event) => {
 	closeDropdowns();
 });
 
-repoMenuClone.addEventListener("click", (event) => {
-	event.stopPropagation();
-	openModalWithFocus(repoCloneModal, validateRepoCloneModal, repoCloneModalRepoUrl);
-});
-
-repoMenuCreate.addEventListener("click", (event) => {
-	event.stopPropagation();
-	openModalWithFocus(repoCreateModal, validateRepoCreateModal, repoCreateModalInputName);
-});
-
-repoMenuAdd.addEventListener("click", (event) => {
-	event.stopPropagation();
-	openModalWithFocus(repoAddModal, validateRepoAddModal, repoAddModalInputPath);
-});
-
+// Dropdown repo item context-menu options (dropdown-items/context-menu)
 repoItemMenuTerminal.addEventListener("click", (event) => {
 	event.stopPropagation();
 
@@ -2081,6 +2170,7 @@ repoItemMenuRemove.addEventListener("click", (event) => {
 	closeDropdowns();
 });
 
+// Repo related modals confirm buttons (modals)
 repoCloneModalConfirmBtn.addEventListener("click", () => {
 	const repoUrl = repoCloneModalRepoUrl.value;
 	const asLocal = repoCloneModalAsLocal.checked;
@@ -2153,6 +2243,7 @@ repoMissingModalConfirmBtn.addEventListener("click", () => {
 	repoAddModal.classList.add("show");
 });
 
+// Custom cancel button for 'repo-missing-modal' (modals)
 repoMissingModalCancelBtn.addEventListener("click", () => {
 	const stalePath = repoMissingModal.dataset.targetPath;
 
@@ -2166,6 +2257,7 @@ repoMissingModalCancelBtn.addEventListener("click", () => {
 	closeAndClearModal(repoMissingModal);
 });
 
+// Repo related modals 'enter' shortcuts (modals)
 repoCreateModalInputName.addEventListener("keyup", (event) => {
 	if (event.key === "Enter") { repoCreateModalConfirmBtn.click(); }
 });
@@ -2178,14 +2270,11 @@ repoAddModalInputPath.addEventListener("keyup", (event) => {
 	if (event.key === "Enter") { repoAddModalConfirmBtn.click(); }
 });
 
+// Repo related modals 'input -> validator' listeners (modals)
 repoCloneModalRepoUrl.addEventListener("input", validateRepoCloneModal);
-
 repoCloneModalInputPath.addEventListener("input", validateRepoCloneModal);
-
 repoCreateModalInputName.addEventListener("input", validateRepoCreateModal);
-
 repoCreateModalInputPath.addEventListener("input", validateRepoCreateModal);
-
 repoAddModalInputPath.addEventListener("input", validateRepoAddModal);
 
 // Browse buttons (modals)
@@ -2213,7 +2302,7 @@ repoAddModalBrowseBtn.addEventListener("click", (event) => {
 	sendIpcMessage(IpcActions.EXPLORER_OPEN_DIALOG);
 });
 
-// Repo create modal edit btn (modals/repo-create-modal)
+// RepoCreateModal edit button (modals/repo-create-modal)
 repoCreateModalLicenseEdit.addEventListener("click", (event) => {
 	event.stopPropagation();
 	repoCreateModalLicenseEditPanel.classList.toggle("open");
@@ -2233,11 +2322,15 @@ repoCreateModalSelectLicense.addEventListener("change", (event) => {
 });
 
 // ======================== BRANCH LISTENERS ========================
+// Click/Input listeners scoped to the BranchDropdown items, branch ContextMenus and BranchModals.
+
+// New button (dropdown)
 branchNewBtn.addEventListener("click", (event) => {
 	event.stopPropagation();
 	openModalWithFocus(branchNewModal, validateBranchNewModal, branchNewModalInputName);
 });
 
+// Topbar context-menu options (topbar/context-menu)
 topbarBranchMenuNew.addEventListener("click", (event) => {
 	event.stopPropagation();
 	openModalWithFocus(branchNewModal, validateBranchNewModal, branchNewModalInputName);
@@ -2282,6 +2375,7 @@ topbarBranchMenuDelete.addEventListener("click", (event) => {
 	branchDeleteModal.classList.add("show");
 });
 
+// Dropdown branch item context-menu options (dropdown-items/context-menu)
 branchItemMenuRename.addEventListener("click", (event) => {
 	event.stopPropagation();
 	const branchName = branchItemContextMenu.dataset.targetName;
@@ -2336,7 +2430,7 @@ branchItemMenuDelete.addEventListener("click", (event) => {
 	closeDropdowns();
 });
 
-// Left sidebar buttons (left-sidebar)
+// Left sidebar branch related button (left-sidebar)
 mergeBtn.addEventListener("click", () => {
 	if (!currentRepoPath || !currentBranch) { return; }
 
@@ -2345,7 +2439,7 @@ mergeBtn.addEventListener("click", () => {
 	branchMergeModal.classList.add("show");
 });
 
-// Confirm buttons (modals)
+// Branch related modals confirm buttons (modals)
 branchNewModalConfirmBtn.addEventListener("click", () => {
 	const newBranchName = branchNewModalInputName.value.trim();
 
@@ -2417,7 +2511,7 @@ branchMergeModalConfirmBtn.addEventListener("click", () => {
 	closeAndClearModal(branchMergeModal);
 });
 
-// Input boxes (modals)
+// Branch related modals 'enter' shortcuts (modals)
 branchNewModalInputName.addEventListener("keyup", (event) => {
 	if (event.key === "Enter") { branchNewModalConfirmBtn.click(); }
 });
@@ -2430,14 +2524,14 @@ branchRenameModalInputName.addEventListener("keyup", (event) => {
 	if (event.key === "Enter") { branchRenameModalConfirmBtn.click(); }
 });
 
-// Confirm toggle (modals)
+// Branch related modals 'input -> validator' listeners (modals)
 branchNewModalInputName.addEventListener("input", validateBranchNewModal);
-
 branchHistoryNewModalInputName.addEventListener("input", validateBranchHistoryNewModal);
-
 branchRenameModalInputName.addEventListener("input", validateBranchRenameModal);
 
 // ======================== CHANGES & COMMIT LISTENERS ========================
+// Click/Input listeners scoped to the commit draft inputs, commit/pull button and changed-file ContextMenu.
+
 // Commit section (right-sidebar)
 commitMessageInput.addEventListener("input", () => {
 	saveDraft();
@@ -2489,7 +2583,7 @@ commitBtn.addEventListener("click", () => {
 	});
 });
 
-// Changes section
+// Changes section (right-sidebar)
 changesItemMenuDiscard.addEventListener("click", (event) => {
 	event.stopPropagation();
 	const filePath = changesItemContextMenu.dataset.targetPath;
@@ -2554,6 +2648,8 @@ changesItemMenuExplorer.addEventListener("click", (event) => {
 });
 
 // ======================== HISTORY LISTENERS ========================
+// Click/Input listeners scoped to commit history and history item context menu.
+
 historyList.addEventListener("scroll", () => {
 	updateCustomScrollbar(historyList, historyScrollbar);
 
@@ -2618,6 +2714,8 @@ historyItemMenuCopySHA.addEventListener("click", (event) => {
 });
 
 // ======================== TODO LISTENERS ========================
+// Click listeners scoped to opening and saving the TodoModal.
+
 todoBtn.addEventListener("click", () => {
 	if (!currentRepoPath) { return; }
 
@@ -2641,6 +2739,9 @@ todoModalConfirmBtn.addEventListener("click", () => {
 });
 
 // ======================== CONFIG & SETTINGS LISTENERS ========================
+// Click/Input listeners scoped to local/global config and AppSettings modals.
+
+// LeftSidebar binding (left-sidebar)
 configBtn.addEventListener("click", () => {
 	if (!currentRepoPath) { return; }
 
@@ -2681,6 +2782,7 @@ settingsModalConfirmBtn.addEventListener("click", () => {
 	closeAndClearModal(settingsModal);
 });
 
+// Config modal (modals)
 configModalConfirmBtn.addEventListener("click", () => {
 	if (!currentRepoPath) { return; }
 
@@ -2693,6 +2795,7 @@ configModalConfirmBtn.addEventListener("click", () => {
 	closeAndClearModal(configModal);
 });
 
+// Account modal (modals)
 accountModalConfirmBtn.addEventListener("click", () => {
 	sendIpcMessage(IpcActions.CONFIG_GLOBAL_SAVE, {
 		name: accountModalInputName.value.trim(),
@@ -2703,6 +2806,8 @@ accountModalConfirmBtn.addEventListener("click", () => {
 });
 
 // ======================== FETCH LISTENERS ========================
+// Click listener that triggers a remote fetch.
+
 fetchBtn.addEventListener("click", () => {
 	if (!currentRepoPath || fetchBtn.classList.contains("fetching")) { return; }
 
@@ -2714,6 +2819,7 @@ fetchBtn.addEventListener("click", () => {
 });
 
 // ======================== APP INIT ========================
+// Initial app code execution (the only part of the code that directly executed functions).
 updatePanelWidths();
 
 interactCustomScrollbar(repoList, repoScrollbar);
