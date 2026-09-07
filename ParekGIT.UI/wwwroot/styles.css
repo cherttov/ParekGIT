@@ -478,20 +478,8 @@ select:focus {
 	background-color: var(--accent);
 }
 
-.icon-file {
-	mask-image: url("assets/icons/materials_file_copy.svg");
-}
-
 .icon-merge {
 	mask-image: url("assets/icons/materials_merge_type.svg");
-}
-
-.icon-branches {
-	mask-image: url("assets/icons/materials_alt_route.svg");
-}
-
-.icon-analytics {
-	mask-image: url("assets/icons/materials_bar_chart.svg");
 }
 
 .icon-todo {
@@ -500,6 +488,10 @@ select:focus {
 
 .icon-config {
 	mask-image: url("assets/icons/materials_user_attributes.svg");
+}
+
+.icon-pushpull {
+	mask-image: url("assets/icons/materials_arrow_upward.svg");
 }
 
 .icon-fetch {
@@ -517,6 +509,14 @@ select:focus {
 
 .btn-settings {
 	margin-top: auto;
+}
+
+.left-sidebar-btn.push .icon-pushpull {
+	transform: rotate(0deg);
+}
+
+.left-sidebar-btn.pull .icon-pushpull {
+	transform: rotate(180deg);
 }
 
 @keyframes spin-fetch {

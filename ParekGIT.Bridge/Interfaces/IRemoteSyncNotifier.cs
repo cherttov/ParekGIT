@@ -2,6 +2,6 @@
 {
 	public interface IRemoteSyncNotifier
 	{
-		void NotifyCommitsBehind(string repoPath, int commitsBehind);
+		void NotifyCommitsBehind(string repoPath, int commitsBehind, int commitsAhead);
 	}
 }

@@ -24,12 +24,10 @@ const dropdownBackdrop = document.getElementById("dropdown-backdrop");
 const leftSidebar = document.getElementById("left-sidebar");
 
 // LeftSidebar buttons
-const fileBtn = leftSidebar.querySelector(".btn-file");
 const mergeBtn = leftSidebar.querySelector(".btn-merge");
-const branchesBtn = leftSidebar.querySelector(".btn-branches");
-const analyticsBtn = leftSidebar.querySelector(".btn-analytics");
 const todoBtn = leftSidebar.querySelector(".btn-todo");
 const configBtn = leftSidebar.querySelector(".btn-config");
+const pushpullBtn = leftSidebar.querySelector(".btn-pushpull");
 const fetchBtn = leftSidebar.querySelector(".btn-fetch");
 const settingsBtn = leftSidebar.querySelector(".btn-settings");
 const accountBtn = leftSidebar.querySelector(".btn-account");
@@ -259,7 +257,9 @@ let historyTake = 50;
 let isFetchingHistory = false;
 let hasReachedEndOfHistory = false;
 let isPullRequired = false;
+let isPushRequired = false;
 let commitsBehind = 0;
+let commitsAhead = 0;
 
 let minRightWidth = 0, maxRightWidth = 0;
 let isResizing = false;
@@ -283,6 +283,7 @@ const IpcActions = {
 	BRANCH_MERGE: "BRANCH_MERGE",
 	REPO_FETCH: "REPO_FETCH",
 	REPO_PULL: "REPO_PULL",
+	REPO_PUSH: "REPO_PUSH",
 	REPO_COMMIT: "REPO_COMMIT",
 	REPO_CLONE: "REPO_CLONE",
 	REPO_CREATE: "REPO_CREATE",
@@ -315,6 +316,7 @@ const IpcActions = {
 	REPO_COMMITTED: "REPO_COMMITTED",
 	REPO_FETCHED: "REPO_FETCHED",
 	REPO_PULLED: "REPO_PULLED",
+	REPO_PUSHED: "REPO_PUSHED",
 	REPO_STATUS_LOADED: "REPO_STATUS_LOADED",
 	REPO_FILES_CHANGED: "REPO_FILES_CHANGED",
 	REPO_PATH_MISSING: "REPO_PATH_MISSING",
@@ -395,6 +397,14 @@ window.external.receiveMessage((message) => {
 		case IpcActions.REPO_PULLED: // MOVE TO DEDICATED METHOD
 			isPullRequired = false;
 			commitsBehind = 0;
+			togglePushPullButton();
+			refreshRepoState();
+			break;
+
+		case IpcAction.REPO_PUSHED: // MOVE TO DEDICATED METHOD
+			isPushRequired = false;
+			commitsAhead = 0;
+			togglePushPullButton();
 			refreshRepoState();
 			break;
 
@@ -411,9 +421,14 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case IpcActions.REMOTE_SYNC_STATUS:
-			commitsBehind = data.Payload.commitsBehind;
+			commitsBehind = data.Payload.commitsBehind || 0;
+			commitsAhead = data.Payload.commitsAhead || 0;
+
 			isPullRequired = commitsBehind > 0;
+			isPushRequired = commitsAhead > 0;
+
 			toggleCommitButton();
+			togglePushPullButton();
 			break;
 
 		case IpcActions.BRANCHES_LOADED:
@@ -876,6 +891,7 @@ function createRepoDropdownItem(repo) {
 
 		loadDraft();
 		toggleCommitButton();
+		togglePushPullButton();
 		switchToChangesTab();
 		resetViewers();
 		activeTodos = [];
@@ -1002,6 +1018,7 @@ function processMissingRepo(repoPath) {
 
 		resetViewers();
 		toggleCommitButton();
+		togglePushPullButton();
 	}
 }
 
@@ -1203,22 +1220,15 @@ function processBranchesMerged() {
 }
 
 // ======================== CHANGES & COMMIT HELPERS ========================
-// Functions scoped to the working-tree changes list, commit drafting and the commit/pull button.
+// Functions scoped to the working-tree changes list, commit drafting and the commit button.
 
-// Toggles CommitButton if a commit is possible || acts as a PullButton if there are changes on remote
+// Toggles CommitButton based only on local changes and message
 function toggleCommitButton() {
 	// Wait for C# to return the branch name
 	if (currentBranch === "") {
 		commitBtn.disabled = true;
 		commitBtn.classList.add("disabled");
 		commitBtn.textContent = "Loading...";
-		return;
-	}
-
-	if (isPullRequired) {
-		commitBtn.disabled = false;
-		commitBtn.classList.remove("disabled");
-		commitBtn.textContent = `Pull (${commitsBehind} commit${commitsBehind === 1 ? "" : "s"} behind)`;
 		return;
 	}
 
@@ -1237,6 +1247,30 @@ function toggleCommitButton() {
 		commitBtn.disabled = false;
 		commitBtn.classList.remove("disabled");
 		commitBtn.textContent = commitText;
+	}
+}
+
+// Toggles LeftSidebar Push/Pull Button
+function togglePushPullButton() {
+	if (!currentBranch) {
+		pushpullBtn.classList.add("disabled");
+		pushpullBtn.disabled = true;
+		pushpullBtn.classList.remove("push", "pull");
+		return;
+	}
+
+	if (isPullRequired) {
+		pushpullBtn.classList.remove("disabled", "push");
+		pushpullBtn.disabled = false;
+		pushpullBtn.classList.add("pull");
+	} else if (isPushRequired) {
+		pushpullBtn.classList.remove("disabled", "pull");
+		pushpullBtn.disabled = false;
+		pushpullBtn.classList.add("push");
+	} else {
+		pushpullBtn.classList.add("disabled");
+		pushpullBtn.disabled = true;
+		pushpullBtn.classList.remove("pull", "push");
 	}
 }
 
@@ -2530,7 +2564,7 @@ branchHistoryNewModalInputName.addEventListener("input", validateBranchHistoryNe
 branchRenameModalInputName.addEventListener("input", validateBranchRenameModal);
 
 // ======================== CHANGES & COMMIT LISTENERS ========================
-// Click/Input listeners scoped to the commit draft inputs, commit/pull button and changed-file ContextMenu.
+// Click/Input listeners scoped to the commit draft inputs, commit button, push/pull button and changed-file ContextMenu.
 
 // Commit section (right-sidebar)
 commitMessageInput.addEventListener("input", () => {
@@ -2543,19 +2577,6 @@ commitDescriptionInput.addEventListener("input", () => {
 });
 
 commitBtn.addEventListener("click", () => {
-	// Pull
-	if (isPullRequired) {
-		commitBtn.disabled = true;
-		commitBtn.classList.add("disabled");
-		commitBtn.textContent = "Pulling...";
-
-		sendIpcMessage(IpcActions.REPO_PULL, {
-			repoPath: currentRepoPath
-		});
-		return;
-	}
-
-	// Commit
 	const message = commitMessageInput.value.trim();
 	const description = commitDescriptionInput.value.trim();
 
@@ -2581,6 +2602,24 @@ commitBtn.addEventListener("click", () => {
 		description: description,
 		files: selectedFiles
 	});
+});
+
+// Push/Pull button (left-sidebar)
+pushpullBtn.addEventListener("click", () => {
+	if (!currentRepoPath || pushpullBtn.classList.contains("disabled")) { return; }
+
+	pushpullBtn.classList.add("disabled");
+	pushpullBtn.disabled = true;
+
+	if (isPullRequired) {
+		sendIpcMessage(IpcActions.REPO_PULL, {
+			repoPath: currentRepoPath
+		});
+	} else if (isPushRequired) {
+		sendIpcMessage(IpcActions.REPO_PUSH, {
+			repoPath: currentRepoPath
+		});
+	}
 });
 
 // Changes section (right-sidebar)
@@ -2831,13 +2870,11 @@ interactCustomScrollbar(changesList, changesScrollbar);
 interactCustomScrollbar(historyList, historyScrollbar);
 interactCustomScrollbar(todoModalRowsContainer, todoScrollbar);
 
-fileBtn.classList.add("disabled"); // FINISH
-branchesBtn.classList.add("disabled"); // FINISH
-analyticsBtn.classList.add("disabled"); // FINISH
-setRepoToolsEnabled(false);
 
+setRepoToolsEnabled(false);
 switchToChangesTab();
 toggleCommitButton();
+togglePushPullButton();
 resetDetailsViewer();
 
 window.addEventListener("DOMContentLoaded", () => {

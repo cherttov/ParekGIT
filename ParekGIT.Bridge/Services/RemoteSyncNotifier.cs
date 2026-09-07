@@ -18,13 +18,13 @@ namespace ParekGIT.Bridge.Services
 			_gitRunner = gitRunner;
 		}
 
-		public void NotifyCommitsBehind(string repoPath, int commitsBehind)
+		public void NotifyCommitsBehind(string repoPath, int commitsBehind, int commitsAhead)
 		{
 			// Response
 			var message = new IpcMessage
 			{
 				Action = "REMOTE_SYNC_STATUS",
-				Payload = JsonSerializer.SerializeToElement(new { repoPath, commitsBehind })
+				Payload = JsonSerializer.SerializeToElement(new { repoPath, commitsBehind, commitsAhead })
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(message));
 		}

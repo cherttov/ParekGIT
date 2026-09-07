@@ -57,8 +57,10 @@ namespace ParekGIT.Bridge.Handlers
 			if (repo?.IsRemote == true)
 			{
 				await _gitRunner.FetchRepositoryAsync(repoPath);
+
 				int commitsBehind = await _gitRunner.GetCommitsBehindAsync(repoPath);
-				_syncNotifier.NotifyCommitsBehind(repoPath, commitsBehind);
+				int commitsAhead = await _gitRunner.GetCommitsAheadAsync(repoPath);
+				_syncNotifier.NotifyCommitsBehind(repoPath, commitsBehind, commitsAhead);
 
 				if (commitsBehind == 0)
 				{
