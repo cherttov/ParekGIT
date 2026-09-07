@@ -12,6 +12,7 @@ namespace ParekGIT.Core.Interfaces
 		Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int skip = 0, int take = 50);
 		Task<string> GetFileDiffAsync(string repoPath, string filePath);
 		Task<CommitDetailsResult> GetCommitDetailsAsync(string repoPath, string hash);
+		Task<int> GetCommitsAheadAsync(string repoPath);
 		Task<int> GetCommitsBehindAsync(string repoPath);
 		Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath);
 		Task<GitConfigInfo> GetGlobalConfigAsync(string? repoPath);

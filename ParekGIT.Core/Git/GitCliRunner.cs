@@ -124,6 +124,15 @@ namespace ParekGIT.Core.Git
 			return GitCommitDetailsParser.Parse(rawOutput);
 		}
 
+		public async Task<int> GetCommitsAheadAsync(string repoPath)
+		{
+			string arguments = "rev-list --count @{u}..HEAD";
+
+			string output = await ExecuteCommandAsync(repoPath, arguments, 128);
+
+			return int.TryParse(output, out int aheadCount) ? aheadCount : 0;
+		}
+
 		public async Task<int> GetCommitsBehindAsync(string repoPath)
 		{
 			string arguments = "rev-list --count HEAD..@{u}";
