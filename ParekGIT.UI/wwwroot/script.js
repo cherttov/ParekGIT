@@ -1242,13 +1242,16 @@ function togglePushPullButton() {
 	if (isPullRequired) {
 		pushpullBtn.classList.remove("push");
 		pushpullBtn.disabled = false;
+		pushpullBtn.title = `Pull ${commitsBehind} commit${commitsBehind === 1 ? "" : "s"}`;
 		pushpullBtn.classList.add("pull");
 	} else if (isPushRequired) {
 		pushpullBtn.classList.remove("pull");
 		pushpullBtn.disabled = false;
+		pushpullBtn.title = `Push ${commitsAhead} commit${commitsAhead === 1 ? "" : "s"}`;
 		pushpullBtn.classList.add("push");
 	} else {
 		pushpullBtn.disabled = true;
+		pushpullBtn.title = "Up to date";
 		pushpullBtn.classList.remove("pull", "push");
 	}
 }
