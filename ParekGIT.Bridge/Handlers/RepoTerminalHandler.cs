@@ -2,7 +2,6 @@
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
@@ -32,16 +31,16 @@ namespace ParekGIT.Bridge.Handlers
 					UseShellExecute = true
 				};
 
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				if (OperatingSystem.IsWindows())
 				{
 					processInfo.FileName = "cmd.exe";
 				}
-				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+				else if (OperatingSystem.IsMacOS())
 				{
 					processInfo.FileName = "open";
 					processInfo.Arguments = $"-a Terminal \"{repoPath}\"";
 				}
-				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+				else if (OperatingSystem.IsLinux())
 				{
 					processInfo.FileName = "x-terminal-emulator";
 				}

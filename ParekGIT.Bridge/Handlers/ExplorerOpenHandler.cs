@@ -3,7 +3,6 @@ using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Services;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
@@ -41,7 +40,7 @@ namespace ParekGIT.Bridge.Handlers
 
 			if (!_fileSystem.DirectoryExists(normalizedPath)) { return Task.CompletedTask; }
 
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			if (OperatingSystem.IsLinux())
 			{
 				Process.Start("xdg-open", normalizedPath);
 			}

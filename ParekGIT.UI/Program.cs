@@ -5,7 +5,6 @@ using ParekGIT.Bridge.Ipc;
 using ParekGIT.Bridge.Handlers;
 using ParekGIT.Core.Git;
 using ParekGIT.Core.Services;
-using System.Runtime.InteropServices;
 using ParekGIT.Bridge.Services;
 
 namespace ParekGIT.UI
@@ -105,7 +104,7 @@ namespace ParekGIT.UI
 			{
 				string errorMessage = "Error occurred while starting ParekGIT";
 
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+				if (OperatingSystem.IsLinux())
 				{
 					Console.WriteLine("Error occured while starting ParekGIT:");
 					Console.WriteLine("- WebKitGTK might be missing.");

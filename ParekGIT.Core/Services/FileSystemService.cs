@@ -2,7 +2,6 @@
 using Microsoft.VisualBasic.FileIO;
 using SearchOption = System.IO.SearchOption;
 using ParekGIT.Core.Interfaces;
-using System.Runtime.InteropServices;
 
 namespace ParekGIT.Core.Services
 {
@@ -54,20 +53,20 @@ namespace ParekGIT.Core.Services
 			}
 
 			// Match OS and delete accordingly
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			if (OperatingSystem.IsWindows())
 			{
 				FileSystem.DeleteDirectory(
 					path,
 					UIOption.OnlyErrorDialogs,
 					RecycleOption.SendToRecycleBin);
 			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			else if (OperatingSystem.IsMacOS())
 			{
 				await Cli.Wrap("osascript")
 					.WithArguments(["-e", $"tell application \"Finder\" to delete POSIX file \"{path}\""])
 					.ExecuteAsync();
 			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			else if (OperatingSystem.IsLinux())
 			{
 				try
 				{

@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace ParekGIT.Core.Services
+﻿namespace ParekGIT.Core.Services
 {
 	public static class AppDataPaths
 	{
@@ -10,11 +8,11 @@ namespace ParekGIT.Core.Services
 		{
 			string basePath;
 
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			if (OperatingSystem.IsWindows())
 			{
 				basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			else if (OperatingSystem.IsMacOS())
 			{
 				basePath = Path.Combine(
 					Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
