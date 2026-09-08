@@ -401,7 +401,7 @@ window.external.receiveMessage((message) => {
 			refreshRepoState();
 			break;
 
-		case IpcAction.REPO_PUSHED: // MOVE TO DEDICATED METHOD
+		case IpcActions.REPO_PUSHED: // MOVE TO DEDICATED METHOD
 			isPushRequired = false;
 			commitsAhead = 0;
 			togglePushPullButton();
@@ -765,14 +765,12 @@ const closeContextMenusOnOutsideClick = (event) => {
 const validateBranchNewModal = () => {
 	const isValid = branchNewModalInputName.value.trim() !== "";
 	branchNewModalConfirmBtn.disabled = !isValid;
-	branchNewModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
 // Enables the NewBranchModal (from commit) confirmBtn once a name is entered
 const validateBranchHistoryNewModal = () => {
 	const isValid = branchHistoryNewModalInputName.value.trim() !== "";
 	branchHistoryNewModalConfirmBtn.disabled = !isValid;
-	branchHistoryNewModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
 // Enables the BranchRenameModal confirmBtn once the new name is entered
@@ -785,7 +783,6 @@ const validateBranchRenameModal = () => {
 		&& !protectedBranches.includes(newName);
 
 	branchRenameModalConfirmBtn.disabled = !isValid;
-	branchRenameModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
 // Enables the CloneRepoModal confirmBtn once the URL and localPath are entered 
@@ -793,7 +790,6 @@ const validateRepoCloneModal = () => {
 	const isValid = repoCloneModalRepoUrl.value.trim() !== ""
 		&& repoCloneModalInputPath.value.trim() !== "";
 	repoCloneModalConfirmBtn.disabled = !isValid;
-	repoCloneModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
 // Enables the CreateRepoModal confirmBtn once the name and localPath are entered
@@ -801,14 +797,12 @@ const validateRepoCreateModal = () => {
 	const isValid = repoCreateModalInputName.value.trim() !== ""
 		&& repoCreateModalInputPath.value.trim() !== "";
 	repoCreateModalConfirmBtn.disabled = !isValid;
-	repoCreateModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
 // Enables the AddRepoModal confirmBtn once a path is entered
 const validateRepoAddModal = () => {
 	const isValid = repoAddModalInputPath.value.trim() !== "";
 	repoAddModalConfirmBtn.disabled = !isValid;
-	repoAddModalConfirmBtn.classList.toggle("disabled", !isValid);
 };
 
 // Enables the MergeBranchModal confirmBtn once a source is selected and different from the target
@@ -820,7 +814,6 @@ const validateBranchMergeModal = () => {
 		&& targetBranch !== ""
 		&& sourceBranch !== targetBranch;
 
-	branchMergeModalConfirmBtn.classList.toggle("disabled", !isValid);
 	branchMergeModalConfirmBtn.disabled = !isValid;
 };
 
@@ -831,10 +824,7 @@ const validateBranchMergeModal = () => {
 const validateBranchContextMenu = (branchName, renameBtn, deleteBtn) => {
 	const isProtected = protectedBranches.includes(branchName.toLowerCase());
 
-	renameBtn.classList.toggle("disabled", isProtected);
 	renameBtn.disabled = isProtected;
-
-	deleteBtn.classList.toggle("disabled", isProtected);
 	deleteBtn.disabled = isProtected;
 };
 
@@ -844,13 +834,8 @@ const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn, 
 
 	const disableTools = isRepoEmpty || isInvalid;
 
-	terminalBtn.classList.toggle("disabled", disableTools);
 	terminalBtn.disabled = disableTools;
-
-	explorerBtn.classList.toggle("disabled", disableTools);
 	explorerBtn.disabled = disableTools;
-
-	removeBtn.classList.toggle("disabled", isRepoEmpty);
 	removeBtn.disabled = isRepoEmpty;
 };
 
@@ -859,12 +844,11 @@ const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn, 
 
 // Enable/disable repo left-sidebar tools
 function setRepoToolsEnabled(enabled) {
-	branchBtn.classList.toggle("disabled", !enabled);
 	branchBtn.disabled = !enabled;
-	mergeBtn.classList.toggle("disabled", !enabled);
-	todoBtn.classList.toggle("disabled", !enabled);
-	configBtn.classList.toggle("disabled", !enabled);
-	fetchBtn.classList.toggle("disabled", !enabled);
+	mergeBtn.disabled = !enabled;
+	todoBtn.disabled = !enabled;
+	configBtn.disabled = !enabled;
+	fetchBtn.disabled = !enabled;
 }
 
 // Build a repo dropdown item
@@ -1227,7 +1211,6 @@ function toggleCommitButton() {
 	// Wait for C# to return the branch name
 	if (currentBranch === "") {
 		commitBtn.disabled = true;
-		commitBtn.classList.add("disabled");
 		commitBtn.textContent = "Loading...";
 		return;
 	}
@@ -1241,11 +1224,9 @@ function toggleCommitButton() {
 
 	if (commitMessageInput.value.trim() === "" || checkedCount === 0) {
 		commitBtn.disabled = true;
-		commitBtn.classList.add("disabled");
 		commitBtn.textContent = commitText;
 	} else {
 		commitBtn.disabled = false;
-		commitBtn.classList.remove("disabled");
 		commitBtn.textContent = commitText;
 	}
 }
@@ -1253,22 +1234,20 @@ function toggleCommitButton() {
 // Toggles LeftSidebar Push/Pull Button
 function togglePushPullButton() {
 	if (!currentBranch) {
-		pushpullBtn.classList.add("disabled");
 		pushpullBtn.disabled = true;
 		pushpullBtn.classList.remove("push", "pull");
 		return;
 	}
 
 	if (isPullRequired) {
-		pushpullBtn.classList.remove("disabled", "push");
+		pushpullBtn.classList.remove("push");
 		pushpullBtn.disabled = false;
 		pushpullBtn.classList.add("pull");
 	} else if (isPushRequired) {
-		pushpullBtn.classList.remove("disabled", "pull");
+		pushpullBtn.classList.remove("pull");
 		pushpullBtn.disabled = false;
 		pushpullBtn.classList.add("push");
 	} else {
-		pushpullBtn.classList.add("disabled");
 		pushpullBtn.disabled = true;
 		pushpullBtn.classList.remove("pull", "push");
 	}
@@ -1487,7 +1466,6 @@ function renderHistory(commits, isAppending = false) {
 
 			detailsBtnValue.textContent = "Loading...";
 			detailsBtn.disabled = true;
-			detailsBtn.classList.add("disabled");
 
 			sendIpcMessage(IpcActions.GET_COMMIT_DETAILS, {
 				repoPath: currentRepoPath,
@@ -1546,12 +1524,10 @@ function loadCommitDetails(details) {
 	if (!details.files || details.files.length === 0) {
 		detailsBtnValue.textContent = "No files available";
 		detailsBtn.disabled = true;
-		detailsBtn.classList.add("disabled");
 		return;
 	}
 
 	detailsBtn.disabled = false;
-	detailsBtn.classList.remove("disabled");
 
 	details.files.forEach((file, index) => {
 		const item = document.createElement("div");
@@ -1690,7 +1666,6 @@ function resetDetailsViewer() {
 
 	detailsBtnValue.textContent = "No commit selected";
 	detailsBtn.disabled = true;
-	detailsBtn.classList.add("disabled");
 	detailsFileList.innerHTML = "";
 }
 
@@ -1854,7 +1829,7 @@ branchBtn.addEventListener("contextmenu", (event) => {
 	event.preventDefault();
 	event.stopPropagation();
 
-	if (branchBtn.classList.contains("disabled")) { return; }
+	if (branchBtn.disabled) { return; }
 	closeDropdowns();
 
 	validateBranchContextMenu(currentBranch, topbarBranchMenuRename, topbarBranchMenuDelete);
@@ -1995,7 +1970,7 @@ detailsFileList.addEventListener("scroll", () =>
 );
 
 detailsBtn.addEventListener("click", (event) => {
-	if (detailsBtn.disabled || detailsBtn.classList.contains("disabled")) { return; }
+	if (detailsBtn.disabled) { return; }
 
 	event.stopPropagation();
 	repoPanel.classList.remove("show");
@@ -2347,7 +2322,6 @@ repoCreateModalSelectLicense.addEventListener("change", (event) => {
 	const isNone = event.target.value === "None";
 
 	repoCreateModalLicenseEdit.disabled = isNone;
-	repoCreateModalLicenseEdit.classList.toggle("disabled", isNone);
 
 	if (isNone) {
 		repoCreateModalLicenseEditPanel.classList.remove("open");
@@ -2594,7 +2568,6 @@ commitBtn.addEventListener("click", () => {
 	if (selectedFiles.length === 0) { return; }
 
 	commitBtn.disabled = true;
-	commitBtn.classList.add("disabled");
 
 	sendIpcMessage(IpcActions.REPO_COMMIT, {
 		repoPath: currentRepoPath,
@@ -2606,9 +2579,8 @@ commitBtn.addEventListener("click", () => {
 
 // Push/Pull button (left-sidebar)
 pushpullBtn.addEventListener("click", () => {
-	if (!currentRepoPath || pushpullBtn.classList.contains("disabled")) { return; }
+	if (!currentRepoPath || pushpullBtn.disabled) { return; }
 
-	pushpullBtn.classList.add("disabled");
 	pushpullBtn.disabled = true;
 
 	if (isPullRequired) {
