@@ -863,7 +863,7 @@ function createRepoDropdownItem(repo) {
 		item.title = "Repository folder not found";
 	}
 
-	if (repo.IsRemote) { item.classList.add("remote"); }
+	if (repo.RemoteUrl) { item.classList.add("remote"); }
 
 	// LMB - select
 	item.addEventListener("click", () => {

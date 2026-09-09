@@ -7,6 +7,6 @@
 		public string AbsolutePath { get; set; } = string.Empty;
 		public DateTime LastAccessed { get; set; } = DateTime.Now;
 		public bool IsValid { get; set; } = true;
-		public bool IsRemote { get; set; } = false;
+		public string? RemoteUrl { get; set; } = null;
 	}
 }

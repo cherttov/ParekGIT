@@ -7,7 +7,7 @@ namespace ParekGIT.Core.Services
 	{
 		private FileSystemWatcher? _watcher;
 		private readonly Timer _debounceTimer;
-		private string? _currentRepoPath;
+		private string _currentRepoPath = string.Empty;
 
 		public event EventHandler<string>? OnFilesChanged;
 

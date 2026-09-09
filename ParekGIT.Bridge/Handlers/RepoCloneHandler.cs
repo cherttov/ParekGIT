@@ -48,7 +48,7 @@ namespace ParekGIT.Bridge.Handlers
 				Name = repoName,
 				AbsolutePath = localPath,
 				LastAccessed = DateTime.Now,
-				IsRemote = !asLocal
+				RemoteUrl = asLocal ? null : repoUrl
 			};
 
 			await _dbStore.UpsertRepositoryAsync(clonedRepo);

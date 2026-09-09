@@ -51,10 +51,11 @@ namespace ParekGIT.Bridge.Handlers
 			await _gitRunner.CommitAsync(repoPath, message, description, files);
 
 			// Remote push if not remote
-			GitRepository? repo = await _dbStore.GetRepositoryByPathAsync(repoPath);
+			GitRepository repo = await _dbStore.GetRepositoryByPathAsync(repoPath)
+				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
 			bool pushed = false;
 
-			if (repo?.IsRemote == true)
+			if (!string.IsNullOrEmpty(repo.RemoteUrl))
 			{
 				await _gitRunner.FetchRepositoryAsync(repoPath);
 
