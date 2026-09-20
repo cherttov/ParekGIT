@@ -17,13 +17,13 @@ namespace ParekGIT.Bridge.Handlers
 		private readonly PhotinoWindow _window;
 		private readonly LiteDbStore _dbStore;
 		private readonly IGitRunner _gitRunner;
-		private readonly RepoWatcher _repoWatcher;
+		private readonly IRepoWatcher _repoWatcher;
 		private readonly IFileSystemService _fileSystem;
 
 		public string Action => "REPO_SELECTED";
 
 		// Constructor
-		public RepoSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner, RepoWatcher repoWatcher, IFileSystemService fileSystem)
+		public RepoSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner, IRepoWatcher repoWatcher, IFileSystemService fileSystem)
 		{
 			_window = window;
 			_dbStore = dbStore;

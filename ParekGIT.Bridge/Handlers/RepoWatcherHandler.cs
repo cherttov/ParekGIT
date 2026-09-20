@@ -1,5 +1,5 @@
 ﻿using ParekGIT.Bridge.Interfaces;
-using ParekGIT.Core.Services;
+using ParekGIT.Core.Interfaces;
 using Photino.NET;
 using System.Text.Json;
 
@@ -8,12 +8,12 @@ namespace ParekGIT.Bridge.Handlers
 	public class RepoWatcherHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly RepoWatcher _repoWatcher;
+		private readonly IRepoWatcher _repoWatcher;
 
 		public string Action => "INTERNAL_WATCHER_EVENTS";
 
 		// Constructor
-		public RepoWatcherHandler(PhotinoWindow window, RepoWatcher repoWatcher)
+		public RepoWatcherHandler(PhotinoWindow window, IRepoWatcher repoWatcher)
 		{
 			_window = window;
 			_repoWatcher = repoWatcher;

@@ -1,4 +1,5 @@
-﻿using ParekGIT.Data.Data;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ParekGIT.Data.Data;
 using Photino.NET;
 using System.Drawing;
 using ParekGIT.Bridge.Ipc;
@@ -6,6 +7,9 @@ using ParekGIT.Bridge.Handlers;
 using ParekGIT.Core.Git;
 using ParekGIT.Core.Services;
 using ParekGIT.Bridge.Services;
+using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Core.Interfaces;
+using ParekGIT.Data.Interfaces;
 
 namespace ParekGIT.UI
 {
@@ -16,89 +20,109 @@ namespace ParekGIT.UI
 		{
 			try
 			{
-				// Logger
-				var logger = new FileLogger();
+				var services = new ServiceCollection();
 
-				// Database
-				var dbStore = new LiteDbStore();
+				// ======================== Core Services ========================
+				services.AddSingleton<ILogger, FileLogger>();
 
-				// OS Services
-				var fileSystem = new FileSystemService(logger);
+				services.AddSingleton<LiteDbStore>();
+				services.AddSingleton<IRepositoryStore>(p => p.GetRequiredService<LiteDbStore>());
+				services.AddSingleton<ISettingsStore>(p => p.GetRequiredService<LiteDbStore>());
+				services.AddSingleton<ITodoStore>(p => p.GetRequiredService<LiteDbStore>());
 
-				// Template service (creating .gitignore & LICENSE files)
-				var templateService = new TemplateService(fileSystem, logger);
+				services.AddSingleton<IFileSystemService, FileSystemService>();
+				services.AddSingleton<ITemplateService, TemplateService>();
+				services.AddSingleton<IGitRunner, GitCliRunner>();
+				services.AddSingleton<IRepoWatcher, RepoWatcher>();
+				services.AddSingleton<IRemoteSyncNotifier, RemoteSyncNotifier>();
+				services.AddSingleton<IpcRouter>();
 
-				// Core runner
-				var gitRunner = new GitCliRunner(fileSystem, templateService, logger);
+				// ======================== Window ========================
+				services.AddSingleton(provider =>
+				{
+					return new PhotinoWindow()
+						.SetTitle("ParekGIT")
+						.SetUseOsDefaultSize(false)
+						.SetSize(new Size(960, 660))
+						.SetMinSize(960, 660)
+						.Center()
+						.SetContextMenuEnabled(true) // later false
+						.SetDevToolsEnabled(true) // later false
+						.SetJavascriptClipboardAccessEnabled(true)
+						.Load("wwwroot/index.html");
+				});
 
-				// Repo watcher
-				var repoWatcher = new RepoWatcher();
+				// ======================== Ipc handlers ========================
+				// App
+				services.AddSingleton<IMessageHandler, AppReadyHandler>();
 
-				// Window
-				var window = new PhotinoWindow()
-					.SetTitle("ParekGIT")
-					.SetUseOsDefaultSize(false)
-					.SetSize(new Size(960, 660))
-					.SetMinSize(960, 660)
-					.Center()
-					.SetContextMenuEnabled(true) // later false
-					.SetDevToolsEnabled(true) // later false
-					.SetJavascriptClipboardAccessEnabled(true)
-					.Load("wwwroot/index.html");
+				// Repo
+				services.AddSingleton<IMessageHandler, RepoSelectedHandler>();
+				services.AddSingleton<IMessageHandler, RepoCloneHandler>();
+				services.AddSingleton<IMessageHandler, RepoAddHandler>();
+				services.AddSingleton<IMessageHandler, RepoCreateHandler>();
+				services.AddSingleton<IMessageHandler, RepoRemoveHandler>();
+				services.AddSingleton<IMessageHandler, RepoPullHandler>();
+				services.AddSingleton<IMessageHandler, RepoPushHandler>();
+				services.AddSingleton<IMessageHandler, RepoStatusHandler>();
+				services.AddSingleton<IMessageHandler, RepoTerminalHandler>();
+				services.AddSingleton<IMessageHandler, RepoCommitHandler>();
+				services.AddSingleton<IMessageHandler, RepoFetchHandler>();
+				services.AddSingleton<IMessageHandler, RepoWatcherHandler>();
 
-				// Repo sync notifier
-				var syncNotifier = new RemoteSyncNotifier(window, gitRunner);
+				// Branch
+				services.AddSingleton<IMessageHandler, BranchSelectedHandler>();
+				services.AddSingleton<IMessageHandler, BranchCreateHandler>();
+				services.AddSingleton<IMessageHandler, BranchHistoryCreateHandler>();
+				services.AddSingleton<IMessageHandler, BranchRenameHandler>();
+				services.AddSingleton<IMessageHandler, BranchDeleteHandler>();
+				services.AddSingleton<IMessageHandler, BranchHistoryHandler>();
+				services.AddSingleton<IMessageHandler, BranchMergeHandler>();
 
-				// Setup IPC router
-				var router = new IpcRouter(logger);
+				// Commit/File
+				services.AddSingleton<IMessageHandler, FileDiffHandler>();
+				services.AddSingleton<IMessageHandler, HistoryFileDiffHandler>();
+				services.AddSingleton<IMessageHandler, CommitDetailsHandler>();
 
-				router.RegisterHandler(new AppReadyHandler(window, dbStore, fileSystem));
+				// Change
+				services.AddSingleton<IMessageHandler, ChangeDiscardHandler>();
+				services.AddSingleton<IMessageHandler, ChangeIgnoreHandler>();
 
-				router.RegisterHandler(new RepoSelectedHandler(window, dbStore, gitRunner, repoWatcher, fileSystem));
-				router.RegisterHandler(new RepoCloneHandler(window, dbStore, gitRunner));
-				router.RegisterHandler(new RepoAddHandler(window, dbStore, fileSystem));
-				router.RegisterHandler(new RepoCreateHandler(window, dbStore, gitRunner));
-				router.RegisterHandler(new RepoRemoveHandler(window, dbStore, fileSystem, logger));
-				router.RegisterHandler(new RepoPullHandler(window, gitRunner));
-				router.RegisterHandler(new RepoPushHandler(window, gitRunner));
-				router.RegisterHandler(new RepoStatusHandler(window, gitRunner, fileSystem));
-				router.RegisterHandler(new RepoTerminalHandler(fileSystem));
-				router.RegisterHandler(new RepoCommitHandler(window, dbStore, gitRunner, syncNotifier));
-				router.RegisterHandler(new RepoFetchHandler(window, gitRunner, syncNotifier));
-				router.RegisterHandler(new RepoWatcherHandler(window, repoWatcher));
+				// Explorer
+				services.AddSingleton<IMessageHandler, ExplorerDialogHandler>();
+				services.AddSingleton<IMessageHandler, ExplorerOpenHandler>();
 
-				router.RegisterHandler(new BranchSelectedHandler(window, gitRunner));
-				router.RegisterHandler(new BranchCreateHandler(window, gitRunner));
-				router.RegisterHandler(new BranchHistoryCreateHandler(window, gitRunner));
-				router.RegisterHandler(new BranchRenameHandler(window, gitRunner));
-				router.RegisterHandler(new BranchDeleteHandler(window, gitRunner));
-				router.RegisterHandler(new BranchHistoryHandler(window, gitRunner));
-				router.RegisterHandler(new BranchMergeHandler(window, gitRunner));
+				// Settings
+				services.AddSingleton<IMessageHandler, SettingsSaveHandler>();
 
-				router.RegisterHandler(new FileDiffHandler(window, gitRunner));
-				router.RegisterHandler(new HistoryFileDiffHandler(window, gitRunner));
-				router.RegisterHandler(new CommitDetailsHandler(window, gitRunner));
+				// Todo
+				services.AddSingleton<IMessageHandler, TodoLoadHandler>();
+				services.AddSingleton<IMessageHandler, TodoSaveHandler>();
 
-				router.RegisterHandler(new ChangeDiscardHandler(window, gitRunner));
-				router.RegisterHandler(new ChangeIgnoreHandler(window, gitRunner));
+				// Config
+				services.AddSingleton<IMessageHandler, ConfigLocalGetHandler>();
+				services.AddSingleton<IMessageHandler, ConfigLocalSaveHandler>();
+				services.AddSingleton<IMessageHandler, ConfigGlobalGetHandler>();
+				services.AddSingleton<IMessageHandler, ConfigGlobalSaveHandler>();
 
-				router.RegisterHandler(new ExplorerDialogHandler(window));
-				router.RegisterHandler(new ExplorerOpenHandler(fileSystem));
+				// Logs
+				services.AddSingleton<IMessageHandler, LogsClearHandler>();
 
-				router.RegisterHandler(new SettingsSaveHandler(window, dbStore));
+				// ======================== Building DependencyInjection & Handlers ========================
+				using var serviceProvider = services.BuildServiceProvider();
 
-				router.RegisterHandler(new TodoLoadHandler(window, dbStore));
-				router.RegisterHandler(new TodoSaveHandler(window, dbStore));
+				var window = serviceProvider.GetRequiredService<PhotinoWindow>();
+				var router = serviceProvider.GetRequiredService<IpcRouter>();
+				_ = serviceProvider.GetRequiredService<IRemoteSyncNotifier>();
 
-				router.RegisterHandler(new ConfigLocalGetHandler(window, gitRunner));
-				router.RegisterHandler(new ConfigLocalSaveHandler(window, gitRunner));
-				router.RegisterHandler(new ConfigGlobalGetHandler(window, gitRunner));
-				router.RegisterHandler(new ConfigGlobalSaveHandler(window, gitRunner));
+				var allHandlers = serviceProvider.GetServices<IMessageHandler>();
+				foreach (var handler in allHandlers)
+				{
+					router.RegisterHandler(handler);
+				}
 
-				router.RegisterHandler(new LogsClearHandler(window, fileSystem, logger));
-
+				// ======================== Start the application ========================
 				window.RegisterWebMessageReceivedHandler(router.HandleMessage!);
-
 				window.WaitForClose();
 			}
 			catch (Exception ex)
