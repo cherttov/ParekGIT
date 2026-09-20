@@ -4,6 +4,9 @@ namespace ParekGIT.Core.Git.Parsers
 {
 	internal static class GitBranchParser
 	{
+		private const string LOCAL_REF_PREFIX = "refs/heads/";
+		private const string REMOTE_REF_PREFIX = "refs/remotes/";
+
 		public static IEnumerable<GitBranch> Parse(string rawOutput)
 		{
 			var branches = new List<GitBranch>();
@@ -16,15 +19,19 @@ namespace ParekGIT.Core.Git.Parsers
 			foreach (var line in lines)
 			{
 				var parts = line.Split('|');
-				if (parts.Length != 4) { continue; }
+				if (parts.Length != 5) { continue; }
 
-				string name = parts[0].Trim();
-				if (name == "origin") { continue; }
+				string fullRefName = parts[0].Trim();
+				string name = parts[1].Trim();
+				bool isCurrent = parts[2].Trim() == "*";
+				string remoteBranch = parts[3].Trim();
+				string targetCommitHash = parts[4].Trim();
 
-				bool isCurrent = parts[1].Trim() == "*";
-				bool isRemote = name.Contains('/') && !isCurrent;
-				string targetCommitHash = parts[3].Trim();
-				string remoteBranch = parts[2].Trim();
+				bool isRemote = fullRefName.StartsWith(REMOTE_REF_PREFIX, StringComparison.Ordinal); ;
+				bool isLocal = fullRefName.StartsWith(LOCAL_REF_PREFIX, StringComparison.Ordinal);
+
+				if (!isRemote && !isLocal) { continue; } // not local & not remote (how?)
+				if (isRemote && fullRefName.EndsWith("/HEAD", StringComparison.Ordinal)) { continue; } // skip e.g. "origin/HEAD"
 
 				branches.Add(new GitBranch
 				{
@@ -48,7 +55,8 @@ namespace ParekGIT.Core.Git.Parsers
 			{
 				if (branch.IsRemote)
 				{
-					string shortName = branch.Name.Substring(branch.Name.IndexOf('/') + 1);
+					int slashIndex = branch.Name.IndexOf('/');
+					string shortName = slashIndex >= 0 ? branch.Name[(slashIndex + 1)..] : branch.Name;
 
 					if (localBranchNames.Contains(shortName))
 					{

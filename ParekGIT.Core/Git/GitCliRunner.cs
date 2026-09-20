@@ -3,7 +3,6 @@ using CliWrap.Buffered;
 using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
-using ParekGIT.Core.Services;
 
 namespace ParekGIT.Core.Git
 {
@@ -68,7 +67,7 @@ namespace ParekGIT.Core.Git
 		// Parsers
 		public async Task<IEnumerable<GitBranch>> GetBranchesAsync(string repoPath)
 		{
-			string arguments = "branch --all --format=\"%(refname:short)|%(HEAD)|%(upstream:short)|%(objectname)\"";
+			string arguments = "branch --all --format=\"%(refname)|%(refname:short)|%(HEAD)|%(upstream:short)|%(objectname)\"";
 
 			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
