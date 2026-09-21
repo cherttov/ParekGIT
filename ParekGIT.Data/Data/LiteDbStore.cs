@@ -6,9 +6,9 @@ using ParekGIT.Core.Services;
 
 namespace ParekGIT.Data.Data
 {
-	public class LiteDbStore : IRepositoryStore, ISettingsStore, ITodoStore
+	public class LiteDbStore : IRepositoryStore, ISettingsStore, ITodoStore, IDisposable
 	{
-		private readonly string _connectionString;
+		private readonly LiteDatabase _db;
 
 		private const string ReposCollectionName = "repositories";
 		private const string SettingsCollectionName = "settings";
@@ -17,12 +17,17 @@ namespace ParekGIT.Data.Data
 		// Constructor
 		public LiteDbStore()
 		{
-			string appDataPath = appDataPath = AppDataPaths.GetAppDataRoot();
+			string appDataPath = AppDataPaths.GetAppDataRoot();
 
 			Directory.CreateDirectory(appDataPath);
 
 			string rawPath = Path.Combine(appDataPath, "data.db");
-			_connectionString = $"Filename={rawPath};Connection=Shared";
+			_db = new LiteDatabase($"Filename={rawPath}");
+		}
+
+		public void Dispose()
+		{
+			_db.Dispose();
 		}
 
 		// Repos db
@@ -30,15 +35,12 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
-				{
-					var collection = db.GetCollection<GitRepository>(ReposCollectionName);
+				var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
 
-					return (IEnumerable<GitRepository>)collection
-						.Query()
-						.OrderByDescending(entry => entry.LastAccessed)
-						.ToList();
-				}
+				return (IEnumerable<GitRepository>)collection
+					.Query()
+					.OrderByDescending(entry => entry.LastAccessed)
+					.ToList();
 			});
 		}
 
@@ -46,12 +48,8 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run<GitRepository?>(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
-				{
-					var collection = db.GetCollection<GitRepository>(ReposCollectionName);
-
-					return (GitRepository)collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
-				}
+				var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
+				return (GitRepository)collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
 			});
 		}
 
@@ -59,12 +57,8 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
-				{
-					var collection = db.GetCollection<GitRepository>(ReposCollectionName);
-
-					collection.Upsert(repository);
-				}
+				var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
+				collection.Upsert(repository);
 			});
 		}
 
@@ -72,12 +66,8 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
-				{
-					var collection = db.GetCollection<GitRepository>(ReposCollectionName);
-
-					collection.Delete(id);
-				}
+				var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
+				collection.Delete(id);
 			});
 		}
 
@@ -85,17 +75,12 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
+				var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
+				var repo = collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
+				if (repo != null && repo.IsValid != isValid)
 				{
-					var collection = db.GetCollection<GitRepository>(ReposCollectionName);
-
-					var repo = collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
-
-					if (repo != null && repo.IsValid != isValid)
-					{
-						repo.IsValid = isValid;
-						collection.Update(repo);
-					}
+					repo.IsValid = isValid;
+					collection.Update(repo);
 				}
 			});
 		}
@@ -105,12 +90,9 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
-				{
-					var collection = db.GetCollection<UserSettings>(SettingsCollectionName);
-					var settings = collection.FindById(1);
-					return settings ?? new UserSettings();
-				}
+				var collection = _db.GetCollection<UserSettings>(SettingsCollectionName);
+				var settings = collection.FindById(1);
+				return settings ?? new UserSettings();
 			});
 		}
 
@@ -118,11 +100,8 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
-				{
-					var collection = db.GetCollection<UserSettings>(SettingsCollectionName);
-					collection.Upsert(settings);
-				}
+				var collection = _db.GetCollection<UserSettings>(SettingsCollectionName);
+				collection.Upsert(settings);
 			});
 		}
 
@@ -131,14 +110,10 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
-				{
-					var collection = db.GetCollection<TodoItem>(TodosCollectionName);
-
-					return (IEnumerable<TodoItem>)collection
-						.FindAll()
-						.ToList();
-				}
+				var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
+				return (IEnumerable<TodoItem>)collection
+					.FindAll()
+					.ToList();
 			});
 		}
 
@@ -146,14 +121,10 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
-				{
-					var collection = db.GetCollection<TodoItem>(TodosCollectionName);
-
-					return (IEnumerable<TodoItem>)collection
-						.Find(todo => todo.RepoId == repoId)
-						.ToList();
-				}
+				var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
+				return (IEnumerable<TodoItem>)collection
+					.Find(todo => todo.RepoId == repoId)
+					.ToList();
 			});
 		}
 
@@ -161,13 +132,18 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
+				_db.BeginTrans();
+				try
 				{
-					var collection = db.GetCollection<TodoItem>(TodosCollectionName);
-
+					var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
 					collection.DeleteMany(todo => todo.RepoId == repoId);
-
 					if (todos.Any()) { collection.InsertBulk(todos); }
+					_db.Commit();
+				}
+				catch
+				{
+					_db.Rollback();
+					throw;
 				}
 			});
 		}
@@ -176,12 +152,8 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
-				{
-					var collection = db.GetCollection<TodoItem>(TodosCollectionName);
-
-					collection.Upsert(todo);
-				}
+				var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
+				collection.Upsert(todo);
 			});
 		}
 
@@ -189,12 +161,8 @@ namespace ParekGIT.Data.Data
 		{
 			return Task.Run(() =>
 			{
-				using (var db = new LiteDatabase(_connectionString))
-				{
-					var collection = db.GetCollection<TodoItem>(TodosCollectionName);
-
-					collection.Delete(id);
-				}
+				var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
+				collection.Delete(id);
 			});
 		}
 	}
