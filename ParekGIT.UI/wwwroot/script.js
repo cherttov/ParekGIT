@@ -142,6 +142,7 @@ const repoAddModalConfirmBtn = repoAddModal.querySelector(".confirm-modal-btn");
 // Remove/Delete Repo Modal
 const repoRemoveModal = document.getElementById("repo-remove-modal");
 const repoRemoveModalName = document.getElementById("remove-modal-repo-name");
+const repoRemoveModalLocalRow = repoRemoveModal.querySelector(".checkbox-row");
 const repoRemoveModalLocalCheckbox = repoRemoveModal.querySelector(".ui-checkbox");
 const repoRemoveModalConfirmBtn = repoRemoveModal.querySelector(".confirm-modal-btn");
 
@@ -900,6 +901,7 @@ function createRepoDropdownItem(repo) {
 		repoItemContextMenu.dataset.targetName = repo.Name;
 
 		const isInvalid = item.classList.contains("invalid");
+		repoItemContextMenu.dataset.targetInvalid = isInvalid;
 
 		validateRepoContextMenu(repo.AbsolutePath, repoItemMenuTerminal, repoItemMenuExplorer, repoItemMenuRemove, isInvalid);
 
@@ -2135,6 +2137,7 @@ topbarRepoMenuRemove.addEventListener("click", (event) => {
 		repoRemoveModal.dataset.targetPath = currentRepoPath;
 		repoRemoveModalName.textContent = document.querySelector("#repositories-container .btn-value").textContent;
 		repoRemoveModalLocalCheckbox.checked = false;
+		repoRemoveModalLocalRow.style.display = "";
 		repoRemoveModal.classList.add("show");
 	}
 	closeDropdowns();
@@ -2170,12 +2173,14 @@ repoItemMenuRemove.addEventListener("click", (event) => {
 
 	const pathToRepo = repoItemContextMenu.dataset.targetPath;
 	const repoName = repoItemContextMenu.dataset.targetName;
+	const isInvalid = repoItemContextMenu.dataset.targetInvalid == "true";
 
 	if (pathToRepo) {
 		repoRemoveModal.dataset.targetPath = pathToRepo;
 
 		repoRemoveModalName.textContent = repoName;
 		repoRemoveModalLocalCheckbox.checked = false;
+		repoRemoveModalLocalRow.style.display = isInvalid ? "none" : "";
 
 		repoRemoveModal.classList.add("show");
 	}
