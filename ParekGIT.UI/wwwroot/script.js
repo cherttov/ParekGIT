@@ -27,7 +27,7 @@ const leftSidebar = document.getElementById("left-sidebar");
 const mergeBtn = leftSidebar.querySelector(".btn-merge");
 const todoBtn = leftSidebar.querySelector(".btn-todo");
 const configBtn = leftSidebar.querySelector(".btn-config");
-const pushpullBtn = leftSidebar.querySelector(".btn-pushpull");
+const pushPullPublishBtn = leftSidebar.querySelector(".btn-pushpullpublish");
 const fetchBtn = leftSidebar.querySelector(".btn-fetch");
 const settingsBtn = leftSidebar.querySelector(".btn-settings");
 const accountBtn = leftSidebar.querySelector(".btn-account");
@@ -1236,25 +1236,25 @@ function toggleCommitButton() {
 // Toggles LeftSidebar Push/Pull Button
 function togglePushPullButton() {
 	if (!currentBranch) {
-		pushpullBtn.disabled = true;
-		pushpullBtn.classList.remove("push", "pull");
+		pushPullPublishBtn.disabled = true;
+		pushPullPublishBtn.classList.remove("push", "pull");
 		return;
 	}
 
 	if (isPullRequired) {
-		pushpullBtn.classList.remove("push");
-		pushpullBtn.disabled = false;
-		pushpullBtn.title = `Pull ${commitsBehind} commit${commitsBehind === 1 ? "" : "s"}`;
-		pushpullBtn.classList.add("pull");
+		pushPullPublishBtn.classList.remove("push");
+		pushPullPublishBtn.disabled = false;
+		pushPullPublishBtn.title = `Pull ${commitsBehind} commit${commitsBehind === 1 ? "" : "s"}`;
+		pushPullPublishBtn.classList.add("pull");
 	} else if (isPushRequired) {
-		pushpullBtn.classList.remove("pull");
-		pushpullBtn.disabled = false;
-		pushpullBtn.title = `Push ${commitsAhead} commit${commitsAhead === 1 ? "" : "s"}`;
-		pushpullBtn.classList.add("push");
+		pushPullPublishBtn.classList.remove("pull");
+		pushPullPublishBtn.disabled = false;
+		pushPullPublishBtn.title = `Push ${commitsAhead} commit${commitsAhead === 1 ? "" : "s"}`;
+		pushPullPublishBtn.classList.add("push");
 	} else {
-		pushpullBtn.disabled = true;
-		pushpullBtn.title = "Up to date";
-		pushpullBtn.classList.remove("pull", "push");
+		pushPullPublishBtn.disabled = true;
+		pushPullPublishBtn.title = "Up to date";
+		pushPullPublishBtn.classList.remove("pull", "push");
 	}
 }
 
@@ -2586,10 +2586,10 @@ commitBtn.addEventListener("click", () => {
 });
 
 // Push/Pull button (left-sidebar)
-pushpullBtn.addEventListener("click", () => {
-	if (!currentRepoPath || pushpullBtn.disabled) { return; }
+pushPullPublishBtn.addEventListener("click", () => {
+	if (!currentRepoPath || pushPullPublishBtn.disabled) { return; }
 
-	pushpullBtn.disabled = true;
+	pushPullPublishBtn.disabled = true;
 
 	if (isPullRequired) {
 		sendIpcMessage(IpcActions.REPO_PULL, {

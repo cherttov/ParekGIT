@@ -490,7 +490,7 @@ select:focus {
 	mask-image: url("assets/icons/materials_user_attributes.svg");
 }
 
-.icon-pushpull {
+.icon-pushpullpublish {
 	mask-image: url("assets/icons/materials_arrow_upward.svg");
 }
 
@@ -511,12 +511,19 @@ select:focus {
 	margin-top: auto;
 }
 
-.left-sidebar-btn.push .icon-pushpull {
+.left-sidebar-btn.push .icon-pushpullpublish {
+	mask-image: url("assets/icons/materials_arrow_upward.svg");
 	transform: rotate(0deg);
 }
 
-.left-sidebar-btn.pull .icon-pushpull {
+.left-sidebar-btn.pull .icon-pushpullpublish {
+	mask-image: url("assets/icons/materials_arrow_upward.svg");
 	transform: rotate(180deg);
+}
+
+.left-sidebar-btn.publish .icon-pushpullpublish {
+	mask-image: url("assets/icons/materials_publish.svg");
+	transform: rotate(0deg);
 }
 
 @keyframes spin-fetch {
