@@ -50,10 +50,9 @@ namespace ParekGIT.Bridge.Handlers
 			// Commit locally
 			await _gitRunner.CommitAsync(repoPath, message, description, files);
 
-			// Remote push if not remote
+			// Refresh remote sync status
 			GitRepository repo = await _dbStore.GetRepositoryByPathAsync(repoPath)
 				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
-			bool pushed = false;
 
 			if (!string.IsNullOrEmpty(repo.RemoteUrl))
 			{
@@ -62,19 +61,13 @@ namespace ParekGIT.Bridge.Handlers
 				int commitsBehind = await _gitRunner.GetCommitsBehindAsync(repoPath);
 				int commitsAhead = await _gitRunner.GetCommitsAheadAsync(repoPath);
 				_syncNotifier.NotifyCommitsBehind(repoPath, commitsBehind, commitsAhead);
-
-				if (commitsBehind == 0)
-				{
-					await _gitRunner.PushAsync(repoPath);
-					pushed = true;
-				}
 			}
 
 			// Response
 			var response = new IpcMessage
 			{
 				Action = "REPO_COMMITTED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true, pushed })
+				Payload = JsonSerializer.SerializeToElement(new { success = true })
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
