@@ -22,8 +22,9 @@ namespace ParekGIT.Bridge.Ipc
 			_handlers[handler.Action] = handler;
 		}
 
-		public async void HandleMessage(object sender, string message)
+		public async void HandleMessage(object sender, WebMessageReceivedEventArgs e)
 		{
+			string message = e.Message;
 			var window = (PhotinoWindow)sender;
 
 			try

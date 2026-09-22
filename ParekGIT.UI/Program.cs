@@ -123,7 +123,9 @@ namespace ParekGIT.UI
 
 				// ======================== Start the application ========================
 				window.RegisterWebMessageReceivedHandler(router.HandleMessage!);
-				window.WaitForClose();
+
+				var app = new PhotinoApplication();
+				app.Run(window);
 			}
 			catch (Exception ex)
 			{
