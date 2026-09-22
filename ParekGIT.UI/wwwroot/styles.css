@@ -512,12 +512,10 @@ select:focus {
 }
 
 .left-sidebar-btn.push .icon-pushpullpublish {
-	mask-image: url("assets/icons/materials_arrow_upward.svg");
 	transform: rotate(0deg);
 }
 
 .left-sidebar-btn.pull .icon-pushpullpublish {
-	mask-image: url("assets/icons/materials_arrow_upward.svg");
 	transform: rotate(180deg);
 }
 

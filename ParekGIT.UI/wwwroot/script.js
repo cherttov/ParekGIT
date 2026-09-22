@@ -261,6 +261,7 @@ let isPullRequired = false;
 let isPushRequired = false;
 let commitsBehind = 0;
 let commitsAhead = 0;
+let currentBranchHasUpstream = true;
 
 let minRightWidth = 0, maxRightWidth = 0;
 let isResizing = false;
@@ -285,6 +286,7 @@ const IpcActions = {
 	REPO_FETCH: "REPO_FETCH",
 	REPO_PULL: "REPO_PULL",
 	REPO_PUSH: "REPO_PUSH",
+	REPO_PUBLISH: "REPO_PUBLISH",
 	REPO_COMMIT: "REPO_COMMIT",
 	REPO_CLONE: "REPO_CLONE",
 	REPO_CREATE: "REPO_CREATE",
@@ -318,6 +320,7 @@ const IpcActions = {
 	REPO_FETCHED: "REPO_FETCHED",
 	REPO_PULLED: "REPO_PULLED",
 	REPO_PUSHED: "REPO_PUSHED",
+	REPO_PUBLISHED: "REPO_PUBLISHED",
 	REPO_STATUS_LOADED: "REPO_STATUS_LOADED",
 	REPO_FILES_CHANGED: "REPO_FILES_CHANGED",
 	REPO_PATH_MISSING: "REPO_PATH_MISSING",
@@ -398,14 +401,24 @@ window.external.receiveMessage((message) => {
 		case IpcActions.REPO_PULLED: // MOVE TO DEDICATED METHOD
 			isPullRequired = false;
 			commitsBehind = 0;
-			togglePushPullButton();
+			togglePushPullPublishButton();
 			refreshRepoState();
 			break;
 
 		case IpcActions.REPO_PUSHED: // MOVE TO DEDICATED METHOD
 			isPushRequired = false;
 			commitsAhead = 0;
-			togglePushPullButton();
+			togglePushPullPublishButton();
+			refreshRepoState();
+			break;
+
+		case IpcActions.REPO_PUBLISHED: // MOVE TO DEDICATED METHOD
+			currentBranchHasUpstream = true;
+			isPushRequired = false;
+			isPullRequired = false;
+			commitsAhead = 0;
+			commitsBehind = 0;
+			togglePushPullPublishButton();
 			refreshRepoState();
 			break;
 
@@ -429,7 +442,7 @@ window.external.receiveMessage((message) => {
 			isPushRequired = commitsAhead > 0;
 
 			toggleCommitButton();
-			togglePushPullButton();
+			togglePushPullPublishButton();
 			break;
 
 		case IpcActions.BRANCHES_LOADED:
@@ -876,7 +889,7 @@ function createRepoDropdownItem(repo) {
 
 		loadDraft();
 		toggleCommitButton();
-		togglePushPullButton();
+		togglePushPullPublishButton();
 		switchToChangesTab();
 		resetViewers();
 		activeTodos = [];
@@ -1004,7 +1017,7 @@ function processMissingRepo(repoPath) {
 
 		resetViewers();
 		toggleCommitButton();
-		togglePushPullButton();
+		togglePushPullPublishButton();
 	}
 }
 
@@ -1064,6 +1077,7 @@ function loadBranchesIntoDropdown(branches) {
 			item.className = "dropdown-item active";
 			currentBranchName = branch.Name;
 			currentBranch = branch.Name;
+			currentBranchHasUpstream = !!branch.RemoteBranch;
 		} else {
 			item.className = "dropdown-item";
 		}
@@ -1234,27 +1248,32 @@ function toggleCommitButton() {
 }
 
 // Toggles LeftSidebar Push/Pull Button
-function togglePushPullButton() {
+function togglePushPullPublishButton() {
 	if (!currentBranch) {
 		pushPullPublishBtn.disabled = true;
-		pushPullPublishBtn.classList.remove("push", "pull");
+		pushPullPublishBtn.classList.remove("push", "pull", "publish");
 		return;
 	}
 
-	if (isPullRequired) {
-		pushPullPublishBtn.classList.remove("push");
+	if (!currentBranchHasUpstream) {
+		pushPullPublishBtn.classList.remove("push", "pull");
+		pushPullPublishBtn.disabled = false;
+		pushPullPublishBtn.title = "Publish branch";
+		pushPullPublishBtn.classList.add("publish");
+	} else if (isPullRequired) {
+		pushPullPublishBtn.classList.remove("push", "publish");
 		pushPullPublishBtn.disabled = false;
 		pushPullPublishBtn.title = `Pull ${commitsBehind} commit${commitsBehind === 1 ? "" : "s"}`;
 		pushPullPublishBtn.classList.add("pull");
 	} else if (isPushRequired) {
-		pushPullPublishBtn.classList.remove("pull");
+		pushPullPublishBtn.classList.remove("pull", "publish");
 		pushPullPublishBtn.disabled = false;
 		pushPullPublishBtn.title = `Push ${commitsAhead} commit${commitsAhead === 1 ? "" : "s"}`;
 		pushPullPublishBtn.classList.add("push");
 	} else {
 		pushPullPublishBtn.disabled = true;
 		pushPullPublishBtn.title = "Up to date";
-		pushPullPublishBtn.classList.remove("pull", "push");
+		pushPullPublishBtn.classList.remove("pull", "push", "publish");
 	}
 }
 
@@ -2591,7 +2610,12 @@ pushPullPublishBtn.addEventListener("click", () => {
 
 	pushPullPublishBtn.disabled = true;
 
-	if (isPullRequired) {
+	if (!currentBranchHasUpstream) {
+		sendIpcMessage(IpcActions.REPO_PUBLISH, {
+			repoPath: currentRepoPath,
+			branchName: currentBranch
+		});
+	} else if (isPullRequired) {
 		sendIpcMessage(IpcActions.REPO_PULL, {
 			repoPath: currentRepoPath
 		});
@@ -2854,7 +2878,7 @@ interactCustomScrollbar(todoModalRowsContainer, todoScrollbar);
 setRepoToolsEnabled(false);
 switchToChangesTab();
 toggleCommitButton();
-togglePushPullButton();
+togglePushPullPublishButton();
 resetDetailsViewer();
 
 window.addEventListener("DOMContentLoaded", () => {

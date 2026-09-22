@@ -64,6 +64,7 @@ namespace ParekGIT.UI
 				services.AddSingleton<IMessageHandler, RepoRemoveHandler>();
 				services.AddSingleton<IMessageHandler, RepoPullHandler>();
 				services.AddSingleton<IMessageHandler, RepoPushHandler>();
+				services.AddSingleton<IMessageHandler, RepoPublishHandler>();
 				services.AddSingleton<IMessageHandler, RepoStatusHandler>();
 				services.AddSingleton<IMessageHandler, RepoTerminalHandler>();
 				services.AddSingleton<IMessageHandler, RepoCommitHandler>();
