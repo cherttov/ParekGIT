@@ -1213,7 +1213,7 @@ function processBranchesMerged() {
 	resetViewers();
 
 	if (currentRepoPath) {
-		sendIpcMessage(IpcActions.GET_BRANCHES, { absolutePath: currentRepoPath });
+		sendIpcMessage(IpcActions.GET_BRANCHES, { repoPath: currentRepoPath });
 	}
 
 	refreshRepoState();

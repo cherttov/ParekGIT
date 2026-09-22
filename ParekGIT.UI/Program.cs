@@ -73,6 +73,7 @@ namespace ParekGIT.UI
 
 				// Branch
 				services.AddSingleton<IMessageHandler, BranchSelectedHandler>();
+				services.AddSingleton<IMessageHandler, BranchListHandler>();
 				services.AddSingleton<IMessageHandler, BranchCreateHandler>();
 				services.AddSingleton<IMessageHandler, BranchHistoryCreateHandler>();
 				services.AddSingleton<IMessageHandler, BranchRenameHandler>();
