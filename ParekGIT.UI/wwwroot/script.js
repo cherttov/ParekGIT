@@ -262,6 +262,7 @@ let isPushRequired = false;
 let commitsBehind = 0;
 let commitsAhead = 0;
 let currentBranchHasUpstream = true;
+let globalConfigRequestSource = null;
 
 let minRightWidth = 0, maxRightWidth = 0;
 let isResizing = false;
@@ -1795,13 +1796,19 @@ function processLocalConfigLoad(configs) {
 
 // C# - On global config load
 function processGlobalConfigLoad(config) {
-	accountModalInputName.value = config.globalName || "";
-	accountModalInputEmail.value = config.globalEmail || "";
+	if (globalConfigRequestSource === "license") {
+		document.getElementById("license-field-organization").placeholder = config.globalName || "";
+	} else {
+		accountModalInputName.value = config.globalName || "";
+		accountModalInputEmail.value = config.globalEmail || "";
 
-	accountModalInputName.placeholder = config.globalName || "";
-	accountModalInputEmail.placeholder = config.globalEmail || "";
+		accountModalInputName.placeholder = config.globalName || "";
+		accountModalInputEmail.placeholder = config.globalEmail || "";
 
-	accountModal.classList.add("show");
+		accountModal.classList.add("show");
+	}
+
+	globalConfigRequestSource = null;
 }
 
 // C# - Handle backend errors
@@ -2343,6 +2350,14 @@ repoCreateModalLicenseEdit.addEventListener("click", (event) => {
 	event.stopPropagation();
 	repoCreateModalLicenseEditPanel.classList.toggle("open");
 	repoCreateModalLicenseEdit.classList.toggle("active");
+
+	if (repoCreateModalLicenseEditPanel.classList.contains("open")) {
+		document.getElementById("license-field-year").placeholder = new Date().getFullYear().toString();
+		document.getElementById("license-field-project").placeholder = repoCreateModalInputName.value.trim();
+
+		globalConfigRequestSource = "license";
+		sendIpcMessage(IpcActions.CONFIG_GLOBAL_GET, {});
+	}
 });
 
 repoCreateModalSelectLicense.addEventListener("change", (event) => {
@@ -2796,9 +2811,10 @@ settingsBtn.addEventListener("click", () => {
 	settingsModal.classList.add("show");
 });
 
-accountBtn.addEventListener("click", () =>
-	sendIpcMessage(IpcActions.CONFIG_GLOBAL_GET, {})
-);
+accountBtn.addEventListener("click", () => {
+	globalConfigRequestSource = "account";
+	sendIpcMessage(IpcActions.CONFIG_GLOBAL_GET, {});
+});
 
 // Settings modal (modals)
 settingsModalLogsView.addEventListener("click", () =>
