@@ -16,6 +16,17 @@ Git GUI Client that's focused on simplicity
 - MacOS: [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview)
 > **NOTE:** Unlike **Windows** and **MacOS**, **Linux** might not come with a pre-installed WebKitGTK2
 
+## Credits ##
+### Framework & Core ###
+- [PhotinoX](https://github.com/ivanvoyager/PhotinoX) - Lightweight .NET wrapper for building cross-platform desktop apps with native OS WebViews.
+- [.NET 10](https://dotnet.microsoft.com) - Cross-platform runtime and framework for C#.
+- [CliWrap](https://github.com/Tyrrrz/CliWrap) - Library for interacting with command-line interfaces.
+- [LiteDB](https://github.com/litedb-org/litedb) - NoSQL single document database.
+
+### Assets & UI ###
+- **Icons:** [Google Material Symbols/Icons](https://github.com/google/material-design-icons) - UI Icon set under Apache 2.0 license.
+- **Fonts:** [FiraCode](https://github.com/tonsky/firacode) - Monospaced programming font with custom ligatures for readability.
+
 ## AI Usage ##
 AI was used to refactor the code, improve overall code structure and test edge cases.
 
