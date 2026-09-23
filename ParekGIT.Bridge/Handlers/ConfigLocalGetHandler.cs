@@ -27,8 +27,13 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 							  ?? throw new IpcPayloadException("repoPath");
 
-			GitConfigInfo localConfig = await _gitRunner.GetLocalConfigAsync(repoPath);
-			GitConfigInfo globalConfig = await _gitRunner.GetGlobalConfigAsync(null);
+			Task<GitConfigInfo> localConfigTask = _gitRunner.GetLocalConfigAsync(repoPath);
+			Task<GitConfigInfo> globalConfigTask = _gitRunner.GetGlobalConfigAsync(null);
+
+			await Task.WhenAll(localConfigTask, globalConfigTask);
+
+			GitConfigInfo localConfig = localConfigTask.Result;
+			GitConfigInfo globalConfig = globalConfigTask.Result;
 
 			var jsPayload = new
 			{
