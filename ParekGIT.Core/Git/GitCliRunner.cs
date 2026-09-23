@@ -150,20 +150,16 @@ namespace ParekGIT.Core.Git
 
 		public async Task<GitConfigInfo> GetGlobalConfigAsync(string? repoPath = null)
 		{
-			return new GitConfigInfo
-			{
-				Name = await ExecuteCommandAsync(repoPath, "config --global user.name", 1),
-				Email = await ExecuteCommandAsync(repoPath, "config --global user.email", 1)
-			};
+			string output = await ExecuteCommandAsync(repoPath, "config --global --get-regexp \"^user\\.(name|email)$\"", 1);
+
+			return GitConfigParser.Parse(output);
 		}
 
 		public async Task<GitConfigInfo> GetLocalConfigAsync(string repoPath)
 		{
-			return new GitConfigInfo
-			{
-				Name = await ExecuteCommandAsync(repoPath, "config --local user.name", 1),
-				Email = await ExecuteCommandAsync(repoPath, "config --local user.email", 1)
-			};
+			string output = await ExecuteCommandAsync(repoPath, "config --local --get-regexp \"^user\\.(name|email)$\"", 1);
+
+			return GitConfigParser.Parse(output);
 		}
 
 		// Commands
