@@ -1,15 +1,10 @@
 ﻿using ParekGIT.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ParekGIT.Core.Git.Parsers
 {
 	internal static class GitHistoryParser
 	{
-		public static IEnumerable<GitCommit> Parse(string rawOutput)
+		internal static IEnumerable<GitCommit> Parse(string rawOutput)
 		{
 			var commits = new List<GitCommit>();
 

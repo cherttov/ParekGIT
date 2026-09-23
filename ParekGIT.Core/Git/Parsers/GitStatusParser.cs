@@ -7,7 +7,6 @@ namespace ParekGIT.Core.Git.Parsers
 		internal static IEnumerable<GitFileStatus> Parse(string rawOutput)
 		{
 			var changedFiles = new List<GitFileStatus>();
-
 			if (string.IsNullOrWhiteSpace(rawOutput)) { return changedFiles; }
 
 			var lines = rawOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries);

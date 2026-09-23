@@ -7,11 +7,9 @@ namespace ParekGIT.Core.Git.Parsers
 		private const string LOCAL_REF_PREFIX = "refs/heads/";
 		private const string REMOTE_REF_PREFIX = "refs/remotes/";
 
-		public static IEnumerable<GitBranch> Parse(string rawOutput)
+		internal static IEnumerable<GitBranch> Parse(string rawOutput)
 		{
 			var branches = new List<GitBranch>();
-
-			// Empty repo
 			if (string.IsNullOrWhiteSpace(rawOutput)) { return branches; }
 
 			var lines = rawOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
