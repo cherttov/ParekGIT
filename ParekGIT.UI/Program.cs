@@ -107,6 +107,12 @@ namespace ParekGIT.UI
 				services.AddSingleton<IMessageHandler, ConfigGlobalGetHandler>();
 				services.AddSingleton<IMessageHandler, ConfigGlobalSaveHandler>();
 
+				// Stash
+				services.AddSingleton<IMessageHandler, StashListHandler>();
+				services.AddSingleton<IMessageHandler, StashSaveHandler>();
+				services.AddSingleton<IMessageHandler, StashPopHandler>();
+				services.AddSingleton<IMessageHandler, StashDropHandler>();
+
 				// Logs
 				services.AddSingleton<IMessageHandler, LogsClearHandler>();
 
