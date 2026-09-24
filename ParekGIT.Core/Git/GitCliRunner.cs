@@ -92,6 +92,15 @@ namespace ParekGIT.Core.Git
 			return GitHistoryParser.Parse(rawOutput);
 		}
 
+		public async Task<IEnumerable<GitStash>> GetStashesAsync(string repoPath)
+		{
+			string arguments = "stash list --format=\"%gd|%H|%s\"";
+
+			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
+
+			return GitStashParser.Parse(rawOutput);
+		}
+
 		public async Task<string> GetFileDiffAsync(string repoPath, string filePath)
 		{
 			string arguments = $"diff HEAD -- \"{filePath}\"";
@@ -494,6 +503,33 @@ namespace ParekGIT.Core.Git
 				string safeEmail = email.Replace("\"", "\\\"");
 				await ExecuteCommandAsync(repoPath, $"config --global user.email \"{safeEmail}\"");
 			}
+		}
+
+		public async Task StashSaveAsync(string repoPath, string message)
+		{
+			string arguments = "stash push";
+
+			if (!string.IsNullOrWhiteSpace(message))
+			{
+				string safeMessage = message.Replace("\"", "\\\"");
+				arguments += $" -m \"{safeMessage}\"";
+			}
+
+			await ExecuteCommandAsync(repoPath, arguments);
+		}
+
+		public async Task StashPopAsync(string repoPath, string stashSelector)
+		{
+			string arguments = $"stash pop {stashSelector}";
+
+			await ExecuteCommandAsync(repoPath, arguments);
+		}
+
+		public async Task StashDropAsync(string repoPath, string stashSelector)
+		{
+			string arguments = $"stash drop {stashSelector}";
+
+			await ExecuteCommandAsync(repoPath, arguments);
 		}
 	}
 }

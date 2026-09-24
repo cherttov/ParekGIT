@@ -10,6 +10,7 @@ namespace ParekGIT.Core.Interfaces
 		Task<IEnumerable<GitBranch>> GetBranchesAsync(string repoPath);
 		Task<IEnumerable<GitFileStatus>> GetStatusAsync(string repoPath);
 		Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int skip = 0, int take = 50);
+		Task<IEnumerable<GitStash>> GetStashesAsync(string repoPath);
 		Task<string> GetFileDiffAsync(string repoPath, string filePath);
 		Task<CommitDetailsResult> GetCommitDetailsAsync(string repoPath, string hash);
 		Task<int> GetCommitsAheadAsync(string repoPath);
@@ -39,5 +40,8 @@ namespace ParekGIT.Core.Interfaces
 		Task CloneRepositoryAsync(string repoUrl, bool asLocal, string localPath);
 		Task SaveLocalConfigAsync(string repoPath, string name, string email);
 		Task SaveGlobalConfigAsync(string? repoPath, string name, string email);
+		Task StashSaveAsync(string repoPath, string message);
+		Task StashPopAsync(string repoPath, string stashSelector);
+		Task StashDropAsync(string repoPath, string stashSelector);
 	}
 }
