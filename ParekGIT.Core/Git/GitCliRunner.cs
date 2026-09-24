@@ -20,7 +20,7 @@ namespace ParekGIT.Core.Git
 			_logger = logger;
 		}
 
-		// Command executor
+		// ======================== Command execution ========================
 		public async Task<string> ExecuteCommandAsync(string? repoPath, string arguments, params int[] successExitCodes)
 		{
 			string safeWorkingDir = string.IsNullOrWhiteSpace(repoPath)
@@ -64,7 +64,7 @@ namespace ParekGIT.Core.Git
 			}
 		}
 
-		// Parsers
+		// ======================== Parsers ========================
 		public async Task<IEnumerable<GitBranch>> GetBranchesAsync(string repoPath)
 		{
 			string arguments = "branch --all --format=\"%(refname)|%(refname:short)|%(HEAD)|%(upstream:short)|%(objectname)\"";
@@ -127,42 +127,48 @@ namespace ParekGIT.Core.Git
 		{
 			string arguments = "rev-list --count @{u}..HEAD";
 
-			string output = await ExecuteCommandAsync(repoPath, arguments, 128);
+			string rawOutput = await ExecuteCommandAsync(repoPath, arguments, 128);
 
-			return int.TryParse(output, out int aheadCount) ? aheadCount : 0;
+			return int.TryParse(rawOutput, out int aheadCount) ? aheadCount : 0;
 		}
 
 		public async Task<int> GetCommitsBehindAsync(string repoPath)
 		{
 			string arguments = "rev-list --count HEAD..@{u}";
 
-			string output = await ExecuteCommandAsync(repoPath, arguments, 128);
+			string rawOutput = await ExecuteCommandAsync(repoPath, arguments, 128);
 
-			return int.TryParse(output, out int behindCount) ? behindCount : 0;
+			return int.TryParse(rawOutput, out int behindCount) ? behindCount : 0;
 		}
 
 		public async Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath)
 		{
 			string arguments = $"show --format= {commitHash} -- \"{filePath}\"";
 
-			return await ExecuteCommandAsync(repoPath, arguments);
+			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
+
+			return rawOutput;
 		}
 
 		public async Task<GitConfigInfo> GetGlobalConfigAsync(string? repoPath = null)
 		{
-			string output = await ExecuteCommandAsync(repoPath, "config --global --get-regexp \"^user\\.(name|email)$\"", 1);
+			string arguments = "config --global --get-regexp \"^user\\.(name|email)$\"";
 
-			return GitConfigParser.Parse(output);
+			string rawOutput = await ExecuteCommandAsync(repoPath, arguments, 1);
+
+			return GitConfigParser.Parse(rawOutput);
 		}
 
 		public async Task<GitConfigInfo> GetLocalConfigAsync(string repoPath)
 		{
-			string output = await ExecuteCommandAsync(repoPath, "config --local --get-regexp \"^user\\.(name|email)$\"", 1);
+			string arguments = "config --local --get-regexp \"^user\\.(name|email)$\"";
 
-			return GitConfigParser.Parse(output);
+			string rawOutput = await ExecuteCommandAsync(repoPath, arguments, 1);
+
+			return GitConfigParser.Parse(rawOutput);
 		}
 
-		// Commands
+		// ======================== Commands ========================
 		public async Task CheckoutBranchAsync(string repoPath, string branchName, bool isRemote)
 		{
 			string arguments = isRemote
