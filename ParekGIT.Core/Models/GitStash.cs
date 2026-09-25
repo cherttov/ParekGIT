@@ -1,5 +1,6 @@
 ﻿namespace ParekGIT.Core.Models
 {
+	// Convert to record
 	public class GitStash
 	{
 		public string Selector { get; set; } = string.Empty;

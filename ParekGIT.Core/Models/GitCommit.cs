@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ParekGIT.Core.Models
+﻿namespace ParekGIT.Core.Models
 {
+	// Convert to record
 	public class GitCommit
 	{
-		public string Hash { get; set; }
-		public string Message { get; set; }
-		public string Author { get; set; }
-		public string TimeAgo { get; set; }
+		public string Hash { get; set; } = string.Empty;
+		public string Message { get; set; } = string.Empty;
+		public string Author { get; set; } = string.Empty;
+		public string TimeAgo { get; set; } = string.Empty; // Change to DateTime
 	}
 }
