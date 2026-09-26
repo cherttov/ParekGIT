@@ -1,11 +1,10 @@
 ﻿namespace ParekGIT.Core.Models
 {
-	// Convert to record
-	public class GitStash
+	public record GitStash
 	{
-		public string Selector { get; set; } = string.Empty;
-		public string CommitHash { get; set; } = string.Empty;
-		public string Message { get; set; } = string.Empty;
-		public string BranchName { get; set; } = string.Empty;
+		public required string Selector { get; init; }
+		public required string CommitHash { get; init; }
+		public required string Message { get; init; }
+		public string BranchName { get; init; } = string.Empty;
 	}
 }

@@ -1,10 +1,9 @@
 ﻿namespace ParekGIT.Core.Models
 {
-	// Convert to record
-	public class CommitDetailsResult
+	public record CommitDetailsResult
 	{
-		public string Author { get; set; } = string.Empty;
-		public string Message { get; set; } = string.Empty;
-		public List<GitFileStatus> Files { get; set; } = new();
+		public required string Author { get; init; }
+		public required string Message { get; init; }
+		public List<GitFileStatus> Files { get; init; } = new();
 	}
 }

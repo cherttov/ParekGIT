@@ -1,9 +1,8 @@
 ﻿namespace ParekGIT.Core.Models
 {
-	// Convert to record
-	public class GitFileStatus
+	public record GitFileStatus
 	{
-		public string StatusCode { get; set; } = string.Empty;
-		public string Path { get; set; } = string.Empty;
+		public required string StatusCode { get; init; }
+		public required string Path { get; init; }
 	}
 }

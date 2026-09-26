@@ -1,11 +1,10 @@
 ﻿namespace ParekGIT.Core.Models
 {
-	// Convert to record
-	public class GitCommit
+	public record GitCommit
 	{
-		public string Hash { get; set; } = string.Empty;
-		public string Message { get; set; } = string.Empty;
-		public string Author { get; set; } = string.Empty;
-		public string TimeAgo { get; set; } = string.Empty; // Change to DateTime
+		public required string Hash { get; init; }
+		public required string Message { get; init; }
+		public required string Author { get; init; }
+		public required string TimeAgo { get; init; } // Change to DateTime
 	}
 }

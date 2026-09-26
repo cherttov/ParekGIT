@@ -7,7 +7,7 @@ namespace ParekGIT.Core.Git.Parsers
 		internal static CommitDetailsResult Parse(string rawOutput)
 		{
 			var lines = rawOutput.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-			if (lines.Length == 0) { return new CommitDetailsResult { Author = "Unknown", Files = new List<GitFileStatus>() }; }
+			if (lines.Length == 0) { return new CommitDetailsResult { Author = "Unknown", Message = string.Empty, Files = new List<GitFileStatus>() }; }
 
 			string author = lines[0].Trim();
 			string message = lines.Length > 1 ? lines[1].Trim() : "";

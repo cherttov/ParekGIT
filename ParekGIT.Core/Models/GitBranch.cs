@@ -1,12 +1,11 @@
 ﻿namespace ParekGIT.Core.Models
 {
-	// Convert to record?
-	public class GitBranch
+	public record GitBranch
 	{
-		public string Name { get; set; } = string.Empty;
-		public bool IsCurrent { get; set; } = false;
-		public bool IsRemote { get; set; } = false;
-		public string TargetCommitHash { get; set; } = string.Empty;
-		public string RemoteBranch { get; set; } = string.Empty;
+		public required string Name { get; init; }
+		public bool IsCurrent { get; init; } = false;
+		public bool IsRemote { get; init; } = false;
+		public required string TargetCommitHash { get; init; }
+		public string RemoteBranch { get; init; } = string.Empty;
 	}
 }
