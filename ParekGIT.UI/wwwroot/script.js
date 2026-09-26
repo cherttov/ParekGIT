@@ -1481,7 +1481,7 @@ function renderHistory(commits, isAppending = false) {
 			<div class="history-message">${commit.Message}</div>
 			<div class="history-meta">
 				<div class="history-author">${commit.Author}</div>
-				<div class="history-time"">${commit.TimeAgo}</div>
+				<div class="history-time">${commit.TimeAgo}</div>
 			</div>
 		`;
 

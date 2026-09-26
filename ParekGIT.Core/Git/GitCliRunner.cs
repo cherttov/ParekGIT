@@ -85,7 +85,7 @@ namespace ParekGIT.Core.Git
 
 		public async Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int skip = 0, int take = 50)
 		{
-			string arguments = $"log \"{branchName}\" -n {take} --pretty=format:\"%H|%s|%an|%ar\"";
+			string arguments = $"log \"{branchName}\" -n {take} --pretty=format:\"%H|%s|%an|%ar|%at\"";
 
 			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
