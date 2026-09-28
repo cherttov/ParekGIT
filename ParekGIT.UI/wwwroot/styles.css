@@ -494,6 +494,10 @@ select:focus {
 	mask-image: url("assets/icons/materials_arrow_upward.svg");
 }
 
+.icon-stash {
+	mask-image: url("assets/icons/materials_box.svg");
+}
+
 .icon-fetch {
 	transform: rotate(-45deg);
 	mask-image: url("assets/icons/materials_cached.svg");
@@ -1366,7 +1370,7 @@ select:focus {
 	user-select: text;
 }
 
-.todo-list-wrapper {
+.modal-list-wrapper {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
@@ -1375,7 +1379,7 @@ select:focus {
 	overflow: hidden;
 }
 
-.todo-rows-container {
+.modal-list-rows {
 	display: flex;
 	flex-direction: column;
 	gap: 0;
@@ -1383,7 +1387,7 @@ select:focus {
 	scrollbar-width: none;
 }
 
-.todo-rows-container::-webkit-scrollbar {
+.modal-list-rows::-webkit-scrollbar {
 	display: none;
 }
 
@@ -1570,7 +1574,7 @@ select:focus {
 .history-list-wrapper:hover .custom-scrollbar,
 .changes-list-wrapper:hover .custom-scrollbar,
 .dropdown-list-wrapper:hover .custom-scrollbar,
-.todo-list-wrapper:hover .custom-scrollbar {
+.modal-list-wrapper:hover .custom-scrollbar {
 	opacity: 0.15;
 }
 
@@ -1579,7 +1583,7 @@ select:focus {
 .history-list-wrapper:hover .custom-scrollbar:hover,
 .changes-list-wrapper:hover .custom-scrollbar:hover,
 .dropdown-list-wrapper:hover .custom-scrollbar:hover,
-.todo-list-wrapper:hover .custom-scrollbar:hover {
+.modal-list-wrapper:hover .custom-scrollbar:hover {
 	opacity: 0.3;
 }
 
@@ -1589,7 +1593,7 @@ select:focus {
 .history-list-wrapper:hover .custom-scrollbar.focused,
 .changes-list-wrapper:hover .custom-scrollbar.focused,
 .dropdown-list-wrapper:hover .custom-scrollbar.focused,
-.todo-list-wrapper:hover .custom-scrollbar.focused {
+.modal-list-wrapper:hover .custom-scrollbar.focused {
 	opacity: 0.3;
 }
 

@@ -28,6 +28,7 @@ const mergeBtn = leftSidebar.querySelector(".btn-merge");
 const todoBtn = leftSidebar.querySelector(".btn-todo");
 const configBtn = leftSidebar.querySelector(".btn-config");
 const pushPullPublishBtn = leftSidebar.querySelector(".btn-pushpullpublish");
+const stashBtn = leftSidebar.querySelector(".btn-stash");
 const fetchBtn = leftSidebar.querySelector(".btn-fetch");
 const settingsBtn = leftSidebar.querySelector(".btn-settings");
 const accountBtn = leftSidebar.querySelector(".btn-account");
@@ -179,6 +180,9 @@ const errorModalMessage = document.getElementById("error-modal-message");
 const repoMissingModal = document.getElementById("repo-missing-modal");
 const repoMissingModalConfirmBtn = repoMissingModal.querySelector(".confirm-modal-btn");
 const repoMissingModalCancelBtn = repoMissingModal.querySelector(".cancel-modal-btn");
+
+// Stash Modal
+const stashModal = document.getElementById("stash-modal");
 
 // Dropdown 'ADD' Button ContextMenu
 const repoContextMenu = document.getElementById("repo-context-menu");
@@ -871,6 +875,7 @@ function setRepoToolsEnabled(enabled) {
 	mergeBtn.disabled = !enabled;
 	todoBtn.disabled = !enabled;
 	configBtn.disabled = !enabled;
+	stashBtn.disabled = !enabled;
 	fetchBtn.disabled = !enabled;
 }
 
@@ -2802,6 +2807,16 @@ todoModalConfirmBtn.addEventListener("click", () => {
 	});
 
 	closeAndClearModal(todoModal);
+});
+
+// ======================== STASH LISTENERS ========================
+// Click listeners scoped to StashModal
+
+stashBtn.addEventListener("click", () => {
+	if (!currentRepoPath) { return; }
+
+	stashModal.classList.add("show");
+	sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
 });
 
 // ======================== CONFIG & SETTINGS LISTENERS ========================
