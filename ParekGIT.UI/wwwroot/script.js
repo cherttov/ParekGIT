@@ -1723,7 +1723,7 @@ function renderTodoList() {
 	// Render all existing todo items
 	draftTodos.forEach((todo, index) => {
 		const row = document.createElement("div");
-		row.className = "todo-row";
+		row.className = "todo-modal-row";
 
 		// Checkbox
 		const checkbox = document.createElement("input");
@@ -1739,12 +1739,12 @@ function renderTodoList() {
 
 		// Label
 		const label = document.createElement("span");
-		label.className = `todo-label ${todo.isCompleted ? "done" : ""}`;
+		label.className = `todo-modal-label ${todo.isCompleted ? "done" : ""}`;
 		label.textContent = todo.text;
 
 		// Delete
 		const deleteBtn = document.createElement("button");
-		deleteBtn.className = "todo-remove-btn";
+		deleteBtn.className = "todo-modal-remove-btn";
 		deleteBtn.innerHTML = "&times;";
 		deleteBtn.addEventListener("click", () => {
 			draftTodos.splice(index, 1);
@@ -1759,7 +1759,7 @@ function renderTodoList() {
 
 	// Render constant new task row
 	const newRow = document.createElement("div");
-	newRow.className = "todo-row";
+	newRow.className = "todo-modal-row";
 
 	const newInput = document.createElement("input");
 	newInput.type = "text";
@@ -1775,7 +1775,7 @@ function renderTodoList() {
 			renderTodoList();
 
 			// Refocus on new task input
-			const newInputs = todoModalRowsContainer.querySelectorAll(".todo-row .modal-input");
+			const newInputs = todoModalRowsContainer.querySelectorAll(".todo-modal-row .modal-input");
 			if (newInputs.length > 0) { newInputs[newInputs.length - 1].focus(); }
 		}
 	});
@@ -2912,7 +2912,6 @@ interactCustomScrollbar(detailsBodyWrapper, detailsScrollbar);
 interactCustomScrollbar(changesList, changesScrollbar);
 interactCustomScrollbar(historyList, historyScrollbar);
 interactCustomScrollbar(todoModalRowsContainer, todoScrollbar);
-
 
 setRepoToolsEnabled(false);
 switchToChangesTab();

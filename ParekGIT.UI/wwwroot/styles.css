@@ -1391,7 +1391,7 @@ select:focus {
 	display: none;
 }
 
-.todo-row {
+.todo-modal-row {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -1400,11 +1400,11 @@ select:focus {
 	transition: background-color 0.1s ease;
 }
 
-.todo-row:hover {
+.todo-modal-row:hover {
 	background-color: var(--bg-hover);
 }
 
-.todo-label {
+.todo-modal-label {
 	flex: 1;
 	font-family: inherit;
 	font-size: 13px;
@@ -1417,19 +1417,19 @@ select:focus {
 	-webkit-font-smoothing: antialiased;
 }
 
-.todo-label.done {
+.todo-modal-label.done {
 	text-decoration: line-through;
 	color: var(--text-muted);
 	text-decoration-color: var(--text-muted);
 	text-decoration-thickness: 1px;
 }
 
-.todo-row .modal-input {
+.todo-modal-row .modal-input {
 	flex: 1;
 	margin: 0;
 }
 
-.todo-remove-btn {
+.todo-modal-remove-btn {
 	background: transparent;
 	border: none;
 	color: var(--text-muted);
@@ -1438,12 +1438,12 @@ select:focus {
 	transition: color 0.1s ease;
 }
 
-.todo-remove-btn:hover:not(:disabled) {
+.todo-modal-remove-btn:hover:not(:disabled) {
 	color: var(--diff-remove-text);
 }
 
-.todo-remove-btn:disabled,
-.todo-checkbox:disabled {
+.todo-modal-remove-btn:disabled,
+.todo-modal-checkbox:disabled {
 	opacity: 0.3;
 	pointer-events: none;
 }
