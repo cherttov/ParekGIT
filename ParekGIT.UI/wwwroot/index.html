@@ -759,10 +759,25 @@
 						<button class="close-modal-icon">&times;</button>
 					</div>
 
-					<div class="modal-body">
+					<div class="modal-body" style="padding: 0; gap: 0">
 						<div class="modal-list-wrapper">
 							<div class="modal-list-rows"
 								 id="stash-rows-container">
+
+								<div class="stash-modal-row" data-selector="stash@{0}">
+									<div class="stash-info">
+										<div class="stash-message">fix login bug</div>
+										<div class="stash-meta">
+											<span class="stash-branch">main</span>
+											<span class="stash-hash">a1b2c3d</span>
+										</div>
+									</div>
+									<div class="stash-actions">
+										<button class="stash-action-btn stash-pop-btn">Pop</button>
+										<button class="stash-action-btn stash-drop-btn">Drop</button>
+									</div>
+								</div>
+
 							</div>
 							<div class="custom-scrollbar"
 								 id="stash-scrollbar"></div>

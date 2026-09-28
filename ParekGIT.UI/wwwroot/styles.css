@@ -1391,7 +1391,7 @@ select:focus {
 	display: none;
 }
 
-.todo-modal-row {
+.todo-modal-row, .stash-modal-row {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -1400,7 +1400,7 @@ select:focus {
 	transition: background-color 0.1s ease;
 }
 
-.todo-modal-row:hover {
+.todo-modal-row:hover, .stash-modal-row:hover {
 	background-color: var(--bg-hover);
 }
 
@@ -1506,6 +1506,62 @@ select:focus {
 
 .browse-btn:hover {
 	background-color: var(--bg-hover);
+}
+
+.stash-info {
+	flex: 1;
+	min-width: 0;
+}
+
+.stash-meta {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--text-muted);
+	font-size: 12px;
+}
+
+.stash-branch::after {
+	content: "•";
+	margin-left: 6px;
+}
+
+.stash-actions {
+	display: flex;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+.stash-action-btn {
+	padding: 4px 8px;
+	background-color: transparent;
+	color: var(--text-primary);
+	border: 1px solid var(--border-color);
+	border-radius: 4px;
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 500;
+	transition: background-color 0.1s ease, color 0.2s ease, border-color 0.1s ease;
+}
+
+.modal-list-rows:hover .stash-pop-btn {
+	background-color: var(--accent);
+	border-color: var(--accent);
+	color: var(--accent-text);
+}
+
+.modal-list-rows:hover .stash-drop-btn {
+	border-color: var(--bg-active);
+}
+
+.modal-list-rows:hover .stash-pop-btn:hover {
+	background-color: var(--accent-hover);
+	border-color: var(--accent-hover);
+}
+
+.modal-list-rows:hover .stash-drop-btn:hover {
+	border-color: var(--diff-remove-text);
+	color: var(--diff-remove-text);
 }
 
 /* CONTEXT MENUS */
