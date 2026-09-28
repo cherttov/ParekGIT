@@ -1058,7 +1058,7 @@ select:focus {
 }
 
 .history-author::after {
-	content: ".";
+	content: "•";
 	margin-left: 6px;
 }
 
