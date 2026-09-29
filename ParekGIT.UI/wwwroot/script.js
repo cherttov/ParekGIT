@@ -183,6 +183,8 @@ const repoMissingModalCancelBtn = repoMissingModal.querySelector(".cancel-modal-
 
 // Stash Modal
 const stashModal = document.getElementById("stash-modal");
+const stashRowsContainer = document.getElementById("stash-rows-container");
+const stashScrollbar = document.getElementById("stash-scrollbar");
 
 // Dropdown 'ADD' Button ContextMenu
 const repoContextMenu = document.getElementById("repo-context-menu");
@@ -530,6 +532,19 @@ window.external.receiveMessage((message) => {
 
 		case IpcActions.SETTINGS_SAVED:
 			applyTheme(data.Payload.Theme);
+			break;
+
+		case IpcActions.STASHES_LOADED:
+			loadStashes(data.Payload);
+			break;
+
+		case IpcActions.STASH_SAVED:
+			break;
+
+		case IpcActions.STASH_POPPEP:
+			break;
+
+		case IpcActions.STASH_DROPPED:
 			break;
 
 		default:
@@ -1711,6 +1726,73 @@ function resetDetailsViewer() {
 function resetViewers() {
 	resetDiffViewer();
 	resetDetailsViewer();
+}
+
+// ======================== STASH HELPERS ========================
+// Functions scoped to per-repo StashList modal.
+
+// C# - Load stashes into stash modal
+function loadStashes(stashes) {
+	stashRowsContainer.innerHTML = "";
+
+	// Empty repo stashes
+	if (!stashes || stashes.length === 0) {
+		const empty = document.createElement("div");
+		empty.className = "stash-empty";
+		empty.textContent = "No stashes in this repository";
+		stashRowsContainer.appendChild(empty);
+
+		updateCustomScrollbar(stashRowsContainer, stashScrollbar);
+		return;
+	}
+
+	stashes.forEach((stash) => {
+		const row = document.createElement("div");
+		row.className = "stash-modal-row";
+		row.dataset.selector = stash.Selector;
+
+		row.innerHTML = `
+			<div class="stash-info">
+				<div class="stash-message"></div>
+				<div class="stash-meta">
+					<span class="stash-branch"></span>
+					<span class="stash-hash"></span>
+				</div>
+			</div>
+			<div class="stash-actions">
+				<button class="stash-action-btn stash-pop-btn">Pop</button>
+				<button class="stash-action-btn stash-drop-btn">Drop</button>
+			</div>
+		`;
+
+		// Stip git raw message beginning (e.g. "On main: ...")
+		const separatorIndex = stash.Message.indexOf(": ");
+		const displayMessage = separatorIndex >= 0 ? stash.Message.slice(separatorIndex + 2) : stash.Message;
+
+		// Set text content
+		row.querySelector(".stash-message").textContent = displayMessage;
+		row.querySelector(".stash-branch").textContent = stash.BranchName;
+		row.querySelector(".stash-hash").textContent = stash.Hash.substring(0, 7);
+
+		// Wire listeners
+		row.querySelector(".stash-pop-btn").addEventListener("click", (event) => {
+			event.stopPropagation();
+			sendIpcMessage(IpcActions.STASH_POP, {
+				repoPath: currentRepoPath,
+				stashSelector: row.dataset.selector
+			});
+		});
+
+		row.querySelector(".stash-drop-btn").addEventListener("click", (event) => {
+			event.stopPropagation();
+			sendIpcMessage(IpcActions.STASH_DROP, {
+				repoPath: currentRepoPath,
+				stashSelector: row.dataset.selector
+			});
+		});
+	});
+
+	updateCustomScrollbar(stashRowsContainer, stashScrollbar);
 }
 
 // ======================== TODO HELPERS ========================
