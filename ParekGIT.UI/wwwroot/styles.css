@@ -1508,6 +1508,16 @@ select:focus {
 	background-color: var(--bg-hover);
 }
 
+.stash-message {
+	color: var(--text-primary);
+	font-family: inherit;
+	font-size: 13px;
+	font-weight: 500;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .stash-info {
 	flex: 1;
 	min-width: 0;
@@ -1532,6 +1542,13 @@ select:focus {
 	flex-shrink: 0;
 }
 
+.stash-empty {
+	padding: 12px 8px;
+	color: var(--text-muted);
+	font-size: 13px;
+	text-align: center;
+}
+
 .stash-action-btn {
 	padding: 4px 8px;
 	background-color: transparent;
@@ -1541,25 +1558,25 @@ select:focus {
 	font-family: inherit;
 	font-size: 12px;
 	font-weight: 500;
-	transition: background-color 0.1s ease, color 0.2s ease, border-color 0.1s ease;
+	transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.modal-list-rows:hover .stash-pop-btn {
+.stash-modal-row:hover .stash-pop-btn {
 	background-color: var(--accent);
 	border-color: var(--accent);
 	color: var(--accent-text);
 }
 
-.modal-list-rows:hover .stash-drop-btn {
+.stash-modal-row:hover .stash-drop-btn {
 	border-color: var(--bg-active);
 }
 
-.modal-list-rows:hover .stash-pop-btn:hover {
+.stash-modal-row:hover .stash-pop-btn:hover {
 	background-color: var(--accent-hover);
 	border-color: var(--accent-hover);
 }
 
-.modal-list-rows:hover .stash-drop-btn:hover {
+.stash-modal-row:hover .stash-drop-btn:hover {
 	border-color: var(--diff-remove-text);
 	color: var(--diff-remove-text);
 }
