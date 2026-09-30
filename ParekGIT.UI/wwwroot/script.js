@@ -185,6 +185,8 @@ const repoMissingModalCancelBtn = repoMissingModal.querySelector(".cancel-modal-
 const stashModal = document.getElementById("stash-modal");
 const stashRowsContainer = document.getElementById("stash-rows-container");
 const stashScrollbar = document.getElementById("stash-scrollbar");
+const stashModalInputMessage = document.getElementById("stash-modal-input-message");
+const stashModalSaveBtn = document.getElementById("stash-modal-save-btn");
 
 // Dropdown 'ADD' Button ContextMenu
 const repoContextMenu = document.getElementById("repo-context-menu");
@@ -358,7 +360,7 @@ const IpcActions = {
 	SETTINGS_SAVED: "SETTINGS_SAVED",
 	STASHES_LOADED: "STASHES_LOADED",
 	STASH_SAVED: "STASH_SAVED",
-	STASH_POPPEP: "STASH_POPPEP",
+	STASH_POPPED: "STASH_POPPED",
 	STASH_DROPPED: "STASH_DROPPED"
 };
 
@@ -539,12 +541,15 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case IpcActions.STASH_SAVED:
+			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath }); // REVISIT
 			break;
 
 		case IpcActions.STASH_POPPEP:
+			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath }); // REVISIT
 			break;
 
 		case IpcActions.STASH_DROPPED:
+			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath }); // REVISIT
 			break;
 
 		default:
@@ -1772,14 +1777,14 @@ function loadStashes(stashes) {
 		// Set text content
 		row.querySelector(".stash-message").textContent = displayMessage;
 		row.querySelector(".stash-branch").textContent = stash.BranchName;
-		row.querySelector(".stash-hash").textContent = stash.Hash.substring(0, 7);
+		row.querySelector(".stash-hash").textContent = stash.CommitHash.substring(0, 7);
 
 		// Wire listeners
 		row.querySelector(".stash-pop-btn").addEventListener("click", (event) => {
 			event.stopPropagation();
 			sendIpcMessage(IpcActions.STASH_POP, {
 				repoPath: currentRepoPath,
-				stashSelector: row.dataset.selector
+				selector: row.dataset.selector
 			});
 		});
 
@@ -1787,9 +1792,11 @@ function loadStashes(stashes) {
 			event.stopPropagation();
 			sendIpcMessage(IpcActions.STASH_DROP, {
 				repoPath: currentRepoPath,
-				stashSelector: row.dataset.selector
+				selector: row.dataset.selector
 			});
 		});
+
+		stashRowsContainer.appendChild(row);
 	});
 
 	updateCustomScrollbar(stashRowsContainer, stashScrollbar);
@@ -2899,6 +2906,18 @@ stashBtn.addEventListener("click", () => {
 
 	stashModal.classList.add("show");
 	sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
+});
+
+stashModalSaveBtn.addEventListener("click", () => {
+	if (!currentRepoPath) { return; }
+
+	const hasChanges = document.querySelectorAll(".changes-item-checkbox").length > 0;
+	if (!hasChanges) { return; }
+
+	sendIpcMessage(IpcActions.STASH_SAVE, {
+		repoPath: currentRepoPath,
+		message: stashModalInputMessage.value.trim()
+	});
 });
 
 // ======================== CONFIG & SETTINGS LISTENERS ========================

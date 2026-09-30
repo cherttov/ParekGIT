@@ -1508,6 +1508,33 @@ select:focus {
 	background-color: var(--bg-hover);
 }
 
+.stash-new-row {
+	display: flex;
+	gap: 8px;
+	padding: 8px;
+	border-bottom: 1px solid var(--border-color);
+}
+
+.stash-new-row .modal-input {
+	flex: 1;
+}
+
+.stash-save-btn {
+	border-color: var(--accent);
+	color: var(--accent-text);
+}
+
+.stash-save-btn:hover {
+	background-color: var(--accent-hover);
+	border-color: var(--accent-hover);
+	color: var(--accent-text-hover);
+}
+
+.stash-save-btn:disabled {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
 .stash-message {
 	color: var(--text-primary);
 	font-family: inherit;
