@@ -5,7 +5,7 @@ namespace ParekGIT.Core.Git.Parsers
 {
 	internal static class GitStashParser
 	{
-		private static readonly Regex _branchPattern = new(@"^(?:WIP on|ON) ([^:]+):", RegexOptions.Compiled);
+		private static readonly Regex _branchPattern = new(@"^(?:WIP on|On) ([^:]+):", RegexOptions.Compiled);
 
 		internal static IEnumerable<GitStash> Parse(string rawOutput)
 		{

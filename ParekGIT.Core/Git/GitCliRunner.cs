@@ -507,7 +507,7 @@ namespace ParekGIT.Core.Git
 
 		public async Task StashSaveAsync(string repoPath, string message)
 		{
-			string arguments = "stash push";
+			string arguments = "stash push --include-untracked";
 
 			if (!string.IsNullOrWhiteSpace(message))
 			{

@@ -451,7 +451,7 @@ window.external.receiveMessage((message) => {
 			processMissingRepo(data.Payload.absolutePath);
 			break;
 
-		case IpcActions.REMOTE_SYNC_STATUS:
+		case IpcActions.REMOTE_SYNC_STATUS: // MOVE TO DEDICATED METHOD
 			commitsBehind = data.Payload.commitsBehind || 0;
 			commitsAhead = data.Payload.commitsAhead || 0;
 
@@ -540,16 +540,18 @@ window.external.receiveMessage((message) => {
 			loadStashes(data.Payload);
 			break;
 
-		case IpcActions.STASH_SAVED:
-			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath }); // REVISIT
+		case IpcActions.STASH_SAVED: // MOVE TO DEDICATED METHOD
+			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
+			refreshRepoState();
 			break;
 
-		case IpcActions.STASH_POPPEP:
-			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath }); // REVISIT
+		case IpcActions.STASH_POPPED: // MOVE TO DEDICATED METHOD
+			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
+			refreshRepoState();
 			break;
 
 		case IpcActions.STASH_DROPPED:
-			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath }); // REVISIT
+			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
 			break;
 
 		default:
@@ -2914,9 +2916,12 @@ stashModalSaveBtn.addEventListener("click", () => {
 	const hasChanges = document.querySelectorAll(".changes-item-checkbox").length > 0;
 	if (!hasChanges) { return; }
 
+	const stashMessage = stashModalInputMessage.value.trim();
+	stashModalInputMessage.value = "";
+
 	sendIpcMessage(IpcActions.STASH_SAVE, {
 		repoPath: currentRepoPath,
-		message: stashModalInputMessage.value.trim()
+		message: stashMessage
 	});
 });
 
