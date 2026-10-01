@@ -27,8 +27,11 @@ Git GUI Client that's focused on simplicity
 - **Icons:** [Google Material Symbols/Icons](https://github.com/google/material-design-icons) - UI Icon set under Apache 2.0 license.
 - **Fonts:** [FiraCode](https://github.com/tonsky/firacode) - Monospaced programming font with custom ligatures for readability.
 
+### Logo ###
+- **ParekGIT** logo uses parts of the original [Git logo](https://git-scm.com/downloads/logos) made by Jason Long, licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) 
+
 ## AI Usage ##
 AI was used to refactor the code, improve overall code structure and test edge cases.
 
 ## License ##
-Distributed under the MIT License. See [LICENSE](https://github.com/cherttov/godot-dev-console/blob/main/LICENSE) for more information.
+Distributed under the MIT License. See [LICENSE](https://github.com/cherttov/ParekGIT/blob/main/LICENSE) for more information.
