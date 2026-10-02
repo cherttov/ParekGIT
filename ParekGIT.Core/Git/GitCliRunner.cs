@@ -505,7 +505,7 @@ namespace ParekGIT.Core.Git
 			}
 		}
 
-		public async Task StashSaveAsync(string repoPath, string message)
+		public async Task StashSaveAsync(string repoPath, string message, IEnumerable<string> files)
 		{
 			string arguments = "stash push --include-untracked";
 
@@ -513,6 +513,13 @@ namespace ParekGIT.Core.Git
 			{
 				string safeMessage = message.Replace("\"", "\\\"");
 				arguments += $" -m \"{safeMessage}\"";
+			}
+
+			var fileList = files.ToList();
+			if (fileList.Count > 0)
+			{
+				string pathspec = string.Join(" ", fileList.Select(f => $"\"{f}\""));
+				arguments += $" -- {pathspec}";
 			}
 
 			await ExecuteCommandAsync(repoPath, arguments);

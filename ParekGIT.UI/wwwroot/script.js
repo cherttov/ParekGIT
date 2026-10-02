@@ -1281,6 +1281,9 @@ function toggleCommitButton() {
 		commitBtn.disabled = false;
 		commitBtn.textContent = commitText;
 	}
+
+	// Stash save state
+	stashModalSaveBtn.disabled = checkedCount === 0;
 }
 
 // Toggles LeftSidebar Push/Pull Button
@@ -2913,16 +2916,23 @@ stashBtn.addEventListener("click", () => {
 stashModalSaveBtn.addEventListener("click", () => {
 	if (!currentRepoPath) { return; }
 
-	const hasChanges = document.querySelectorAll(".changes-item-checkbox").length > 0;
-	if (!hasChanges) { return; }
+	const selectedFiles = [];
+	const allFileCheckboxes = document.querySelectorAll(".changes-item-checkbox:checked");
 
-	const stashMessage = stashModalInputMessage.value.trim();
-	stashModalInputMessage.value = "";
+	allFileCheckboxes.forEach((checkbox) => {
+		const itemRow = checkbox.closest(".change-item");
+		selectedFiles.push(itemRow.dataset.path);
+	});
+
+	if (selectedFiles.length === 0) { return; }
 
 	sendIpcMessage(IpcActions.STASH_SAVE, {
 		repoPath: currentRepoPath,
-		message: stashMessage
+		message: stashModalInputMessage.value.trim(),
+		files: selectedFiles
 	});
+
+	stashModalInputMessage.value = "";
 });
 
 // ======================== CONFIG & SETTINGS LISTENERS ========================

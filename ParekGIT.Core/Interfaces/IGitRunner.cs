@@ -40,7 +40,7 @@ namespace ParekGIT.Core.Interfaces
 		Task CloneRepositoryAsync(string repoUrl, bool asLocal, string localPath);
 		Task SaveLocalConfigAsync(string repoPath, string name, string email);
 		Task SaveGlobalConfigAsync(string? repoPath, string name, string email);
-		Task StashSaveAsync(string repoPath, string message);
+		Task StashSaveAsync(string repoPath, string message, IEnumerable<string> files);
 		Task StashPopAsync(string repoPath, string stashSelector);
 		Task StashDropAsync(string repoPath, string stashSelector);
 	}

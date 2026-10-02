@@ -30,7 +30,14 @@ namespace ParekGIT.Bridge.Handlers
 			string message = payload.GetProperty("message").GetString()
 				?? throw new IpcPayloadException("message");
 
-			await _gitRunner.StashSaveAsync(repoPath, message);
+			List<string> files = payload.GetProperty("files")
+					.EnumerateArray()
+					.Select(f => f.GetString() ?? string.Empty)
+					.Where(f => f.Length > 0)
+					.ToList()
+				?? throw new IpcPayloadException("files");
+
+			await _gitRunner.StashSaveAsync(repoPath, message, files);
 
 			// Response
 			var response = new IpcMessage
