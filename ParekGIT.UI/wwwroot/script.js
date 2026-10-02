@@ -415,28 +415,16 @@ window.external.receiveMessage((message) => {
 			fetchRepo(data.Payload);
 			break;
 
-		case IpcActions.REPO_PULLED: // MOVE TO DEDICATED METHOD
-			isPullRequired = false;
-			commitsBehind = 0;
-			togglePushPullPublishButton();
-			refreshRepoState();
+		case IpcActions.REPO_PULLED:
+			processRepoPulled();
 			break;
 
-		case IpcActions.REPO_PUSHED: // MOVE TO DEDICATED METHOD
-			isPushRequired = false;
-			commitsAhead = 0;
-			togglePushPullPublishButton();
-			refreshRepoState();
+		case IpcActions.REPO_PUSHED:
+			processRepoPushed();
 			break;
 
-		case IpcActions.REPO_PUBLISHED: // MOVE TO DEDICATED METHOD
-			currentBranchHasUpstream = true;
-			isPushRequired = false;
-			isPullRequired = false;
-			commitsAhead = 0;
-			commitsBehind = 0;
-			togglePushPullPublishButton();
-			refreshRepoState();
+		case IpcActions.REPO_PUBLISHED:
+			processRepoPublished();
 			break;
 
 		case IpcActions.REPO_STATUS_LOADED:
@@ -451,15 +439,8 @@ window.external.receiveMessage((message) => {
 			processMissingRepo(data.Payload.absolutePath);
 			break;
 
-		case IpcActions.REMOTE_SYNC_STATUS: // MOVE TO DEDICATED METHOD
-			commitsBehind = data.Payload.commitsBehind || 0;
-			commitsAhead = data.Payload.commitsAhead || 0;
-
-			isPullRequired = commitsBehind > 0;
-			isPushRequired = commitsAhead > 0;
-
-			toggleCommitButton();
-			togglePushPullPublishButton();
+		case IpcActions.REMOTE_SYNC_STATUS:
+			processRemoteSyncStatus(payload);
 			break;
 
 		case IpcActions.BRANCHES_LOADED:
@@ -1055,6 +1036,43 @@ function processMissingRepo(repoPath) {
 		toggleCommitButton();
 		togglePushPullPublishButton();
 	}
+}
+
+// C# - Repo pulled handler
+function processRepoPulled() {
+	isPullRequired = false;
+	commitsBehind = 0;
+	togglePushPullPublishButton();
+	refreshRepoState();
+}
+
+// C# - Repo pushed handler
+function processRepoPushed() {
+	isPushRequired = false;
+	commitsAhead = 0;
+	togglePushPullPublishButton();
+	refreshRepoState();
+}
+
+// C# - Repo published handler
+function processRepoPublished() {
+	currentBranchHasUpstream = true;
+	isPushRequired = false;
+	isPullRequired = false;
+	commitsAhead = 0;
+	commitsBehind = 0;
+	togglePushPullPublishButton();
+	refreshRepoState();
+}
+
+// C# - Remote sync status handler
+function processRemoteSyncStatus(payload) {
+	commitsBehind = payload.commitsBehind || 0;
+	commitsAhead = payload.commitsAhead || 0;
+	isPullRequired = commitsBehind > 0;
+	isPushRequired = commitsAhead > 0;
+	toggleCommitButton();
+	togglePushPullPublishButton();
 }
 
 // C# - Folder selected
