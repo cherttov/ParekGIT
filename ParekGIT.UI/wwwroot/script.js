@@ -1432,6 +1432,7 @@ function renderChangedFiles(files) {
 	});
 
 	toggleCommitButton();
+	updateMasterCheckboxState()
 	updateCustomScrollbar(changesList, changesScrollbar);
 }
 
