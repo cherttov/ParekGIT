@@ -479,7 +479,7 @@ window.external.receiveMessage((message) => {
 			loadCommitDetails(data.Payload);
 			break;
 
-		case IpcActions.CHANGE_DISCARDED: // FINISH
+		case IpcActions.CHANGE_DISCARDED:
 			break;
 
 		case IpcActions.CHANGE_IGNORED:
@@ -521,14 +521,12 @@ window.external.receiveMessage((message) => {
 			loadStashes(data.Payload);
 			break;
 
-		case IpcActions.STASH_SAVED: // MOVE TO DEDICATED METHOD
-			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
-			refreshRepoState();
+		case IpcActions.STASH_SAVED:
+			processStashChange();
 			break;
 
-		case IpcActions.STASH_POPPED: // MOVE TO DEDICATED METHOD
-			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
-			refreshRepoState();
+		case IpcActions.STASH_POPPED:
+			processStashChange();
 			break;
 
 		case IpcActions.STASH_DROPPED:
@@ -1758,6 +1756,12 @@ function resetViewers() {
 
 // ======================== STASH HELPERS ========================
 // Functions scoped to per-repo StashList modal.
+
+// C# - Process STASH_SAVED & STASH_POPPED
+function processStashChange() {
+	sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
+	refreshRepoState();
+}
 
 // C# - Load stashes into stash modal
 function loadStashes(stashes) {
