@@ -81,9 +81,11 @@ namespace ParekGIT.UI
 				services.AddSingleton<IMessageHandler, BranchHistoryHandler>();
 				services.AddSingleton<IMessageHandler, BranchMergeHandler>();
 
-				// Commit/File
+				// Commit/File/History
 				services.AddSingleton<IMessageHandler, FileDiffHandler>();
 				services.AddSingleton<IMessageHandler, HistoryFileDiffHandler>();
+				services.AddSingleton<IMessageHandler, HistoryCheckoutHandler>();
+				services.AddSingleton<IMessageHandler, HistoryRevertHandler>();
 				services.AddSingleton<IMessageHandler, CommitDetailsHandler>();
 
 				// Change
