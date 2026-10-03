@@ -254,6 +254,11 @@ namespace ParekGIT.Core.Git
 			await ExecuteCommandAsync(repoPath, arguments);
 		}
 
+		public async Task DeleteRemoteBranchAsync(string repoPath, string remoteName, string branchName)
+		{
+			string arguments = $"push {remoteName} --d {branchName}";
+		}
+
 		public async Task FetchRepositoryAsync(string repoPath)
 		{
 			string arguments = "fetch --all --prune";
