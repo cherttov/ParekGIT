@@ -1177,7 +1177,7 @@ function loadBranchesIntoDropdown(branches) {
 	branchBtnValue.textContent = currentBranchName;
 
 	toggleCommitButton();
-
+	togglePushPullPublishButton();
 	refreshRepoState();
 }
 
