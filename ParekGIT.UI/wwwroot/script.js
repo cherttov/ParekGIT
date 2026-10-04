@@ -2687,16 +2687,7 @@ branchDeleteModalConfirmBtn.addEventListener("click", () => {
 	sendIpcMessage(IpcActions.BRANCH_DELETE, {
 		repoPath: currentRepoPath,
 		branchName: branchName,
-		deleteRemote: null
 	});
-
-	if (alsoDeleteRemote && remoteBranchName) {
-		sendIpcMessage(IpcActions.BRANCH_DELETE, {
-			repoPath: currentRepoPath,
-			branchName: remoteBranchName,
-			isRemote: true
-		});
-	}
 
 	closeAndClearModal(branchDeleteModal);
 });

@@ -29,18 +29,6 @@ namespace ParekGIT.Bridge.Handlers
 			string branchName = payload.GetProperty("branchName").GetString()
 							  ?? throw new IpcPayloadException("branchName");
 
-			bool isRemote = payload.TryGetProperty("isRemote", out var isRemoteProp) && isRemoteProp.GetBoolean();
-
-			// FINISH
-			if (isRemote)
-			{
-				await _gitRunner.DeleteRemoteBranchAsync(repoPath, branchName, branchName);
-			}
-			else
-			{
-				await _gitRunner.DeleteBranchAsync(repoPath, branchName);
-			}
-
 			await _gitRunner.DeleteBranchAsync(repoPath, branchName);
 
 			var responsePayload = new
