@@ -105,6 +105,8 @@ const branchRenameModalConfirmBtn = branchRenameModal.querySelector(".confirm-mo
 // Delete Branch Modal
 const branchDeleteModal = document.getElementById("branch-delete-modal");
 const branchDeleteModalName = document.getElementById("delete-modal-branch-name");
+const branchDeleteModalRemoteRow = document.getElementById("branch-delete-remote-row");
+const branchDeleteModalRemoteCheckbox = document.getElementById("branch-delete-modal-remote-checkbox");
 const branchDeleteModalConfirmBtn = branchDeleteModal.querySelector(".confirm-modal-btn");
 
 // Merge Branch Modal
@@ -270,6 +272,7 @@ let isPushRequired = false;
 let commitsBehind = 0;
 let commitsAhead = 0;
 let currentBranchHasUpstream = true;
+let currentBranchRemoteBranch = "";
 let globalConfigRequestSource = null;
 
 let minRightWidth = 0, maxRightWidth = 0;
@@ -1055,6 +1058,7 @@ function processRepoPushed() {
 // C# - Repo published handler
 function processRepoPublished() {
 	currentBranchHasUpstream = true;
+	currentBranchRemoteBranch = "";
 	isPushRequired = false;
 	isPullRequired = false;
 	commitsAhead = 0;
@@ -1130,6 +1134,7 @@ function loadBranchesIntoDropdown(branches) {
 			currentBranchName = branch.Name;
 			currentBranch = branch.Name;
 			currentBranchHasUpstream = !!branch.RemoteBranch;
+			currentBranchRemoteBranch = branch.RemoteBranch;
 		} else {
 			item.className = "dropdown-item";
 		}
@@ -1161,6 +1166,7 @@ function loadBranchesIntoDropdown(branches) {
 
 			branchItemContextMenu.dataset.targetPath = currentRepoPath;
 			branchItemContextMenu.dataset.targetName = branch.Name;
+			branchItemContextMenu.dataset.targetRemoteBranch = branch.RemoteBranch;
 
 			validateBranchContextMenu(branch.Name, branchItemMenuRename, branchItemMenuDelete);
 
@@ -2550,7 +2556,10 @@ topbarBranchMenuDelete.addEventListener("click", (event) => {
 	if (!currentRepoPath || !currentBranch) { return; }
 
 	branchDeleteModal.dataset.targetName = currentBranch;
+	branchDeleteModal.dataset.targetRemoteBranch = currentBranchRemoteBranch;
 	branchDeleteModalName.textContent = currentBranch;
+	branchDeleteModalRemoteCheckbox.checked = false;
+	branchDeleteModalRemoteRow.style.display = currentBranchRemoteBranch ? "" : "none";
 
 	branchDeleteModal.classList.add("show");
 });
@@ -2597,12 +2606,17 @@ branchItemMenuMerge.addEventListener("click", (event) => {
 
 branchItemMenuDelete.addEventListener("click", (event) => {
 	event.stopPropagation();
+
 	const branchName = branchItemContextMenu.dataset.targetName;
+	const remoteBranchName = branchItemContextMenu.dataset.targetRemoteBranch;
 
 	if (branchName) {
 		branchDeleteModal.dataset.targetName = branchName;
-
+		branchDeleteModal.dataset.targetRemoteBranch = remoteBranchName;
 		branchDeleteModalName.textContent = branchName;
+		branchDeleteModalRemoteCheckbox.checked = false;
+		branchDeleteModalRemoteRow.style.display = branchItemContextMenu.dataset.targetRemoteBranch ? "" : "none";
+
 		branchDeleteModal.classList.add("show");
 	}
 
@@ -2665,13 +2679,24 @@ branchRenameModalConfirmBtn.addEventListener("click", () => {
 
 branchDeleteModalConfirmBtn.addEventListener("click", () => {
 	const branchName = branchDeleteModal.dataset.targetName;
+	const remoteBranchName = branchDeleteModal.dataset.targetRemoteBranch;
+	const alsoDeleteRemote = branchDeleteModalRemoteCheckbox.checked;
 
 	if (!branchName) { return; }
 
 	sendIpcMessage(IpcActions.BRANCH_DELETE, {
 		repoPath: currentRepoPath,
-		branchName: branchName
+		branchName: branchName,
+		deleteRemote: null
 	});
+
+	if (alsoDeleteRemote && remoteBranchName) {
+		sendIpcMessage(IpcActions.BRANCH_DELETE, {
+			repoPath: currentRepoPath,
+			branchName: remoteBranchName,
+			isRemote: true
+		});
+	}
 
 	closeAndClearModal(branchDeleteModal);
 });
