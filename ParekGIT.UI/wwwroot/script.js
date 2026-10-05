@@ -2684,10 +2684,21 @@ branchDeleteModalConfirmBtn.addEventListener("click", () => {
 
 	if (!branchName) { return; }
 
+	// Delete local
 	sendIpcMessage(IpcActions.BRANCH_DELETE, {
 		repoPath: currentRepoPath,
 		branchName: branchName,
+		isRemote: false
 	});
+
+	// Delete remote
+	if (alsoDeleteRemote && remoteBranchName) {
+		sendIpcMessage(IpcActions.BRANCH_DELETE, {
+			repoPath: currentRepoPath,
+			branchName: remoteBranchName,
+			isRemote: true
+		});
+	}
 
 	closeAndClearModal(branchDeleteModal);
 });
