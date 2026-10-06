@@ -31,16 +31,38 @@ namespace ParekGIT.Bridge.Handlers
 
 			bool isRemote = payload.TryGetProperty("isRemote", out var isRemoteProp) && isRemoteProp.GetBoolean();
 
-			if (isRemote)
+			// Catch "not fully merged" exception
+			try
 			{
-				int slashIndex = branchName.IndexOf('/');
-				if (slashIndex < 0) { throw new IpcPayloadException("branchName", "expected '<remote>/<branch>' for a remote delete"); }
+				if (isRemote)
+				{
+					int slashIndex = branchName.IndexOf('/');
+					if (slashIndex < 0) { throw new IpcPayloadException("branchName", "expected '<remote>/<branch>' for a remote delete"); }
 
-				await _gitRunner.DeleteRemoteBranchAsync(repoPath, branchName[..slashIndex], branchName[(slashIndex + 1)..]);
+					await _gitRunner.DeleteRemoteBranchAsync(repoPath, branchName[..slashIndex], branchName[(slashIndex + 1)..]);
+				}
+				else
+				{
+					await _gitRunner.DeleteBranchAsync(repoPath, branchName);
+				}
 			}
-			else
+			catch (Exception ex) when (ex.Message.Contains("not fully merged", StringComparison.OrdinalIgnoreCase))
 			{
-				await _gitRunner.DeleteBranchAsync(repoPath, branchName);
+				var requestPayload = new
+				{
+					branchName = branchName,
+					remoteBranchName = isRemote ? branchName : null,
+					unmergedCount = "multiple" // TEMPORARY
+				};
+
+				// Request
+				var request = new IpcMessage
+				{
+					Action = "BRANCH_FORCE_DELETE_REQUESTED",
+					Payload = JsonSerializer.SerializeToElement(requestPayload)
+				};
+				_window.SendWebMessage(JsonSerializer.Serialize(request));
+				return;
 			}
 
 			var responsePayload = new

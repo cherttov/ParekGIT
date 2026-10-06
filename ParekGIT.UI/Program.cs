@@ -78,6 +78,7 @@ namespace ParekGIT.UI
 				services.AddSingleton<IMessageHandler, BranchHistoryCreateHandler>();
 				services.AddSingleton<IMessageHandler, BranchRenameHandler>();
 				services.AddSingleton<IMessageHandler, BranchDeleteHandler>();
+				services.AddSingleton<IMessageHandler, BranchForceDeleteHandler>();
 				services.AddSingleton<IMessageHandler, BranchHistoryHandler>();
 				services.AddSingleton<IMessageHandler, BranchMergeHandler>();
 

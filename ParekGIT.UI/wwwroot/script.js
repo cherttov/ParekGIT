@@ -109,6 +109,12 @@ const branchDeleteModalRemoteRow = document.getElementById("branch-delete-remote
 const branchDeleteModalRemoteCheckbox = document.getElementById("branch-delete-modal-remote-checkbox");
 const branchDeleteModalConfirmBtn = branchDeleteModal.querySelector(".confirm-modal-btn");
 
+// Force Delete Branch Modal
+const branchForceDeleteModal = document.getElementById("branch-delete-unmerged-modal");
+const branchForceDeleteModalCount = document.getElementById("unmerged-changes-count");
+const branchForceDeleteModalName = document.getElementById("delete-unmerged-modal-branch-name");
+const branchForceDeleteModalConfirmBtn = branchForceDeleteModal.querySelector(".confirm-modal-btn");
+
 // Merge Branch Modal
 const branchMergeModal = document.getElementById("branch-merge-modal");
 const branchMergeModalSourceLabel = document.getElementById("merge-modal-source-branch");
@@ -295,6 +301,7 @@ const IpcActions = {
 	BRANCH_HISTORY_CREATE: "BRANCH_HISTORY_CREATE",
 	BRANCH_RENAME: "BRANCH_RENAME",
 	BRANCH_DELETE: "BRANCH_DELETE",
+	BRANCH_FORCE_DELETE: "BRANCH_FORCE_DELETE",
 	BRANCH_MERGE: "BRANCH_MERGE",
 	REPO_FETCH: "REPO_FETCH",
 	REPO_PULL: "REPO_PULL",
@@ -343,6 +350,7 @@ const IpcActions = {
 	REMOTE_SYNC_STATUS: "REMOTE_SYNC_STATUS",
 	BRANCHES_LOADED: "BRANCHES_LOADED",
 	BRANCH_DELETED: "BRANCH_DELETED",
+	BRANCH_FORCE_DELETE_REQUESTED: "BRANCH_FORCE_DELETE_REQUESTED",
 	BRANCH_RENAMED: "BRANCH_RENAMED",
 	BRANCH_MERGED: "BRANCH_MERGED",
 	BRANCH_HISTORY_LOADED: "BRANCH_HISTORY_LOADED",
@@ -443,7 +451,7 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case IpcActions.REMOTE_SYNC_STATUS:
-			processRemoteSyncStatus(payload);
+			processRemoteSyncStatus(data.Payload);
 			break;
 
 		case IpcActions.BRANCHES_LOADED:
@@ -453,6 +461,9 @@ window.external.receiveMessage((message) => {
 		case IpcActions.BRANCH_DELETED:
 			removeBranchFromDropdown(data.Payload);
 			break;
+
+		case IpcActions.BRANCH_FORCE_DELETE_REQUESTED:
+			processBranchForceDeleteRequested(data.Payload);
 
 		case IpcActions.BRANCH_RENAMED:
 			renameBranchInDropdown(data.Payload);
@@ -1275,6 +1286,19 @@ function processBranchesMerged() {
 	}
 
 	refreshRepoState();
+}
+
+// C# - Branch force delete requested
+function processBranchForceDeleteRequested(payload) {
+	const branchName = payload.branchName;
+	const unmergedCount = payload.unmergedCount;
+
+	branchForceDeleteModal.dataset.targetName = branchName;
+
+	branchForceDeleteModalName.textContent = branchName;
+	branchForceDeleteModalCount.textContent = unmergedCount;
+
+	branchForceDeleteModal.classList.add("show");
 }
 
 // ======================== CHANGES & COMMIT HELPERS ========================
@@ -2701,6 +2725,19 @@ branchDeleteModalConfirmBtn.addEventListener("click", () => {
 	}
 
 	closeAndClearModal(branchDeleteModal);
+});
+
+branchForceDeleteModalConfirmBtn.addEventListener("click", () => {
+	const branchName = branchForceDeleteModal.dataset.targetName;
+
+	if (!branchName) { return; }
+
+	sendIpcMessage(IpcActions.BRANCH_FORCE_DELETE, {
+		repoPath: currentRepoPath,
+		branchName: branchName
+	});
+
+	closeAndClearModal(branchForceDeleteModal);
 });
 
 branchMergeModalConfirmBtn.addEventListener("click", () => {
