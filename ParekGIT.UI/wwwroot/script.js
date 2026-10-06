@@ -1938,8 +1938,8 @@ function processGlobalConfigLoad(config) {
 		accountModalInputName.value = config.globalName || "";
 		accountModalInputEmail.value = config.globalEmail || "";
 
-		accountModalInputName.placeholder = config.globalName || "";
-		accountModalInputEmail.placeholder = config.globalEmail || "";
+		accountModalInputName.placeholder = config.globalName || "Not set";
+		accountModalInputEmail.placeholder = config.globalEmail || "Not set";
 
 		accountModal.classList.add("show");
 	}
