@@ -280,6 +280,7 @@ let commitsAhead = 0;
 let currentBranchHasUpstream = true;
 let currentBranchRemoteBranch = "";
 let globalConfigRequestSource = null;
+let currentRepoHasRemote = false;
 
 let minRightWidth = 0, maxRightWidth = 0;
 let isResizing = false;
@@ -501,6 +502,11 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case IpcActions.HISTORY_CHECKED_OUT: // FINISH
+			resetViewers();
+			// The "GET_BRANCHES" fails as the GitCliRunner returns an empty list,
+			// because in detached HEAD state 'git branch --format' does not output HEAD,
+			// defaulting UI currentBranch to "None"
+			if (currentRepoPath) { sendIpcMessage(IpcActions.GET_BRANCHES, { repoPath: currentRepoPath }); }
 			break;
 
 		case IpcActions.HISTORY_REVERT_RESULT:
@@ -917,6 +923,7 @@ function createRepoDropdownItem(repo) {
 
 		currentRepoPath = repo.AbsolutePath;
 		currentBranch = "";
+		currentRepoHasRemote = !!repo.RemoteUrl;
 
 		loadDraft();
 		toggleCommitButton();
@@ -1026,6 +1033,7 @@ function processMissingRepo(repoPath) {
 	if (currentRepoPath === repoPath) {
 		currentRepoPath = "";
 		currentBranch = "";
+		currentRepoHasRemote = false;
 
 		// Reset Topbar
 		const repoBtnValue = repoBtn.querySelector(".btn-value");
@@ -1336,7 +1344,7 @@ function toggleCommitButton() {
 
 // Toggles LeftSidebar Push/Pull Button
 function togglePushPullPublishButton() {
-	if (!currentBranch) {
+	if (!currentBranch || !currentRepoHasRemote) {
 		pushPullPublishBtn.disabled = true;
 		pushPullPublishBtn.classList.remove("push", "pull", "publish");
 		return;
