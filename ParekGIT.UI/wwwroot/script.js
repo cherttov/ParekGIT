@@ -503,7 +503,9 @@ window.external.receiveMessage((message) => {
 		case IpcActions.HISTORY_CHECKED_OUT: // FINISH
 			break;
 
-		case IpcActions.HISTORY_REVERT_RESULT: // FINISH
+		case IpcActions.HISTORY_REVERT_RESULT:
+			resetViewers();
+			refreshRepoState();
 			break;
 
 		case IpcActions.TODO_LOADED:
@@ -1593,6 +1595,10 @@ function renderHistory(commits, isAppending = false) {
 
 			document.querySelectorAll(".history-item").forEach((el) => el.classList.remove("context-active"));
 			item.classList.add("context-active");
+
+			// Disable revert if not latest commit
+			const isLatestCommit = item === historyList.firstElementChild;
+			historyItemMenuRevert.disabled = !isLatestCommit;
 
 			historyItemContextMenu.classList.add("show");
 			placeContextMenu(event, historyItemContextMenu);
