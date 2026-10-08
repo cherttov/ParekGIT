@@ -260,6 +260,7 @@ const binaryExts = [
 // ======================== APP STATE ========================
 let currentRepoPath = "";
 let currentBranch = "";
+let currentBranchRevision = "";
 let activeHistoryHash = "";
 let activeBrowseInput = null;
 let activeDetailsFile = "";
@@ -503,9 +504,6 @@ window.external.receiveMessage((message) => {
 
 		case IpcActions.HISTORY_CHECKED_OUT: // FINISH
 			resetViewers();
-			// The "GET_BRANCHES" fails as the GitCliRunner returns an empty list,
-			// because in detached HEAD state 'git branch --format' does not output HEAD,
-			// defaulting UI currentBranch to "None"
 			if (currentRepoPath) { sendIpcMessage(IpcActions.GET_BRANCHES, { repoPath: currentRepoPath }); }
 			break;
 
@@ -923,6 +921,7 @@ function createRepoDropdownItem(repo) {
 
 		currentRepoPath = repo.AbsolutePath;
 		currentBranch = "";
+		currentBranchRevision = "";
 		currentRepoHasRemote = !!repo.RemoteUrl;
 
 		loadDraft();
@@ -1033,6 +1032,7 @@ function processMissingRepo(repoPath) {
 	if (currentRepoPath === repoPath) {
 		currentRepoPath = "";
 		currentBranch = "";
+		currentBranchRevision = "";
 		currentRepoHasRemote = false;
 
 		// Reset Topbar
@@ -1154,6 +1154,7 @@ function loadBranchesIntoDropdown(branches) {
 			item.className = "dropdown-item active";
 			currentBranchName = branch.Name;
 			currentBranch = branch.Name;
+			currentBranchRevision = branch.IsDetached ? branch.TargetCommitHash : branch.Name;
 			currentBranchHasUpstream = !!branch.RemoteBranch;
 			currentBranchRemoteBranch = branch.RemoteBranch;
 		} else {
@@ -1166,6 +1167,7 @@ function loadBranchesIntoDropdown(branches) {
 
 		// LMB - select
 		item.addEventListener("click", () => {
+			if (branch.IsDetached) { return; }
 			if (currentBranch.toLowerCase() === branch.Name.toLowerCase()) { return; }
 
 			resetViewers();
@@ -1498,7 +1500,7 @@ function refreshRepoState() {
 	if (currentBranch) {
 		sendIpcMessage(IpcActions.GET_BRANCH_HISTORY, {
 			repoPath: currentRepoPath,
-			branchName: currentBranch
+			branchName: currentBranchRevision
 		});
 	}
 }

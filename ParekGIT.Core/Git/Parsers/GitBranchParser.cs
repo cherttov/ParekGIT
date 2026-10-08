@@ -25,17 +25,22 @@ namespace ParekGIT.Core.Git.Parsers
 				string remoteBranch = parts[3].Trim();
 				string targetCommitHash = parts[4].Trim();
 
-				bool isRemote = fullRefName.StartsWith(REMOTE_REF_PREFIX, StringComparison.Ordinal); ;
+				bool isRemote = fullRefName.StartsWith(REMOTE_REF_PREFIX, StringComparison.Ordinal);
 				bool isLocal = fullRefName.StartsWith(LOCAL_REF_PREFIX, StringComparison.Ordinal);
 
-				if (!isRemote && !isLocal) { continue; } // not local & not remote (how?)
+				bool isDetached = isCurrent && !isRemote && !isLocal;
 				if (isRemote && fullRefName.EndsWith("/HEAD", StringComparison.Ordinal)) { continue; } // skip e.g. "origin/HEAD"
+
+				string displayName = isDetached
+					? $"(detached at {(targetCommitHash.Length >= 7 ? targetCommitHash[..7] : targetCommitHash)})"
+					: name;
 
 				branches.Add(new GitBranch
 				{
-					Name = name,
+					Name = displayName,
 					IsCurrent = isCurrent,
 					IsRemote = isRemote,
+					IsDetached = isDetached,
 					TargetCommitHash = targetCommitHash,
 					RemoteBranch = remoteBranch
 				});
