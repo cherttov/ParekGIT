@@ -425,6 +425,17 @@ select:focus {
 	background-color: var(--bg-hover);
 }
 
+.dropdown-item-unpublished-icon {
+	width: 14px;
+	height: 14px;
+	flex-shrink: 0;
+	background-color: var(--text-muted);
+	mask-image: url("assets/icons/materials_publish.svg");
+	mask-size: contain;
+	mask-repeat: no-repeat;
+	mask-position: center;
+}
+
 /* APP CONTAINER */
 .app-container {
 	display: flex;

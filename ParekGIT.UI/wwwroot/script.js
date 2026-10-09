@@ -1163,7 +1163,11 @@ function loadBranchesIntoDropdown(branches) {
 
 		item.dataset.branchName = branch.Name;
 
-		item.innerHTML = `<span class="dropdown-item-text">${branch.Name}</span>`;
+		const isUnpublished = currentRepoHasRemote && !branch.IsRemote && !branch.IsDetached && !branch.RemoteBranch;
+		item.innerHTML = `
+			<span class="dropdown-item-text">${branch.Name}</span>
+			${isUnpublished ? `<span class="dropdown-item-unpublished-icon"></span>` : ""}
+		`;
 
 		// LMB - select
 		item.addEventListener("click", () => {
