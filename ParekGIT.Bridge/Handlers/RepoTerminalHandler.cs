@@ -48,7 +48,7 @@ namespace ParekGIT.Bridge.Handlers
 					{
 						processInfo.FileName = customTerminal;
 					} 
-					else if (_fileSystem.FileExists("usr/bin/konsole"))
+					else if (_fileSystem.FileExists("/usr/bin/konsole"))
 					{
 						processInfo.FileName = "konsole";
 					}
