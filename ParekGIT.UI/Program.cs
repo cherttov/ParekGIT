@@ -48,6 +48,7 @@ namespace ParekGIT.UI
 						.Center()
 						.SetContextMenuEnabled(true) // later false
 						.SetDevToolsEnabled(true) // later false
+						.SetIconFile("wwwroot/assets/icons/icon.ico")
 						.SetJavascriptClipboardAccessEnabled(true)
 						.Load("wwwroot/index.html");
 				});

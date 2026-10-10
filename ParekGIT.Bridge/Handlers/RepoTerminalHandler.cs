@@ -42,7 +42,25 @@ namespace ParekGIT.Bridge.Handlers
 				}
 				else if (OperatingSystem.IsLinux())
 				{
-					processInfo.FileName = "x-terminal-emulator";
+					string? customTerminal = Environment.GetEnvironmentVariable("TERMINAL");
+
+					if (!string.IsNullOrEmpty(customTerminal))
+					{
+						processInfo.FileName = customTerminal;
+					} 
+					else if (_fileSystem.FileExists("usr/bin/konsole"))
+					{
+						processInfo.FileName = "konsole";
+					}
+					else if (_fileSystem.FileExists("/usr/bin/gnome-terminal"))
+					{
+						processInfo.FileName = "gnome-terminal";
+					}
+					else
+					{
+						processInfo.FileName = "xterm";
+					}
+
 				}
 
 				Process.Start(processInfo);
