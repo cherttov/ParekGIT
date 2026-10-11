@@ -282,6 +282,7 @@ let currentBranchHasUpstream = true;
 let currentBranchRemoteBranch = "";
 let globalConfigRequestSource = null;
 let currentRepoHasRemote = false;
+let currentBranchIsDetached = false;
 
 let minRightWidth = 0, maxRightWidth = 0;
 let isResizing = false;
@@ -874,8 +875,8 @@ const validateBranchMergeModal = () => {
 // Enable/disable individual ContextMenu options based on state (e.g. protected branch, invalid repo).
 
 // Disables Rename/Delete on a branch's context menu if it's protected (main/master)
-const validateBranchContextMenu = (branchName, renameBtn, deleteBtn) => {
-	const isProtected = protectedBranches.includes(branchName.toLowerCase());
+const validateBranchContextMenu = (branchName, renameBtn, deleteBtn, isDetached = false) => {
+	const isProtected = isDetached || protectedBranches.includes(branchName.toLowerCase());
 
 	renameBtn.disabled = isProtected;
 	deleteBtn.disabled = isProtected;
@@ -927,6 +928,7 @@ function createRepoDropdownItem(repo) {
 		currentRepoPath = repo.AbsolutePath;
 		currentBranch = "";
 		currentBranchRevision = "";
+		currentBranchIsDetached = false;
 		currentRepoHasRemote = !!repo.RemoteUrl;
 
 		loadDraft();
@@ -1038,6 +1040,7 @@ function processMissingRepo(repoPath) {
 		currentRepoPath = "";
 		currentBranch = "";
 		currentBranchRevision = "";
+		currentBranchIsDetached = false;
 		currentRepoHasRemote = false;
 
 		// Reset Topbar
@@ -1160,6 +1163,7 @@ function loadBranchesIntoDropdown(branches) {
 			currentBranchName = branch.Name;
 			currentBranch = branch.Name;
 			currentBranchRevision = branch.IsDetached ? branch.TargetCommitHash : branch.Name;
+			currentBranchIsDetached = branch.IsDetached;
 			currentBranchHasUpstream = !!branch.RemoteBranch;
 			currentBranchRemoteBranch = branch.RemoteBranch;
 		} else {
@@ -1167,6 +1171,7 @@ function loadBranchesIntoDropdown(branches) {
 		}
 
 		item.dataset.branchName = branch.Name;
+		item.dataset.detached = branch.IsDetached ? "true" : "false";
 
 		const isUnpublished = currentRepoHasRemote && !branch.IsRemote && !branch.IsDetached && !branch.RemoteBranch;
 		item.innerHTML = `
@@ -1200,7 +1205,7 @@ function loadBranchesIntoDropdown(branches) {
 			branchItemContextMenu.dataset.targetName = branch.Name;
 			branchItemContextMenu.dataset.targetRemoteBranch = branch.RemoteBranch;
 
-			validateBranchContextMenu(branch.Name, branchItemMenuRename, branchItemMenuDelete);
+			validateBranchContextMenu(branch.Name, branchItemMenuRename, branchItemMenuDelete, branch.IsDetached);
 
 			branchItemContextMenu.classList.add("show");
 			branchDropdown.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
@@ -1214,6 +1219,7 @@ function loadBranchesIntoDropdown(branches) {
 
 	branchBtnValue.textContent = currentBranchName;
 
+	mergeBtn.disabled = currentBranchIsDetached;
 	toggleCommitButton();
 	togglePushPullPublishButton();
 	refreshRepoState();
@@ -1268,7 +1274,7 @@ function setupMergeModal(preselectedTarget) {
 	const branchItems = branchDropdown.querySelectorAll(".dropdown-item");
 	branchItems.forEach((item) => {
 		const branchName = item.dataset.branchName;
-		if (!branchName) { return; }
+		if (!branchName || item.dataset.detached == "true") { return; }
 
 		const optionSource = document.createElement("option");
 		optionSource.value = branchName;
@@ -2048,7 +2054,8 @@ branchBtn.addEventListener("contextmenu", (event) => {
 	if (branchBtn.disabled) { return; }
 	closeDropdowns();
 
-	validateBranchContextMenu(currentBranch, topbarBranchMenuRename, topbarBranchMenuDelete);
+	validateBranchContextMenu(currentBranch, topbarBranchMenuRename, topbarBranchMenuDelete, currentBranchIsDetached);
+	topbarBranchMenuMerge.disabled = currentBranchIsDetached;
 
 	topbarBranchContextMenu.classList.add("show");
 	placeContextMenu(event, topbarBranchContextMenu);
@@ -2580,7 +2587,7 @@ topbarBranchMenuCopy.addEventListener("click", (event) => {
 topbarBranchMenuMerge.addEventListener("click", (event) => {
 	event.stopPropagation();
 	closeDropdowns();
-	if (!currentRepoPath || !currentBranch) { return; }
+	if (!currentRepoPath || !currentBranch || currentBranchIsDetached) { return; }
 
 	setupMergeModal(currentBranch);
 	branchMergeModal.dataset.targetName = currentBranch;
@@ -2675,7 +2682,7 @@ branchItemMenuDelete.addEventListener("click", (event) => {
 
 // Left sidebar branch related button (left-sidebar)
 mergeBtn.addEventListener("click", () => {
-	if (!currentRepoPath || !currentBranch) { return; }
+	if (!currentRepoPath || !currentBranch || currentBranchIsDetached) { return; }
 
 	setupMergeModal(currentBranch);
 	branchMergeModal.dataset.targetName = currentBranch;
