@@ -33,7 +33,7 @@ namespace ParekGIT.Bridge.Handlers
 			int skip = payload.TryGetProperty("skip", out var skipProperty) && skipProperty.TryGetInt32(out int parsedSkip)
 				? parsedSkip : 0;
 
-			int take = payload.TryGetProperty("skip", out var takeProperty) && skipProperty.TryGetInt32(out int parsedTake)
+			int take = payload.TryGetProperty("take", out var takeProperty) && skipProperty.TryGetInt32(out int parsedTake)
 				? parsedTake : 50;
 
 			IEnumerable<GitCommit> commits = await _gitRunner.GetBranchHistoryAsync(repoPath, branchName, skip, take);

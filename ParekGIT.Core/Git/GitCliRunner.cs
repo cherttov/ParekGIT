@@ -242,28 +242,28 @@ namespace ParekGIT.Core.Git
 
 		public async Task RenameBranchAsync(string repoPath, string oldName, string newName)
 		{
-			string arguments = $"branch -m {oldName} {newName}";
+			string arguments = $"branch -m \"{oldName}\" \"{newName}\"";
 
 			await ExecuteCommandAsync(repoPath, arguments);
 		}
 
 		public async Task DeleteBranchAsync(string repoPath, string branchName)
 		{
-			string arguments = $"branch -d {branchName}";
+			string arguments = $"branch -d \"{branchName}\"";
 
 			await ExecuteCommandAsync(repoPath, arguments);
 		}
 
 		public async Task ForceDeleteBranchAsync(string repoPath, string branchName)
 		{
-			string arguments = $"branch -D {branchName}";
+			string arguments = $"branch -D \"{branchName}\"";
 
 			await ExecuteCommandAsync(repoPath, arguments);
 		}
 
 		public async Task DeleteRemoteBranchAsync(string repoPath, string remoteName, string branchName)
 		{
-			string arguments = $"push {remoteName} -d {branchName}";
+			string arguments = $"push {remoteName} -d \"{branchName}\"";
 
 			await ExecuteCommandAsync(repoPath, arguments);
 		}

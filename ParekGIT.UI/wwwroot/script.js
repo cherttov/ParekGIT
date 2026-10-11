@@ -374,7 +374,8 @@ const IpcActions = {
 	STASHES_LOADED: "STASHES_LOADED",
 	STASH_SAVED: "STASH_SAVED",
 	STASH_POPPED: "STASH_POPPED",
-	STASH_DROPPED: "STASH_DROPPED"
+	STASH_DROPPED: "STASH_DROPPED",
+	LOGS_CLEARED: "LOGS_CLEARED"
 };
 
 // ======================== IPC COMMUNICATION ========================
@@ -466,6 +467,7 @@ window.external.receiveMessage((message) => {
 
 		case IpcActions.BRANCH_FORCE_DELETE_REQUESTED:
 			processBranchForceDeleteRequested(data.Payload);
+			break;
 
 		case IpcActions.BRANCH_RENAMED:
 			renameBranchInDropdown(data.Payload);
@@ -552,6 +554,9 @@ window.external.receiveMessage((message) => {
 		case IpcActions.STASH_DROPPED:
 			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
 			break;
+
+		// case IpcActions.LOGS_CLEARED:
+		// 	break;
 
 		default:
 			console.warn("Unknown action received: ", data.Action);
@@ -2925,7 +2930,7 @@ changesItemMenuExplorer.addEventListener("click", (event) => {
 historyList.addEventListener("scroll", () => {
 	updateCustomScrollbar(historyList, historyScrollbar);
 
-	if (isFetchingHistory || hasReachedEndOfHistory || !currentBranch) { return; }
+	if (isFetchingHistory || hasReachedEndOfHistory || !currentBranchRevision) { return; }
 
 	const threshold = 30; // 30px
 	const isNearBottom = historyList.scrollTop + historyList.clientHeight >= historyList.scrollHeight - threshold;
@@ -2936,7 +2941,7 @@ historyList.addEventListener("scroll", () => {
 
 		sendIpcMessage(IpcActions.GET_BRANCH_HISTORY, {
 			repoPath: currentRepoPath,
-			branchName: currentBranch,
+			branchName: currentBranchRevision,
 			skip: currentHistorySkip,
 			take: historyTake
 		});
