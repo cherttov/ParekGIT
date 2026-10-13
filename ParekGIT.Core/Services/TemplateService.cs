@@ -57,7 +57,7 @@ namespace ParekGIT.Core.Services
 			if (content.Contains("{{") && content.Contains("}}"))
 			{
 				await _logger.LogWarningAsync(
-					$"Template '{templateName}' may contain unahndled placeholders after substitution."
+					$"Template '{templateName}' may contain unhandled placeholders after substitution."
 				);
 			}
 

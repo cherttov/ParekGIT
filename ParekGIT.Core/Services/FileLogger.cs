@@ -5,7 +5,7 @@ namespace ParekGIT.Core.Services
 	public class FileLogger : ILogger
 	{
 		private readonly string _logDirectory;
-		private readonly SemaphoreSlim _writeLock = new SemaphoreSlim(1, 1);
+		private static readonly SemaphoreSlim _writeLock = new SemaphoreSlim(1, 1);
 		private const int MaxLogFileSizeBytes = 5 * 1024 * 1024; // 5 MB
 
 		public FileLogger()
@@ -39,11 +39,11 @@ namespace ParekGIT.Core.Services
 			await _writeLock.WaitAsync();
 			try
 			{
-				string logFile = Path.Combine(_logDirectory, $"parekgit-{DateTime.UtcNow:dd-MM-yyyy}.log");
+				string logFile = Path.Combine(_logDirectory, $"parekgit-{DateTime.UtcNow:yyyy-MM-dd}.log");
 
 				if (File.Exists(logFile) && new FileInfo(logFile).Length > MaxLogFileSizeBytes)
 				{
-					string backupFile = Path.Combine(_logDirectory, $"parekgit-{DateTime.UtcNow:dd-MM-yyyy}_{DateTime.UtcNow:HHmmss}.bak");
+					string backupFile = Path.Combine(_logDirectory, $"parekgit-{DateTime.UtcNow:yyyy-MM-dd}_{DateTime.UtcNow:HHmmss}.bak");
 					File.Move(logFile, backupFile);
 				}
 
@@ -77,7 +77,7 @@ namespace ParekGIT.Core.Services
 
 		private static string FormatLogMessage(string level, string message, Exception? exception)
 		{
-			string timestamp = DateTime.UtcNow.ToString("dd-MM-yyyy HH:mm:ss");
+			string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
 			string formatted = $"[{timestamp}][{level}] {message}";
 
 			if (exception != null)

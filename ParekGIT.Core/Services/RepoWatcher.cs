@@ -52,7 +52,7 @@ namespace ParekGIT.Core.Services
 
 		private void OnFileActivity(object sender, FileSystemEventArgs e)
 		{
-			if (e.FullPath.Contains($"{Path.DirectorySeparatorChar}.git")) { return; }
+			if (e.FullPath.Contains($"{Path.DirectorySeparatorChar}.git", StringComparison.OrdinalIgnoreCase)) { return; }
 
 			_debounceTimer.Stop();
 			_debounceTimer.Start();

@@ -49,7 +49,11 @@ namespace ParekGIT.Core.Services
 			directory.Attributes = FileAttributes.Normal;
 			foreach (var info in directory.GetFileSystemInfos("*", System.IO.SearchOption.AllDirectories))
 			{
-				info.Attributes = FileAttributes.Normal;
+				try
+				{
+					info.Attributes = FileAttributes.Normal;
+				}
+				catch (UnauthorizedAccessException) { }
 			}
 
 			// Match OS and delete accordingly
@@ -62,8 +66,9 @@ namespace ParekGIT.Core.Services
 			}
 			else if (OperatingSystem.IsMacOS())
 			{
+				string escapedPath = path.Replace("\"", "\\\"");
 				await Cli.Wrap("osascript")
-					.WithArguments(["-e", $"tell application \"Finder\" to delete POSIX file \"{path}\""])
+					.WithArguments(["-e", $"tell application \"Finder\" to delete POSIX file \"{escapedPath}\""])
 					.ExecuteAsync();
 			}
 			else if (OperatingSystem.IsLinux())
@@ -77,9 +82,9 @@ namespace ParekGIT.Core.Services
 				catch (Exception ex)
 				{
 					await _logger.LogWarningAsync(
-						$"'gio trash' unavailable when deleting '{path}. Falling back to permanent delete. ({ex.Message})"
+						$"'gio trash' unavailable when deleting '{path}'. Falling back to permanent delete. ({ex.Message})"
 					);
-					directory.Delete(true);
+					throw new InvalidOperationException($"Failed to move directory to a recycle bin. 'gio trash' might be missing.", ex);
 				}
 			}
 		}
