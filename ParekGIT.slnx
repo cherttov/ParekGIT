@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Analytics/" />
+  <Folder Name="/src/Core/">
+    <Project Path="ParekGIT.Core/ParekGIT.Core.csproj" />
+  </Folder>
+  <Folder Name="/src/Data/">
+    <Project Path="ParekGIT.Data/ParekGIT.Data.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="ParekGIT.Bridge/ParekGIT.Bridge.csproj" />
+  </Folder>
+  <Folder Name="/src/Presentation/">
+    <Project Path="ParekGIT.UI/ParekGIT.UI.csproj" />
+  </Folder>
+</Solution>
