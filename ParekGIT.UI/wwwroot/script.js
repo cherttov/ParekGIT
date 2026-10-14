@@ -1419,24 +1419,29 @@ function renderChangedFiles(files) {
 
 		let statusLetter = "M";
 		let statusClass = "status-modified";
+		let statusTitle = "Modified";
 
 		if (file.StatusCode.includes("?")) {
 			statusLetter = "U";
 			statusClass = "status-untracked";
+			statusTitle = "Untracked"
 		} else if (file.StatusCode.includes("A")) {
 			statusLetter = "A";
 			statusClass = "status-added";
+			statusTitle = "Added";
 		} else if (file.StatusCode.includes("D")) {
 			statusLetter = "D";
 			statusClass = "status-deleted";
+			statusTitle = "Deleted";
 		} else if (file.StatusCode.includes("R")) {
 			statusLetter = "R";
 			statusClass = "status-renamed";
+			statusTitle = "Renamed";
 		}
 
 		item.innerHTML = `
 			<div class="change-item-left">
-				<div class="change-status ${statusClass}">${statusLetter}</div>
+				<div class="change-status ${statusClass}" title="${statusTitle}">${statusLetter}</div>
 				<div class="change-path">${file.Path}</div>
 			</div>
 			<input type="checkbox" class="ui-checkbox changes-item-checkbox" checked/>
@@ -1675,14 +1680,20 @@ function loadCommitDetails(details) {
 		item.className = "dropdown-item";
 
 		let statusClass = "status-modified";
+		let statusTitle = "Modified";
+
 		if (file.StatusCode.startsWith("A")) {
 			statusClass = "status-added";
+			statusTitle = "Added";
 		} else if (file.StatusCode.startsWith("D")) {
 			statusClass = "status-deleted";
+			statusTitle = "Deleted";
 		} else if (file.StatusCode.startsWith("R")) {
 			statusClass = "status-renamed";
+			statusTitle = "Renamed";
 		} else if (file.StatusCode.startsWith("U")) {
 			statusClass = "status-untracked";
+			statusTitle = "Untracked";
 		}
 
 		item.innerHTML = `<span class="change-status ${statusClass}">${file.StatusCode[0]}</span>
@@ -1700,7 +1711,7 @@ function loadCommitDetails(details) {
 			detailsFileList.querySelectorAll(".dropdown-item").forEach((el) => el.classList.remove("active"));
 			item.classList.add("active");
 
-			detailsBtnValue.innerHTML = `<span class="change-status ${statusClass}">${file.StatusCode[0]}</span>
+			detailsBtnValue.innerHTML = `<span class="change-status ${statusClass}" title="${statusTitle}">${file.StatusCode[0]}</span>
 										 <span class="change-path">${file.Path}</span>`;
 			closeDropdowns();
 
