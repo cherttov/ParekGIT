@@ -11,6 +11,7 @@
     <Project Path="ParekGIT.Bridge/ParekGIT.Bridge.csproj" />
   </Folder>
   <Folder Name="/src/Presentation/">
-    <Project Path="ParekGIT.UI/ParekGIT.UI.csproj" />
+    <Project Path="ParekGIT.UI/ParekGIT.UI.csproj" 
+	DefaultStartup="true" />
   </Folder>
 </Solution>
