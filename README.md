@@ -7,7 +7,7 @@ Git GUI Client that's focused on simplicity
 ## Requirements ##
 **Operating System**
 - Windows 10/11 (x64)
-- Linux **(UNTESTED)**
+- Linux **(NOT OPTIMIZED)**
 - MacOS **(UNTESTED/NOT COMPILED)**
 
 **Web Rendering Engine ([source](https://docs.tryphotino.io/Photino-Comparison-with-Electron))**
