@@ -170,6 +170,8 @@ const accountModalConfirmBtn = accountModal.querySelector(".confirm-modal-btn");
 
 // Todo Modal
 const todoModal = document.getElementById("todo-modal");
+const todoModalInputTask = document.getElementById("todo-modal-input-task");
+const todoModalAddBtn = document.getElementById("todo-modal-add-btn");
 const todoModalRowsContainer = document.getElementById("todo-rows-container");
 const todoScrollbar = document.getElementById("todo-scrollbar");
 const todoModalConfirmBtn = todoModal.querySelector(".confirm-modal-btn");
@@ -1905,72 +1907,68 @@ function loadStashes(stashes) {
 // ======================== TODO HELPERS ========================
 // Functions scoped to the per-repo TodoList modal.
 
-// Rebuilds the TodoModal task list + extra "add new task" row at the end/bottom
+// Adds a task to the todo list
+const addTodoTask = () => {
+	if (todoModalInputTask.value.trim() !== "") {
+		draftTodos.push({
+			text: todoModalInputTask.value.trim(),
+			isCompleted: false
+		});
+
+		todoModalInputTask.value = "";
+		todoModalAddBtn.disabled = true;
+		renderTodoList();
+		todoModalInputTask.focus();
+	}
+}
+
+// Rebuilds the TodoModal task list
 function renderTodoList() {
 	todoModalRowsContainer.innerHTML = "";
 
-	// Render all existing todo items
-	draftTodos.forEach((todo, index) => {
-		const row = document.createElement("div");
-		row.className = "todo-modal-row";
+	if (draftTodos.length === 0) {
+		const empty = document.createElement("div");
+		empty.className = "stash-empty";
+		empty.textContent = "No todos in this repository";
+		todoModalRowsContainer.appendChild(empty);
+	} else { 
+		// Render all existing todo items
+		draftTodos.forEach((todo, index) => {
+			const row = document.createElement("div");
+			row.className = "todo-modal-row";
 
-		// Checkbox
-		const checkbox = document.createElement("input");
-		checkbox.type = "checkbox";
-		checkbox.className = "ui-checkbox todo-checkbox";
-		checkbox.checked = todo.isCompleted;
-		checkbox.addEventListener("click", () => {
-			todo.isCompleted = checkbox.checked;
+			// Checkbox
+			const checkbox = document.createElement("input");
+			checkbox.type = "checkbox";
+			checkbox.className = "ui-checkbox todo-checkbox";
+			checkbox.checked = todo.isCompleted;
+			checkbox.addEventListener("click", () => {
+				todo.isCompleted = checkbox.checked;
 
-			if (todo.isCompleted) { label.classList.add("done"); }
-			else { label.classList.remove("done"); }
-		});
-
-		// Label
-		const label = document.createElement("span");
-		label.className = `todo-modal-label ${todo.isCompleted ? "done" : ""}`;
-		label.textContent = todo.text;
-
-		// Delete
-		const deleteBtn = document.createElement("button");
-		deleteBtn.className = "todo-modal-remove-btn";
-		deleteBtn.innerHTML = "&times;";
-		deleteBtn.addEventListener("click", () => {
-			draftTodos.splice(index, 1);
-			renderTodoList();
-		});
-
-		row.appendChild(checkbox);
-		row.appendChild(label);
-		row.appendChild(deleteBtn);
-		todoModalRowsContainer.appendChild(row);
-	});
-
-	// Render constant new task row
-	const newRow = document.createElement("div");
-	newRow.className = "todo-modal-row";
-
-	const newInput = document.createElement("input");
-	newInput.type = "text";
-	newInput.className = "modal-input";
-	newInput.placeholder = "Add new task (press enter)";
-
-	newInput.addEventListener("keyup", (e) => {
-		if (e.key === "Enter" && newInput.value.trim() !== "") {
-			draftTodos.push({
-				text: newInput.value.trim(),
-				isCompleted: false
+				if (todo.isCompleted) { label.classList.add("done"); }
+				else { label.classList.remove("done"); }
 			});
-			renderTodoList();
 
-			// Refocus on new task input
-			const newInputs = todoModalRowsContainer.querySelectorAll(".todo-modal-row .modal-input");
-			if (newInputs.length > 0) { newInputs[newInputs.length - 1].focus(); }
-		}
-	});
+			// Label
+			const label = document.createElement("span");
+			label.className = `todo-modal-label ${todo.isCompleted ? "done" : ""}`;
+			label.textContent = todo.text;
 
-	newRow.appendChild(newInput);
-	todoModalRowsContainer.appendChild(newRow);
+			// Delete
+			const deleteBtn = document.createElement("button");
+			deleteBtn.className = "todo-modal-remove-btn";
+			deleteBtn.innerHTML = "&times;";
+			deleteBtn.addEventListener("click", () => {
+				draftTodos.splice(index, 1);
+				renderTodoList();
+			});
+
+			row.appendChild(checkbox);
+			row.appendChild(label);
+			row.appendChild(deleteBtn);
+			todoModalRowsContainer.appendChild(row);
+		});
+	}
 
 	setTimeout(() => {
 		updateCustomScrollbar(todoModalRowsContainer, todoScrollbar);
@@ -3010,6 +3008,16 @@ historyItemMenuCopySHA.addEventListener("click", (event) => {
 
 // ======================== TODO LISTENERS ========================
 // Click listeners scoped to opening and saving the TodoModal.
+
+todoModalInputTask.addEventListener("input", (e) => {
+	todoModalAddBtn.disabled = e.target.value.trim() === "";
+});
+
+todoModalInputTask.addEventListener("keyup", (e) => {
+	if (e.key === "Enter") { addTodoTask(); }
+});
+
+todoModalAddBtn.addEventListener("click", addTodoTask);
 
 todoBtn.addEventListener("click", () => {
 	if (!currentRepoPath) { return; }
