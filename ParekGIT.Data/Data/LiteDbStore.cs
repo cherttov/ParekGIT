@@ -18,10 +18,8 @@ namespace ParekGIT.Data.Data
 		public LiteDbStore()
 		{
 			string appDataPath = AppDataPaths.GetAppDataRoot();
-
-			Directory.CreateDirectory(appDataPath);
-
 			string rawPath = Path.Combine(appDataPath, "data.db");
+
 			_db = new LiteDatabase($"Filename={rawPath}");
 		}
 

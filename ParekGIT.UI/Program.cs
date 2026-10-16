@@ -24,13 +24,13 @@ namespace ParekGIT.UI
 
 				// ======================== Core Services ========================
 				services.AddSingleton<ILogger, FileLogger>();
+				services.AddSingleton<IFileSystemService, FileSystemService>();
 
 				services.AddSingleton<LiteDbStore>();
 				services.AddSingleton<IRepositoryStore>(p => p.GetRequiredService<LiteDbStore>());
 				services.AddSingleton<ISettingsStore>(p => p.GetRequiredService<LiteDbStore>());
 				services.AddSingleton<ITodoStore>(p => p.GetRequiredService<LiteDbStore>());
 
-				services.AddSingleton<IFileSystemService, FileSystemService>();
 				services.AddSingleton<ITemplateService, TemplateService>();
 				services.AddSingleton<IGitRunner, GitCliRunner>();
 				services.AddSingleton<IRepoWatcher, RepoWatcher>();
@@ -122,6 +122,11 @@ namespace ParekGIT.UI
 
 				// ======================== Building DependencyInjection & Handlers ========================
 				using var serviceProvider = services.BuildServiceProvider();
+
+				// Initialize app data directory
+				var fileSystem = serviceProvider.GetRequiredService<IFileSystemService>();
+				string appDataPath = AppDataPaths.GetAppDataRoot();
+				fileSystem.CreateDirectory(appDataPath);
 
 				var window = serviceProvider.GetRequiredService<PhotinoWindow>();
 				var router = serviceProvider.GetRequiredService<IpcRouter>();

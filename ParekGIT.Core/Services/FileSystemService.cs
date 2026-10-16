@@ -9,11 +9,13 @@ namespace ParekGIT.Core.Services
 	{
 		private readonly ILogger _logger;
 
+		// Constructor
 		public FileSystemService(ILogger logger)
 		{
 			_logger = logger;
 		}
 
+		// Exist
 		public bool FileExists(string path)
 		{
 			return File.Exists(path);
@@ -24,6 +26,15 @@ namespace ParekGIT.Core.Services
 			return Directory.Exists(path);
 		}
 
+		// Create
+		public Task CreateDirectory(string path)
+		{
+			Directory.CreateDirectory(path);
+
+			return Task.CompletedTask;
+		}
+
+		// Write/read
 		public Task<string> ReadAllTextAsync(string path)
 		{
 			return File.ReadAllTextAsync(path);
@@ -34,6 +45,7 @@ namespace ParekGIT.Core.Services
 			return File.WriteAllTextAsync(path, content);
 		}
 
+		// Getters
 		public async Task<IEnumerable<string>> GetFileSystemEntriesAsync(string path, string searchPattern, SearchOption searchOption)
 		{
 			return await Task.Run(() =>
@@ -41,6 +53,7 @@ namespace ParekGIT.Core.Services
 			);
 		}
 
+		// Delete/recycle-bin
 		public async Task MoveDirectoryToRecycleBinAsync(string path)
 		{
 			var directory = new DirectoryInfo(path);
