@@ -14,15 +14,17 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IRepositoryStore _dbStore;
+		private readonly IGitRunner _gitRunner;
 		private readonly IFileSystemService _fileSystem;
 
 		public string Action => "REPO_ADD";
 
 		// Constructor
-		public RepoAddHandler(PhotinoWindow window, LiteDbStore dbStore, IFileSystemService fileSystem)
+		public RepoAddHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner, IFileSystemService fileSystem)
 		{
 			_window = window;
 			_dbStore = dbStore;
+			_gitRunner = gitRunner;
 			_fileSystem = fileSystem;
 		}
 
@@ -50,12 +52,16 @@ namespace ParekGIT.Bridge.Handlers
 			string repoName = new DirectoryInfo(repoPath).Name;
 			DateTime lastAccessed = new DirectoryInfo(repoPath).LastAccessTime;
 
+			// Check for remote
+			string? remoteUrl = await _gitRunner.GetRemoteUrlAsync(repoPath);
+
 			var addedRepo = new GitRepository
 			{
 				Id = Guid.NewGuid(),
 				Name = repoName,
 				AbsolutePath = repoPath,
-				LastAccessed = lastAccessed
+				LastAccessed = lastAccessed,
+				RemoteUrl = remoteUrl
 			};
 
 			IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();

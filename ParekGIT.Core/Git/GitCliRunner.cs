@@ -177,6 +177,15 @@ namespace ParekGIT.Core.Git
 			return GitConfigParser.Parse(rawOutput);
 		}
 
+		public async Task<string?> GetRemoteUrlAsync(string repoPath)
+		{
+			string arguments = "config --get remote.origin.url";
+
+			string rawOutput = await ExecuteCommandAsync(repoPath, arguments, 1);
+
+			return string.IsNullOrWhiteSpace(rawOutput) ? null : rawOutput;
+		}
+
 		// ======================== Commands ========================
 		public async Task CheckoutBranchAsync(string repoPath, string branchName, bool isRemote)
 		{

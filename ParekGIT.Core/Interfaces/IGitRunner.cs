@@ -18,6 +18,7 @@ namespace ParekGIT.Core.Interfaces
 		Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath);
 		Task<GitConfigInfo> GetGlobalConfigAsync(string? repoPath);
 		Task<GitConfigInfo> GetLocalConfigAsync(string repoPath);
+		Task<string?> GetRemoteUrlAsync(string repoPath);
 
 		// Commands
 		Task CheckoutBranchAsync(string repoPath, string branchName, bool isRemote);
