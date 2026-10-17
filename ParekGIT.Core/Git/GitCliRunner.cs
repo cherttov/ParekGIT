@@ -85,7 +85,7 @@ namespace ParekGIT.Core.Git
 
 		public async Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int skip = 0, int take = 50)
 		{
-			string arguments = $"log \"{branchName}\" -n {take} --pretty=format:\"%H|%s|%an|%ar|%at\"";
+			string arguments = $"log \"{branchName}\" --skip {skip} -n {take} --pretty=format:\"%H|%s|%an|%ar|%at\"";
 
 			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
@@ -125,7 +125,7 @@ namespace ParekGIT.Core.Git
 
 		public async Task<CommitDetailsResult> GetCommitDetailsAsync(string repoPath, string hash)
 		{
-			string arguments = $"show --name-status --format=\"%an%n%s\" {hash}";
+			string arguments = $"show --diff-merges=first-parent --name-status --format=\"%an%n%s\" {hash}";
 
 			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
@@ -152,7 +152,7 @@ namespace ParekGIT.Core.Git
 
 		public async Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath)
 		{
-			string arguments = $"show --format= {commitHash} -- \"{filePath}\"";
+			string arguments = $"show --diff-merges=first-parent --format= {commitHash} -- \"{filePath}\"";
 
 			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
 
