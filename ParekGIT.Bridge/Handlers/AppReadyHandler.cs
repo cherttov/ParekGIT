@@ -13,15 +13,17 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 		private readonly LiteDbStore _dbStore;
+		private readonly JsonStore _jsonStore;
 		private readonly IFileSystemService _fileSystem;
 
 		public string Action => "APP_READY";
 
 		// Constructor
-		public AppReadyHandler(PhotinoWindow window, LiteDbStore dbStore, IFileSystemService fileSystem)
+		public AppReadyHandler(PhotinoWindow window, LiteDbStore dbStore, JsonStore jsonStore, IFileSystemService fileSystem)
 		{
 			_window = window;
 			_dbStore = dbStore;
+			_jsonStore = jsonStore;
 			_fileSystem = fileSystem;
 		}
 
@@ -41,7 +43,7 @@ namespace ParekGIT.Bridge.Handlers
 				}
 			}
 
-			UserSettings settings = await _dbStore.GetUserSettingsAsync();
+			UserSettings settings = await _jsonStore.GetUserSettingsAsync();
 
 			// Data, frontend ready
 			var bootData = new

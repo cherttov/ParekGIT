@@ -6,12 +6,11 @@ using ParekGIT.Core.Services;
 
 namespace ParekGIT.Data.Data
 {
-	public class LiteDbStore : IRepositoryStore, ISettingsStore, ITodoStore, IDisposable
+	public class LiteDbStore : IRepositoryStore, ITodoStore, IDisposable
 	{
 		private readonly LiteDatabase _db;
 
 		private const string ReposCollectionName = "repositories";
-		private const string SettingsCollectionName = "settings";
 		private const string TodosCollectionName = "todos";
 
 		// Constructor
@@ -80,26 +79,6 @@ namespace ParekGIT.Data.Data
 					repo.IsValid = isValid;
 					collection.Update(repo);
 				}
-			});
-		}
-
-		// Settings db
-		public Task<UserSettings> GetUserSettingsAsync()
-		{
-			return Task.Run(() =>
-			{
-				var collection = _db.GetCollection<UserSettings>(SettingsCollectionName);
-				var settings = collection.FindById(1);
-				return settings ?? new UserSettings();
-			});
-		}
-
-		public Task SaveUserSettingsAsync(UserSettings settings)
-		{
-			return Task.Run(() =>
-			{
-				var collection = _db.GetCollection<UserSettings>(SettingsCollectionName);
-				collection.Upsert(settings);
 			});
 		}
 

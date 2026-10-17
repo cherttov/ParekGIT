@@ -3,9 +3,7 @@ using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
-using ParekGIT.Core.Services;
 using ParekGIT.Data.Data;
-using ParekGIT.Data.Interfaces;
 using ParekGIT.Data.Models;
 using Photino.NET;
 using System.Text.Json;
@@ -16,6 +14,7 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 		private readonly LiteDbStore _dbStore;
+		private readonly JsonStore _jsonStore;
 		private readonly IGitRunner _gitRunner;
 		private readonly IRepoWatcher _repoWatcher;
 		private readonly IFileSystemService _fileSystem;
@@ -23,10 +22,11 @@ namespace ParekGIT.Bridge.Handlers
 		public string Action => "REPO_SELECTED";
 
 		// Constructor
-		public RepoSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner, IRepoWatcher repoWatcher, IFileSystemService fileSystem)
+		public RepoSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, JsonStore jsonStore, IGitRunner gitRunner, IRepoWatcher repoWatcher, IFileSystemService fileSystem)
 		{
 			_window = window;
 			_dbStore = dbStore;
+			_jsonStore = jsonStore;
 			_gitRunner = gitRunner;
 			_repoWatcher = repoWatcher;
 			_fileSystem = fileSystem;
@@ -52,7 +52,7 @@ namespace ParekGIT.Bridge.Handlers
 				return;
 			}
 
-			UserSettings currentSettings = await _dbStore.GetUserSettingsAsync();
+			UserSettings currentSettings = await _jsonStore.GetUserSettingsAsync();
 
 			// Get branches
 			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
@@ -62,7 +62,7 @@ namespace ParekGIT.Bridge.Handlers
 			if (currentSettings.LastRepoPath != repoPath)
 			{
 				currentSettings.LastRepoPath = repoPath;
-				await _dbStore.SaveUserSettingsAsync(currentSettings);
+				await _jsonStore.SaveUserSettingsAsync(currentSettings);
 			}
 
 			// Response

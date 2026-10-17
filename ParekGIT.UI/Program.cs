@@ -27,8 +27,9 @@ namespace ParekGIT.UI
 				services.AddSingleton<IFileSystemService, FileSystemService>();
 
 				services.AddSingleton<LiteDbStore>();
+				services.AddSingleton<JsonStore>();
 				services.AddSingleton<IRepositoryStore>(p => p.GetRequiredService<LiteDbStore>());
-				services.AddSingleton<ISettingsStore>(p => p.GetRequiredService<LiteDbStore>());
+				services.AddSingleton<ISettingsStore>(p => p.GetRequiredService<JsonStore>());
 				services.AddSingleton<ITodoStore>(p => p.GetRequiredService<LiteDbStore>());
 
 				services.AddSingleton<ITemplateService, TemplateService>();

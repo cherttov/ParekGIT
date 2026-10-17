@@ -11,15 +11,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class SettingsSaveHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly ISettingsStore _dbStore;
+		private readonly ISettingsStore _jsonStore;
 
 		public string Action => "SETTINGS_SAVE";
 
 		// Constructor
-		public SettingsSaveHandler(PhotinoWindow window, ISettingsStore dbStore)
+		public SettingsSaveHandler(PhotinoWindow window, ISettingsStore jsonStore)
 		{
 			_window = window;
-			_dbStore = dbStore;
+			_jsonStore = jsonStore;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -27,11 +27,11 @@ namespace ParekGIT.Bridge.Handlers
 			UserSettings incomingSettings = payload.Deserialize<UserSettings>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
 				?? throw new IpcPayloadException("settings");
 
-			UserSettings existingSettings = await _dbStore.GetUserSettingsAsync();
+			UserSettings existingSettings = await _jsonStore.GetUserSettingsAsync();
 
 			existingSettings.Theme = incomingSettings.Theme;
 
-			await _dbStore.SaveUserSettingsAsync(existingSettings);
+			await _jsonStore.SaveUserSettingsAsync(existingSettings);
 
 			// Response
 			var response = new IpcMessage

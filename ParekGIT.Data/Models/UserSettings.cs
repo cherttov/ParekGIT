@@ -2,8 +2,6 @@
 {
 	public class UserSettings
 	{
-		public int Id { get; set; } = 1;
-
 		// Visible parameters
 		public string Theme { get; set; } = "catppuccin-mocha";
 
