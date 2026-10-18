@@ -1,10 +1,15 @@
-﻿namespace ParekGIT.Core.Services
+﻿using System.Net.NetworkInformation;
+
+namespace ParekGIT.Core.Services
 {
 	public static class AppDataPaths
 	{
 		private const string AppName = "ParekGIT";
 
-		public static string GetAppDataRoot()
+		private static readonly string _appDataRoot;
+
+		// Constructor
+		static AppDataPaths()
 		{
 			string basePath;
 
@@ -27,17 +32,15 @@
 				);
 			}
 
-			return Path.Combine(basePath, AppName);
+			_appDataRoot = Path.Combine(basePath, AppName);
 		}
 
-		public static string GetLogDirectory()
-		{
-			return Path.Combine(GetAppDataRoot(), "logs");
-		}
+		public static string GetAppDataRoot() { return _appDataRoot; }
 
-		public static string GetDatabaseDirectory()
-		{
-			return GetAppDataRoot();
-		}
+		public static string GetLogDirectory() { return Path.Combine(_appDataRoot, "logs"); }
+
+		public static string GetDatabaseDirectory() { return _appDataRoot; }
+
+		public static string GetSettingsDirectory() { return _appDataRoot; }
 	}
 }

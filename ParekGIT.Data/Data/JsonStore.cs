@@ -10,9 +10,10 @@ namespace ParekGIT.Data.Data
 	{
 		private readonly IFileSystemService _fileSystem;
 
+		private readonly string _settingsDir;
 		private readonly string _settingsPath;
 
-		private JsonSerializerOptions _options = new() 
+		private readonly JsonSerializerOptions _options = new() 
 		{ 
 			PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 			WriteIndented = true, 
@@ -24,7 +25,8 @@ namespace ParekGIT.Data.Data
 		{
 			_fileSystem = fileSystem;
 
-			_settingsPath = Path.Combine(AppDataPaths.GetAppDataRoot(), "settings.json");
+			_settingsDir = AppDataPaths.GetSettingsDirectory();
+			_settingsPath = Path.Combine(_settingsDir, "settings.json");
 		}
 
 		// Settings
@@ -41,9 +43,8 @@ namespace ParekGIT.Data.Data
 
 		public async Task SaveUserSettingsAsync(UserSettings settings)
 		{
-			string? dir = Path.GetDirectoryName(_settingsPath);
-			if (dir != null && !_fileSystem.DirectoryExists(dir))
-				await _fileSystem.CreateDirectory(_settingsPath);
+			if (_settingsDir != null && !_fileSystem.DirectoryExists(_settingsDir))
+				await _fileSystem.CreateDirectory(_settingsDir);
 
 			string json = JsonSerializer.Serialize<UserSettings>(settings, _options);
 			await _fileSystem.WriteAllTextAsync(_settingsPath, json);
