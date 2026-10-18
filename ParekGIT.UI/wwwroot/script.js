@@ -1832,6 +1832,29 @@ function resetViewers() {
 // ======================== STASH HELPERS ========================
 // Functions scoped to per-repo StashList modal.
 
+// Saves a stash & clears input
+const saveStash = () => {
+	if (!currentRepoPath) { return; }
+
+	const selectedFiles = [];
+	const allFileCheckboxes = document.querySelectorAll(".changes-item-checkbox:checked");
+
+	allFileCheckboxes.forEach((checkbox) => {
+		const itemRow = checkbox.closest(".change-item");
+		selectedFiles.push(itemRow.dataset.path);
+	});
+
+	if (selectedFiles.length === 0) { return; }
+
+	sendIpcMessage(IpcActions.STASH_SAVE, {
+		repoPath: currentRepoPath,
+		message: stashModalInputMessage.value.trim(),
+		files: selectedFiles
+	});
+
+	stashModalInputMessage.value = "";
+}
+
 // C# - Process STASH_SAVED & STASH_POPPED
 function processStashChange() {
 	sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
@@ -3051,27 +3074,11 @@ stashBtn.addEventListener("click", () => {
 	sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
 });
 
-stashModalSaveBtn.addEventListener("click", () => {
-	if (!currentRepoPath) { return; }
-
-	const selectedFiles = [];
-	const allFileCheckboxes = document.querySelectorAll(".changes-item-checkbox:checked");
-
-	allFileCheckboxes.forEach((checkbox) => {
-		const itemRow = checkbox.closest(".change-item");
-		selectedFiles.push(itemRow.dataset.path);
-	});
-
-	if (selectedFiles.length === 0) { return; }
-
-	sendIpcMessage(IpcActions.STASH_SAVE, {
-		repoPath: currentRepoPath,
-		message: stashModalInputMessage.value.trim(),
-		files: selectedFiles
-	});
-
-	stashModalInputMessage.value = "";
+stashModalInputMessage.addEventListener("keyup", (e) => {
+	if (e.key === "Enter") { saveStash(); }
 });
+
+stashModalSaveBtn.addEventListener("click", saveStash);
 
 // ======================== CONFIG & SETTINGS LISTENERS ========================
 // Click/Input listeners scoped to local/global config and AppSettings modals.

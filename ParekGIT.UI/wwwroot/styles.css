@@ -1596,22 +1596,17 @@ select:focus {
 	font-family: inherit;
 	font-size: 12px;
 	font-weight: 500;
-	transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+	transition: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease;
 }
 
-.stash-modal-row:hover .stash-pop-btn {
-	background-color: var(--accent);
-	border-color: var(--accent);
-	color: var(--accent-text);
-}
-
-.stash-modal-row:hover .stash-drop-btn {
+.stash-modal-row:hover .stash-action-btn {
 	border-color: var(--bg-active);
 }
 
 .stash-modal-row:hover .stash-pop-btn:hover {
-	background-color: var(--accent-hover);
-	border-color: var(--accent-hover);
+/*	background-color: var(--accent);*/
+	border-color: var(--accent);
+	color: var(--accent);
 }
 
 .stash-modal-row:hover .stash-drop-btn:hover {
