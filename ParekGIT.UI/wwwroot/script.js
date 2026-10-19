@@ -631,16 +631,24 @@ const closeDropdowns = () => {
 const closeAndClearModal = (modalElement) => {
 	modalElement.classList.remove("show");
 
-	// Clear all text inputs
-	const inputs = modalElement.querySelectorAll("input");
-	inputs.forEach((input) => (input.value = ""));
+	const style = window.getComputedStyle(modalElement);
+	const toMs = (value) => parseFloat(value) * (value.trim().endsWith("ms") ? 1 : 1000);
+	const durations = style.transitionDuration.split(",").map(toMs);
+	const delays = style.transitionDelay.split(",").map(toMs);
+	const totalMs = Math.max(...durations.map((d, i) => d + (delays[i] ?? delays[0])));
 
-	// Reset all select inputs
-	const selects = modalElement.querySelectorAll("select");
-	selects.forEach((select) => {
-		select.selectedIndex = 0;
-		select.dispatchEvent(new Event("change"));
-	});
+	setTimeout(() => {
+		if (modalElement.classList.contains("show")) { return; }
+
+		// Clear all text inputs
+		modalElement.querySelectorAll("input").forEach((input) => (input.value = ""));
+
+		// Reset all select inputs
+		modalElement.querySelectorAll("select").forEach((select) => {
+			select.selectedIndex = 0;
+			select.dispatchEvent(new Event("change"));
+		});
+	}, totalMs);
 };
 
 // Toggles 1st dropdown to visible & 2nd to hidden
