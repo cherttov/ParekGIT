@@ -31,7 +31,7 @@ Git GUI Client that's focused on simplicity
 - **ParekGIT** logo uses parts of the original [Git logo](https://git-scm.com/downloads/logos) made by Jason Long, licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) 
 
 ## AI Usage ##
-AI was used to refactor the code, improve overall code structure and test edge cases.
+AI was used moderately to help refactor the code, improve overall code structure and assist in development.
 
 ## License ##
 Distributed under the MIT License. See [LICENSE](https://github.com/cherttov/ParekGIT/blob/main/LICENSE) for more information.
