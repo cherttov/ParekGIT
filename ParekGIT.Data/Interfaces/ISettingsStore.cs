@@ -4,6 +4,7 @@ namespace ParekGIT.Data.Interfaces
 {
 	public interface ISettingsStore
 	{
+		Task EnsureSettingsFileAsync();
 		Task<UserSettings> GetUserSettingsAsync();
 		Task SaveUserSettingsAsync(UserSettings settings);
 	}

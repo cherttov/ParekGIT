@@ -30,13 +30,20 @@ namespace ParekGIT.Data.Data
 		}
 
 		// Settings
+		public async Task EnsureSettingsFileAsync()
+		{
+			if (_fileSystem.FileExists(_settingsPath)) { return; }
+
+			await SaveUserSettingsAsync(new UserSettings());
+		}
+
 		public async Task<UserSettings> GetUserSettingsAsync()
 		{
 			if (!_fileSystem.FileExists(_settingsPath))
 				return new UserSettings();
 
 			string json = await _fileSystem.ReadAllTextAsync(_settingsPath);
-			var result =  JsonSerializer.Deserialize<UserSettings>(json, _options) ?? new UserSettings();
+			var result = JsonSerializer.Deserialize<UserSettings>(json, _options) ?? new UserSettings();
 
 			return result;
 		}
