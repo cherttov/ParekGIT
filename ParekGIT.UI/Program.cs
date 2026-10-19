@@ -124,10 +124,12 @@ namespace ParekGIT.UI
 				// ======================== Building DependencyInjection & Handlers ========================
 				using var serviceProvider = services.BuildServiceProvider();
 
-				// Initialize app data directory
+				// Initialize app data directory/directories
 				var fileSystem = serviceProvider.GetRequiredService<IFileSystemService>();
-				string appDataPath = AppDataPaths.GetAppDataRoot();
-				fileSystem.CreateDirectory(appDataPath);
+				foreach (string dir in AppDataPaths.GetAllDirectories())
+				{
+					fileSystem.CreateDirectory(dir);
+				}
 
 				var window = serviceProvider.GetRequiredService<PhotinoWindow>();
 				var router = serviceProvider.GetRequiredService<IpcRouter>();
