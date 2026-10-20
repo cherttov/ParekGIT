@@ -42,7 +42,11 @@
 		public static string GetDatabaseDirectory() { return _dataDir; }
 		public static string GetSettingsDirectory() { return _configDir; }
 		public static string GetLogDirectory() { return Path.Combine(_stateDir, "logs"); }
-		public static IEnumerable<string> GetAllDirectories() { return new[] { _configDir, _dataDir, GetLogDirectory() }.Distinct(); }
+		public static string GetThemesDirectory() { return Path.Combine(_configDir, "themes"); }
+		public static IEnumerable<string> GetAllDirectories() 
+		{ 
+			return new[] { _configDir, _dataDir, GetLogDirectory(), GetThemesDirectory() }.Distinct(); 
+		}
 
 		// Private helpers
 		private static string XdgDir(string envVar, string fallbackRelativeToHome)
