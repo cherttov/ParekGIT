@@ -28,6 +28,9 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 							  ?? throw new IpcPayloadException("repoPath");
 
+			string branchName = payload.GetProperty("branchName").GetString()
+								?? throw new IpcPayloadException("branchName");
+
 			// Get target repo
 			IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
 			GitRepository targetRepo = allRepos.FirstOrDefault(repo => repo.AbsolutePath == repoPath)
@@ -38,15 +41,19 @@ namespace ParekGIT.Bridge.Handlers
 			List<TodoItem> newTodos = payload.GetProperty("todos").Deserialize<List<TodoItem>>(options)
 				?? new List<TodoItem>();
 
-			// Assing repo ids & save
-			foreach (var todo in newTodos) { todo.RepoId = targetRepo.Id; }
-			await _dbStore.SaveRepoTodosAsync(targetRepo.Id, newTodos);
+			// Assing repo ids/branch names & save
+			foreach (var todo in newTodos) 
+			{ 
+				todo.RepoId = targetRepo.Id;
+				todo.BranchName = branchName;
+			}
+			await _dbStore.SaveBranchTodosAsync(targetRepo.Id, branchName, newTodos);
 
 			// Response
 			var response = new IpcMessage
 			{
 				Action = "TODO_SAVED",
-				Payload = JsonSerializer.SerializeToElement("")
+				Payload = JsonSerializer.SerializeToElement(new { success = true})
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}

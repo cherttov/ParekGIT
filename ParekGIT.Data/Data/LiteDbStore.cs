@@ -94,18 +94,18 @@ namespace ParekGIT.Data.Data
 			});
 		}
 
-		public Task<IEnumerable<TodoItem>> GetRepoTodosAsync(Guid repoId)
+		public Task<IEnumerable<TodoItem>> GetBranchTodosAsync(Guid repoId, string branchName)
 		{
 			return Task.Run(() =>
 			{
 				var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
 				return (IEnumerable<TodoItem>)collection
-					.Find(todo => todo.RepoId == repoId)
+					.Find(todo => todo.RepoId == repoId && todo.BranchName == branchName)
 					.ToList();
 			});
 		}
 
-		public Task SaveRepoTodosAsync(Guid repoId, IEnumerable<TodoItem> todos)
+		public Task SaveBranchTodosAsync(Guid repoId, string branchName, IEnumerable<TodoItem> todos)
 		{
 			return Task.Run(() =>
 			{
@@ -113,7 +113,7 @@ namespace ParekGIT.Data.Data
 				try
 				{
 					var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
-					collection.DeleteMany(todo => todo.RepoId == repoId);
+					collection.DeleteMany(todo => todo.RepoId == repoId && todo.BranchName == branchName);
 					if (todos.Any()) { collection.InsertBulk(todos); }
 					_db.Commit();
 				}

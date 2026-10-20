@@ -950,7 +950,7 @@ function createRepoDropdownItem(repo) {
 
 		sendIpcMessage(IpcActions.REPO_SELECTED, { absolutePath: repo.AbsolutePath });
 		sendIpcMessage(IpcActions.GET_REPO_STATUS, { repoPath: repo.AbsolutePath });
-		sendIpcMessage(IpcActions.TODO_LOAD, { repoPath: repo.AbsolutePath });
+		// sendIpcMessage(IpcActions.TODO_LOAD, { repoPath: repo.AbsolutePath }); // !!!!!!!!!
 
 		setRepoToolsEnabled(true);
 	});
@@ -1199,6 +1199,14 @@ function loadBranchesIntoDropdown(branches) {
 			historyList.innerHTML = "";
 			changesList.innerHTML = "";
 
+			// Load todos signal
+			const targetRevision = branch.IsDetached ? branch.TargetCommitHash : branch.Name;
+			sendIpcMessage(IpcActions.TODO_LOAD, {
+				repoPath: currentRepoPath,
+				branchName: targetRevision
+			});
+
+			// Branch selected signal
 			sendIpcMessage(IpcActions.BRANCH_SELECTED, {
 				absolutePath: currentRepoPath,
 				branchName: branch.Name,
@@ -1228,6 +1236,14 @@ function loadBranchesIntoDropdown(branches) {
 	});
 
 	branchBtnValue.textContent = currentBranchName;
+
+	// Load todos
+	if (currentRepoPath && currentBranchRevision) {
+		sendIpcMessage(IpcActions.TODO_LOAD, {
+			repoPath: currentRepoPath,
+			branchName: currentBranchRevision
+		});
+	}
 
 	mergeBtn.disabled = currentBranchIsDetached;
 	toggleCommitButton();
@@ -1942,8 +1958,8 @@ function loadStashes(stashes) {
 const addTodoTask = () => {
 	if (todoModalInputTask.value.trim() !== "") {
 		draftTodos.push({
-			text: todoModalInputTask.value.trim(),
-			isCompleted: false
+			TaskLabel: todoModalInputTask.value.trim(),
+			IsCompleted: false
 		});
 
 		todoModalInputTask.value = "";
@@ -1972,18 +1988,18 @@ function renderTodoList() {
 			const checkbox = document.createElement("input");
 			checkbox.type = "checkbox";
 			checkbox.className = "ui-checkbox todo-checkbox";
-			checkbox.checked = todo.isCompleted;
+			checkbox.checked = todo.IsCompleted;
 			checkbox.addEventListener("click", () => {
-				todo.isCompleted = checkbox.checked;
+				todo.IsCompleted = checkbox.checked;
 
-				if (todo.isCompleted) { label.classList.add("done"); }
+				if (todo.IsCompleted) { label.classList.add("done"); }
 				else { label.classList.remove("done"); }
 			});
 
 			// Label
 			const label = document.createElement("span");
-			label.className = `todo-modal-label ${todo.isCompleted ? "done" : ""}`;
-			label.textContent = todo.text;
+			label.className = `todo-modal-label ${todo.IsCompleted ? "done" : ""}`;
+			label.textContent = todo.TaskLabel;
 
 			// Delete
 			const deleteBtn = document.createElement("button");
@@ -3060,12 +3076,13 @@ todoBtn.addEventListener("click", () => {
 });
 
 todoModalConfirmBtn.addEventListener("click", () => {
-	if (!currentRepoPath) { return; }
+	if (!currentRepoPath || !currentBranchRevision) { return; }
 
 	activeTodos = JSON.parse(JSON.stringify(draftTodos));
 
 	sendIpcMessage(IpcActions.TODO_SAVE, {
 		repoPath: currentRepoPath,
+		branchName: currentBranchRevision,
 		todos: activeTodos
 	});
 

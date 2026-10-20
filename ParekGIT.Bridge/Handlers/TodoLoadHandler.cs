@@ -28,12 +28,16 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 							  ?? throw new IpcPayloadException("repoPath");
 
+			string branchName = payload.GetProperty("branchName").GetString()
+								?? throw new IpcPayloadException("branchName");
+
 			IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
 			GitRepository? targetRepo = allRepos.FirstOrDefault(repo => repo.AbsolutePath == repoPath);
 
-			IEnumerable<TodoItem> todos = targetRepo != null
-				? await _dbStore.GetRepoTodosAsync(targetRepo.Id)
-				: throw new IpcPayloadException("repoPath", $"no repository found for path: {repoPath}");
+			if (targetRepo == null)
+				throw new InvalidOperationException($"Repository not found for path: {repoPath}");
+
+			IEnumerable<TodoItem> todos = await _dbStore.GetBranchTodosAsync(targetRepo.Id, branchName);
 
 			// Response
 			var response = new IpcMessage
