@@ -29,8 +29,9 @@ namespace ParekGIT.UI
 				services.AddSingleton<LiteDbStore>();
 				services.AddSingleton<JsonStore>();
 				services.AddSingleton<IRepositoryStore>(p => p.GetRequiredService<LiteDbStore>());
-				services.AddSingleton<ISettingsStore>(p => p.GetRequiredService<JsonStore>());
 				services.AddSingleton<ITodoStore>(p => p.GetRequiredService<LiteDbStore>());
+				services.AddSingleton<ISettingsStore>(p => p.GetRequiredService<JsonStore>());
+				services.AddSingleton<IThemeStore>(p => p.GetRequiredService<JsonStore>());
 
 				services.AddSingleton<ITemplateService, TemplateService>();
 				services.AddSingleton<IGitRunner, GitCliRunner>();
@@ -128,10 +129,12 @@ namespace ParekGIT.UI
 				var fileSystem = serviceProvider.GetRequiredService<IFileSystemService>();
 				foreach (string dir in AppDataPaths.GetAllDirectories())
 				{
-					fileSystem.CreateDirectory(dir);
+					fileSystem.CreateDirectory(dir).GetAwaiter().GetResult();
 				}
 				var settingsStore = serviceProvider.GetRequiredService<ISettingsStore>();
 				settingsStore.EnsureSettingsFileAsync().GetAwaiter().GetResult();
+				var themeStore = serviceProvider.GetRequiredService<IThemeStore>();
+				themeStore.EnsureDefaultThemesAsync().GetAwaiter().GetResult();
 
 				var window = serviceProvider.GetRequiredService<PhotinoWindow>();
 				var router = serviceProvider.GetRequiredService<IpcRouter>();
