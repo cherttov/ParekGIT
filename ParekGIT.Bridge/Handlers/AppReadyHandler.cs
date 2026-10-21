@@ -29,6 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 
 		public async Task ExecuteAsync(JsonElement payload)
 		{
+			// Repos
 			IEnumerable<GitRepository> repos = await _dbStore.GetAllRepositoriesAsync();
 
 			// Check if invalid repos are still invalid
@@ -43,13 +44,18 @@ namespace ParekGIT.Bridge.Handlers
 				}
 			}
 
+			// Settings
 			UserSettings settings = await _jsonStore.GetUserSettingsAsync();
+
+			// Themes
+			var themes = await _jsonStore.LoadThemes();
 
 			// Data, frontend ready
 			var bootData = new
 			{
 				Repositories = repos,
-				Settings = settings
+				Settings = settings,
+				Themes = themes
 			};
 
 			// Response

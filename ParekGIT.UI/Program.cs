@@ -100,8 +100,9 @@ namespace ParekGIT.UI
 				services.AddSingleton<IMessageHandler, ExplorerDialogHandler>();
 				services.AddSingleton<IMessageHandler, ExplorerOpenHandler>();
 
-				// Settings
+				// Settings / Themes
 				services.AddSingleton<IMessageHandler, SettingsSaveHandler>();
+				services.AddSingleton<IMessageHandler, ThemesListhandler>();
 
 				// Todo
 				services.AddSingleton<IMessageHandler, TodoLoadHandler>();
