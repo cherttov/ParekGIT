@@ -258,6 +258,7 @@ const binaryExts = [
 	".gif", ".ico", ".zip", ".tar",
 	".gz", ".7z", ".pdf",
 ];
+const defaultTheme = "catppuccin-mocha";
 
 // ======================== APP STATE ========================
 let currentRepoPath = "";
@@ -270,6 +271,7 @@ let currentChangesCount = 0;
 let repoDrafts = {};
 let fetchStopRequested = false;
 let currentTheme = "catppuccin-mocha";
+let availableThemes = [];
 let draftTodos = [];
 let activeTodos = [];
 let currentHistorySkip = 0;
@@ -329,6 +331,7 @@ const IpcActions = {
 	CONFIG_GLOBAL_GET: "CONFIG_GLOBAL_GET",
 	CONFIG_GLOBAL_SAVE: "CONFIG_GLOBAL_SAVE",
 	SETTINGS_SAVE: "SETTINGS_SAVE",
+	GET_THEMES: "GET_THEMES",
 	EXPLORER_OPEN: "EXPLORER_OPEN",
 	EXPLORER_OPEN_DIALOG: "EXPLORER_OPEN_DIALOG",
 	STASH_SAVE: "STASH_SAVE",
@@ -374,6 +377,7 @@ const IpcActions = {
 	CONFIG_GLOBAL_LOADED: "CONFIG_GLOBAL_LOADED",
 	CONFIG_GLOBAL_SAVED: "CONFIG_GLOBAL_SAVED",
 	SETTINGS_SAVED: "SETTINGS_SAVED",
+	THEMES_LOADED: "THEMES_LOADED",
 	STASHES_LOADED: "STASHES_LOADED",
 	STASH_SAVED: "STASH_SAVED",
 	STASH_POPPED: "STASH_POPPED",
@@ -560,6 +564,10 @@ window.external.receiveMessage((message) => {
 
 		// case IpcActions.LOGS_CLEARED:
 		// 	break;
+
+		case IpcActions.THEMES_LOADED:
+			processThemesLoaded(data.Payload);
+			break;
 
 		default:
 			console.warn("Unknown action received: ", data.Action);
@@ -753,9 +761,20 @@ const interactCustomScrollbar = (container, scrollbar) => {
 };
 
 // Swaps the active `theme-*` class in <body> to the given theme name (config)
-const applyTheme = (themeName) => {
-	document.body.className = document.body.className.replace(/theme-\S+/g, "");
-	if (themeName) { document.body.classList.add(`theme-${themeName}`); }
+const applyTheme = (themeId) => {
+	if (!themeId) { return; }
+	currentTheme = themeId;
+
+	if (settingsModalThemeSelect.value !== themeId) {
+		settingsModalThemeSelect.value = themeId;
+	}
+
+	const theme = availableThemes.find((t) => t.Id === themeId);
+	if (theme && theme.Colors) {
+		for (const [key, value] of Object.entries(theme.Colors)) {
+			document.documentElement.style.setProperty(`--${key}`, value);
+		}
+	}
 };
 
 // Escapes HTML-significant characters for safe injection via innerHTML
@@ -1130,8 +1149,7 @@ function folderSelected(directory) {
 function appInit(data) {
 	// Visuals
 	currentTheme = data.Settings.Theme;
-	applyTheme(data.Settings.Theme);
-	settingsModalThemeSelect.value = data.Settings.Theme;
+	processThemesLoaded(data.Themes);
 
 	// Data
 	loadRepositoriesIntoDropdown(data.Repositories);
@@ -2062,6 +2080,30 @@ function processGlobalConfigLoad(config) {
 function showErrorModal(message) {
 	errorModalMessage.textContent = message || "An unknown error occurred.";
 	errorModal.classList.add("show");
+}
+
+// C# - Themes loaded
+function processThemesLoaded(themes) {
+	availableThemes = themes;
+	settingsModalThemeSelect.innerHTML = "";
+
+	themes.forEach((theme) => {
+		const option = document.createElement("option");
+		option.value = theme.Id;
+		option.textContent = theme.Name;
+		settingsModalThemeSelect.appendChild(option);
+	});
+
+	const themeExists = availableThemes.some(t => t.Id === currentTheme);
+	if (!themeExists) {
+		currentTheme = defaultTheme;
+
+		sendIpcMessage(IpcActions.SETTINGS_SAVE, {
+			Theme: currentTheme
+		});
+	}
+
+	applyTheme(currentTheme);
 }
 
 // ======================== GLOBAL & GENERIC LISTENERS ========================
@@ -3116,7 +3158,7 @@ configBtn.addEventListener("click", () => {
 });
 
 settingsBtn.addEventListener("click", () => {
-	settingsModalThemeSelect.value = currentTheme;
+	sendIpcMessage(IpcActions.GET_THEMES);
 	settingsModal.classList.add("show");
 });
 
@@ -3138,15 +3180,13 @@ settingsModalLogsClear.addEventListener("click", () =>
 
 settingsModalConfirmBtn.addEventListener("click", () => {
 	const updatedSettings = {
-		Id: 1,
 		Theme: settingsModalThemeSelect.value
 	};
 
-	sendIpcMessage(IpcActions.SETTINGS_SAVE, updatedSettings);
-
+	sendIpcMessage(IpcActions.SETTINGS_SAVE, {
+		Theme: settingsModalThemeSelect.value
+	});
 	currentTheme = updatedSettings.Theme;
-
-	applyTheme(updatedSettings.Theme);
 	closeAndClearModal(settingsModal);
 });
 
