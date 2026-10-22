@@ -68,7 +68,7 @@ namespace ParekGIT.UI
 				services.AddSingleton<IMessageHandler, RepoPullHandler>();
 				services.AddSingleton<IMessageHandler, RepoPushHandler>();
 				services.AddSingleton<IMessageHandler, RepoPublishHandler>();
-				services.AddSingleton<IMessageHandler, RepoStatusHandler>();
+				services.AddSingleton<IMessageHandler, RepoStatusLoadHandler>();
 				services.AddSingleton<IMessageHandler, RepoTerminalHandler>();
 				services.AddSingleton<IMessageHandler, RepoCommitHandler>();
 				services.AddSingleton<IMessageHandler, RepoFetchHandler>();
@@ -76,46 +76,46 @@ namespace ParekGIT.UI
 
 				// Branch
 				services.AddSingleton<IMessageHandler, BranchSelectedHandler>();
-				services.AddSingleton<IMessageHandler, BranchListHandler>();
+				services.AddSingleton<IMessageHandler, BranchListLoadHandler>();
 				services.AddSingleton<IMessageHandler, BranchCreateHandler>();
-				services.AddSingleton<IMessageHandler, BranchHistoryCreateHandler>();
+				services.AddSingleton<IMessageHandler, BranchCreateFromCommitHandler>();
 				services.AddSingleton<IMessageHandler, BranchRenameHandler>();
 				services.AddSingleton<IMessageHandler, BranchDeleteHandler>();
 				services.AddSingleton<IMessageHandler, BranchForceDeleteHandler>();
-				services.AddSingleton<IMessageHandler, BranchHistoryHandler>();
+				services.AddSingleton<IMessageHandler, BranchHistoryLoadHandler>();
 				services.AddSingleton<IMessageHandler, BranchMergeHandler>();
 
 				// Commit/File/History
-				services.AddSingleton<IMessageHandler, FileDiffHandler>();
-				services.AddSingleton<IMessageHandler, HistoryFileDiffHandler>();
-				services.AddSingleton<IMessageHandler, HistoryCheckoutHandler>();
-				services.AddSingleton<IMessageHandler, HistoryRevertHandler>();
-				services.AddSingleton<IMessageHandler, CommitDetailsHandler>();
+				services.AddSingleton<IMessageHandler, FileDiffLoadHandler>();
+				services.AddSingleton<IMessageHandler, CommitFileDiffLoadHandler>();
+				services.AddSingleton<IMessageHandler, CommitCheckoutHandler>();
+				services.AddSingleton<IMessageHandler, CommitRevertHandler>();
+				services.AddSingleton<IMessageHandler, CommitDetailsLoadHandler>();
 
 				// Change
 				services.AddSingleton<IMessageHandler, ChangeDiscardHandler>();
 				services.AddSingleton<IMessageHandler, ChangeIgnoreHandler>();
 
 				// Explorer
-				services.AddSingleton<IMessageHandler, ExplorerDialogHandler>();
-				services.AddSingleton<IMessageHandler, ExplorerOpenHandler>();
+				services.AddSingleton<IMessageHandler, ExplorerPickFolderHandler>();
+				services.AddSingleton<IMessageHandler, ExplorerShowHandler>();
 
 				// Settings / Themes
 				services.AddSingleton<IMessageHandler, SettingsSaveHandler>();
-				services.AddSingleton<IMessageHandler, ThemesListhandler>();
+				services.AddSingleton<IMessageHandler, ThemeListLoadHandler>();
 
 				// Todo
 				services.AddSingleton<IMessageHandler, TodoLoadHandler>();
 				services.AddSingleton<IMessageHandler, TodoSaveHandler>();
 
 				// Config
-				services.AddSingleton<IMessageHandler, ConfigLocalGetHandler>();
+				services.AddSingleton<IMessageHandler, ConfigLocalLoadHandler>();
 				services.AddSingleton<IMessageHandler, ConfigLocalSaveHandler>();
-				services.AddSingleton<IMessageHandler, ConfigGlobalGetHandler>();
+				services.AddSingleton<IMessageHandler, ConfigGlobalLoadHandler>();
 				services.AddSingleton<IMessageHandler, ConfigGlobalSaveHandler>();
 
 				// Stash
-				services.AddSingleton<IMessageHandler, StashListHandler>();
+				services.AddSingleton<IMessageHandler, StashListLoadHandler>();
 				services.AddSingleton<IMessageHandler, StashSaveHandler>();
 				services.AddSingleton<IMessageHandler, StashPopHandler>();
 				services.AddSingleton<IMessageHandler, StashDropHandler>();

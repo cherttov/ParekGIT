@@ -7,14 +7,14 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class ExplorerOpenHandler : IMessageHandler
+	public class ExplorerShowHandler : IMessageHandler
 	{
 		private readonly IFileSystemService _fileSystem;
 
-		public string Action => "EXPLORER_OPEN";
+		public string Action => "EXPLORER_SHOW";
 
 		// Constructor
-		public ExplorerOpenHandler(IFileSystemService fileSystem)
+		public ExplorerShowHandler(IFileSystemService fileSystem)
 		{
 			_fileSystem = fileSystem;
 		}

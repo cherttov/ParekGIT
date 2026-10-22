@@ -8,15 +8,15 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class ConfigLocalGetHandler : IMessageHandler
+	public class CommitDetailsLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitRunner _gitRunner;
 
-		public string Action => "CONFIG_LOCAL_GET";
+		public string Action => "COMMIT_DETAILS_LOAD";
 
 		// Constructor
-		public ConfigLocalGetHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public CommitDetailsLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
 		{
 			_window = window;
 			_gitRunner = gitRunner;
@@ -27,26 +27,23 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 							  ?? throw new IpcPayloadException("repoPath");
 
-			Task<GitConfigInfo> localConfigTask = _gitRunner.GetLocalConfigAsync(repoPath);
-			Task<GitConfigInfo> globalConfigTask = _gitRunner.GetGlobalConfigAsync(null);
+			string commitHash = payload.GetProperty("commitHash").GetString()
+							  ?? throw new IpcPayloadException("commitHash");
 
-			await Task.WhenAll(localConfigTask, globalConfigTask);
+			CommitDetailsResult details = await _gitRunner.GetCommitDetailsAsync(repoPath, commitHash);
 
-			GitConfigInfo localConfig = localConfigTask.Result;
-			GitConfigInfo globalConfig = globalConfigTask.Result;
-
+			// Convert to json payload
 			var jsPayload = new
 			{
-				localName = localConfig.Name,
-				localEmail = localConfig.Email,
-				globalName = globalConfig.Name,
-				globalEmail = globalConfig.Email
+				author = details.Author,
+				message = details.Message,
+				files = details.Files
 			};
 
 			// Response
 			var response = new IpcMessage
 			{
-				Action = "CONFIG_LOCAL_LOADED",
+				Action = "COMMIT_DETAILS_LOADED",
 				Payload = JsonSerializer.SerializeToElement(jsPayload)
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));

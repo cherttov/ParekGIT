@@ -8,15 +8,15 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class BranchHistoryHandler : IMessageHandler
+	public class BranchHistoryLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitRunner _gitRunner;
 
-		public string Action => "GET_BRANCH_HISTORY";
+		public string Action => "BRANCH_HISTORY_LOAD";
 
 		// Constructor
-		public BranchHistoryHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public BranchHistoryLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
 		{
 			_window = window;
 			_gitRunner = gitRunner;

@@ -5,14 +5,14 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class ExplorerDialogHandler : IMessageHandler
+	public class ExplorerPickFolderHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 
-		public string Action => "EXPLORER_OPEN_DIALOG";
+		public string Action => "EXPLORER_PICK_FOLDER";
 
 		// Constructor
-		public ExplorerDialogHandler(PhotinoWindow window)
+		public ExplorerPickFolderHandler(PhotinoWindow window)
 		{
 			_window = window;
 		}
@@ -26,7 +26,7 @@ namespace ParekGIT.Bridge.Handlers
 				// Response (success)
 				var response = new IpcMessage
 				{
-					Action = "FOLDER_SELECTED",
+					Action = "EXPLORER_FOLDER_PICKED",
 					Payload = JsonSerializer.SerializeToElement(new { path = selectedDir[0] })
 				};
 

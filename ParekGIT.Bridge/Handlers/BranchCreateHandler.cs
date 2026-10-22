@@ -39,7 +39,7 @@ namespace ParekGIT.Bridge.Handlers
 			// Response
 			var response = new IpcMessage
 			{
-				Action = "BRANCHES_LOADED", // maybe make a distinct "BRANCH_CREATED" action
+				Action = "BRANCH_LIST_LOADED", // maybe make a distinct "BRANCH_CREATED" action
 				Payload = JsonSerializer.SerializeToElement(branches)
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));

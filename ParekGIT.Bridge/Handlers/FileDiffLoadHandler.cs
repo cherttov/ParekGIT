@@ -2,21 +2,20 @@
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
-using ParekGIT.Core.Models;
 using Photino.NET;
 using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class StashListHandler : IMessageHandler
+	public class FileDiffLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitRunner _gitRunner;
 
-		public string Action => "GET_STASHES";
+		public string Action => "FILE_DIFF_LOAD";
 
 		// Constructor
-		public StashListHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public FileDiffLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
 		{
 			_window = window;
 			_gitRunner = gitRunner;
@@ -27,13 +26,16 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 				?? throw new IpcPayloadException("repoPath");
 
-			IEnumerable<GitStash> stashes = await _gitRunner.GetStashesAsync(repoPath);
+			string filePath = payload.GetProperty("filePath").GetString()
+				?? throw new IpcPayloadException("filePath");
+
+			string diffText = await _gitRunner.GetFileDiffAsync(repoPath, filePath);
 
 			// Response
 			var response = new IpcMessage
 			{
-				Action = "STASHES_LOADED",
-				Payload = JsonSerializer.SerializeToElement(stashes)
+				Action = "FILE_DIFF_LOADED",
+				Payload = JsonSerializer.SerializeToElement(new { diffText = diffText })
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}

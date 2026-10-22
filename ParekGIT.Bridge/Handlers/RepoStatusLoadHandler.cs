@@ -8,16 +8,16 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class RepoStatusHandler : IMessageHandler
+	public class RepoStatusLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitRunner _gitRunner;
 		private readonly IFileSystemService _fileSystem;
 
-		public string Action => "GET_REPO_STATUS";
+		public string Action => "REPO_STATUS_LOAD";
 
 		// Constructor
-		public RepoStatusHandler(PhotinoWindow window, IGitRunner gitRunner, IFileSystemService fileSystem)
+		public RepoStatusLoadHandler(PhotinoWindow window, IGitRunner gitRunner, IFileSystemService fileSystem)
 		{
 			_window = window;
 			_gitRunner = gitRunner;

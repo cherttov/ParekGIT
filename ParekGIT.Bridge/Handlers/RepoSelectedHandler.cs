@@ -68,7 +68,7 @@ namespace ParekGIT.Bridge.Handlers
 			// Response
 			var response = new IpcMessage
 			{
-				Action = "BRANCHES_LOADED",
+				Action = "BRANCH_LIST_LOADED",
 				Payload = JsonSerializer.SerializeToElement(branches)
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));

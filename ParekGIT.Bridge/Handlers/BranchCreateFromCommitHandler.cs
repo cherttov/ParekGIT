@@ -2,20 +2,21 @@
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
+using ParekGIT.Core.Models;
 using Photino.NET;
 using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class HistoryFileDiffHandler : IMessageHandler
+	public class BranchCreateFromCommitHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitRunner _gitRunner;
 
-		public string Action => "GET_HISTORY_FILE_DIFF";
+		public string Action => "BRANCH_CREATE_FROM_COMMIT";
 
 		// Constructor
-		public HistoryFileDiffHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public BranchCreateFromCommitHandler(PhotinoWindow window, IGitRunner gitRunner)
 		{
 			_window = window;
 			_gitRunner = gitRunner;
@@ -26,19 +27,23 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 							  ?? throw new IpcPayloadException("repoPath");
 
+			string branchName = payload.GetProperty("branchName").GetString()
+							  ?? throw new IpcPayloadException("branchName");
+
 			string commitHash = payload.GetProperty("commitHash").GetString()
 							  ?? throw new IpcPayloadException("commitHash");
 
-			string filePath = payload.GetProperty("filePath").GetString()
-							  ?? throw new IpcPayloadException("filePath");
+			// Create new branch
+			await _gitRunner.CreateBranchFromCommitAsync(repoPath, branchName, commitHash);
 
-			string diffText = await _gitRunner.GetHistoryFileDiffAsync(repoPath, commitHash, filePath);
+			// Update displayed list
+			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
 
 			// Response
 			var response = new IpcMessage
 			{
-				Action = "HISTORY_FILE_DIFF_LOADED",
-				Payload = JsonSerializer.SerializeToElement(new { diffText = diffText })
+				Action = "BRANCH_LIST_LOADED", // maybe make a distinct "BRANCH_HISTORY_CREATED" action
+				Payload = JsonSerializer.SerializeToElement(branches)
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}

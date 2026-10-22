@@ -293,23 +293,13 @@ let isResizing = false;
 
 // ======================== IPC ACTIONS ========================
 const IpcActions = {
-	// Outgoing (frontend -> C#)
+	// ===== Outgoing (frontend -> C#) =====
+	// App
 	APP_READY: "APP_READY",
+
+	// Repo
 	REPO_SELECTED: "REPO_SELECTED",
-	GET_REPO_STATUS: "GET_REPO_STATUS",
-	GET_BRANCH_HISTORY: "GET_BRANCH_HISTORY",
-	GET_BRANCHES: "GET_BRANCHES",
-	GET_FILE_DIFF: "GET_FILE_DIFF",
-	GET_HISTORY_FILE_DIFF: "GET_HISTORY_FILE_DIFF",
-	GET_COMMIT_DETAILS: "GET_COMMIT_DETAILS",
-	GET_STASHES: "GET_STASHES",
-	BRANCH_SELECTED: "BRANCH_SELECTED",
-	BRANCH_CREATE: "BRANCH_CREATE",
-	BRANCH_HISTORY_CREATE: "BRANCH_HISTORY_CREATE",
-	BRANCH_RENAME: "BRANCH_RENAME",
-	BRANCH_DELETE: "BRANCH_DELETE",
-	BRANCH_FORCE_DELETE: "BRANCH_FORCE_DELETE",
-	BRANCH_MERGE: "BRANCH_MERGE",
+	REPO_STATUS_LOAD: "REPO_STATUS_LOAD",
 	REPO_FETCH: "REPO_FETCH",
 	REPO_PULL: "REPO_PULL",
 	REPO_PUSH: "REPO_PUSH",
@@ -320,29 +310,62 @@ const IpcActions = {
 	REPO_ADD: "REPO_ADD",
 	REPO_REMOVE: "REPO_REMOVE",
 	REPO_TERMINAL: "REPO_TERMINAL",
+
+	// Branch
+	BRANCH_CHECKOUT: "BRANCH_CHECKOUT",
+	BRANCH_LIST_LOAD: "BRANCH_LIST_LOAD",
+	BRANCH_HISTORY_LOAD: "BRANCH_HISTORY_LOAD",
+	BRANCH_CREATE: "BRANCH_CREATE",
+	BRANCH_CREATE_FROM_COMMIT: "BRANCH_CREATE_FROM_COMMIT",
+	BRANCH_RENAME: "BRANCH_RENAME",
+	BRANCH_DELETE: "BRANCH_DELETE",
+	BRANCH_FORCE_DELETE: "BRANCH_FORCE_DELETE",
+	BRANCH_MERGE: "BRANCH_MERGE",
+
+	// Commit / File
+	COMMIT_DETAILS_LOAD: "COMMIT_DETAILS_LOAD",
+	COMMIT_FILE_DIFF_LOAD: "COMMIT_FILE_DIFF_LOAD",
+	COMMIT_CHECKOUT: "COMMIT_CHECKOUT",
+	COMMIT_REVERT: "COMMIT_REVERT",
+	FILE_DIFF_LOAD: "FILE_DIFF_LOAD",
+
+	// Change
 	CHANGE_DISCARD: "CHANGE_DISCARD",
 	CHANGE_IGNORE: "CHANGE_IGNORE",
-	HISTORY_CHECKOUT: "HISTORY_CHECKOUT",
-	HISTORY_REVERT: "HISTORY_REVERT",
+
+	// Todo
 	TODO_LOAD: "TODO_LOAD",
 	TODO_SAVE: "TODO_SAVE",
-	CONFIG_LOCAL_GET: "CONFIG_LOCAL_GET",
+
+	// Config
+	CONFIG_LOCAL_LOAD: "CONFIG_LOCAL_LOAD",
 	CONFIG_LOCAL_SAVE: "CONFIG_LOCAL_SAVE",
-	CONFIG_GLOBAL_GET: "CONFIG_GLOBAL_GET",
+	CONFIG_GLOBAL_LOAD: "CONFIG_GLOBAL_LOAD",
 	CONFIG_GLOBAL_SAVE: "CONFIG_GLOBAL_SAVE",
+
+	// Settings / Theme
 	SETTINGS_SAVE: "SETTINGS_SAVE",
-	GET_THEMES: "GET_THEMES",
-	EXPLORER_OPEN: "EXPLORER_OPEN",
-	EXPLORER_OPEN_DIALOG: "EXPLORER_OPEN_DIALOG",
+	THEME_LIST_LOAD: "THEME_LIST_LOAD",
+
+	// Explorer
+	EXPLORER_SHOW: "EXPLORER_SHOW",
+	EXPLORER_PICK_FOLDER: "EXPLORER_PICK_FOLDER",
+
+	// Stash
+	STASH_LIST_LOAD: "STASH_LIST_LOAD",
 	STASH_SAVE: "STASH_SAVE",
 	STASH_POP: "STASH_POP",
 	STASH_DROP: "STASH_DROP",
+
+	// Logs
 	LOGS_CLEAR: "LOGS_CLEAR",
 
-	// Incoming (C# -> frontend)
+	// ===== Incoming (C# -> frontend) =====
+	// App
 	APP_INITIALIZED: "APP_INITIALIZED",
 	APP_ERROR: "APP_ERROR",
-	FOLDER_SELECTED: "FOLDER_SELECTED",
+
+	// Repo
 	REPO_CLONED: "REPO_CLONED",
 	REPO_CREATED: "REPO_CREATED",
 	REPO_ADDED: "REPO_ADDED",
@@ -355,33 +378,52 @@ const IpcActions = {
 	REPO_STATUS_LOADED: "REPO_STATUS_LOADED",
 	REPO_FILES_CHANGED: "REPO_FILES_CHANGED",
 	REPO_PATH_MISSING: "REPO_PATH_MISSING",
-	REMOTE_SYNC_STATUS: "REMOTE_SYNC_STATUS",
-	BRANCHES_LOADED: "BRANCHES_LOADED",
+	REPO_SYNC_STATUS_CHANGED: "REPO_SYNC_STATUS_CHANGED",
+
+	// Branch
+	BRANCH_LIST_LOADED: "BRANCH_LIST_LOADED",
 	BRANCH_DELETED: "BRANCH_DELETED",
 	BRANCH_FORCE_DELETE_REQUESTED: "BRANCH_FORCE_DELETE_REQUESTED",
 	BRANCH_RENAMED: "BRANCH_RENAMED",
 	BRANCH_MERGED: "BRANCH_MERGED",
 	BRANCH_HISTORY_LOADED: "BRANCH_HISTORY_LOADED",
 	BRANCH_HISTORY_APPENDED: "BRANCH_HISTORY_APPENDED",
-	FILE_DIFF_LOADED: "FILE_DIFF_LOADED",
-	HISTORY_FILE_DIFF_LOADED: "HISTORY_FILE_DIFF_LOADED",
+
+	// Commit / File
 	COMMIT_DETAILS_LOADED: "COMMIT_DETAILS_LOADED",
+	COMMIT_FILE_DIFF_LOADED: "COMMIT_FILE_DIFF_LOADED",
+	COMMIT_CHECKED_OUT: "COMMIT_CHECKED_OUT",
+	COMMIT_REVERTED: "COMMIT_REVERTED",
+	FILE_DIFF_LOADED: "FILE_DIFF_LOADED",
+
+	// Change
 	CHANGE_DISCARDED: "CHANGE_DISCARDED",
 	CHANGE_IGNORED: "CHANGE_IGNORED",
-	HISTORY_CHECKED_OUT: "HISTORY_CHECKED_OUT",
-	HISTORY_REVERT_RESULT: "HISTORY_REVERT_RESULT",
+
+	// Todo
 	TODO_LOADED: "TODO_LOADED",
 	TODO_SAVED: "TODO_SAVED",
+
+	// Config
 	CONFIG_LOCAL_LOADED: "CONFIG_LOCAL_LOADED",
 	CONFIG_LOCAL_SAVED: "CONFIG_LOCAL_SAVED",
 	CONFIG_GLOBAL_LOADED: "CONFIG_GLOBAL_LOADED",
 	CONFIG_GLOBAL_SAVED: "CONFIG_GLOBAL_SAVED",
+
+	// Settings / Theme
 	SETTINGS_SAVED: "SETTINGS_SAVED",
-	THEMES_LOADED: "THEMES_LOADED",
-	STASHES_LOADED: "STASHES_LOADED",
+	THEME_LIST_LOADED: "THEME_LIST_LOADED",
+
+	// Explorer
+	EXPLORER_FOLDER_PICKED: "EXPLORER_FOLDER_PICKED",
+
+	// Stash
+	STASH_LIST_LOADED: "STASH_LIST_LOADED",
 	STASH_SAVED: "STASH_SAVED",
 	STASH_POPPED: "STASH_POPPED",
 	STASH_DROPPED: "STASH_DROPPED",
+
+	// Logs
 	LOGS_CLEARED: "LOGS_CLEARED"
 };
 
@@ -400,6 +442,7 @@ window.external.receiveMessage((message) => {
 	const data = JSON.parse(message);
 
 	switch (data.Action) {
+		// App
 		case IpcActions.APP_INITIALIZED:
 			appInit(data.Payload);
 			break;
@@ -408,10 +451,7 @@ window.external.receiveMessage((message) => {
 			showErrorModal(data.Payload.message);
 			break;
 
-		case IpcActions.FOLDER_SELECTED:
-			folderSelected(data.Payload);
-			break;
-
+		// Repo
 		case IpcActions.REPO_CLONED:
 			addRepositoryToDropdown(data.Payload);
 			break;
@@ -460,11 +500,12 @@ window.external.receiveMessage((message) => {
 			processMissingRepo(data.Payload.absolutePath);
 			break;
 
-		case IpcActions.REMOTE_SYNC_STATUS:
+		case IpcActions.REPO_SYNC_STATUS_CHANGED:
 			processRemoteSyncStatus(data.Payload);
 			break;
 
-		case IpcActions.BRANCHES_LOADED:
+		// Branch
+		case IpcActions.BRANCH_LIST_LOADED:
 			loadBranchesIntoDropdown(data.Payload);
 			break;
 
@@ -492,35 +533,38 @@ window.external.receiveMessage((message) => {
 			processBranchHistoryAppended(data.Payload);
 			break;
 
-		case IpcActions.FILE_DIFF_LOADED:
-			renderFileDiff(data.Payload.diffText, diffContent, diffBodyWrapper, diffScrollbar);
-			break;
-
-		case IpcActions.HISTORY_FILE_DIFF_LOADED:
-			renderFileDiff(data.Payload.diffText, detailsContent, detailsBodyWrapper, detailsScrollbar);
-			break;
-
+		// Commit / File
 		case IpcActions.COMMIT_DETAILS_LOADED:
 			loadCommitDetails(data.Payload);
 			break;
 
-		case IpcActions.CHANGE_DISCARDED:
+		case IpcActions.COMMIT_FILE_DIFF_LOADED:
+			renderFileDiff(data.Payload.diffText, detailsContent, detailsBodyWrapper, detailsScrollbar);
 			break;
+
+		case IpcActions.COMMIT_CHECKED_OUT: // FINISH
+			resetViewers();
+			if (currentRepoPath) { sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: currentRepoPath }); }
+			break;
+
+		case IpcActions.COMMIT_REVERTED:
+			resetViewers();
+			refreshRepoState();
+			break;
+
+		case IpcActions.FILE_DIFF_LOADED:
+			renderFileDiff(data.Payload.diffText, diffContent, diffBodyWrapper, diffScrollbar);
+			break;
+
+		// Change
+		case IpcActions.CHANGE_DISCARDED:
+		break;
 
 		case IpcActions.CHANGE_IGNORED:
 			processFileChanges(data.Payload); // REVISIT
 			break;
 
-		case IpcActions.HISTORY_CHECKED_OUT: // FINISH
-			resetViewers();
-			if (currentRepoPath) { sendIpcMessage(IpcActions.GET_BRANCHES, { repoPath: currentRepoPath }); }
-			break;
-
-		case IpcActions.HISTORY_REVERT_RESULT:
-			resetViewers();
-			refreshRepoState();
-			break;
-
+		// Todo
 		case IpcActions.TODO_LOADED:
 			loadTodos(data.Payload.todos);
 			break;
@@ -528,6 +572,7 @@ window.external.receiveMessage((message) => {
 		case IpcActions.TODO_SAVED:
 			break;
 
+		// Config
 		case IpcActions.CONFIG_LOCAL_LOADED:
 			processLocalConfigLoad(data.Payload);
 			break;
@@ -542,11 +587,22 @@ window.external.receiveMessage((message) => {
 		case IpcActions.CONFIG_GLOBAL_SAVED:
 			break;
 
+		// Settings / Theme
 		case IpcActions.SETTINGS_SAVED:
 			applyTheme(data.Payload.Theme);
 			break;
 
-		case IpcActions.STASHES_LOADED:
+		case IpcActions.THEME_LIST_LOADED:
+			processThemesLoaded(data.Payload);
+			break;
+
+		// Explorer
+		case IpcActions.EXPLORER_FOLDER_PICKED:
+			folderSelected(data.Payload);
+			break;
+
+		// Stash
+		case IpcActions.STASH_LIST_LOADED:
 			loadStashes(data.Payload);
 			break;
 
@@ -559,14 +615,11 @@ window.external.receiveMessage((message) => {
 			break;
 
 		case IpcActions.STASH_DROPPED:
-			sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
+			sendIpcMessage(IpcActions.STASH_LIST_LOAD, { repoPath: currentRepoPath });
 			break;
 
-		// case IpcActions.LOGS_CLEARED:
-		// 	break;
-
-		case IpcActions.THEMES_LOADED:
-			processThemesLoaded(data.Payload);
+		// Logs
+		case IpcActions.LOGS_CLEARED:
 			break;
 
 		default:
@@ -968,7 +1021,7 @@ function createRepoDropdownItem(repo) {
 		activeTodos = [];
 
 		sendIpcMessage(IpcActions.REPO_SELECTED, { absolutePath: repo.AbsolutePath });
-		sendIpcMessage(IpcActions.GET_REPO_STATUS, { repoPath: repo.AbsolutePath });
+		sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: repo.AbsolutePath });
 		// sendIpcMessage(IpcActions.TODO_LOAD, { repoPath: repo.AbsolutePath }); // !!!!!!!!!
 
 		setRepoToolsEnabled(true);
@@ -1225,7 +1278,7 @@ function loadBranchesIntoDropdown(branches) {
 			});
 
 			// Branch selected signal
-			sendIpcMessage(IpcActions.BRANCH_SELECTED, {
+			sendIpcMessage(IpcActions.BRANCH_CHECKOUT, {
 				absolutePath: currentRepoPath,
 				branchName: branch.Name,
 				isRemote: branch.IsRemote
@@ -1353,7 +1406,7 @@ function processBranchesMerged() {
 	resetViewers();
 
 	if (currentRepoPath) {
-		sendIpcMessage(IpcActions.GET_BRANCHES, { repoPath: currentRepoPath });
+		sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: currentRepoPath });
 	}
 
 	refreshRepoState();
@@ -1510,7 +1563,7 @@ function renderChangedFiles(files) {
 
 			diffContent.textContent = "Loading changes...";
 
-			sendIpcMessage(IpcActions.GET_FILE_DIFF, {
+			sendIpcMessage(IpcActions.FILE_DIFF_LOAD, {
 				repoPath: currentRepoPath,
 				filePath: file.Path
 			});
@@ -1559,10 +1612,10 @@ function processCommit() {
 function refreshRepoState() {
 	if (!currentRepoPath) { return; }
 
-	sendIpcMessage(IpcActions.GET_REPO_STATUS, { repoPath: currentRepoPath });
+	sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: currentRepoPath });
 
 	if (currentBranch) {
-		sendIpcMessage(IpcActions.GET_BRANCH_HISTORY, {
+		sendIpcMessage(IpcActions.BRANCH_HISTORY_LOAD, {
 			repoPath: currentRepoPath,
 			branchName: currentBranchRevision
 		});
@@ -1579,7 +1632,7 @@ function fetchRepo(repo) {
 // C# - Repo files changed
 function processFileChanges(repo) {
 	if (currentRepoPath === repo.repoPath) {
-		sendIpcMessage(IpcActions.GET_REPO_STATUS, { repoPath: currentRepoPath });
+		sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: currentRepoPath });
 	} else {
 		console.warn("RepoWatcher is watching unnecessary repositories.");
 	}
@@ -1653,7 +1706,7 @@ function renderHistory(commits, isAppending = false) {
 			detailsBtnValue.textContent = "Loading...";
 			detailsBtn.disabled = true;
 
-			sendIpcMessage(IpcActions.GET_COMMIT_DETAILS, {
+			sendIpcMessage(IpcActions.COMMIT_DETAILS_LOAD, {
 				repoPath: currentRepoPath,
 				commitHash: commit.Hash
 			});
@@ -1768,7 +1821,7 @@ function loadCommitDetails(details) {
 
 			detailsContent.textContent = "Loading diff...";
 
-			sendIpcMessage(IpcActions.GET_HISTORY_FILE_DIFF, {
+			sendIpcMessage(IpcActions.COMMIT_FILE_DIFF_LOAD, {
 				repoPath: currentRepoPath,
 				commitHash: activeHistoryHash,
 				filePath: file.Path
@@ -1899,7 +1952,7 @@ const saveStash = () => {
 
 // C# - Process STASH_SAVED & STASH_POPPED
 function processStashChange() {
-	sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
+	sendIpcMessage(IpcActions.STASH_LIST_LOAD, { repoPath: currentRepoPath });
 	refreshRepoState();
 }
 
@@ -2439,7 +2492,7 @@ topbarRepoMenuTerminal.addEventListener("click", (event) => {
 topbarRepoMenuExplorer.addEventListener("click", (event) => {
 	event.stopPropagation();
 	if (currentRepoPath) {
-		sendIpcMessage(IpcActions.EXPLORER_OPEN, {
+		sendIpcMessage(IpcActions.EXPLORER_SHOW, {
 			path: currentRepoPath
 		});
 	}
@@ -2477,7 +2530,7 @@ repoItemMenuExplorer.addEventListener("click", (event) => {
 
 	const pathToRepo = repoItemContextMenu.dataset.targetPath;
 	if (pathToRepo) {
-		sendIpcMessage(IpcActions.EXPLORER_OPEN, {
+		sendIpcMessage(IpcActions.EXPLORER_SHOW, {
 			path: pathToRepo
 		});
 	}
@@ -2616,7 +2669,7 @@ repoCloneModalBrowseBtn.addEventListener("click", (event) => {
 
 	activeBrowseInput = repoCloneModalInputPath;
 
-	sendIpcMessage(IpcActions.EXPLORER_OPEN_DIALOG);
+	sendIpcMessage(IpcActions.EXPLORER_PICK_FOLDER);
 });
 
 repoCreateModalBrowseBtn.addEventListener("click", (event) => {
@@ -2624,7 +2677,7 @@ repoCreateModalBrowseBtn.addEventListener("click", (event) => {
 
 	activeBrowseInput = repoCreateModalInputPath;
 
-	sendIpcMessage(IpcActions.EXPLORER_OPEN_DIALOG);
+	sendIpcMessage(IpcActions.EXPLORER_PICK_FOLDER);
 });
 
 repoAddModalBrowseBtn.addEventListener("click", (event) => {
@@ -2632,7 +2685,7 @@ repoAddModalBrowseBtn.addEventListener("click", (event) => {
 
 	activeBrowseInput = repoAddModalInputPath;
 
-	sendIpcMessage(IpcActions.EXPLORER_OPEN_DIALOG);
+	sendIpcMessage(IpcActions.EXPLORER_PICK_FOLDER);
 });
 
 // RepoCreateModal edit button (modals/repo-create-modal)
@@ -2646,7 +2699,7 @@ repoCreateModalLicenseEdit.addEventListener("click", (event) => {
 		document.getElementById("license-field-project").placeholder = repoCreateModalInputName.value.trim();
 
 		globalConfigRequestSource = "license";
-		sendIpcMessage(IpcActions.CONFIG_GLOBAL_GET, {});
+		sendIpcMessage(IpcActions.CONFIG_GLOBAL_LOAD, {});
 	}
 });
 
@@ -2807,7 +2860,7 @@ branchHistoryNewModalConfirmBtn.addEventListener("click", () => {
 
 	if (newBranchName === "" || !commitHash) { return; }
 
-	sendIpcMessage(IpcActions.BRANCH_HISTORY_CREATE, {
+	sendIpcMessage(IpcActions.BRANCH_CREATE_FROM_COMMIT, {
 		repoPath: currentRepoPath,
 		branchName: newBranchName,
 		commitHash: commitHash
@@ -3022,7 +3075,7 @@ changesItemMenuExplorer.addEventListener("click", (event) => {
 		let lastSlashIndex = rawPath.lastIndexOf("/");
 		let dirPath = rawPath.substring(0, lastSlashIndex);
 
-		sendIpcMessage(IpcActions.EXPLORER_OPEN, {
+		sendIpcMessage(IpcActions.EXPLORER_SHOW, {
 			path: dirPath
 		});
 	}
@@ -3044,7 +3097,7 @@ historyList.addEventListener("scroll", () => {
 		isFetchingHistory = true;
 		currentHistorySkip += historyTake;
 
-		sendIpcMessage(IpcActions.GET_BRANCH_HISTORY, {
+		sendIpcMessage(IpcActions.BRANCH_HISTORY_LOAD, {
 			repoPath: currentRepoPath,
 			branchName: currentBranchRevision,
 			skip: currentHistorySkip,
@@ -3057,7 +3110,7 @@ historyItemMenuCheckout.addEventListener("click", (event) => {
 	event.stopPropagation();
 	const hash = historyItemContextMenu.dataset.targetHash;
 	if (hash) {
-		sendIpcMessage(IpcActions.HISTORY_CHECKOUT, {
+		sendIpcMessage(IpcActions.COMMIT_CHECKOUT, {
 			repoPath: currentRepoPath,
 			commitHash: hash
 		});
@@ -3069,7 +3122,7 @@ historyItemMenuRevert.addEventListener("click", (event) => {
 	event.stopPropagation();
 	const hash = historyItemContextMenu.dataset.targetHash;
 	if (hash) {
-		sendIpcMessage(IpcActions.HISTORY_REVERT, {
+		sendIpcMessage(IpcActions.COMMIT_REVERT, {
 			repoPath: currentRepoPath,
 			commitHash: hash
 		});
@@ -3138,7 +3191,7 @@ stashBtn.addEventListener("click", () => {
 	if (!currentRepoPath) { return; }
 
 	stashModal.classList.add("show");
-	sendIpcMessage(IpcActions.GET_STASHES, { repoPath: currentRepoPath });
+	sendIpcMessage(IpcActions.STASH_LIST_LOAD, { repoPath: currentRepoPath });
 });
 
 stashModalInputMessage.addEventListener("keyup", (e) => {
@@ -3154,22 +3207,22 @@ stashModalSaveBtn.addEventListener("click", saveStash);
 configBtn.addEventListener("click", () => {
 	if (!currentRepoPath) { return; }
 
-	sendIpcMessage(IpcActions.CONFIG_LOCAL_GET, { repoPath: currentRepoPath });
+	sendIpcMessage(IpcActions.CONFIG_LOCAL_LOAD, { repoPath: currentRepoPath });
 });
 
 settingsBtn.addEventListener("click", () => {
-	sendIpcMessage(IpcActions.GET_THEMES);
+	sendIpcMessage(IpcActions.THEME_LIST_LOAD);
 	settingsModal.classList.add("show");
 });
 
 accountBtn.addEventListener("click", () => {
 	globalConfigRequestSource = "account";
-	sendIpcMessage(IpcActions.CONFIG_GLOBAL_GET, {});
+	sendIpcMessage(IpcActions.CONFIG_GLOBAL_LOAD, {});
 });
 
 // Settings modal (modals)
 settingsModalLogsView.addEventListener("click", () =>
-	sendIpcMessage(IpcActions.EXPLORER_OPEN, {
+	sendIpcMessage(IpcActions.EXPLORER_SHOW, {
 		path: "%APP_DATA%"
 	})
 );

@@ -1,6 +1,5 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
-using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
 using Photino.NET;
@@ -8,15 +7,15 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class BranchListHandler : IMessageHandler
+	public class ConfigGlobalLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitRunner _gitRunner;
 
-		public string Action => "GET_BRANCHES";
+		public string Action => "CONFIG_GLOBAL_LOAD";
 
 		// Constructor
-		public BranchListHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public ConfigGlobalLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
 		{
 			_window = window;
 			_gitRunner = gitRunner;
@@ -24,16 +23,19 @@ namespace ParekGIT.Bridge.Handlers
 
 		public async Task ExecuteAsync(JsonElement payload)
 		{
-			string repoPath = payload.GetProperty("repoPath").GetString()
-				?? throw new IpcPayloadException("repoPath");
+			GitConfigInfo globalConfig = await _gitRunner.GetGlobalConfigAsync(null);
 
-			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
+			var jsPayload = new
+			{
+				globalName = globalConfig.Name,
+				globalEmail = globalConfig.Email
+			};
 
 			// Response
 			var response = new IpcMessage
 			{
-				Action = "BRANCHES_LOADED",
-				Payload = JsonSerializer.SerializeToElement(branches)
+				Action = "CONFIG_GLOBAL_LOADED",
+				Payload = JsonSerializer.SerializeToElement(jsPayload)
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}

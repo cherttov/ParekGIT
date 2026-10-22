@@ -6,15 +6,15 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class ThemesListhandler : IMessageHandler
+	public class ThemeListLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IThemeStore _themeStore;
 
-		public string Action => "GET_THEMES";
+		public string Action => "THEME_LIST_LOAD";
 
 		// Constructor
-		public ThemesListhandler(PhotinoWindow window, IThemeStore themeStore)
+		public ThemeListLoadHandler(PhotinoWindow window, IThemeStore themeStore)
 		{
 			_window = window;
 			_themeStore = themeStore;
@@ -27,7 +27,7 @@ namespace ParekGIT.Bridge.Handlers
 			// Response
 			var response = new IpcMessage
 			{
-				Action = "THEMES_LOADED",
+				Action = "THEME_LIST_LOADED",
 				Payload = JsonSerializer.SerializeToElement(themes)
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));

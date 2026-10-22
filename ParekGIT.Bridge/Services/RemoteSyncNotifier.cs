@@ -23,7 +23,7 @@ namespace ParekGIT.Bridge.Services
 			// Response
 			var message = new IpcMessage
 			{
-				Action = "REMOTE_SYNC_STATUS",
+				Action = "REPO_SYNC_STATUS_CHANGED",
 				Payload = JsonSerializer.SerializeToElement(new { repoPath, commitsBehind, commitsAhead })
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(message));

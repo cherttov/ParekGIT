@@ -13,7 +13,7 @@ namespace ParekGIT.Bridge.Handlers
 		private readonly PhotinoWindow _window;
 		private readonly IGitRunner _gitRunner;
 
-		public string Action => "BRANCH_SELECTED";
+		public string Action => "BRANCH_CHECKOUT";
 
 		// Constructor
 		public BranchSelectedHandler(PhotinoWindow window, IGitRunner gitRunner)
@@ -41,7 +41,7 @@ namespace ParekGIT.Bridge.Handlers
 			// Response
 			var response = new IpcMessage
 			{
-				Action = "BRANCHES_LOADED",
+				Action = "BRANCH_LIST_LOADED",
 				Payload = JsonSerializer.SerializeToElement(branches)
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));

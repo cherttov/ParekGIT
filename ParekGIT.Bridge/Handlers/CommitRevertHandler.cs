@@ -9,17 +9,17 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class HistoryRevertHandler : IMessageHandler
+	public class CommitRevertHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly LiteDbStore _dbStore;
 		private readonly IGitRunner _gitRunner;
 		private readonly IRemoteSyncNotifier _syncNotifier;
 
-		public string Action => "HISTORY_REVERT";
+		public string Action => "COMMIT_REVERT";
 
 		// Constructor
-		public HistoryRevertHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner, IRemoteSyncNotifier syncNotifier)
+		public CommitRevertHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner, IRemoteSyncNotifier syncNotifier)
 		{
 			_window = window;
 			_dbStore = dbStore;
@@ -53,7 +53,7 @@ namespace ParekGIT.Bridge.Handlers
 			// Response
 			var response = new IpcMessage
 			{
-				Action = "HISTORY_REVERT_RESULT",
+				Action = "COMMIT_REVERTED",
 				Payload = JsonSerializer.SerializeToElement(new { success = true })
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));

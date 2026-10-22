@@ -1,5 +1,6 @@
 ﻿using ParekGIT.Bridge.Data;
 using ParekGIT.Bridge.Interfaces;
+using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
 using Photino.NET;
@@ -7,15 +8,15 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class ConfigGlobalGetHandler : IMessageHandler
+	public class StashListLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitRunner _gitRunner;
 
-		public string Action => "CONFIG_GLOBAL_GET";
+		public string Action => "STASH_LIST_LOAD";
 
 		// Constructor
-		public ConfigGlobalGetHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public StashListLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
 		{
 			_window = window;
 			_gitRunner = gitRunner;
@@ -23,19 +24,16 @@ namespace ParekGIT.Bridge.Handlers
 
 		public async Task ExecuteAsync(JsonElement payload)
 		{
-			GitConfigInfo globalConfig = await _gitRunner.GetGlobalConfigAsync(null);
+			string repoPath = payload.GetProperty("repoPath").GetString()
+				?? throw new IpcPayloadException("repoPath");
 
-			var jsPayload = new
-			{
-				globalName = globalConfig.Name,
-				globalEmail = globalConfig.Email
-			};
+			IEnumerable<GitStash> stashes = await _gitRunner.GetStashesAsync(repoPath);
 
 			// Response
 			var response = new IpcMessage
 			{
-				Action = "CONFIG_GLOBAL_LOADED",
-				Payload = JsonSerializer.SerializeToElement(jsPayload)
+				Action = "STASH_LIST_LOADED",
+				Payload = JsonSerializer.SerializeToElement(stashes)
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
