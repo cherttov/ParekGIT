@@ -35,7 +35,7 @@ namespace ParekGIT.Bridge.Handlers
 			var response = new IpcMessage
 			{
 				Action = "CHANGE_DISCARDED",
-				Payload = JsonSerializer.SerializeToElement("")
+				Payload = JsonSerializer.SerializeToElement(new { success = true })
 			};
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}

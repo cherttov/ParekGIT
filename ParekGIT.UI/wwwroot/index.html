@@ -11,8 +11,8 @@
 			<div class="topbar-dropdown-container" id="repositories-container">
 				<button class="topbar-btn">
 					<div class="btn-text-group">
-						<span class="topbar-dropdown btn-label"
-							>Current repository:
+						<span class="topbar-dropdown btn-label">
+							Current repository:
 						</span>
 						<span class="topbar-dropdown btn-value">None</span>
 					</div>
@@ -22,11 +22,9 @@
 				<div class="dropdown-panel" id="repository-dropdown-panel">
 					<div class="filter-container" id="repositories-filter">
 						<div class="icon-filter"></div>
-						<input
-							type="text"
-							class="filter-input"
-							placeholder="Search"
-						/>
+						<input type="text"
+							   class="filter-input"
+							   placeholder="Search" />
 
 						<button class="topbar-filter-btn btn-add">
 							Add
@@ -35,13 +33,11 @@
 					</div>
 
 					<div class="dropdown-list-wrapper">
-						<div
-							class="dropdown-list-container"
-							id="repo-topbar-list">
+						<div class="dropdown-list-container"
+							 id="repo-topbar-list">
 						</div>
-						<div
-							class="custom-scrollbar"
-							id="repo-topbar-scrollbar">
+						<div class="custom-scrollbar"
+							 id="repo-topbar-scrollbar">
 						</div>
 					</div>
 				</div>
@@ -50,8 +46,8 @@
 			<div class="topbar-dropdown-container" id="branches-container">
 				<button class="topbar-btn">
 					<div class="btn-text-group">
-						<span class="topbar-dropdown btn-label"
-							>Current branch:
+						<span class="topbar-dropdown btn-label">
+							Current branch:
 						</span>
 						<span class="topbar-dropdown btn-value">None</span>
 					</div>
@@ -61,24 +57,18 @@
 				<div class="dropdown-panel" id="branch-dropdown-panel">
 					<div class="filter-container" id="branches-filter">
 						<div class="icon-filter"></div>
-						<input
-							type="text"
-							class="filter-input"
-							placeholder="Search"
-						/>
+						<input type="text"
+							   class="filter-input"
+							   placeholder="Search" />
 
 						<button class="topbar-filter-btn btn-new">New</button>
 					</div>
 
 					<div class="dropdown-list-wrapper">
-						<div
-							class="dropdown-list-container"
-							id="branch-topbar-list"
-						></div>
-						<div
-							class="custom-scrollbar"
-							id="branch-topbar-scrollbar"
-						></div>
+						<div class="dropdown-list-container"
+							 id="branch-topbar-list"></div>
+						<div class="custom-scrollbar"
+							 id="branch-topbar-scrollbar"></div>
 					</div>
 				</div>
 			</div>
@@ -855,26 +845,20 @@
 				<div class="main-content" id="main-content">
 					<div class="diff-viewer" id="diff-viewer">
 						<div class="diff-header" id="diff-header">
-							<span id="diff-filename"
-								>Select a file to view changes</span
-							>
+							<span id="diff-filename">Select a file to view changes</span>
 						</div>
 
 						<div class="diff-body-wrapper" id="diff-body-wrapper">
 							<pre class="diff-content" id="diff-content"></pre>
-							<div
-								class="custom-scrollbar"
-								id="diff-scrollbar"
-							></div>
+							<div class="custom-scrollbar"
+								 id="diff-scrollbar"></div>
 						</div>
 					</div>
 
 					<div class="details-viewer" id="details-viewer">
 						<div class="details-header" id="details-header">
 							<div class="details-header-left">
-								<span id="details-commit-message"
-									>Select a commit to view details</span
-								>
+								<span id="details-commit-message">Select a commit to view details</span>
 							</div>
 
 							<div class="details-header-right">
@@ -882,47 +866,31 @@
 							</div>
 						</div>
 
-						<div
-							class="details-body-wrapper"
-							id="details-body-wrapper"
-						>
-							<pre
-								class="diff-content"
-								id="details-content"
-							></pre>
-							<div
-								class="custom-scrollbar"
-								id="details-scrollbar"
-							></div>
+						<div class="details-body-wrapper"
+							 id="details-body-wrapper">
+							<pre class="diff-content"
+								 id="details-content"></pre>
+							<div class="custom-scrollbar"
+								 id="details-scrollbar"></div>
 						</div>
 
 						<div class="details-footer" id="details-footer">
-							<div
-								class="details-footer-container"
-								id="details-footer-container"
-							>
+							<div class="details-footer-container"
+								 id="details-footer-container">
 								<button class="topbar-btn details-footer-btn">
 									<div class="btn-text-group">
-										<span class="topbar-dropdown btn-value"
-											>No files available</span
-										>
+										<span class="topbar-dropdown btn-value">No files available</span>
 									</div>
 									<div class="btn-arrow"></div>
 								</button>
 
-								<div
-									class="dropdown-panel"
-									id="details-footer-panel"
-								>
+								<div class="dropdown-panel"
+									 id="details-footer-panel">
 									<div class="dropdown-list-wrapper">
-										<div
-											class="dropdown-list-container"
-											id="details-file-list"
-										></div>
-										<div
-											class="custom-scrollbar"
-											id="details-file-scrollbar"
-										></div>
+										<div class="dropdown-list-container"
+											 id="details-file-list"></div>
+										<div class="custom-scrollbar"
+											 id="details-file-scrollbar"></div>
 									</div>
 								</div>
 							</div>
@@ -944,53 +912,39 @@
 
 					<div class="history-tab" id="history-tab">
 						<div class="history-list-wrapper">
-							<div
-								class="history-list-container"
-								id="history-list"
-							></div>
+							<div class="history-list-container"
+								 id="history-list"></div>
 
-							<div
-								class="custom-scrollbar"
-								id="history-scrollbar"
-							></div>
+							<div class="custom-scrollbar"
+								 id="history-scrollbar"></div>
 						</div>
 					</div>
 
 					<div class="changes-tab" id="changes-tab">
 						<div class="changes-header" id="changes-header">
 							<span id="changes-count-text">0 changed files</span>
-							<input
-								type="checkbox"
-								class="ui-checkbox"
-								id="changes-master-checkbox"
-								checked
-							/>
+							<input type="checkbox"
+								   class="ui-checkbox"
+								   id="changes-master-checkbox"
+								   checked />
 						</div>
 
 						<div class="changes-list-wrapper">
-							<div
-								class="changes-list-container"
-								id="changes-list"
-							></div>
+							<div class="changes-list-container"
+								 id="changes-list"></div>
 
-							<div
-								class="custom-scrollbar"
-								id="changes-scrollbar"
-							></div>
+							<div class="custom-scrollbar"
+								 id="changes-scrollbar"></div>
 						</div>
 
 						<div class="right-sidebar-bottom">
-							<input
-								type="text"
-								class="commit-input message-input"
-								id="commit-name-input"
-								placeholder="Message (required)"
-							/>
-							<textarea
-								class="commit-input description-input"
-								id="commit-desc-input"
-								placeholder="Description"
-							></textarea>
+							<input type="text"
+								   class="commit-input message-input"
+								   id="commit-name-input"
+								   placeholder="Message (required)" />
+							<textarea class="commit-input description-input"
+									  id="commit-desc-input"
+									  placeholder="Description"></textarea>
 							<button class="commit-btn" id="commit-btn">
 								Commit X files to <strong>[branch]</strong>
 							</button>

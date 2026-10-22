@@ -234,7 +234,7 @@ const topbarBranchMenuCopy = topbarBranchContextMenu.querySelector(".context-men
 const topbarBranchMenuMerge = topbarBranchContextMenu.querySelector(".context-menu-item.item-merge");
 const topbarBranchMenuDelete = topbarBranchContextMenu.querySelector(".context-menu-item.item-delete");
 
-// Change Item LeftSidebar ChangesTab ContextMenu
+// Change Item RightSidebar ChangesTab ContextMenu
 const changesItemContextMenu = document.getElementById("changes-item-context-menu");
 const changesItemMenuDiscard = changesItemContextMenu.querySelector(".context-menu-item.item-discard");
 const changesItemMenuIgnoreFile = changesItemContextMenu.querySelector(".context-menu-item.item-ignore-file");
@@ -558,7 +558,7 @@ window.external.receiveMessage((message) => {
 
 		// Change
 		case IpcActions.CHANGE_DISCARDED:
-		break;
+			break;
 
 		case IpcActions.CHANGE_IGNORED:
 			processFileChanges(data.Payload); // REVISIT
