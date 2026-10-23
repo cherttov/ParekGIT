@@ -242,7 +242,11 @@ const changesItemMenuCopyAbsPath = changesItemContextMenu.querySelector(".contex
 const changesItemMenuCopyRelPath = changesItemContextMenu.querySelector(".context-menu-item.item-copy-rel-path");
 const changesItemMenuExplorer = changesItemContextMenu.querySelector(".context-menu-item.item-explorer");
 
-// Commit Item LeftSidebar HistoryTab ContextMenu
+// Change Master RightSidebar ChangesTab ContextMenu
+const changesMasterContextMenu = document.getElementById("changes-master-context-menu");
+const changesMasterMenuDiscard = changesMasterContextMenu.querySelector(".context-menu-item.item-discard");
+
+// Commit Item RightSidebar HistoryTab ContextMenu
 const historyItemContextMenu = document.getElementById("history-item-context-menu");
 const historyItemMenuCheckout = historyItemContextMenu.querySelector(".context-menu-item.item-checkout");
 const historyItemMenuRevert = historyItemContextMenu.querySelector(".context-menu-item.item-revert");
@@ -330,6 +334,7 @@ const IpcActions = {
 	FILE_DIFF_LOAD: "FILE_DIFF_LOAD",
 
 	// Change
+	CHANGE_ALL_DISCARD: "CHANGE_ALL_DISCARD",
 	CHANGE_DISCARD: "CHANGE_DISCARD",
 	CHANGE_IGNORE: "CHANGE_IGNORE",
 
@@ -397,6 +402,7 @@ const IpcActions = {
 	FILE_DIFF_LOADED: "FILE_DIFF_LOADED",
 
 	// Change
+	CHANGE_ALL_DISCARDED: "CHANGE_ALL_DISCARDED",
 	CHANGE_DISCARDED: "CHANGE_DISCARDED",
 	CHANGE_IGNORED: "CHANGE_IGNORED",
 
@@ -557,6 +563,9 @@ window.external.receiveMessage((message) => {
 			break;
 
 		// Change
+		case IpcActions.CHANGE_ALL_DISCARDED:
+			break;
+
 		case IpcActions.CHANGE_DISCARDED:
 			break;
 
@@ -682,6 +691,7 @@ const closeDropdowns = () => {
 	topbarRepoContextMenu.classList.remove("show");
 	topbarBranchContextMenu.classList.remove("show");
 	changesItemContextMenu.classList.remove("show");
+	changesMasterContextMenu.classList.remove("show");
 	historyItemContextMenu.classList.remove("show");
 	detailsPanel.classList.remove("show");
 
@@ -1437,7 +1447,7 @@ function toggleCommitButton() {
 		return;
 	}
 
-	const checkedCount = document.querySelectorAll(".changes-item-checkbox:checked",).length;
+	const checkedCount = document.querySelectorAll(".changes-item-checkbox:checked").length;
 
 	// Commit state
 	const commitText = checkedCount > 0
@@ -3019,6 +3029,27 @@ pushPullPublishBtn.addEventListener("click", () => {
 });
 
 // Changes section (right-sidebar)
+changesHeader.addEventListener("contextmenu", (event) => {
+	event.preventDefault();
+	event.stopPropagation();
+	closeDropdowns();
+
+	const checkedCount = document.querySelectorAll(".changes-item-checkbox:checked").length;
+	if (checkedCount === 0) { changesMasterMenuDiscard.disabled = true; }
+	else { changesMasterMenuDiscard.disabled = false; }
+
+	changesMasterContextMenu.classList.add("show");
+	placeContextMenu(event, changesMasterContextMenu);
+});
+
+changesMasterMenuDiscard.addEventListener("click", (event) => {
+	event.stopPropagation();
+	sendIpcMessage(IpcActions.CHANGE_ALL_DISCARD, {
+		repoPath: currentRepoPath
+	});
+	closeDropdowns();
+});
+
 changesItemMenuDiscard.addEventListener("click", (event) => {
 	event.stopPropagation();
 	const filePath = changesItemContextMenu.dataset.targetPath;

@@ -33,6 +33,7 @@ namespace ParekGIT.Core.Interfaces
 		Task DeleteRemoteBranchAsync(string repoPath, string remoteName, string branchName);
 		Task FetchRepositoryAsync(string repoPath);
 		Task DiscardChangeAsync(string repoPath, string filePath);
+		Task DiscardAllChangesAsync(string repoPath);
 		Task IgnoreFileAsync(string repoPath, string filePath);
 		Task IgnoreFolderAsync(string repoPath, string filePath);
 		Task IgnoreExtensionAsync(string repoPath, string filePath);

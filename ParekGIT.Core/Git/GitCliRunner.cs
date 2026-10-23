@@ -306,6 +306,12 @@ namespace ParekGIT.Core.Git
 			}
 		}
 
+		public async Task DiscardAllChangesAsync(string repoPath)
+		{
+			await ExecuteCommandAsync(repoPath, "reset --hard HEAD");
+			await ExecuteCommandAsync(repoPath, "clean -fd");
+		}
+
 		public async Task IgnoreFileAsync(string repoPath, string filePath)
 		{
 			string gitignorePath = Path.Combine(repoPath, ".gitignore");

@@ -93,6 +93,7 @@ namespace ParekGIT.UI
 				services.AddSingleton<IMessageHandler, CommitDetailsLoadHandler>();
 
 				// Change
+				services.AddSingleton<IMessageHandler, ChangeAllDiscardHandler>();
 				services.AddSingleton<IMessageHandler, ChangeDiscardHandler>();
 				services.AddSingleton<IMessageHandler, ChangeIgnoreHandler>();
 
