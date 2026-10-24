@@ -123,6 +123,11 @@ const branchMergeModalSelectSource = document.getElementById("merge-modal-select
 const branchMergeModalSelectTarget = document.getElementById("merge-modal-select-target");
 const branchMergeModalConfirmBtn = branchMergeModal.querySelector(".confirm-modal-btn");
 
+// Discard All Changes Modal
+const changesDiscardAllModal = document.getElementById("changes-discard-all-modal");
+const changesDiscardAllModalCount = document.getElementById("discard-all-modal-count");
+const changesDiscardAllModalConfirmBtn = changesDiscardAllModal.querySelector(".confirm-modal-btn");
+
 // Clone Repo Modal
 const repoCloneModal = document.getElementById("repo-clone-modal");
 const repoCloneModalRepoUrl = repoCloneModal.querySelector(".input-url");
@@ -3044,11 +3049,21 @@ changesHeader.addEventListener("contextmenu", (event) => {
 
 changesMasterMenuDiscard.addEventListener("click", (event) => {
 	event.stopPropagation();
+	closeDropdowns();
+
+	if (!currentRepoPath) { return; }
+
+	changesDiscardAllModalCount.textContent = `${currentChangesCount} changed file${currentChangesCount === 1 ? "" : "s"}`;
+	changesDiscardAllModal.classList.add("show");
+});
+
+changesDiscardAllModalConfirmBtn.addEventListener("click", () => {
+	if (!currentRepoPath) { return; }
 	sendIpcMessage(IpcActions.CHANGE_ALL_DISCARD, {
 		repoPath: currentRepoPath
 	});
-	closeDropdowns();
-});
+	closeAndClearModal(changesDiscardAllModal);
+})
 
 changesItemMenuDiscard.addEventListener("click", (event) => {
 	event.stopPropagation();
