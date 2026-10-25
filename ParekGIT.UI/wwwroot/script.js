@@ -846,7 +846,7 @@ const escapeHtml = (unsafeText) => {
 		.replace(/</g, "&lt;")
 		.replace(/>/g, "&gt;")
 		.replace(/"/g, "&quot;")
-		.replace(/'/g, "&#039");
+		.replace(/'/g, "&#039;");
 };
 
 // Switches from HistoryTab to ChangesTab in the RightSidebar
@@ -997,7 +997,8 @@ function createRepoDropdownItem(repo) {
 	const item = document.createElement("div");
 	item.className = "dropdown-item";
 	item.dataset.path = repo.AbsolutePath;
-	item.innerHTML = `<span class="dropdown-item-text">${repo.Name}</span>`;
+	item.innerHTML = `<span class="dropdown-item-text"></span>`;
+	item.querySelector(".dropdown-item-text").textContent = repo.Name;
 
 	if (!repo.IsValid) {
 		item.classList.add("invalid");
@@ -1254,9 +1255,10 @@ function loadBranchesIntoDropdown(branches) {
 
 		const isUnpublished = currentRepoHasRemote && !branch.IsRemote && !branch.IsDetached && !branch.RemoteBranch;
 		item.innerHTML = `
-			<span class="dropdown-item-text">${branch.Name}</span>
+			<span class="dropdown-item-text"></span>
 			${isUnpublished ? `<span class="dropdown-item-unpublished-icon"></span>` : ""}
 		`;
+		item.querySelector(".dropdown-item-text").textContent = branch.Name;
 
 		// LMB - select
 		item.addEventListener("click", () => {
@@ -1533,10 +1535,11 @@ function renderChangedFiles(files) {
 		item.innerHTML = `
 			<div class="change-item-left">
 				<div class="change-status ${statusClass}" title="${statusTitle}">${statusLetter}</div>
-				<div class="change-path">${file.Path}</div>
+				<div class="change-path"></div>
 			</div>
 			<input type="checkbox" class="ui-checkbox changes-item-checkbox" checked/>
 		`;
+		item.querySelector(".change-path").textContent = file.Path;
 
 		// LMB - Change item clicking
 		item.addEventListener("click", (event) => {
@@ -1674,12 +1677,15 @@ function renderHistory(commits, isAppending = false) {
 		item.dataset.hash = commit.Hash;
 
 		item.innerHTML = `
-			<div class="history-message">${commit.Message}</div>
+			<div class="history-message"></div>
 			<div class="history-meta">
-				<div class="history-author">${commit.Author}</div>
-				<div class="history-time">${commit.TimeAgo}</div>
+				<div class="history-author"></div>
+				<div class="history-time"></div>
 			</div>
 		`;
+		item.querySelector(".history-message").textContent = commit.Message;
+		item.querySelector(".history-author").textContent = commit.Author;
+		item.querySelector(".history-time").textContent = commit.TimeAgo;
 
 		// LMB - Show commit history details
 		item.addEventListener("click", () => {
@@ -1745,7 +1751,7 @@ function loadCommitDetails(details) {
 	activeDetailsFile = "";
 
 	// Header info
-	detailsCommitMessage.innerHTML = `${details.message}`;
+	detailsCommitMessage.textContent = `${details.message}`;
 	detailsCommitStats.textContent = `${details.files.length} file${details.files.length === 1 ? "" : "s"} changed`;
 
 	detailsFileList.innerHTML = "";
@@ -1780,7 +1786,8 @@ function loadCommitDetails(details) {
 		}
 
 		item.innerHTML = `<span class="change-status ${statusClass}">${file.StatusCode[0]}</span>
-						  <span class="change-path">${file.Path}</span>`;
+						  <span class="change-path"></span>`;
+		item.querySelector(".change-path").textContent = file.Path;
 
 		// LMB
 		item.addEventListener("click", (event) => {
@@ -1795,7 +1802,8 @@ function loadCommitDetails(details) {
 			item.classList.add("active");
 
 			detailsBtnValue.innerHTML = `<span class="change-status ${statusClass}" title="${statusTitle}">${file.StatusCode[0]}</span>
-										 <span class="change-path">${file.Path}</span>`;
+										 <span class="change-path"></span>`;
+			detailsBtnValue.querySelector(".change-path").textContent = file.Path;
 			closeDropdowns();
 
 			const ext = file.Path.substring(file.Path.lastIndexOf(".")).toLowerCase();
