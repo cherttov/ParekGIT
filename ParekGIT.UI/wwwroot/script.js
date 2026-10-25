@@ -259,7 +259,6 @@ const historyItemMenuCreateBranch = historyItemContextMenu.querySelector(".conte
 const historyItemMenuCopySHA = historyItemContextMenu.querySelector(".context-menu-item.item-copy-sha");
 
 // ContextMenu list, ProtectedBranches list, Known BinaryExtensions list
-const contextMenus = [repoContextMenu, repoItemContextMenu, branchItemContextMenu, topbarRepoContextMenu, topbarBranchContextMenu];
 const protectedBranches = ["main", "master"];
 const binaryExts = [
 	".exe", ".dll", ".bin", ".obj",
@@ -670,19 +669,22 @@ const stopFetchAnimation = () => {
 	}, 500);
 };
 
-// Places context menu to stay in viewport (based on position)
-const placeContextMenu = (event, contextMenu) => {
-	let mouseX = event.clientX;
-	let mouseY = event.clientY;
+// Closes all context menus
+const closeContextMenus = () => {
+	document.querySelectorAll(".context-menu.show").forEach((menu) => menu.classList.remove("show"));
+	document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
+};
 
-	const menuWidth = contextMenu.offsetWidth;
-	const menuHeight = contextMenu.offsetHeight;
+// Open & place context menu + close other
+const showContextMenu = (event, contextMenu, activeItem = null) => {
+	closeContextMenus();
 
-	if (mouseX + menuWidth > window.innerWidth) { mouseX = mouseX - menuWidth; }
-	if (mouseY + menuHeight > window.innerHeight) { mouseY = mouseY - menuHeight; }
+	contextMenu.classList.add("show");
+	if (activeItem) { activeItem.classList.add("context-active"); }
 
-	contextMenu.style.left = `${mouseX}px`;
-	contextMenu.style.top = `${mouseY}px`;
+	const place = (pos, size, max) => (pos + size > max ? Math.max(0, pos - size) : pos);
+	contextMenu.style.left = `${place(event.clientX, contextMenu.offsetWidth, window.innerWidth)}px`;
+	contextMenu.style.top = `${place(event.clientY, contextMenu.offsetHeight, window.innerHeight)}px`;
 };
 
 // Closes all dropdowns
@@ -690,17 +692,9 @@ const closeDropdowns = () => {
 	repoPanel.classList.remove("show");
 	branchPanel.classList.remove("show");
 	dropdownBackdrop.classList.remove("show");
-	repoContextMenu.classList.remove("show");
-	repoItemContextMenu.classList.remove("show");
-	branchItemContextMenu.classList.remove("show");
-	topbarRepoContextMenu.classList.remove("show");
-	topbarBranchContextMenu.classList.remove("show");
-	changesItemContextMenu.classList.remove("show");
-	changesMasterContextMenu.classList.remove("show");
-	historyItemContextMenu.classList.remove("show");
 	detailsPanel.classList.remove("show");
 
-	document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
+	closeContextMenus();
 };
 
 // Closes and clears given modal
@@ -897,15 +891,10 @@ const copyToClipboard = (text) => {
 
 // Closes ContextMenu when clicking outside of it
 const closeContextMenusOnOutsideClick = (event) => {
-	if (repoContextMenu.classList.contains("show") && !repoContextMenu.contains(event.target) && !repoNewBtn.contains(event.target)) {
-		repoContextMenu.classList.remove("show");
-	}
-
-	contextMenus.forEach((menu) => {
-		if (menu.classList.contains("show") && !menu.contains(event.target)) {
-			menu.classList.remove("show");
-			document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
-		}
+	document.querySelectorAll(".context-menu.show").forEach((menu) => {
+		if (menu.contains(event.target)) { return; }
+		if (menu === repoContextMenu && repoAddBtn.contains(event.target)) { return; }
+		closeContextMenus();
 	});
 };
 
@@ -1047,10 +1036,6 @@ function createRepoDropdownItem(repo) {
 		event.preventDefault();
 		event.stopPropagation();
 
-		repoContextMenu.classList.remove("show");
-		repoDropdown.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
-		item.classList.add("context-active");
-
 		repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
 		repoItemContextMenu.dataset.targetName = repo.Name;
 
@@ -1059,9 +1044,7 @@ function createRepoDropdownItem(repo) {
 
 		validateRepoContextMenu(repo.AbsolutePath, repoItemMenuTerminal, repoItemMenuExplorer, repoItemMenuRemove, isInvalid);
 
-		repoItemContextMenu.classList.add("show");
-
-		placeContextMenu(event, repoItemContextMenu);
+		showContextMenu(event, repoItemContextMenu, item);
 	});
 
 	return item;
@@ -1311,11 +1294,7 @@ function loadBranchesIntoDropdown(branches) {
 
 			validateBranchContextMenu(branch.Name, branchItemMenuRename, branchItemMenuDelete, branch.IsDetached);
 
-			branchItemContextMenu.classList.add("show");
-			branchDropdown.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
-			item.classList.add("context-active");
-
-			placeContextMenu(event, branchItemContextMenu);
+			showContextMenu(event, branchItemContextMenu, item);
 		});
 
 		branchList.appendChild(item);
@@ -1595,11 +1574,7 @@ function renderChangedFiles(files) {
 
 			changesItemContextMenu.dataset.targetPath = file.Path;
 
-			document.querySelectorAll(".change-item").forEach((el) => el.classList.remove("context-active"));
-			item.classList.add("context-active");
-
-			changesItemContextMenu.classList.add("show");
-			placeContextMenu(event, changesItemContextMenu);
+			showContextMenu(event, changesItemContextMenu);
 		});
 
 		changesList.appendChild(item);
@@ -1735,15 +1710,11 @@ function renderHistory(commits, isAppending = false) {
 
 			historyItemContextMenu.dataset.targetHash = commit.Hash;
 
-			document.querySelectorAll(".history-item").forEach((el) => el.classList.remove("context-active"));
-			item.classList.add("context-active");
-
 			// Disable revert if not latest commit
 			const isLatestCommit = item === historyList.firstElementChild;
 			historyItemMenuRevert.disabled = !isLatestCommit;
 
-			historyItemContextMenu.classList.add("show");
-			placeContextMenu(event, historyItemContextMenu);
+			showContextMenu(event, historyItemContextMenu, item);
 		});
 
 		historyList.appendChild(item);
@@ -2205,8 +2176,7 @@ repoBtn.addEventListener("contextmenu", (event) => {
 
 	validateRepoContextMenu(currentRepoPath, topbarRepoMenuTerminal, topbarRepoMenuExplorer, topbarRepoMenuRemove);
 
-	topbarRepoContextMenu.classList.add("show");
-	placeContextMenu(event, topbarRepoContextMenu);
+	showContextMenu(event, topbarRepoContextMenu);
 });
 
 branchBtn.addEventListener("click", (event) =>
@@ -2223,8 +2193,7 @@ branchBtn.addEventListener("contextmenu", (event) => {
 	validateBranchContextMenu(currentBranch, topbarBranchMenuRename, topbarBranchMenuDelete, currentBranchIsDetached);
 	topbarBranchMenuMerge.disabled = currentBranchIsDetached;
 
-	topbarBranchContextMenu.classList.add("show");
-	placeContextMenu(event, topbarBranchContextMenu);
+	showContextMenu(event, topbarBranchContextMenu);
 });
 
 // Close triggers (dropdowns)
@@ -2454,12 +2423,7 @@ setupSelection("#branch-dropdown-panel", "#branches-container .btn-value");
 // New button (dropdown)
 repoNewBtn.addEventListener("click", (event) => {
 	event.stopPropagation();
-
-	repoContextMenu.classList.add("show");
-
-	repoItemContextMenu.classList.remove("show");
-
-	placeContextMenu(event, repoContextMenu);
+	showContextMenu(event, repoContextMenu);
 });
 
 // New button context-menu options (dropdown/context-menu)
@@ -3043,8 +3007,7 @@ changesHeader.addEventListener("contextmenu", (event) => {
 	if (checkedCount === 0) { changesMasterMenuDiscard.disabled = true; }
 	else { changesMasterMenuDiscard.disabled = false; }
 
-	changesMasterContextMenu.classList.add("show");
-	placeContextMenu(event, changesMasterContextMenu);
+	showContextMenu(event, changesMasterContextMenu);
 });
 
 changesMasterMenuDiscard.addEventListener("click", (event) => {
