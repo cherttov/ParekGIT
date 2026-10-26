@@ -143,8 +143,11 @@
 		</div>
 
 		<div class="context-menu" id="changes-master-context-menu">
-			<button class="context-menu-item item-discard">
+			<button class="context-menu-item item-discard-all">
 				Discard all changes...
+			</button>
+			<button class="context-menu-item item-discard-selected">
+				Discard selected changes...
 			</button>
 		</div>
 
@@ -372,6 +375,28 @@
 							<label>Are you sure you want to discard</label>
 							<label class="highlight-name"
 								   id="discard-all-modal-count">{ x } changed files</label>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button class="confirm-modal-btn">Confirm</button>
+						<button class="cancel-modal-btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop" id="changes-discard-selected-modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>Discard selected changes</h3>
+						<button class="close-modal-icon">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="modal-body-row">
+							<label>Are you sure you want to discard</label>
+							<label class="highlight-name"
+								   id="discard-selected-modal-count">{ x } changed files</label>
 						</div>
 					</div>
 

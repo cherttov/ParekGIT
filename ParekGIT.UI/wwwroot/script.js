@@ -128,6 +128,11 @@ const changesDiscardAllModal = document.getElementById("changes-discard-all-moda
 const changesDiscardAllModalCount = document.getElementById("discard-all-modal-count");
 const changesDiscardAllModalConfirmBtn = changesDiscardAllModal.querySelector(".confirm-modal-btn");
 
+// Discard Selected Changes Modal
+const changesDiscardSelectedModal = document.getElementById("changes-discard-selected-modal");
+const changesDiscardSelectedModalCount = document.getElementById("discard-selected-modal-count");
+const changesDiscardSelectedModalConfirmBtn = changesDiscardSelectedModal.querySelector(".confirm-modal-btn");
+
 // Clone Repo Modal
 const repoCloneModal = document.getElementById("repo-clone-modal");
 const repoCloneModalRepoUrl = repoCloneModal.querySelector(".input-url");
@@ -249,7 +254,8 @@ const changesItemMenuExplorer = changesItemContextMenu.querySelector(".context-m
 
 // Change Master RightSidebar ChangesTab ContextMenu
 const changesMasterContextMenu = document.getElementById("changes-master-context-menu");
-const changesMasterMenuDiscard = changesMasterContextMenu.querySelector(".context-menu-item.item-discard");
+const changesMasterMenuDiscardAll = changesMasterContextMenu.querySelector(".context-menu-item.item-discard-all");
+const changesMasterMenuDiscardSelected = changesMasterContextMenu.querySelector(".context-menu-item.item-discard-selected");
 
 // Commit Item RightSidebar HistoryTab ContextMenu
 const historyItemContextMenu = document.getElementById("history-item-context-menu");
@@ -276,6 +282,7 @@ let activeHistoryHash = "";
 let activeBrowseInput = null;
 let activeDetailsFile = "";
 let currentChangesCount = 0;
+let pendingDiscardFiles = [];
 let repoDrafts = {};
 let fetchStopRequested = false;
 let currentTheme = "catppuccin-mocha";
@@ -893,7 +900,7 @@ const copyToClipboard = (text) => {
 const closeContextMenusOnOutsideClick = (event) => {
 	document.querySelectorAll(".context-menu.show").forEach((menu) => {
 		if (menu.contains(event.target)) { return; }
-		if (menu === repoContextMenu && repoAddBtn.contains(event.target)) { return; }
+		if (menu === repoContextMenu && repoNewBtn.contains(event.target)) { return; }
 		closeContextMenus();
 	});
 };
@@ -1245,7 +1252,7 @@ function loadBranchesIntoDropdown(branches) {
 			currentBranchRevision = branch.IsDetached ? branch.TargetCommitHash : branch.Name;
 			currentBranchIsDetached = branch.IsDetached;
 			currentBranchHasUpstream = !!branch.RemoteBranch;
-			currentBranchRemoteBranch = branch.RemoteBranch;
+			currentBranchRemoteBranch = branch.RemoteBranch || "";
 		} else {
 			item.className = "dropdown-item";
 		}
@@ -1292,7 +1299,7 @@ function loadBranchesIntoDropdown(branches) {
 
 			branchItemContextMenu.dataset.targetPath = currentRepoPath;
 			branchItemContextMenu.dataset.targetName = branch.Name;
-			branchItemContextMenu.dataset.targetRemoteBranch = branch.RemoteBranch;
+			branchItemContextMenu.dataset.targetRemoteBranch = branch.RemoteBranch || "";
 
 			validateBranchContextMenu(branch.Name, branchItemMenuRename, branchItemMenuDelete, branch.IsDetached);
 
@@ -1452,6 +1459,12 @@ function toggleCommitButton() {
 	stashModalSaveBtn.disabled = checkedCount === 0;
 }
 
+// Paths of the files currently checked in the changes tab
+const getCheckedFilePaths = () => {
+	return Array.from(document.querySelectorAll(".changes-item-checkbox:checked"))
+		.map((checkbox) => checkbox.closest(".change-item").dataset.path);
+};
+
 // Toggles LeftSidebar Push/Pull Button
 function togglePushPullPublishButton() {
 	if (!currentBranch || !currentRepoHasRemote) {
@@ -1577,7 +1590,7 @@ function renderChangedFiles(files) {
 
 			changesItemContextMenu.dataset.targetPath = file.Path;
 
-			showContextMenu(event, changesItemContextMenu);
+			showContextMenu(event, changesItemContextMenu, item);
 		});
 
 		changesList.appendChild(item);
@@ -3011,14 +3024,13 @@ changesHeader.addEventListener("contextmenu", (event) => {
 	event.stopPropagation();
 	closeDropdowns();
 
-	const checkedCount = document.querySelectorAll(".changes-item-checkbox:checked").length;
-	if (checkedCount === 0) { changesMasterMenuDiscard.disabled = true; }
-	else { changesMasterMenuDiscard.disabled = false; }
+	changesMasterMenuDiscardAll.disabled = currentChangesCount === 0;
+	changesMasterMenuDiscardSelected.disabled = getCheckedFilePaths().length === 0;
 
 	showContextMenu(event, changesMasterContextMenu);
 });
 
-changesMasterMenuDiscard.addEventListener("click", (event) => {
+changesMasterMenuDiscardAll.addEventListener("click", (event) => {
 	event.stopPropagation();
 	closeDropdowns();
 
@@ -3028,13 +3040,36 @@ changesMasterMenuDiscard.addEventListener("click", (event) => {
 	changesDiscardAllModal.classList.add("show");
 });
 
+changesMasterMenuDiscardSelected.addEventListener("click", (event) => {
+	event.stopPropagation();
+	closeDropdowns();
+
+	if (!currentRepoPath) { return; }
+	pendingDiscardFiles = getCheckedFilePaths();
+	if (pendingDiscardFiles.length === 0) { return; }
+
+	changesDiscardSelectedModalCount.textContent = `${pendingDiscardFiles.length} changed file${pendingDiscardFiles.length === 1 ? "" : "s"}`;
+	changesDiscardSelectedModal.classList.add("show");
+});
+
 changesDiscardAllModalConfirmBtn.addEventListener("click", () => {
 	if (!currentRepoPath) { return; }
 	sendIpcMessage(IpcActions.CHANGE_ALL_DISCARD, {
 		repoPath: currentRepoPath
 	});
 	closeAndClearModal(changesDiscardAllModal);
-})
+});
+
+changesDiscardSelectedModalConfirmBtn.addEventListener("click", () => {
+	if (!currentRepoPath) { return; }
+	pendingDiscardFiles.forEach((filePath) => {
+		sendIpcMessage(IpcActions.CHANGE_DISCARD, {
+			repoPath: currentRepoPath,
+			filePath: filePath
+		});
+	});
+	closeAndClearModal(changesDiscardSelectedModal);
+});
 
 changesItemMenuDiscard.addEventListener("click", (event) => {
 	event.stopPropagation();
