@@ -1024,6 +1024,8 @@ function createRepoDropdownItem(repo) {
 		currentBranchRevision = "";
 		currentBranchIsDetached = false;
 		currentRepoHasRemote = !!repo.RemoteUrl;
+		changesList.innerHTML = "";
+		historyList.inerHTML = "";
 
 		loadDraft();
 		toggleCommitButton();
@@ -1460,10 +1462,10 @@ function toggleCommitButton() {
 }
 
 // Paths of the files currently checked in the changes tab
-const getCheckedFilePaths = () => {
+function getCheckedFilePaths() {
 	return Array.from(document.querySelectorAll(".changes-item-checkbox:checked"))
 		.map((checkbox) => checkbox.closest(".change-item").dataset.path);
-};
+}
 
 // Toggles LeftSidebar Push/Pull Button
 function togglePushPullPublishButton() {
@@ -1506,14 +1508,42 @@ function updateMasterCheckboxState() {
 	toggleCommitButton();
 }
 
+// Shows the diff of a current changed file in the diff viewer
+function requestFileDiff(filePath, showLoading = true) {
+	diffFilename.textContent = filePath;
+
+	const ext = filePath.substring(filePath.lastIndexOf(".")).toLowerCase();
+	if (binaryExts.includes(ext)) {
+		diffContent.textContent = "Binary file changed (no preview available)";
+		return;
+	}
+
+	if (showLoading) { diffContent.textContent = "Loading changes..."; }
+	sendIpcMessage(IpcActions.FILE_DIFF_LOAD, {
+		repoPath: currentRepoPath,
+		filePath: filePath
+	});
+}
+
 // C# - Load changed files to right sidebar
 function renderChangedFiles(files) {
+	// Remember previous render state (unchecked files, selected file)
+	const uncheckedPaths = new Set(
+		Array.from(changesList.querySelectorAll(".change-item"))
+			.filter((row) => !row.querySelector(".changes-item-checkbox").checked)
+			.map((row) => row.dataset.path)
+	);
+	const selectedItem = changesList.querySelector(".change-item.selected");
+	const selectedPath = selectedItem ? selectedItem.dataset.path : "";
+	let selectedStillExists = false;
+	
 	changesList.innerHTML = "";
 
 	currentChangesCount = files.length;
 	changesCountText.textContent = `${files.length} changed file${files.length === 1 ? "" : "s"}`;
 
 	if (files.length === 0) {
+		if (selectedPath) { resetDiffViewer(); }
 		toggleCommitButton();
 		return;
 	}
@@ -1554,6 +1584,11 @@ function renderChangedFiles(files) {
 		`;
 		item.querySelector(".change-path").textContent = file.Path;
 
+		if (file.Path === selectedPath) {
+			item.classList.add("selected");
+			selectedStillExists = true;
+		}
+
 		// LMB - Change item clicking
 		item.addEventListener("click", (event) => {
 			if (event.target.classList.contains("changes-item-checkbox")) { return; }
@@ -1562,24 +1597,11 @@ function renderChangedFiles(files) {
 			document.querySelectorAll(".change-item").forEach((el) => el.classList.remove("selected"));
 			item.classList.add("selected");
 
-			diffFilename.textContent = file.Path;
-
-			// Check for binary extensions
-			const ext = file.Path.substring(file.Path.lastIndexOf(".")).toLowerCase();
-			if (binaryExts.includes(ext)) {
-				diffContent.textContent = "Binary file changed (no preview available)";
-				return;
-			}
-
-			diffContent.textContent = "Loading changes...";
-
-			sendIpcMessage(IpcActions.FILE_DIFF_LOAD, {
-				repoPath: currentRepoPath,
-				filePath: file.Path
-			});
+			requestFileDiff(file.Path);
 		});
 
 		const checkbox = item.querySelector(".changes-item-checkbox");
+		checkbox.checked = !uncheckedPaths.has(file.Path);
 		checkbox.addEventListener("change", () => { updateMasterCheckboxState(); });
 
 		// RMB - Change item context menu
@@ -1595,6 +1617,11 @@ function renderChangedFiles(files) {
 
 		changesList.appendChild(item);
 	});
+
+	if (selectedPath) {
+		if (selectedStillExists) { requestFileDiff(selectedPath, false); }
+		else { resetDiffViewer(); }
+	}
 
 	toggleCommitButton();
 	updateMasterCheckboxState()
