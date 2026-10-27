@@ -1017,7 +1017,7 @@ function createRepoDropdownItem(repo) {
 	// LMB - select
 	item.addEventListener("click", () => {
 		if (item.classList.contains("invalid")) { return; }
-		if (currentRepoPath.toLowerCase() === repo.AbsolutePath.toLowerCase()) { return; }
+		if (currentRepoPath === repo.AbsolutePath) { return; }
 
 		currentRepoPath = repo.AbsolutePath;
 		currentBranch = "";
@@ -1129,7 +1129,7 @@ function deleteRepoFromDropdown(repository) {
 function markRepoDropdownItemInvalid(repoPath) {
 	const items = repoPanel.querySelectorAll(".dropdown-item");
 	items.forEach((item) => {
-		if (item.dataset.path.toLowerCase() === repoPath.toLowerCase()) {
+		if (item.dataset.path === repoPath) {
 			item.classList.add("invalid");
 			item.title = "Repository folder not found";
 		}
