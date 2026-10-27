@@ -1081,6 +1081,38 @@ function addRepositoryToDropdown(repo) {
 	if (repo.IsValid) { item.click(); }
 }
 
+// Reset the state and UI of the current repository
+function clearCurrentRepo() {
+	currentRepoPath = "";
+	currentBranch = "";
+	currentBranchRevision = "";
+	currentBranchIsDetached = false;
+	currentRepoHasRemote = false;
+	activeTodos = [];
+
+	// Reset topbar
+	repoBtn.querySelector(".btn-value").textContent = "None";
+	branchBtn.querySelector(".btn-value").textContent = "None";
+
+	// Disable btns
+	setRepoToolsEnabled(false);
+
+	// Clear UI panels
+	branchDropdown.querySelectorAll(".dropdown-item").forEach((item) => item.remove());
+
+	changesList.innerHTML = "";
+	historyList.innerHTML = "";
+	currentChangesCount = 0;
+	changesCountText.textContent = "0 changed files";
+
+	commitMessageInput.value = "";
+	commitDescriptionInput.value = "";
+
+	resetViewers();
+	toggleCommitButton();
+	togglePushPullPublishButton();
+}
+
 // C# - Delete repo
 function deleteRepoFromDropdown(repository) {
 	const removedPath = repository.absolutePath;
@@ -1090,21 +1122,7 @@ function deleteRepoFromDropdown(repository) {
 	const itemToRemove = repoDropdown.querySelector(`.dropdown-item[data-path="${cssPath}"]`);
 
 	if (itemToRemove) { itemToRemove.remove(); }
-
-	if (currentRepoPath === removedPath) {
-		currentRepoPath = "";
-
-		const repoBtnValue = repoBtn.querySelector(".btn-value");
-		if (repoBtnValue) { repoBtnValue.textContent = "None"; }
-
-		setRepoToolsEnabled(false);
-
-		const branchBtnValue = branchBtn.querySelector(".btn-value");
-		if (branchBtnValue) { branchBtnValue.textContent = "None"; }
-
-		const existingBranches = branchDropdown.querySelectorAll(".dropdown-item");
-		existingBranches.forEach((item) => item.remove());
-	}
+	if (currentRepoPath === removedPath) { clearCurrentRepo(); }
 }
 
 // Marks a repo in the Topbar dropdown as invalid
@@ -1126,36 +1144,7 @@ function processMissingRepo(repoPath) {
 	repoMissingModal.classList.add("show");
 
 	// Unselect invalid repo if it's current
-	if (currentRepoPath === repoPath) {
-		currentRepoPath = "";
-		currentBranch = "";
-		currentBranchRevision = "";
-		currentBranchIsDetached = false;
-		currentRepoHasRemote = false;
-
-		// Reset Topbar
-		const repoBtnValue = repoBtn.querySelector(".btn-value");
-		if (repoBtnValue) { repoBtnValue.textContent = "None"; }
-
-		const branchBtnValue = branchBtn.querySelector(".btn-value");
-		if (branchBtnValue) { branchBtnValue.textContent = "None"; }
-
-		// Disable buttons
-		setRepoToolsEnabled(false);
-
-		// Clear UI panels
-		const existingBranches = branchDropdown.querySelectorAll(".dropdown-item");
-		existingBranches.forEach((item) => item.remove());
-
-		changesList.innerHTML = "";
-		historyList.innerHTML = "";
-		currentChangesCount = 0;
-		changesCountText.textContent = "0 changed files";
-
-		resetViewers();
-		toggleCommitButton();
-		togglePushPullPublishButton();
-	}
+	if (currentRepoPath === repoPath) { clearCurrentRepo(); }
 }
 
 // C# - Repo pulled handler
