@@ -1081,6 +1081,12 @@ function addRepositoryToDropdown(repo) {
 	if (repo.IsValid) { item.click(); }
 }
 
+// Finds the repo dropdown item of the given repo path
+function findRepoItem(repoPath) {
+	return Array.from(repoDropdown.querySelectorAll(".dropdown-item"))
+		.find((item) => item.dataset.path === repoPath);
+}
+
 // Reset the state and UI of the current repository
 function clearCurrentRepo() {
 	currentRepoPath = "";
@@ -1118,22 +1124,18 @@ function deleteRepoFromDropdown(repository) {
 	const removedPath = repository.absolutePath;
 	if (!removedPath) { return; }
 
-	const cssPath = removedPath.replace(/\\/g, "\\\\");
-	const itemToRemove = repoDropdown.querySelector(`.dropdown-item[data-path="${cssPath}"]`);
-
+	const itemToRemove = findRepoItem(removedPath);
 	if (itemToRemove) { itemToRemove.remove(); }
 	if (currentRepoPath === removedPath) { clearCurrentRepo(); }
 }
 
 // Marks a repo in the Topbar dropdown as invalid
 function markRepoDropdownItemInvalid(repoPath) {
-	const items = repoPanel.querySelectorAll(".dropdown-item");
-	items.forEach((item) => {
-		if (item.dataset.path === repoPath) {
-			item.classList.add("invalid");
-			item.title = "Repository folder not found";
-		}
-	});
+	const item = findRepoItem(repoPath);
+	if (!item) { return; }
+
+	item.classList.add("invalid");
+	item.title = "Repository folder not found";
 }
 
 // C# - Repo not found (path is invalid)
@@ -1206,10 +1208,7 @@ function appInit(data) {
 
 	// Load last repo
 	if (data.Settings.LastRepoPath) {
-		const cssPath = data.Settings.LastRepoPath.replace(/\\/g, "\\\\");
-
-		const lastRepoItem = repoDropdown.querySelector(`.dropdown-item[data-path="${cssPath}"]`);
-
+		const lastRepoItem = findRepoItem(data.Settings.LastRepoPath);
 		if (lastRepoItem) { lastRepoItem.click(); }
 	}
 
