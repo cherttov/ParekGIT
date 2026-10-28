@@ -454,197 +454,87 @@ const sendIpcMessage = (action, payload = {}) => {
 	window.external.sendMessage(JSON.stringify(envelope));
 };
 
-// Dispatches every incoming C# message to its handler (based on the 'Action')
+const noop = () => { };
+
+// Lookup table 'IpcActions.{action}: {correspondingMethod}'
+const IpcHandlers = {
+	// App
+	[IpcActions.APP_INITIALIZED]: appInit,
+	[IpcActions.APP_ERROR]: showErrorModal,
+
+	// Repo
+	[IpcActions.REPO_CLONED]: addRepositoryToDropdown,
+	[IpcActions.REPO_CREATED]: addRepositoryToDropdown,
+	[IpcActions.REPO_ADDED]: addRepositoryToDropdown,
+	[IpcActions.REPO_REMOVED]: deleteRepoFromDropdown,
+	[IpcActions.REPO_COMMITTED]: processCommit,
+	[IpcActions.REPO_FETCHED]: fetchRepo,
+	[IpcActions.REPO_PULLED]: processRepoPulled,
+	[IpcActions.REPO_PUSHED]: processRepoPushed,
+	[IpcActions.REPO_PUBLISHED]: processRepoPublished,
+	[IpcActions.REPO_STATUS_LOADED]: renderChangedFiles,
+	[IpcActions.REPO_FILES_CHANGED]: processFileChanges,
+	[IpcActions.REPO_PATH_MISSING]: processMissingRepo,
+	[IpcActions.REPO_SYNC_STATUS_CHANGED]: processRemoteSyncStatus,
+
+	// Branch
+	[IpcActions.BRANCH_LIST_LOADED]: loadBranchesIntoDropdown,
+	[IpcActions.BRANCH_DELETED]: removeBranchFromDropdown,
+	[IpcActions.BRANCH_FORCE_DELETE_REQUESTED]: processBranchForceDeleteRequested,
+	[IpcActions.BRANCH_RENAMED]: renameBranchInDropdown,
+	[IpcActions.BRANCH_MERGED]: processBranchesMerged,
+	[IpcActions.BRANCH_HISTORY_LOADED]: processBranchHistoryLoaded,
+	[IpcActions.BRANCH_HISTORY_APPENDED]: processBranchHistoryAppended,
+
+	// Commit / File
+	[IpcActions.COMMIT_DETAILS_LOADED]: loadCommitDetails,
+	[IpcActions.COMMIT_FILE_DIFF_LOADED]: processCommitFileDiffLoaded,
+	[IpcActions.COMMIT_CHECKED_OUT]: processCommitCheckedOut, // FINISH
+	[IpcActions.COMMIT_REVERTED]: processCommitReverted,
+	[IpcActions.FILE_DIFF_LOADED]: processFileDiffLoaded,
+
+	// Change
+	[IpcActions.CHANGE_ALL_DISCARDED]: noop,
+	[IpcActions.CHANGE_DISCARDED]: noop,
+	[IpcActions.CHANGE_IGNORED]: processFileChanges, // REVISIT
+
+	// Todo
+	[IpcActions.TODO_LOADED]: loadTodos,
+	[IpcActions.TODO_SAVED]: noop,
+
+	// Config
+	[IpcActions.CONFIG_LOCAL_LOADED]: processLocalConfigLoad,
+	[IpcActions.CONFIG_LOCAL_SAVED]: noop,
+	[IpcActions.CONFIG_GLOBAL_LOADED]: processGlobalConfigLoad,
+	[IpcActions.CONFIG_GLOBAL_SAVED]: noop,
+
+	// Settings / Theme
+	[IpcActions.SETTINGS_SAVED]: processSettingsSaved,
+	[IpcActions.THEME_LIST_LOADED]: processThemesLoaded,
+
+	// Explorer
+	[IpcActions.EXPLORER_FOLDER_PICKED]: folderSelected,
+
+	// Stash
+	[IpcActions.STASH_LIST_LOADED]: loadStashes,
+	[IpcActions.STASH_SAVED]: processStashChange,
+	[IpcActions.STASH_POPPED]: processStashChange,
+	[IpcActions.STASH_DROPPED]: processStashDropped,
+
+	// Logs
+	[IpcActions.LOGS_CLEARED]: noop,
+};
+
+// Processing a message from backend
 window.external.receiveMessage((message) => {
 	const data = JSON.parse(message);
 
-	switch (data.Action) {
-		// App
-		case IpcActions.APP_INITIALIZED:
-			appInit(data.Payload);
-			break;
-
-		case IpcActions.APP_ERROR:
-			showErrorModal(data.Payload.message);
-			break;
-
-		// Repo
-		case IpcActions.REPO_CLONED:
-			addRepositoryToDropdown(data.Payload);
-			break;
-
-		case IpcActions.REPO_CREATED:
-			addRepositoryToDropdown(data.Payload);
-			break;
-
-		case IpcActions.REPO_ADDED:
-			addRepositoryToDropdown(data.Payload);
-			break;
-
-		case IpcActions.REPO_REMOVED:
-			deleteRepoFromDropdown(data.Payload);
-			break;
-
-		case IpcActions.REPO_COMMITTED:
-			processCommit();
-			break;
-
-		case IpcActions.REPO_FETCHED:
-			fetchRepo(data.Payload);
-			break;
-
-		case IpcActions.REPO_PULLED:
-			processRepoPulled();
-			break;
-
-		case IpcActions.REPO_PUSHED:
-			processRepoPushed();
-			break;
-
-		case IpcActions.REPO_PUBLISHED:
-			processRepoPublished();
-			break;
-
-		case IpcActions.REPO_STATUS_LOADED:
-			renderChangedFiles(data.Payload);
-			break;
-
-		case IpcActions.REPO_FILES_CHANGED:
-			processFileChanges(data.Payload);
-			break;
-
-		case IpcActions.REPO_PATH_MISSING:
-			processMissingRepo(data.Payload.absolutePath);
-			break;
-
-		case IpcActions.REPO_SYNC_STATUS_CHANGED:
-			processRemoteSyncStatus(data.Payload);
-			break;
-
-		// Branch
-		case IpcActions.BRANCH_LIST_LOADED:
-			loadBranchesIntoDropdown(data.Payload);
-			break;
-
-		case IpcActions.BRANCH_DELETED:
-			removeBranchFromDropdown(data.Payload);
-			break;
-
-		case IpcActions.BRANCH_FORCE_DELETE_REQUESTED:
-			processBranchForceDeleteRequested(data.Payload);
-			break;
-
-		case IpcActions.BRANCH_RENAMED:
-			renameBranchInDropdown(data.Payload);
-			break;
-
-		case IpcActions.BRANCH_MERGED:
-			processBranchesMerged();
-			break;
-
-		case IpcActions.BRANCH_HISTORY_LOADED:
-			processBranchHistoryLoaded(data.Payload);
-			break;
-
-		case IpcActions.BRANCH_HISTORY_APPENDED:
-			processBranchHistoryAppended(data.Payload);
-			break;
-
-		// Commit / File
-		case IpcActions.COMMIT_DETAILS_LOADED:
-			loadCommitDetails(data.Payload);
-			break;
-
-		case IpcActions.COMMIT_FILE_DIFF_LOADED:
-			renderFileDiff(data.Payload.diffText, detailsContent, detailsBodyWrapper, detailsScrollbar);
-			break;
-
-		case IpcActions.COMMIT_CHECKED_OUT: // FINISH
-			resetViewers();
-			if (currentRepoPath) { sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: currentRepoPath }); }
-			break;
-
-		case IpcActions.COMMIT_REVERTED:
-			resetViewers();
-			refreshRepoState();
-			break;
-
-		case IpcActions.FILE_DIFF_LOADED:
-			renderFileDiff(data.Payload.diffText, diffContent, diffBodyWrapper, diffScrollbar);
-			break;
-
-		// Change
-		case IpcActions.CHANGE_ALL_DISCARDED:
-			break;
-
-		case IpcActions.CHANGE_DISCARDED:
-			break;
-
-		case IpcActions.CHANGE_IGNORED:
-			processFileChanges(data.Payload); // REVISIT
-			break;
-
-		// Todo
-		case IpcActions.TODO_LOADED:
-			loadTodos(data.Payload.todos);
-			break;
-
-		case IpcActions.TODO_SAVED:
-			break;
-
-		// Config
-		case IpcActions.CONFIG_LOCAL_LOADED:
-			processLocalConfigLoad(data.Payload);
-			break;
-
-		case IpcActions.CONFIG_LOCAL_SAVED:
-			break;
-
-		case IpcActions.CONFIG_GLOBAL_LOADED:
-			processGlobalConfigLoad(data.Payload);
-			break;
-
-		case IpcActions.CONFIG_GLOBAL_SAVED:
-			break;
-
-		// Settings / Theme
-		case IpcActions.SETTINGS_SAVED:
-			applyTheme(data.Payload.Theme);
-			break;
-
-		case IpcActions.THEME_LIST_LOADED:
-			processThemesLoaded(data.Payload);
-			break;
-
-		// Explorer
-		case IpcActions.EXPLORER_FOLDER_PICKED:
-			folderSelected(data.Payload);
-			break;
-
-		// Stash
-		case IpcActions.STASH_LIST_LOADED:
-			loadStashes(data.Payload);
-			break;
-
-		case IpcActions.STASH_SAVED:
-			processStashChange();
-			break;
-
-		case IpcActions.STASH_POPPED:
-			processStashChange();
-			break;
-
-		case IpcActions.STASH_DROPPED:
-			sendIpcMessage(IpcActions.STASH_LIST_LOAD, { repoPath: currentRepoPath });
-			break;
-
-		// Logs
-		case IpcActions.LOGS_CLEARED:
-			break;
-
-		default:
-			console.warn("Unknown action received: ", data.Action);
+	if (!Object.hasOwn(IpcHandlers, data.Action)) {
+		console.warn("Unknown action received: ", data.Action);
+		return;
 	}
+
+	IpcHandlers[data.Action](data.Payload);
 });
 
 // ======================== GENERIC UI HELPERS ========================
@@ -1025,7 +915,7 @@ function createRepoDropdownItem(repo) {
 		currentBranchIsDetached = false;
 		currentRepoHasRemote = !!repo.RemoteUrl;
 		changesList.innerHTML = "";
-		historyList.inerHTML = "";
+		historyList.innerHTML = "";
 
 		loadDraft();
 		toggleCommitButton();
@@ -1139,7 +1029,8 @@ function markRepoDropdownItemInvalid(repoPath) {
 }
 
 // C# - Repo not found (path is invalid)
-function processMissingRepo(repoPath) {
+function processMissingRepo(payload) {
+	const repoPath = payload.absolutePath;
 	document.getElementById("missing-modal-repo-path").textContent = repoPath;
 	repoMissingModal.dataset.targetPath = repoPath;
 	markRepoDropdownItemInvalid(repoPath);
@@ -1922,6 +1813,32 @@ function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget)
 	updateCustomScrollbar(wrapperTarget, scrollbarTarget);
 }
 
+// C# - Commit checked out handler
+function processCommitCheckedOut() {
+	resetViewers();
+	if (currentRepoPath) {
+		sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, {
+			repoPath: currentRepoPath
+		});
+	}
+}
+
+// C# - Commit reverted handler
+function processCommitReverted() {
+	resetViewers();
+	refreshRepoState();
+}
+
+// C# - Commit file diff loaded (HistoryTab)
+function processCommitFileDiffLoaded(payload) {
+	renderFileDiff(payload.diffText, detailsContent, detailsBodyWrapper, detailsScrollbar);
+}
+
+// C# - Commit file diff loaded (ChangesTab)
+function processFileDiffLoaded(payload) {
+	renderFileDiff(payload.diffText, diffContent, diffBodyWrapper, diffScrollbar);
+}
+
 // Resets the file-diff viewer to its empty/placeholder state
 function resetDiffViewer() {
 	diffFilename.textContent = "Select a file to view changes";
@@ -1976,6 +1893,11 @@ const saveStash = () => {
 function processStashChange() {
 	sendIpcMessage(IpcActions.STASH_LIST_LOAD, { repoPath: currentRepoPath });
 	refreshRepoState();
+}
+
+// C# - Process STASH_DROPPED
+function processStashDropped() {
+	sendIpcMessage(IpcActions.STASH_LIST_LOAD, { repoPath: currentRepoPath })
 }
 
 // C# - Load stashes into stash modal
@@ -2116,8 +2038,8 @@ function renderTodoList() {
 }
 
 // C# - Load todos
-function loadTodos(todos) {
-	activeTodos = todos || [];
+function loadTodos(payload) {
+	activeTodos = payload?.todos || [];
 }
 
 // ======================== CONFIG & SETTINGS HELPERS ========================
@@ -2152,9 +2074,14 @@ function processGlobalConfigLoad(config) {
 }
 
 // C# - Handle backend errors
-function showErrorModal(message) {
-	errorModalMessage.textContent = message || "An unknown error occurred.";
+function showErrorModal(payload) {
+	errorModalMessage.textContent = payload?.message || "An unknown error occurred.";
 	errorModal.classList.add("show");
+}
+
+// C# Settings saved handler
+function processSettingsSaved(payload) {
+	applyTheme(payload.Theme);
 }
 
 // C# - Themes loaded
