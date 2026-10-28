@@ -264,7 +264,7 @@ const historyItemMenuRevert = historyItemContextMenu.querySelector(".context-men
 const historyItemMenuCreateBranch = historyItemContextMenu.querySelector(".context-menu-item.item-create-branch");
 const historyItemMenuCopySHA = historyItemContextMenu.querySelector(".context-menu-item.item-copy-sha");
 
-// ContextMenu list, ProtectedBranches list, Known BinaryExtensions list
+// ProtectedBranches list, KnownBinaryExtensions list & DefaultTheme
 const protectedBranches = ["main", "master"];
 const binaryExts = [
 	".exe", ".dll", ".bin", ".obj",
@@ -547,6 +547,35 @@ const updatePanelWidths = () => {
 	branchPanel.style.width = window.getComputedStyle(rightSidebar).width;
 };
 
+// Resizes the right sidebar when dragged
+function resize(event) {
+	if (!isResizing) { return; }
+
+	let targetWidth = window.innerWidth - event.clientX;
+	let newWidth = Math.max(minRightWidth, Math.min(targetWidth, maxRightWidth));
+
+	// Calculate always visible
+	rightSidebar.style.width = `${newWidth}px`;
+	branchContainer.style.width = `${newWidth}px`;
+
+	if (branchPanel.classList.contains("show")) {
+		branchPanel.style.width = `${newWidth}px`;
+	}
+
+	if (repoPanel.classList.contains("show")) {
+		repoPanel.style.width = `${repoContainer.offsetWidth}px`;
+		repoPanel.style.left = `${repoContainer.offsetLeft}px`;
+	}
+}
+
+// Stops resizing the right sidebar
+function stopResize() {
+	isResizing = false;
+	document.removeEventListener("mousemove", resize);
+	document.removeEventListener("mouseup", stopResize);
+	document.body.style.userSelect = "";
+}
+
 // Stops LeftSidebar fetchBtn animation
 const stopFetchAnimation = () => {
 	const icon = fetchBtn.querySelector(".icon-fetch");
@@ -566,13 +595,54 @@ const stopFetchAnimation = () => {
 	}, 500);
 };
 
-// Closes all context menus
+// Search setup (dropdowns)
+const setupFilter = (inputSelector, panelSelector) => {
+	const searchInput = document.querySelector(inputSelector);
+
+	searchInput.addEventListener("input", (event) => {
+		const searchTerm = event.target.value.toLowerCase();
+
+		const dropdownItems = document.querySelectorAll(`${panelSelector} .dropdown-item`);
+
+		dropdownItems.forEach((item) => {
+			const itemText = item.textContent.toLowerCase();
+
+			if (itemText.includes(searchTerm)) { item.style.display = ""; }
+			else { item.style.display = "none"; }
+		});
+
+		updateCustomScrollbar(repoList, repoScrollbar);
+		updateCustomScrollbar(branchList, branchScrollbar);
+	});
+};
+
+// Selection setup (dropdowns)
+const setupSelection = (panelSelector, btnValueSelector) => {
+	const panel = document.querySelector(panelSelector);
+	const valueDisplay = document.querySelector(btnValueSelector);
+
+	panel.addEventListener("click", (event) => {
+		const item = event.target.closest(".dropdown-item");
+
+		if (item && !item.classList.contains("invalid")) {
+			valueDisplay.textContent = item.textContent;
+
+			panel.querySelectorAll(".dropdown-item").forEach((elem) => { elem.classList.remove("active"); });
+
+			item.classList.add("active");
+
+			closeDropdowns();
+		}
+	});
+};
+
+// Closes all context menus & clears the highlighted item
 const closeContextMenus = () => {
 	document.querySelectorAll(".context-menu.show").forEach((menu) => menu.classList.remove("show"));
 	document.querySelectorAll(".context-active").forEach((el) => el.classList.remove("context-active"));
 };
 
-// Open & place context menu + close other
+// Opens & places the context menu, highlights active item + close other menus
 const showContextMenu = (event, contextMenu, activeItem = null) => {
 	closeContextMenus();
 
@@ -582,6 +652,15 @@ const showContextMenu = (event, contextMenu, activeItem = null) => {
 	const place = (pos, size, max) => (pos + size > max ? Math.max(0, pos - size) : pos);
 	contextMenu.style.left = `${place(event.clientX, contextMenu.offsetWidth, window.innerWidth)}px`;
 	contextMenu.style.top = `${place(event.clientY, contextMenu.offsetHeight, window.innerHeight)}px`;
+};
+
+// Closes all context mneus when clicking outside of them
+const closeContextMenusOnOutsideClick = (event) => {
+	document.querySelectorAll(".context-menu.show").forEach((menu) => {
+		if (menu.contains(event.target)) { return; }
+		if (menu === repoContextMenu && repoNewBtn.contains(event.target)) { return; }
+		closeContextMenus();
+	});
 };
 
 // Closes all dropdowns
@@ -786,15 +865,6 @@ const copyToClipboard = (text) => {
 		.catch((err) => console.error("Failed to copy text: ", err));
 };
 
-// Closes ContextMenu when clicking outside of it
-const closeContextMenusOnOutsideClick = (event) => {
-	document.querySelectorAll(".context-menu.show").forEach((menu) => {
-		if (menu.contains(event.target)) { return; }
-		if (menu === repoContextMenu && repoNewBtn.contains(event.target)) { return; }
-		closeContextMenus();
-	});
-};
-
 // ======================== MODAL VALIDATORS ========================
 // Enable/disable modal's confirm button based on whether its input is valid.
 
@@ -875,6 +945,43 @@ const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn, 
 	explorerBtn.disabled = disableTools;
 	removeBtn.disabled = isRepoEmpty;
 };
+
+// ======================== APP HELPERS ========================
+// Functions and handlers
+
+// C# - App init
+function appInit(data) {
+	// Visuals
+	currentTheme = data.Settings.Theme;
+	processThemesLoaded(data.Themes);
+
+	// Data
+	loadRepositoriesIntoDropdown(data.Repositories);
+
+	// Load last repo
+	if (data.Settings.LastRepoPath) {
+		const lastRepoItem = findRepoItem(data.Settings.LastRepoPath);
+		if (lastRepoItem) { lastRepoItem.click(); }
+	}
+
+	document.body.classList.remove("loading");
+}
+
+// C# - Folder selected
+function folderSelected(directory) {
+	if (activeBrowseInput) {
+		activeBrowseInput.value = directory.path;
+		activeBrowseInput.dispatchEvent(new Event("input"));
+		activeBrowseInput.focus();
+		activeBrowseInput = null;
+	}
+}
+
+// C# - Handle backend errors
+function showErrorModal(payload) {
+	errorModalMessage.textContent = payload?.message || "An unknown error occurred.";
+	errorModal.classList.add("show");
+}
 
 // ======================== REPO HELPERS ========================
 // Functions and handlers scoped to repository selection, RepoDropdown and repo lifecycle (add/clone/create/remove).
@@ -1040,6 +1147,43 @@ function processMissingRepo(payload) {
 	if (currentRepoPath === repoPath) { clearCurrentRepo(); }
 }
 
+// Toggles LeftSidebar Push/Pull Button
+function togglePushPullPublishButton() {
+	if (!currentBranch || !currentRepoHasRemote) {
+		pushPullPublishBtn.disabled = true;
+		pushPullPublishBtn.classList.remove("push", "pull", "publish");
+		return;
+	}
+
+	if (!currentBranchHasUpstream) {
+		pushPullPublishBtn.classList.remove("push", "pull");
+		pushPullPublishBtn.disabled = false;
+		pushPullPublishBtn.title = "Publish branch";
+		pushPullPublishBtn.classList.add("publish");
+	} else if (isPullRequired) {
+		pushPullPublishBtn.classList.remove("push", "publish");
+		pushPullPublishBtn.disabled = false;
+		pushPullPublishBtn.title = `Pull ${commitsBehind} commit${commitsBehind === 1 ? "" : "s"}`;
+		pushPullPublishBtn.classList.add("pull");
+	} else if (isPushRequired) {
+		pushPullPublishBtn.classList.remove("pull", "publish");
+		pushPullPublishBtn.disabled = false;
+		pushPullPublishBtn.title = `Push ${commitsAhead} commit${commitsAhead === 1 ? "" : "s"}`;
+		pushPullPublishBtn.classList.add("push");
+	} else {
+		pushPullPublishBtn.disabled = true;
+		pushPullPublishBtn.title = "Up to date";
+		pushPullPublishBtn.classList.remove("pull", "push", "publish");
+	}
+}
+
+// C# - Repo fetched handler
+function fetchRepo(repo) {
+	stopFetchAnimation();
+	refreshRepoState();
+	toggleCommitButton();
+}
+
 // C# - Repo pulled handler
 function processRepoPulled() {
 	isPullRequired = false;
@@ -1076,34 +1220,6 @@ function processRemoteSyncStatus(payload) {
 	isPushRequired = commitsAhead > 0;
 	toggleCommitButton();
 	togglePushPullPublishButton();
-}
-
-// C# - Folder selected
-function folderSelected(directory) {
-	if (activeBrowseInput) {
-		activeBrowseInput.value = directory.path;
-		activeBrowseInput.dispatchEvent(new Event("input"));
-		activeBrowseInput.focus();
-		activeBrowseInput = null;
-	}
-}
-
-// C# - App init
-function appInit(data) {
-	// Visuals
-	currentTheme = data.Settings.Theme;
-	processThemesLoaded(data.Themes);
-
-	// Data
-	loadRepositoriesIntoDropdown(data.Repositories);
-
-	// Load last repo
-	if (data.Settings.LastRepoPath) {
-		const lastRepoItem = findRepoItem(data.Settings.LastRepoPath);
-		if (lastRepoItem) { lastRepoItem.click(); }
-	}
-
-	document.body.classList.remove("loading");
 }
 
 // ======================== BRANCH HELPERS ========================
@@ -1346,36 +1462,6 @@ function getCheckedFilePaths() {
 		.map((checkbox) => checkbox.closest(".change-item").dataset.path);
 }
 
-// Toggles LeftSidebar Push/Pull Button
-function togglePushPullPublishButton() {
-	if (!currentBranch || !currentRepoHasRemote) {
-		pushPullPublishBtn.disabled = true;
-		pushPullPublishBtn.classList.remove("push", "pull", "publish");
-		return;
-	}
-
-	if (!currentBranchHasUpstream) {
-		pushPullPublishBtn.classList.remove("push", "pull");
-		pushPullPublishBtn.disabled = false;
-		pushPullPublishBtn.title = "Publish branch";
-		pushPullPublishBtn.classList.add("publish");
-	} else if (isPullRequired) {
-		pushPullPublishBtn.classList.remove("push", "publish");
-		pushPullPublishBtn.disabled = false;
-		pushPullPublishBtn.title = `Pull ${commitsBehind} commit${commitsBehind === 1 ? "" : "s"}`;
-		pushPullPublishBtn.classList.add("pull");
-	} else if (isPushRequired) {
-		pushPullPublishBtn.classList.remove("pull", "publish");
-		pushPullPublishBtn.disabled = false;
-		pushPullPublishBtn.title = `Push ${commitsAhead} commit${commitsAhead === 1 ? "" : "s"}`;
-		pushPullPublishBtn.classList.add("push");
-	} else {
-		pushPullPublishBtn.disabled = true;
-		pushPullPublishBtn.title = "Up to date";
-		pushPullPublishBtn.classList.remove("pull", "push", "publish");
-	}
-}
-
 // Updates MasterCheckbox in the ChangesTab in RightSidebar
 function updateMasterCheckboxState() {
 	const allFileCheckboxes = Array.from(document.querySelectorAll(".changes-item-checkbox"));
@@ -1387,7 +1473,7 @@ function updateMasterCheckboxState() {
 	toggleCommitButton();
 }
 
-// Shows the diff of a current changed file in the diff viewer
+// Requests the diff from C# -> processed by 'processFileDiffLoaded'
 function requestFileDiff(filePath, showLoading = true) {
 	diffFilename.textContent = filePath;
 
@@ -1534,13 +1620,6 @@ function refreshRepoState() {
 	}
 }
 
-// C# - Repo fetching
-function fetchRepo(repo) {
-	stopFetchAnimation();
-	refreshRepoState();
-	toggleCommitButton();
-}
-
 // C# - Repo files changed
 function processFileChanges(repo) {
 	if (currentRepoPath === repo.repoPath) {
@@ -1665,7 +1744,7 @@ function processBranchHistoryAppended(commits) {
 	renderHistory(commits, true);
 }
 
-// C# - History commit details
+// C# - Commit details loaded
 function loadCommitDetails(details) {
 	activeDetailsFile = "";
 
@@ -1749,7 +1828,23 @@ function loadCommitDetails(details) {
 	updateCustomScrollbar(detailsFileList, detailsFileScrollbar);
 }
 
-// C# - Load diff text
+// C# - Commit checked out handler
+function processCommitCheckedOut() {
+	resetViewers();
+	if (currentRepoPath) {
+		sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, {
+			repoPath: currentRepoPath
+		});
+	}
+}
+
+// C# - Commit reverted handler
+function processCommitReverted() {
+	resetViewers();
+	refreshRepoState();
+}
+
+// C# - Renders diff text into the given viewer
 function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget) {
 	if (!diffText || diffText.trim() === "") {
 		contentTarget.textContent = "(No changes or binary file)";
@@ -1813,30 +1908,14 @@ function renderFileDiff(diffText, contentTarget, wrapperTarget, scrollbarTarget)
 	updateCustomScrollbar(wrapperTarget, scrollbarTarget);
 }
 
-// C# - Commit checked out handler
-function processCommitCheckedOut() {
-	resetViewers();
-	if (currentRepoPath) {
-		sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, {
-			repoPath: currentRepoPath
-		});
-	}
-}
-
-// C# - Commit reverted handler
-function processCommitReverted() {
-	resetViewers();
-	refreshRepoState();
+// C# - Changed file diff loaded (ChangesTab)
+function processFileDiffLoaded(payload) {
+	renderFileDiff(payload.diffText, diffContent, diffBodyWrapper, diffScrollbar);
 }
 
 // C# - Commit file diff loaded (HistoryTab)
 function processCommitFileDiffLoaded(payload) {
 	renderFileDiff(payload.diffText, detailsContent, detailsBodyWrapper, detailsScrollbar);
-}
-
-// C# - Commit file diff loaded (ChangesTab)
-function processFileDiffLoaded(payload) {
-	renderFileDiff(payload.diffText, diffContent, diffBodyWrapper, diffScrollbar);
 }
 
 // Resets the file-diff viewer to its empty/placeholder state
@@ -2073,13 +2152,7 @@ function processGlobalConfigLoad(config) {
 	globalConfigRequestSource = null;
 }
 
-// C# - Handle backend errors
-function showErrorModal(payload) {
-	errorModalMessage.textContent = payload?.message || "An unknown error occurred.";
-	errorModal.classList.add("show");
-}
-
-// C# Settings saved handler
+// C# - Settings saved handler
 function processSettingsSaved(payload) {
 	applyTheme(payload.Theme);
 }
@@ -2221,33 +2294,6 @@ resizer.addEventListener("mousedown", (event) => {
 	document.body.style.userSelect = "none";
 });
 
-function resize(event) {
-	if (!isResizing) { return; }
-
-	let targetWidth = window.innerWidth - event.clientX;
-	let newWidth = Math.max(minRightWidth, Math.min(targetWidth, maxRightWidth));
-
-	// Calculate always visible
-	rightSidebar.style.width = `${newWidth}px`;
-	branchContainer.style.width = `${newWidth}px`;
-
-	if (branchPanel.classList.contains("show")) {
-		branchPanel.style.width = `${newWidth}px`;
-	}
-
-	if (repoPanel.classList.contains("show")) {
-		repoPanel.style.width = `${repoContainer.offsetWidth}px`;
-		repoPanel.style.left = `${repoContainer.offsetLeft}px`;
-	}
-}
-
-function stopResize() {
-	isResizing = false;
-	document.removeEventListener("mousemove", resize);
-	document.removeEventListener("mouseup", stopResize);
-	document.body.style.userSelect = "";
-}
-
 // Sidebar tab switching (right-sidebar/tab-selector)
 tabBtnChanges.addEventListener("click", switchToChangesTab);
 
@@ -2333,46 +2379,6 @@ window.addEventListener("click", (event) => {
 		}
 	}
 }, true);
-
-// Search & Selection Setup (dropdowns)
-const setupFilter = (inputSelector, panelSelector) => {
-	const searchInput = document.querySelector(inputSelector);
-
-	searchInput.addEventListener("input", (event) => {
-		const searchTerm = event.target.value.toLowerCase();
-
-		const dropdownItems = document.querySelectorAll(`${panelSelector} .dropdown-item`);
-
-		dropdownItems.forEach((item) => {
-			const itemText = item.textContent.toLowerCase();
-
-			if (itemText.includes(searchTerm)) { item.style.display = ""; }
-			else { item.style.display = "none"; }
-		});
-
-		updateCustomScrollbar(repoList, repoScrollbar);
-		updateCustomScrollbar(branchList, branchScrollbar);
-	});
-};
-
-const setupSelection = (panelSelector, btnValueSelector) => {
-	const panel = document.querySelector(panelSelector);
-	const valueDisplay = document.querySelector(btnValueSelector);
-
-	panel.addEventListener("click", (event) => {
-		const item = event.target.closest(".dropdown-item");
-
-		if (item && !item.classList.contains("invalid")) {
-			valueDisplay.textContent = item.textContent;
-
-			panel.querySelectorAll(".dropdown-item").forEach((elem) => { elem.classList.remove("active"); });
-
-			item.classList.add("active");
-
-			closeDropdowns();
-		}
-	});
-};
 
 setupFilter("#repositories-filter .filter-input", "#repository-dropdown-panel");
 setupFilter("#branches-filter .filter-input", "#branch-dropdown-panel");
