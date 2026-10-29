@@ -264,7 +264,7 @@ const historyItemMenuRevert = historyItemContextMenu.querySelector(".context-men
 const historyItemMenuCreateBranch = historyItemContextMenu.querySelector(".context-menu-item.item-create-branch");
 const historyItemMenuCopySHA = historyItemContextMenu.querySelector(".context-menu-item.item-copy-sha");
 
-// ProtectedBranches list, KnownBinaryExtensions list & DefaultTheme
+// ProtectedBranches list, KnownBinaryExtensions list, DefaultTheme & CustomScrollbar sizes
 const protectedBranches = ["main", "master"];
 const binaryExts = [
 	".exe", ".dll", ".bin", ".obj",
@@ -273,6 +273,8 @@ const binaryExts = [
 	".gz", ".7z", ".pdf",
 ];
 const defaultTheme = "catppuccin-mocha";
+const scrollbarEdgePadding = 6;
+const scrollbarMinThumbHeight = 30;
 
 // ======================== APP STATE ========================
 let currentRepoPath = "";
@@ -468,7 +470,7 @@ const IpcHandlers = {
 	[IpcActions.REPO_ADDED]: addRepositoryToDropdown,
 	[IpcActions.REPO_REMOVED]: deleteRepoFromDropdown,
 	[IpcActions.REPO_COMMITTED]: processCommit,
-	[IpcActions.REPO_FETCHED]: fetchRepo,
+	[IpcActions.REPO_FETCHED]: processFetchRepo,
 	[IpcActions.REPO_PULLED]: processRepoPulled,
 	[IpcActions.REPO_PUSHED]: processRepoPushed,
 	[IpcActions.REPO_PUBLISHED]: processRepoPublished,
@@ -654,7 +656,7 @@ const showContextMenu = (event, contextMenu, activeItem = null) => {
 	contextMenu.style.top = `${place(event.clientY, contextMenu.offsetHeight, window.innerHeight)}px`;
 };
 
-// Closes all context mneus when clicking outside of them
+// Closes all context menus when clicking outside of them
 const closeContextMenusOnOutsideClick = (event) => {
 	document.querySelectorAll(".context-menu.show").forEach((menu) => {
 		if (menu.contains(event.target)) { return; }
@@ -717,32 +719,31 @@ const toggleDropdown = (toShow, toHide, event) => {
 	}
 };
 
+// Calculates thumb size & scroll range for custom scrollbar (based on container)
+const getThumbMetrics = (container) => {
+	const containerH = container.clientHeight;
+	const contentH = container.scrollHeight;
+	const usableTrackHeight = containerH - scrollbarEdgePadding * 2;
+	const thumbHeight = Math.max((containerH / contentH) * usableTrackHeight, scrollbarMinThumbHeight);
+	const maxThumbTop = usableTrackHeight - thumbHeight;
+	return { containerH, contentH, thumbHeight, maxThumbTop };
+};
+
 // Updates CustomScrollbar height & range
 const updateCustomScrollbar = (container, scrollbar) => {
 	// If should be visible
 	if (!container || !scrollbar) { return; }
 
-	const containerH = container.clientHeight;
-	const contentH = container.scrollHeight;
-
+	const { containerH, contentH, thumbHeight, maxThumbTop } = getThumbMetrics(container);
 	if (contentH <= containerH) {
 		scrollbar.style.display = "none";
 		return;
 	}
-
 	scrollbar.style.display = "block";
 
-	const EDGE_PADDING = 6;
-
-	const usableTrackHeight = containerH - EDGE_PADDING * 2;
-
 	// Style math
-	const heightRatio = containerH / contentH;
-	const thumbHeight = Math.max(heightRatio * usableTrackHeight, 30);
-
 	const scrollPercentage = container.scrollTop / (contentH - containerH);
-	const maxThumbTop = usableTrackHeight - thumbHeight;
-	const thumbTop = EDGE_PADDING + scrollPercentage * maxThumbTop;
+	const thumbTop = scrollbarEdgePadding + scrollPercentage * maxThumbTop;
 
 	// Apply style
 	scrollbar.style.height = `${thumbHeight}px`;
@@ -774,15 +775,7 @@ const interactCustomScrollbar = (container, scrollbar) => {
 
 		const deltaY = e.clientY - startY;
 
-		const containerH = container.clientHeight;
-		const contentH = container.scrollHeight;
-		const EDGE_PADDING = 6;
-		const usableTrackHeight = containerH - EDGE_PADDING * 2;
-
-		const heightRatio = containerH / contentH;
-		const thumbHeight = Math.max(heightRatio * usableTrackHeight, 30);
-		const maxThumbTop = usableTrackHeight - thumbHeight;
-
+		const { containerH, contentH, maxThumbTop } = getThumbMetrics(container);
 		if (maxThumbTop <= 0) { return; }
 
 		const scrollRatio = (contentH - containerH) / maxThumbTop;
@@ -1178,7 +1171,7 @@ function togglePushPullPublishButton() {
 }
 
 // C# - Repo fetched handler
-function fetchRepo(repo) {
+function processFetchRepo() {
 	stopFetchAnimation();
 	refreshRepoState();
 	toggleCommitButton();
