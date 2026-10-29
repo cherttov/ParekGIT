@@ -728,6 +728,10 @@ select:focus {
 	text-align: left;
 }
 
+.details-footer-btn .btn-value .change-status {
+	margin-right: 8px;
+}
+
 .details-footer-btn:hover {
 	background-color: var(--bg-hover);
 }
@@ -1342,7 +1346,7 @@ select:focus {
 
 .merge-branch-inline {
 	display: inline-block;
-	margin: 0 4px;
+	margin: 0;
 }
 
 .merge-branch-selector {
