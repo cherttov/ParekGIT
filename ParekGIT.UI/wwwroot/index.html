@@ -22,7 +22,7 @@
 				<div class="dropdown-panel" id="repository-dropdown-panel">
 					<div class="filter-container" id="repositories-filter">
 						<div class="icon-filter"></div>
-						<input type="text"
+						<input id="repo-search-input" type="text"
 							   class="filter-input"
 							   placeholder="Search" />
 
@@ -197,8 +197,8 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Name</label>
-							<input type="text"
+							<label for="branch-new-modal-name">Name</label>
+							<input id="branch-new-modal-name" type="text"
 								   class="modal-input"
 								   placeholder="new branch name" />
 						</div>
@@ -220,14 +220,14 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Create a branch from commit:</label>
-							<label class="highlight-name"
-								   id="branch-history-modal-commit-name">{ commit_name }</label>
+							<p class="modal-text">Create a branch from commit:</p>
+							<span class="highlight-name"
+								   id="branch-history-modal-commit-name">{ commit-name }</span>
 						</div>
 
 						<div class="modal-body-row">
-							<label>Name</label>
-							<input type="text"
+							<label for="branch-history-new-modal-name">Name</label>
+							<input id="branch-history-new-modal-name" type="text"
 								   class="modal-input"
 								   placeholder="new branch name" />
 						</div>
@@ -249,8 +249,8 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Name</label>
-							<input type="text"
+							<label for="branch-rename-modal-name">Name</label>
+							<input id="branch-rename-modal-name" type="text"
 								   class="modal-input"
 								   placeholder="new branch name" />
 						</div>
@@ -272,11 +272,11 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>
+							<p class="modal-text">
 								Are you sure you want to delete this
 								branch?
-							</label>
-							<label class="highlight-name" id="delete-modal-branch-name">{ branch_name }</label>
+							</p>
+							<span class="highlight-name" id="delete-modal-branch-name">{ branch-name }</span>
 						</div>
 
 						<div class="modal-body-row checkbox-row" id="branch-delete-remote-row">
@@ -303,16 +303,16 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>
+							<p class="modal-text">
 								This branch has
 								<span class="highlight-name merge-branch-inline" id="unmerged-changes-count">{ X }</span>
 								changes that have not been merged.
-							</label>
+							</p>
 						</div>
 
 						<div class="modal-body-row">
-							<label>Are you sure you want to permanently delete it?</label>
-							<label class="highlight-name" id="delete-unmerged-modal-branch-name">{ branch_name }</label>
+							<p class="modal-text">Are you sure you want to permanently delete it?</p>
+							<span class="highlight-name" id="delete-unmerged-modal-branch-name">{ branch-name }</span>
 						</div>
 
 					</div>
@@ -333,12 +333,12 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>
+							<p class="modal-text">
 								Are you sure you want to merge
 								<span class="highlight-name merge-branch-inline" id="merge-modal-source-branch">{ branch1 }</span>
 								into 
 								<span class="highlight-name merge-branch-inline" id="merge-modal-target-branch">{ branch2 }</span>
-							</label>
+							</p>
 						</div>
 
 						<div class="modal-body-row">
@@ -370,9 +370,9 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Are you sure you want to discard</label>
-							<label class="highlight-name"
-								   id="discard-all-modal-count">{ x } changed files</label>
+							<p class="modal-text">Are you sure you want to discard</p>
+							<span class="highlight-name"
+								   id="discard-all-modal-count">{ x } changed files</span>
 						</div>
 					</div>
 
@@ -414,23 +414,23 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Repository URL</label>
-							<input type="text"
+							<label for="repo-clone-modal-url">Repository URL</label>
+							<input id="repo-clone-modal-url" type="text"
 								   class="modal-input input-url"
 								   placeholder="repository url" />
 						</div>
 
 						<div class="modal-body-row checkbox-row">
 							<label>
-								<input type="checkbox" class="ui-checkbox" />
+								<input id="clone-modal-clone-local" type="checkbox" class="ui-checkbox" />
 								Clone as local
 							</label>
 						</div>
 
 						<div class="modal-body-row">
-							<label>Local path</label>
+							<label for="repo-clone-modal-path">Local path</label>
 							<div class="input-button-container">
-								<input type="text"
+								<input id="repo-clone-modal-path" type="text"
 									   class="modal-input input-path"
 									   placeholder="local path" />
 								<button class="browse-btn">Browse</button>
@@ -456,16 +456,16 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Name</label>
-							<input type="text"
+							<label for="repo-create-modal-name">Name</label>
+							<input id="repo-create-modal-name" type="text"
 								   class="modal-input input-name"
 								   placeholder="repository name" />
 						</div>
 
 						<div class="modal-body-row">
-							<label>Local path</label>
+							<label for="repo-create-modal-path">Local path</label>
 							<div class="input-button-container">
-								<input type="text"
+								<input id="repo-create-modal-path" type="text"
 									   class="modal-input input-path"
 									   placeholder="repository path" />
 								<button class="browse-btn">Browse</button>
@@ -473,7 +473,7 @@
 						</div>
 
 						<div class="modal-body-row">
-							<label>Git ignore</label>
+							<label for="select-git-ignore">Git ignore</label>
 							<select class="modal-input" id="select-git-ignore">
 								<option value="None">None</option>
 								<option value="angular">Angular</option>
@@ -512,7 +512,7 @@
 						</div>
 
 						<div class="modal-body-row">
-							<label>License</label>
+							<label for="select-git-license">License</label>
 							<div class="input-button-container">
 								<select class="modal-input"
 										id="select-git-license">
@@ -534,19 +534,19 @@
 									<div class="license-edit-panel"
 										 id="license-edit-panel">
 										<div class="license-field-row">
-											<label>Year</label>
+											<label for="license-field-year">Year</label>
 											<input type="text"
 												   class="modal-input"
 												   id="license-field-year" />
 										</div>
 										<div class="license-field-row">
-											<label>Author</label>
+											<label for="license-field-organization">Author</label>
 											<input type="text"
 												   class="modal-input"
 												   id="license-field-organization" />
 										</div>
 										<div class="license-field-row">
-											<label>Project</label>
+											<label for="license-field-project">Project</label>
 											<input type="text"
 												   class="modal-input"
 												   id="license-field-project" />
@@ -575,9 +575,9 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Local path</label>
+							<label for="repo-add-modal-path">Local path</label>
 							<div class="input-button-container">
-								<input type="text"
+								<input id="repo-add-modal-path" type="text"
 									   class="modal-input"
 									   placeholder="repository path" />
 								<button class="browse-btn">Browse</button>
@@ -603,17 +603,17 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>
+							<p class="modal-text">
 								Are you sure you want to remove this repository
 								from ParekGIT?
-							</label>
-							<label class="highlight-name"
-								   id="remove-modal-repo-name">{ repository_name }</label>
+							</p>
+							<span class="highlight-name"
+								   id="remove-modal-repo-name">{ repository-name }</span>
 						</div>
 
 						<div class="modal-body-row checkbox-row">
 							<label>
-								<input type="checkbox" class="ui-checkbox" />
+								<input id="repo-remove-modal-recycle-checkbox" type="checkbox" class="ui-checkbox" />
 								Also move this repository to recycle bin
 							</label>
 						</div>
@@ -635,7 +635,7 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Theme: </label>
+							<label for="settings-theme-select">Theme: </label>
 							<select class="modal-input"
 									id="settings-theme-select">
 								<!-- sent by backend -->
@@ -643,7 +643,7 @@
 						</div>
 
 						<div class="modal-body-row">
-							<label>Logs</label>
+							<p class="modal-text">Logs</p>
 							<div class="button-button-container">
 								<button class="browse-btn view-logs"
 										id="settings-logs-view">
@@ -673,15 +673,15 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Name</label>
-							<input type="text"
+							<label for="account-modal-name">Name</label>
+							<input id="account-modal-name" type="text"
 								   class="modal-input input-name"
 								   placeholder="{ author-name }" />
 						</div>
 
 						<div class="modal-body-row">
-							<label>Email</label>
-							<input type="text"
+							<label for="account-modal-email">Email</label>
+							<input id="account-modal-email" type="text"
 								   class="modal-input input-email"
 								   placeholder="{ author-email }" />
 						</div>
@@ -689,7 +689,7 @@
 						<div class="modal-body-divider"></div>
 
 						<div class="modal-body-row">
-							<label>Linked accounts</label>
+							<p class="modal-text">Linked accounts</p>
 
 							<div class="linked-account-row"
 								 data-provider="github">
@@ -764,15 +764,15 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Name</label>
-							<input type="text"
+							<label for="config-modal-name">Name</label>
+							<input id="config-modal-name" type="text"
 								   class="modal-input input-name"
 								   placeholder="{ author-name }" />
 						</div>
 
 						<div class="modal-body-row">
-							<label>Email</label>
-							<input type="text"
+							<label for="config-modal-email">Email</label>
+							<input id="config-modal-email" type="text"
 								   class="modal-input input-email"
 								   placeholder="{ author-email }" />
 						</div>
@@ -794,9 +794,9 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Repository not found at path: </label>
-							<label class="highlight-name"
-								   id="missing-modal-repo-path">{ repo_path }</label>
+							<p class="modal-text">Repository not found at path: </p>
+							<span class="highlight-name"
+								   id="missing-modal-repo-path">{ repo-path }</span>
 						</div>
 					</div>
 

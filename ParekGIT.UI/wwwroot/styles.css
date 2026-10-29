@@ -1160,7 +1160,9 @@ select:focus {
 	gap: 4px;
 }
 
-.modal-body-row label {
+.modal-body-row label,
+.modal-text {
+	margin: 0;
 	font-family: inherit;
 	font-size: 15px;
 }
@@ -1334,6 +1336,8 @@ select:focus {
 }
 
 .highlight-name {
+	font-family: inherit;
+	font-size: 15px;
 	color: var(--accent);
 	font-weight: 600;
 	margin-top: 4px;
