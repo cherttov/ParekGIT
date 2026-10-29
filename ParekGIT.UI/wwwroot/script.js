@@ -470,7 +470,7 @@ const IpcHandlers = {
 	[IpcActions.REPO_ADDED]: addRepositoryToDropdown,
 	[IpcActions.REPO_REMOVED]: deleteRepoFromDropdown,
 	[IpcActions.REPO_COMMITTED]: processCommit,
-	[IpcActions.REPO_FETCHED]: processFetchRepo,
+	[IpcActions.REPO_FETCHED]: processRepoFetched,
 	[IpcActions.REPO_PULLED]: processRepoPulled,
 	[IpcActions.REPO_PUSHED]: processRepoPushed,
 	[IpcActions.REPO_PUBLISHED]: processRepoPublished,
@@ -858,6 +858,50 @@ const copyToClipboard = (text) => {
 		.catch((err) => console.error("Failed to copy text: ", err));
 };
 
+// Creates an element with text and a class
+const createEl = (tag, className = "", text = undefined) => {
+	const el = document.createElement(tag);
+	if (className) { el.className = className; }
+	if (text !== undefined) { el.textContent = text; }
+	return el;
+};
+
+// Creates an <option> with the given value & label
+const createOption = (value, text) => {
+	const option = createEl("option", "", text);
+	option.value = value;
+	return option;
+};
+
+// Checks if a file has a known binary extension
+const isBinaryPath = (path) => {
+	const dot = path.lastIndexOf(".");
+	return dot >= 0 && binaryExts.includes(path.substring(dot).toLowerCase());
+};
+
+// Maps git status code to its visual badge, title and class
+const getStatusInfo = (statusCode, untrackedMark) => {
+	if (statusCode.includes(untrackedMark)) { return { letter: "U", className: "status-untracked", title: "Untracked" }; }
+	if (statusCode.includes("A")) { return { letter: "A", className: "status-added", title: "Added" }; }
+	if (statusCode.includes("D")) { return { letter: "D", className: "status-deleted", title: "Deleted" }; }
+	if (statusCode.includes("R")) { return { letter: "R", className: "status-renamed", title: "Renamed" }; }
+	return { letter: "M", className: "status-modified", title: "Modified" };
+};
+
+// Creates a file status badge
+const createStatusBadge = (status) => {
+	const badge = createEl("span", `change-status ${status.className}`, status.letter);
+	badge.title = status.title;
+	return badge;
+};
+
+// Runs the action on EnterKey pressed inside the input
+const onEnter = (input, action) => {
+	input.addEventListener("keyup", (event) => {
+		if (event.key === "Enter") { action(); }
+	});
+};
+
 // ======================== MODAL VALIDATORS ========================
 // Enable/disable modal's confirm button based on whether its input is valid.
 
@@ -991,11 +1035,9 @@ function setRepoToolsEnabled(enabled) {
 
 // Build a repo dropdown item
 function createRepoDropdownItem(repo) {
-	const item = document.createElement("div");
-	item.className = "dropdown-item";
+	const item = createEl("div", "dropdown-item");
 	item.dataset.path = repo.AbsolutePath;
-	item.innerHTML = `<span class="dropdown-item-text"></span>`;
-	item.querySelector(".dropdown-item-text").textContent = repo.Name;
+	item.append(createEl("span", "dropdown-item-text", repo.Name));
 
 	if (!repo.IsValid) {
 		item.classList.add("invalid");
@@ -1171,7 +1213,7 @@ function togglePushPullPublishButton() {
 }
 
 // C# - Repo fetched handler
-function processFetchRepo() {
+function processRepoFetched() {
 	stopFetchAnimation();
 	refreshRepoState();
 	toggleCommitButton();
@@ -1233,29 +1275,24 @@ function loadBranchesIntoDropdown(branches) {
 	let currentBranchName = "None";
 
 	branches.forEach((branch) => {
-		const item = document.createElement("div");
+		const item = createEl("div", "dropdown-item");
 
 		if (branch.IsCurrent) {
-			item.className = "dropdown-item active";
+			item.classList.add("active");
 			currentBranchName = branch.Name;
 			currentBranch = branch.Name;
 			currentBranchRevision = branch.IsDetached ? branch.TargetCommitHash : branch.Name;
 			currentBranchIsDetached = branch.IsDetached;
 			currentBranchHasUpstream = !!branch.RemoteBranch;
 			currentBranchRemoteBranch = branch.RemoteBranch || "";
-		} else {
-			item.className = "dropdown-item";
 		}
 
 		item.dataset.branchName = branch.Name;
 		item.dataset.detached = branch.IsDetached ? "true" : "false";
 
 		const isUnpublished = currentRepoHasRemote && !branch.IsRemote && !branch.IsDetached && !branch.RemoteBranch;
-		item.innerHTML = `
-			<span class="dropdown-item-text"></span>
-			${isUnpublished ? `<span class="dropdown-item-unpublished-icon"></span>` : ""}
-		`;
-		item.querySelector(".dropdown-item-text").textContent = branch.Name;
+		item.append(createEl("span", "dropdown-item-text", branch.Name));
+		if (isUnpublished) { item.append(createEl("span", "dropdown-item-unpublished-icon")); }
 
 		// LMB - select
 		item.addEventListener("click", () => {
@@ -1354,9 +1391,7 @@ function setupMergeModal(preselectedTarget) {
 	branchMergeModalSelectSource.innerHTML = "";
 	branchMergeModalSelectTarget.innerHTML = "";
 
-	const defaultSourceOption = document.createElement("option");
-	defaultSourceOption.value = "";
-	defaultSourceOption.textContent = "Select source...";
+	const defaultSourceOption = createOption("", "Select source...");
 	defaultSourceOption.disabled = true;
 	defaultSourceOption.selected = true;
 	branchMergeModalSelectSource.appendChild(defaultSourceOption);
@@ -1366,15 +1401,8 @@ function setupMergeModal(preselectedTarget) {
 		const branchName = item.dataset.branchName;
 		if (!branchName || item.dataset.detached == "true") { return; }
 
-		const optionSource = document.createElement("option");
-		optionSource.value = branchName;
-		optionSource.textContent = branchName;
-		branchMergeModalSelectSource.appendChild(optionSource);
-
-		const optionTarget = document.createElement("option");
-		optionTarget.value = branchName;
-		optionTarget.textContent = branchName;
-		branchMergeModalSelectTarget.appendChild(optionTarget);
+		branchMergeModalSelectSource.appendChild(createOption(branchName, branchName));
+		branchMergeModalSelectTarget.appendChild(createOption(branchName, branchName));
 	});
 
 	branchMergeModalSelectTarget.value = preselectedTarget || currentBranch;
@@ -1470,8 +1498,7 @@ function updateMasterCheckboxState() {
 function requestFileDiff(filePath, showLoading = true) {
 	diffFilename.textContent = filePath;
 
-	const ext = filePath.substring(filePath.lastIndexOf(".")).toLowerCase();
-	if (binaryExts.includes(ext)) {
+	if (isBinaryPath(filePath)) {
 		diffContent.textContent = "Binary file changed (no preview available)";
 		return;
 	}
@@ -1507,40 +1534,20 @@ function renderChangedFiles(files) {
 	}
 
 	files.forEach((file) => {
-		const item = document.createElement("div");
-		item.className = "change-item";
+		const item = createEl("div", "change-item");
 		item.dataset.path = file.Path;
 
-		let statusLetter = "M";
-		let statusClass = "status-modified";
-		let statusTitle = "Modified";
+		const status = getStatusInfo(file.StatusCode, "?");
 
-		if (file.StatusCode.includes("?")) {
-			statusLetter = "U";
-			statusClass = "status-untracked";
-			statusTitle = "Untracked"
-		} else if (file.StatusCode.includes("A")) {
-			statusLetter = "A";
-			statusClass = "status-added";
-			statusTitle = "Added";
-		} else if (file.StatusCode.includes("D")) {
-			statusLetter = "D";
-			statusClass = "status-deleted";
-			statusTitle = "Deleted";
-		} else if (file.StatusCode.includes("R")) {
-			statusLetter = "R";
-			statusClass = "status-renamed";
-			statusTitle = "Renamed";
-		}
+		const left = createEl("div", "change-item-left");
+		left.append(createStatusBadge(status), createEl("div", "change-path", file.Path));
 
-		item.innerHTML = `
-			<div class="change-item-left">
-				<div class="change-status ${statusClass}" title="${statusTitle}">${statusLetter}</div>
-				<div class="change-path"></div>
-			</div>
-			<input type="checkbox" class="ui-checkbox changes-item-checkbox" checked/>
-		`;
-		item.querySelector(".change-path").textContent = file.Path;
+		const checkbox = createEl("input", "ui-checkbox changes-item-checkbox");
+		checkbox.type = "checkbox";
+		checkbox.checked = !uncheckedPaths.has(file.Path);
+		checkbox.addEventListener("change", () => { updateMasterCheckboxState(); });
+
+		item.append(left, checkbox);
 
 		if (file.Path === selectedPath) {
 			item.classList.add("selected");
@@ -1557,10 +1564,6 @@ function renderChangedFiles(files) {
 
 			requestFileDiff(file.Path);
 		});
-
-		const checkbox = item.querySelector(".changes-item-checkbox");
-		checkbox.checked = !uncheckedPaths.has(file.Path);
-		checkbox.addEventListener("change", () => { updateMasterCheckboxState(); });
 
 		// RMB - Change item context menu
 		item.addEventListener("contextmenu", (event) => {
@@ -1662,21 +1665,13 @@ function renderHistory(commits, isAppending = false) {
 	}
 
 	commits.forEach((commit) => {
-		const item = document.createElement("div");
-		item.className = "history-item";
-
+		const item = createEl("div", "history-item");
 		item.dataset.hash = commit.Hash;
 
-		item.innerHTML = `
-			<div class="history-message"></div>
-			<div class="history-meta">
-				<div class="history-author"></div>
-				<div class="history-time"></div>
-			</div>
-		`;
-		item.querySelector(".history-message").textContent = commit.Message;
-		item.querySelector(".history-author").textContent = commit.Author;
-		item.querySelector(".history-time").textContent = commit.TimeAgo;
+		const message = createEl("div", "history-message", commit.Message);
+		const meta = createEl("div", "history-meta");
+		meta.append(createEl("div", "history-author", commit.Author), createEl("div", "history-time", commit.TimeAgo));
+		item.append(message, meta);
 
 		// LMB - Show commit history details
 		item.addEventListener("click", () => {
@@ -1756,29 +1751,10 @@ function loadCommitDetails(details) {
 	detailsBtn.disabled = false;
 
 	details.files.forEach((file, index) => {
-		const item = document.createElement("div");
-		item.className = "dropdown-item";
+		const item = createEl("div", "dropdown-item");
 
-		let statusClass = "status-modified";
-		let statusTitle = "Modified";
-
-		if (file.StatusCode.startsWith("A")) {
-			statusClass = "status-added";
-			statusTitle = "Added";
-		} else if (file.StatusCode.startsWith("D")) {
-			statusClass = "status-deleted";
-			statusTitle = "Deleted";
-		} else if (file.StatusCode.startsWith("R")) {
-			statusClass = "status-renamed";
-			statusTitle = "Renamed";
-		} else if (file.StatusCode.startsWith("U")) {
-			statusClass = "status-untracked";
-			statusTitle = "Untracked";
-		}
-
-		item.innerHTML = `<span class="change-status ${statusClass}">${file.StatusCode[0]}</span>
-						  <span class="change-path"></span>`;
-		item.querySelector(".change-path").textContent = file.Path;
+		const status = getStatusInfo(file.StatusCode, "U");
+		item.append(createStatusBadge(status), createEl("span", "change-path", file.Path));
 
 		// LMB
 		item.addEventListener("click", (event) => {
@@ -1792,13 +1768,10 @@ function loadCommitDetails(details) {
 			detailsFileList.querySelectorAll(".dropdown-item").forEach((el) => el.classList.remove("active"));
 			item.classList.add("active");
 
-			detailsBtnValue.innerHTML = `<span class="change-status ${statusClass}" title="${statusTitle}">${file.StatusCode[0]}</span>
-										 <span class="change-path"></span>`;
-			detailsBtnValue.querySelector(".change-path").textContent = file.Path;
+			detailsBtnValue.replaceChildren(createStatusBadge(status), createEl("span", "change-path", file.Path));
 			closeDropdowns();
 
-			const ext = file.Path.substring(file.Path.lastIndexOf(".")).toLowerCase();
-			if (binaryExts.includes(ext)) {
+			if (isBinaryPath(file.Path)) {
 				detailsContent.innerHTML = `<span class="diff-chunk">Binary file changes (no preview available)</span>`;
 				updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar);
 				return;
@@ -1978,60 +1951,47 @@ function loadStashes(stashes) {
 
 	// Empty repo stashes
 	if (!stashes || stashes.length === 0) {
-		const empty = document.createElement("div");
-		empty.className = "stash-empty";
-		empty.textContent = "No stashes in this repository";
-		stashRowsContainer.appendChild(empty);
-
+		stashRowsContainer.append(createEl("div", "stash-empty", "No stashes in this repository"));
 		updateCustomScrollbar(stashRowsContainer, stashScrollbar);
 		return;
 	}
 
 	stashes.forEach((stash) => {
-		const row = document.createElement("div");
-		row.className = "stash-modal-row";
+		const row = createEl("div", "stash-modal-row");
 		row.dataset.selector = stash.Selector;
 
-		row.innerHTML = `
-			<div class="stash-info">
-				<div class="stash-message"></div>
-				<div class="stash-meta">
-					<span class="stash-branch"></span>
-					<span class="stash-hash"></span>
-				</div>
-			</div>
-			<div class="stash-actions">
-				<button class="stash-action-btn stash-pop-btn">Pop</button>
-				<button class="stash-action-btn stash-drop-btn">Drop</button>
-			</div>
-		`;
-
-		// Stip git raw message beginning (e.g. "On main: ...")
+		// Strip git raw message beginning (e.g. "On main: ...")
 		const separatorIndex = stash.Message.indexOf(": ");
 		const displayMessage = separatorIndex >= 0 ? stash.Message.slice(separatorIndex + 2) : stash.Message;
 
-		// Set text content
-		row.querySelector(".stash-message").textContent = displayMessage;
-		row.querySelector(".stash-branch").textContent = stash.BranchName;
-		row.querySelector(".stash-hash").textContent = stash.CommitHash.substring(0, 7);
+		// Create info elements
+		const info = createEl("div", "stash-info");
+		const message = createEl("div", "stash-message", displayMessage);
+		const meta = createEl("div", "stash-meta");
+		meta.append(createEl("span", "stash-branch", stash.BranchName), createEl("span", "stash-hash", stash.CommitHash.substring(0, 7)));
+		info.append(message, meta);
 
-		// Wire listeners
-		row.querySelector(".stash-pop-btn").addEventListener("click", (event) => {
+		// Create action elements
+		const actions = createEl("div", "stash-actions");
+		const popBtn = createEl("button", "stash-action-btn stash-pop-btn", "Pop");
+		popBtn.addEventListener("click", (event) => {
 			event.stopPropagation();
 			sendIpcMessage(IpcActions.STASH_POP, {
 				repoPath: currentRepoPath,
 				selector: row.dataset.selector
 			});
 		});
-
-		row.querySelector(".stash-drop-btn").addEventListener("click", (event) => {
+		const dropBtn = createEl("button", "stash-action-btn stash-drop-btn", "Drop");
+		dropBtn.addEventListener("click", (event) => {
 			event.stopPropagation();
 			sendIpcMessage(IpcActions.STASH_DROP, {
 				repoPath: currentRepoPath,
 				selector: row.dataset.selector
 			});
 		});
+		actions.append(popBtn, dropBtn);
 
+		row.append(info, actions);
 		stashRowsContainer.appendChild(row);
 	});
 
@@ -2061,45 +2021,33 @@ function renderTodoList() {
 	todoModalRowsContainer.innerHTML = "";
 
 	if (draftTodos.length === 0) {
-		const empty = document.createElement("div");
-		empty.className = "stash-empty";
-		empty.textContent = "No todos in this repository";
-		todoModalRowsContainer.appendChild(empty);
+		todoModalRowsContainer.append(createEl("div", "stash-empty", "No todos in this repository"));
 	} else { 
 		// Render all existing todo items
 		draftTodos.forEach((todo, index) => {
-			const row = document.createElement("div");
-			row.className = "todo-modal-row";
+			const row = createEl("div", "todo-modal-row");
+
+			// Label
+			const label = createEl("span", "todo-modal-label", todo.TaskLabel);
+			label.classList.toggle("done", todo.IsCompleted);
 
 			// Checkbox
-			const checkbox = document.createElement("input");
+			const checkbox = createEl("input", "ui-checkbox todo-checkbox");
 			checkbox.type = "checkbox";
-			checkbox.className = "ui-checkbox todo-checkbox";
 			checkbox.checked = todo.IsCompleted;
 			checkbox.addEventListener("click", () => {
 				todo.IsCompleted = checkbox.checked;
-
-				if (todo.IsCompleted) { label.classList.add("done"); }
-				else { label.classList.remove("done"); }
+				label.classList.toggle("done", todo.IsCompleted);
 			});
 
-			// Label
-			const label = document.createElement("span");
-			label.className = `todo-modal-label ${todo.IsCompleted ? "done" : ""}`;
-			label.textContent = todo.TaskLabel;
-
 			// Delete
-			const deleteBtn = document.createElement("button");
-			deleteBtn.className = "todo-modal-remove-btn";
-			deleteBtn.innerHTML = "&times;";
+			const deleteBtn = createEl("button", "todo-modal-remove-btn", "×");
 			deleteBtn.addEventListener("click", () => {
 				draftTodos.splice(index, 1);
 				renderTodoList();
 			});
 
-			row.appendChild(checkbox);
-			row.appendChild(label);
-			row.appendChild(deleteBtn);
+			row.append(checkbox, label, deleteBtn);
 			todoModalRowsContainer.appendChild(row);
 		});
 	}
@@ -2156,10 +2104,7 @@ function processThemesLoaded(themes) {
 	settingsModalThemeSelect.innerHTML = "";
 
 	themes.forEach((theme) => {
-		const option = document.createElement("option");
-		option.value = theme.Id;
-		option.textContent = theme.Name;
-		settingsModalThemeSelect.appendChild(option);
+		settingsModalThemeSelect.append(createOption(theme.Id, theme.Name));
 	});
 
 	const themeExists = availableThemes.some(t => t.Id === currentTheme);
@@ -2585,17 +2530,9 @@ repoMissingModalCancelBtn.addEventListener("click", () => {
 });
 
 // Repo related modals 'enter' shortcuts (modals)
-repoCreateModalInputName.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") { repoCreateModalConfirmBtn.click(); }
-});
-
-repoCreateModalInputPath.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") { repoCreateModalConfirmBtn.click(); }
-});
-
-repoAddModalInputPath.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") { repoAddModalConfirmBtn.click(); }
-});
+onEnter(repoCreateModalInputName, () => repoCreateModalConfirmBtn.click());
+onEnter(repoCreateModalInputPath, () => repoCreateModalConfirmBtn.click());
+onEnter(repoAddModalInputPath, () => repoAddModalConfirmBtn.click());
 
 // Repo related modals 'input -> validator' listeners (modals)
 repoCloneModalRepoUrl.addEventListener("input", validateRepoCloneModal);
@@ -2880,17 +2817,9 @@ branchMergeModalConfirmBtn.addEventListener("click", () => {
 });
 
 // Branch related modals 'enter' shortcuts (modals)
-branchNewModalInputName.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") { branchNewModalConfirmBtn.click(); }
-});
-
-branchHistoryNewModal.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") { branchHistoryNewModalConfirmBtn.click(); }
-});
-
-branchRenameModalInputName.addEventListener("keyup", (event) => {
-	if (event.key === "Enter") { branchRenameModalConfirmBtn.click(); }
-});
+onEnter(branchNewModalInputName, () => branchNewModalConfirmBtn.click());
+onEnter(branchHistoryNewModalInputName, () => branchHistoryNewModalConfirmBtn.click());
+onEnter(branchRenameModalInputName, () => branchRenameModalConfirmBtn.click());
 
 // Branch related modals 'input -> validator' listeners (modals)
 branchNewModalInputName.addEventListener("input", validateBranchNewModal);
@@ -3148,9 +3077,7 @@ todoModalInputTask.addEventListener("input", (e) => {
 	todoModalAddBtn.disabled = e.target.value.trim() === "";
 });
 
-todoModalInputTask.addEventListener("keyup", (e) => {
-	if (e.key === "Enter") { addTodoTask(); }
-});
+onEnter(todoModalInputTask, addTodoTask);
 
 todoModalAddBtn.addEventListener("click", addTodoTask);
 
@@ -3187,9 +3114,7 @@ stashBtn.addEventListener("click", () => {
 	sendIpcMessage(IpcActions.STASH_LIST_LOAD, { repoPath: currentRepoPath });
 });
 
-stashModalInputMessage.addEventListener("keyup", (e) => {
-	if (e.key === "Enter") { saveStash(); }
-});
+onEnter(stashModalInputMessage, saveStash);
 
 stashModalSaveBtn.addEventListener("click", saveStash);
 
