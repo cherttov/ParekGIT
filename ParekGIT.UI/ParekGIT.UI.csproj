@@ -40,6 +40,11 @@
 		<ProjectReference Include="..\ParekGIT.Bridge\ParekGIT.Bridge.csproj" />
 	</ItemGroup>
 
+	<Target Name="BuildFrontend" BeforeTargets="Build">
+		<Exec Command="npm install" WorkingDirectory="frontend"/>
+		<Exec Command="npm run build" WorkingDirectory="frontend"/>
+	</Target>
+  
 	<Target AfterTargets="Publish" Name="MovePublishedSingleFile">
 		<ItemGroup>
 			<PublishFile Include="$(PublishDir)\*" />
