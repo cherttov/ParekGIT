@@ -57,7 +57,7 @@
 				<div class="dropdown-panel" id="branch-dropdown-panel">
 					<div class="filter-container" id="branches-filter">
 						<div class="icon-filter"></div>
-						<input type="text"
+						<input id="branch-dropdown-panel-search" type="text"
 							   class="filter-input"
 							   placeholder="Search" />
 
@@ -280,10 +280,8 @@
 						</div>
 
 						<div class="modal-body-row checkbox-row" id="branch-delete-remote-row">
-							<label>
-								<input type="checkbox" class="ui-checkbox" id="branch-delete-modal-remote-checkbox" />
-								Also delete on remote
-							</label>
+							<input type="checkbox" class="ui-checkbox" id="branch-delete-modal-remote-checkbox" />
+							<label for="branch-delete-modal-remote-checkbox">Also delete on remote</label>
 						</div>
 					</div>
 
@@ -392,9 +390,9 @@
 
 					<div class="modal-body">
 						<div class="modal-body-row">
-							<label>Are you sure you want to discard</label>
-							<label class="highlight-name"
-								   id="discard-selected-modal-count">{ x } changed files</label>
+							<p class="modal-text">Are you sure you want to discard</p>
+							<span class="highlight-name"
+								   id="discard-selected-modal-count">{ x } changed files</span>
 						</div>
 					</div>
 
@@ -421,10 +419,8 @@
 						</div>
 
 						<div class="modal-body-row checkbox-row">
-							<label>
-								<input id="clone-modal-clone-local" type="checkbox" class="ui-checkbox" />
-								Clone as local
-							</label>
+							<input id="clone-modal-clone-local" type="checkbox" class="ui-checkbox" />
+							<label for="clone-modal-clone-local">Clone as local</label>
 						</div>
 
 						<div class="modal-body-row">
@@ -612,10 +608,8 @@
 						</div>
 
 						<div class="modal-body-row checkbox-row">
-							<label>
-								<input id="repo-remove-modal-recycle-checkbox" type="checkbox" class="ui-checkbox" />
-								Also move this repository to recycle bin
-							</label>
+							<input id="repo-remove-modal-recycle-checkbox" type="checkbox" class="ui-checkbox" />
+							<label for="repo-remove-modal-recycle-checkbox">Also move this repository to recycle bin</label>
 						</div>
 					</div>
 
