@@ -3,6 +3,8 @@ import { onIpc } from "./ipc.js";
 import { repo } from "../stores/repo.svelte.js";
 import { app } from "../stores/app.svelte.js";
 import { repositories } from "../stores/repositories.svelte.js";
+import { branch } from "../stores/branch.svelte.js";
+import { branches } from "../stores/branches.svelte.js";
 
 export function registerHandlers() {
     // App
@@ -18,10 +20,19 @@ export function registerHandlers() {
     });
 
     // Repo
-    // 	[IpcActions.REPO_CLONED]: addRepositoryToDropdown,
-    // 	[IpcActions.REPO_CREATED]: addRepositoryToDropdown,
-    // 	[IpcActions.REPO_ADDED]: addRepositoryToDropdown,
-    // 	[IpcActions.REPO_REMOVED]: deleteRepoFromDropdown,
+    onIpc(IpcActions.REPO_CLONED, addRepo);
+    onIpc(IpcActions.REPO_CREATED, addRepo);
+    onIpc(IpcActions.REPO_ADDED, addRepo);
+    onIpc(IpcActions.REPO_REMOVED, (payload) => {
+        repositories.list = repositories.list.filter(r => r.AbsolutePath !== payload.absolutePath);
+        if (repo.path === payload.absolutePath) {
+            repo.name = "";
+            repo.path = "";
+            repo.hasRemote = false;
+            branch.name = "";
+            branches.list = [];
+        }
+    });
     // 	[IpcActions.REPO_COMMITTED]: processCommit,
     onIpc(IpcActions.REPO_FETCHED, () => {
         repo.fetching = false;
@@ -41,12 +52,14 @@ export function registerHandlers() {
 
     // Branch
     onIpc(IpcActions.BRANCH_LIST_LOADED, (payload) => {
-        repo.branches = payload;
+        branches.list = payload;
         const current = payload.find((b) => b.IsCurrent);
         if (current) {
-            repo.branch = current.Name;
-            repo.hasUpstream = !!current.RemoteBranch;
-            repo.isDetached = current.IsDetached;
+            branch.name = current.IsDetached ? current.TargetCommitHash : current.Name;
+            branch.revision = current.IsDetached ? current.TargetCommitHash : current.Name;
+            branch.isDetached = current.IsDetached;
+            branch.hasUpstream = !!current.RemoteBranch;
+            branch.remoteBranch = current.RemoteBranch || "";
         }
     });
     // 	[IpcActions.BRANCH_DELETED]: removeBranchFromDropdown,
@@ -93,4 +106,9 @@ export function registerHandlers() {
 
     // Logs
     // 	[IpcActions.LOGS_CLEARED]: noop,
+}
+
+// Helpers
+function addRepo(r) {
+    repositories.list = [...repositories.list, r];
 }

@@ -8,6 +8,7 @@
 	import { repo } from "./lib/stores/repo.svelte.js";
 	import { app } from "./lib/stores/app.svelte.js";
 	import { repositories } from "./lib/stores/repositories.svelte";
+	import Topbar from "./lib/components/Topbar.svelte";
 
 	// Registering handlers & starting Ipc listening
 	registerHandlers();
@@ -23,6 +24,7 @@
 	});
 </script>
 
+<Topbar />
 <div class="app-container">
 	<LeftSidebar />
 </div>
