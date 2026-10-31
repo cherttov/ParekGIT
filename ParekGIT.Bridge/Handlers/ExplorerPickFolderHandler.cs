@@ -24,23 +24,13 @@ namespace ParekGIT.Bridge.Handlers
 			if (selectedDir != null && selectedDir.Length > 0)
 			{
 				// Response (success)
-				var response = new IpcMessage
-				{
-					Action = "EXPLORER_FOLDER_PICKED",
-					Payload = JsonSerializer.SerializeToElement(new { path = selectedDir[0] })
-				};
-
+				var response = IpcMessage.Create("EXPLORER_FOLDER_PICKED", new { path = selectedDir[0] });
 				_window.SendWebMessage(JsonSerializer.Serialize(response));
 			}
 			else
 			{
 				// Response (cancel)
-				var response = new IpcMessage
-				{
-					Action = "FOLDER_CANCELED",
-					Payload = JsonSerializer.SerializeToElement(new { })
-				};
-
+				var response = IpcMessage.Create("FOLDER_CANCELED", new { });
 				_window.SendWebMessage(JsonSerializer.Serialize(response));
 			}
 			return Task.CompletedTask;

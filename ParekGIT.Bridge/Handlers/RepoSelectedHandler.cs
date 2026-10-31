@@ -34,8 +34,8 @@ namespace ParekGIT.Bridge.Handlers
 
 		public async Task ExecuteAsync(JsonElement payload)
 		{
-			string repoPath = payload.GetProperty("absolutePath").GetString()
-							  ?? throw new IpcPayloadException("absolutePath");
+			string repoPath = payload.GetProperty("repoPath").GetString()
+							  ?? throw new IpcPayloadException("repoPath");
 
 			// Failed response
 			if (!_fileSystem.DirectoryExists(repoPath))
@@ -43,11 +43,7 @@ namespace ParekGIT.Bridge.Handlers
 				await _dbStore.UpdateRepositoryValidStateAsync(repoPath, false);
 
 				// Make an IPC message that path is missing to resolve
-				var missingResponse = new IpcMessage
-				{
-					Action = "REPO_PATH_MISSING",
-					Payload = JsonSerializer.SerializeToElement(new { absolutePath = repoPath })
-				};
+				var missingResponse = IpcMessage.Create("REPO_PATH_MISSING", new { repoPath });
 				_window.SendWebMessage(JsonSerializer.Serialize(missingResponse));
 				return;
 			}
@@ -66,11 +62,7 @@ namespace ParekGIT.Bridge.Handlers
 			}
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "BRANCH_LIST_LOADED",
-				Payload = JsonSerializer.SerializeToElement(branches)
-			};
+			var response = IpcMessage.Create("BRANCH_LIST_LOADED", branches);
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

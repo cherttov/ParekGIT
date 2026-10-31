@@ -40,11 +40,7 @@ namespace ParekGIT.Bridge.Handlers
 			IEnumerable<TodoItem> todos = await _dbStore.GetBranchTodosAsync(targetRepo.Id, branchName);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "TODO_LOADED",
-				Payload = JsonSerializer.SerializeToElement(new { todos = todos })
-			};
+			var response = IpcMessage.Create("TODO_LOADED", new { todos });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

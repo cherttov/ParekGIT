@@ -30,11 +30,7 @@ namespace ParekGIT.Bridge.Handlers
 			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "BRANCH_LIST_LOADED",
-				Payload = JsonSerializer.SerializeToElement(branches)
-			};
+			var response = IpcMessage.Create("BRANCH_LIST_LOADED", branches);
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

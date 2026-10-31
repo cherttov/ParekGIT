@@ -48,35 +48,23 @@ namespace ParekGIT.Bridge.Handlers
 			}
 			catch (Exception ex) when (ex.Message.Contains("not fully merged", StringComparison.OrdinalIgnoreCase))
 			{
-				var requestPayload = new
+				// Request
+				var request = IpcMessage.Create("BRANCH_FORCE_DELETE_REQUESTED", new
 				{
-					branchName = branchName,
+					branchName,
 					remoteBranchName = isRemote ? branchName : null,
 					unmergedCount = "multiple" // TEMPORARY
-				};
-
-				// Request
-				var request = new IpcMessage
-				{
-					Action = "BRANCH_FORCE_DELETE_REQUESTED",
-					Payload = JsonSerializer.SerializeToElement(requestPayload)
-				};
+				});
 				_window.SendWebMessage(JsonSerializer.Serialize(request));
 				return;
 			}
 
-			var responsePayload = new
-			{
-				repoPath = repoPath,
-				branchName = branchName
-			};
-
 			// Response
-			var response = new IpcMessage
+			var response = IpcMessage.Create("BRANCH_DELETED", new
 			{
-				Action = "BRANCH_DELETED",
-				Payload = JsonSerializer.SerializeToElement(responsePayload)
-			};
+				repoPath,
+				branchName
+			});
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

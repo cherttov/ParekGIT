@@ -74,11 +74,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _dbStore.UpsertRepositoryAsync(addedRepo);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "REPO_ADDED",
-				Payload = JsonSerializer.SerializeToElement(addedRepo)
-			};
+			var response = IpcMessage.Create("REPO_ADDED", addedRepo);
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

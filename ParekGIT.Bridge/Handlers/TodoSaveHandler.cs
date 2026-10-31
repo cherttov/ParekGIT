@@ -50,11 +50,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _dbStore.SaveBranchTodosAsync(targetRepo.Id, branchName, newTodos);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "TODO_SAVED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true})
-			};
+			var response = IpcMessage.Create("TODO_SAVED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

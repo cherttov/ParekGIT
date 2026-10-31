@@ -800,9 +800,9 @@ const applyTheme = (themeId) => {
 		settingsModalThemeSelect.value = themeId;
 	}
 
-	const theme = availableThemes.find((t) => t.Id === themeId);
-	if (theme && theme.Colors) {
-		for (const [key, value] of Object.entries(theme.Colors)) {
+	const theme = availableThemes.find((t) => t.id === themeId);
+	if (theme && theme.colors) {
+		for (const [key, value] of Object.entries(theme.colors)) {
 			document.documentElement.style.setProperty(`--${key}`, value);
 		}
 	}
@@ -989,18 +989,17 @@ const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn, 
 // C# - App init
 function appInit(data) {
 	// Visuals
-	currentTheme = data.Settings.Theme;
-	processThemesLoaded(data.Themes);
+	currentTheme = data.settings.theme;
+	processThemesLoaded(data.themes);
 
 	// Data
-	loadRepositoriesIntoDropdown(data.Repositories);
+	loadRepositoriesIntoDropdown(data.repositories);
 
 	// Load last repo
-	if (data.Settings.LastRepoPath) {
-		const lastRepoItem = findRepoItem(data.Settings.LastRepoPath);
+	if (data.settings.lastRepoPath) {
+		const lastRepoItem = findRepoItem(data.settings.lastRepoPath);
 		if (lastRepoItem) { lastRepoItem.click(); }
 	}
-
 	document.body.classList.remove("loading");
 }
 
@@ -1036,26 +1035,26 @@ function setRepoToolsEnabled(enabled) {
 // Build a repo dropdown item
 function createRepoDropdownItem(repo) {
 	const item = createEl("div", "dropdown-item");
-	item.dataset.path = repo.AbsolutePath;
-	item.append(createEl("span", "dropdown-item-text", repo.Name));
+	item.dataset.path = repo.absolutePath;
+	item.append(createEl("span", "dropdown-item-text", repo.name));
 
-	if (!repo.IsValid) {
+	if (!repo.isValid) {
 		item.classList.add("invalid");
 		item.title = "Repository folder not found";
 	}
 
-	if (repo.RemoteUrl) { item.classList.add("remote"); }
+	if (repo.remoteUrl) { item.classList.add("remote"); }
 
 	// LMB - select
 	item.addEventListener("click", () => {
 		if (item.classList.contains("invalid")) { return; }
-		if (currentRepoPath === repo.AbsolutePath) { return; }
+		if (currentRepoPath === repo.absolutePath) { return; }
 
-		currentRepoPath = repo.AbsolutePath;
+		currentRepoPath = repo.absolutePath;
 		currentBranch = "";
 		currentBranchRevision = "";
 		currentBranchIsDetached = false;
-		currentRepoHasRemote = !!repo.RemoteUrl;
+		currentRepoHasRemote = !!repo.remoteUrl;
 		changesList.innerHTML = "";
 		historyList.innerHTML = "";
 
@@ -1066,9 +1065,9 @@ function createRepoDropdownItem(repo) {
 		resetViewers();
 		activeTodos = [];
 
-		sendIpcMessage(IpcActions.REPO_SELECTED, { absolutePath: repo.AbsolutePath });
-		sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: repo.AbsolutePath });
-		// sendIpcMessage(IpcActions.TODO_LOAD, { repoPath: repo.AbsolutePath }); // !!!!!!!!!
+		sendIpcMessage(IpcActions.REPO_SELECTED, { repoPath: repo.absolutePath });
+		sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: repo.absolutePath });
+		// sendIpcMessage(IpcActions.TODO_LOAD, { repoPath: repo.absolutePath }); // !!!!!!!!!
 
 		setRepoToolsEnabled(true);
 	});
@@ -1078,8 +1077,8 @@ function createRepoDropdownItem(repo) {
 		event.preventDefault();
 		event.stopPropagation();
 
-		repoItemContextMenu.dataset.targetPath = repo.AbsolutePath;
-		repoItemContextMenu.dataset.targetName = repo.Name;
+		repoItemContextMenu.dataset.targetPath = repo.absolutePath;
+		repoItemContextMenu.dataset.targetName = repo.name;
 
 		const isInvalid = item.classList.contains("invalid");
 		repoItemContextMenu.dataset.targetInvalid = isInvalid;
@@ -1110,7 +1109,7 @@ function addRepositoryToDropdown(repo) {
 	const item = createRepoDropdownItem(repo);
 	repoList.appendChild(item);
 
-	if (repo.IsValid) { item.click(); }
+	if (repo.isValid) { item.click(); }
 }
 
 // Finds the repo dropdown item of the given repo path
@@ -1153,7 +1152,7 @@ function clearCurrentRepo() {
 
 // C# - Delete repo
 function deleteRepoFromDropdown(repository) {
-	const removedPath = repository.absolutePath;
+	const removedPath = repository.repoPath;
 	if (!removedPath) { return; }
 
 	const itemToRemove = findRepoItem(removedPath);
@@ -1172,7 +1171,7 @@ function markRepoDropdownItemInvalid(repoPath) {
 
 // C# - Repo not found (path is invalid)
 function processMissingRepo(payload) {
-	const repoPath = payload.absolutePath;
+	const repoPath = payload.repoPath;
 	document.getElementById("missing-modal-repo-path").textContent = repoPath;
 	repoMissingModal.dataset.targetPath = repoPath;
 	markRepoDropdownItemInvalid(repoPath);
@@ -1277,27 +1276,27 @@ function loadBranchesIntoDropdown(branches) {
 	branches.forEach((branch) => {
 		const item = createEl("div", "dropdown-item");
 
-		if (branch.IsCurrent) {
+		if (branch.isCurrent) {
 			item.classList.add("active");
-			currentBranchName = branch.Name;
-			currentBranch = branch.Name;
-			currentBranchRevision = branch.IsDetached ? branch.TargetCommitHash : branch.Name;
-			currentBranchIsDetached = branch.IsDetached;
-			currentBranchHasUpstream = !!branch.RemoteBranch;
-			currentBranchRemoteBranch = branch.RemoteBranch || "";
+			currentBranchName = branch.name;
+			currentBranch = branch.name;
+			currentBranchRevision = branch.isDetached ? branch.targetCommitHash : branch.name;
+			currentBranchIsDetached = branch.isDetached;
+			currentBranchHasUpstream = !!branch.remoteBranch;
+			currentBranchRemoteBranch = branch.remoteBranch || "";
 		}
 
-		item.dataset.branchName = branch.Name;
-		item.dataset.detached = branch.IsDetached ? "true" : "false";
+		item.dataset.branchName = branch.name;
+		item.dataset.detached = branch.isDetached ? "true" : "false";
 
-		const isUnpublished = currentRepoHasRemote && !branch.IsRemote && !branch.IsDetached && !branch.RemoteBranch;
-		item.append(createEl("span", "dropdown-item-text", branch.Name));
+		const isUnpublished = currentRepoHasRemote && !branch.isRemote && !branch.isDetached && !branch.remoteBranch;
+		item.append(createEl("span", "dropdown-item-text", branch.name));
 		if (isUnpublished) { item.append(createEl("span", "dropdown-item-unpublished-icon")); }
 
 		// LMB - select
 		item.addEventListener("click", () => {
-			if (branch.IsDetached) { return; }
-			if (currentBranch.toLowerCase() === branch.Name.toLowerCase()) { return; }
+			if (branch.isDetached) { return; }
+			if (currentBranch.toLowerCase() === branch.name.toLowerCase()) { return; }
 
 			resetViewers();
 
@@ -1305,7 +1304,7 @@ function loadBranchesIntoDropdown(branches) {
 			changesList.innerHTML = "";
 
 			// Load todos signal
-			const targetRevision = branch.IsDetached ? branch.TargetCommitHash : branch.Name;
+			const targetRevision = branch.isDetached ? branch.targetCommitHash : branch.name;
 			sendIpcMessage(IpcActions.TODO_LOAD, {
 				repoPath: currentRepoPath,
 				branchName: targetRevision
@@ -1313,9 +1312,9 @@ function loadBranchesIntoDropdown(branches) {
 
 			// Branch selected signal
 			sendIpcMessage(IpcActions.BRANCH_CHECKOUT, {
-				absolutePath: currentRepoPath,
-				branchName: branch.Name,
-				isRemote: branch.IsRemote
+				repoPath: currentRepoPath,
+				branchName: branch.name,
+				isRemote: branch.isRemote
 			});
 		});
 
@@ -1325,10 +1324,10 @@ function loadBranchesIntoDropdown(branches) {
 			event.stopPropagation();
 
 			branchItemContextMenu.dataset.targetPath = currentRepoPath;
-			branchItemContextMenu.dataset.targetName = branch.Name;
-			branchItemContextMenu.dataset.targetRemoteBranch = branch.RemoteBranch || "";
+			branchItemContextMenu.dataset.targetName = branch.name;
+			branchItemContextMenu.dataset.targetRemoteBranch = branch.remoteBranch || "";
 
-			validateBranchContextMenu(branch.Name, branchItemMenuRename, branchItemMenuDelete, branch.IsDetached);
+			validateBranchContextMenu(branch.name, branchItemMenuRename, branchItemMenuDelete, branch.isDetached);
 
 			showContextMenu(event, branchItemContextMenu, item);
 		});
@@ -1382,7 +1381,7 @@ function renameBranchInDropdown(payload) {
 	}
 
 	if (currentRepoPath) {
-		sendIpcMessage(IpcActions.REPO_SELECTED, { absolutePath: currentRepoPath });
+		sendIpcMessage(IpcActions.REPO_SELECTED, { repoPath: currentRepoPath });
 	}
 }
 
@@ -1535,21 +1534,21 @@ function renderChangedFiles(files) {
 
 	files.forEach((file) => {
 		const item = createEl("div", "change-item");
-		item.dataset.path = file.Path;
+		item.dataset.path = file.path;
 
-		const status = getStatusInfo(file.StatusCode, "?");
+		const status = getStatusInfo(file.statusCode, "?");
 
 		const left = createEl("div", "change-item-left");
-		left.append(createStatusBadge(status), createEl("div", "change-path", file.Path));
+		left.append(createStatusBadge(status), createEl("div", "change-path", file.path));
 
 		const checkbox = createEl("input", "ui-checkbox changes-item-checkbox");
 		checkbox.type = "checkbox";
-		checkbox.checked = !uncheckedPaths.has(file.Path);
+		checkbox.checked = !uncheckedPaths.has(file.path);
 		checkbox.addEventListener("change", () => { updateMasterCheckboxState(); });
 
 		item.append(left, checkbox);
 
-		if (file.Path === selectedPath) {
+		if (file.path === selectedPath) {
 			item.classList.add("selected");
 			selectedStillExists = true;
 		}
@@ -1562,7 +1561,7 @@ function renderChangedFiles(files) {
 			document.querySelectorAll(".change-item").forEach((el) => el.classList.remove("selected"));
 			item.classList.add("selected");
 
-			requestFileDiff(file.Path);
+			requestFileDiff(file.path);
 		});
 
 		// RMB - Change item context menu
@@ -1571,7 +1570,7 @@ function renderChangedFiles(files) {
 			event.stopPropagation();
 			closeDropdowns();
 
-			changesItemContextMenu.dataset.targetPath = file.Path;
+			changesItemContextMenu.dataset.targetPath = file.path;
 
 			showContextMenu(event, changesItemContextMenu, item);
 		});
@@ -1666,11 +1665,11 @@ function renderHistory(commits, isAppending = false) {
 
 	commits.forEach((commit) => {
 		const item = createEl("div", "history-item");
-		item.dataset.hash = commit.Hash;
+		item.dataset.hash = commit.hash;
 
-		const message = createEl("div", "history-message", commit.Message);
+		const message = createEl("div", "history-message", commit.message);
 		const meta = createEl("div", "history-meta");
-		meta.append(createEl("div", "history-author", commit.Author), createEl("div", "history-time", commit.TimeAgo));
+		meta.append(createEl("div", "history-author", commit.author), createEl("div", "history-time", commit.timeAgo));
 		item.append(message, meta);
 
 		// LMB - Show commit history details
@@ -1680,7 +1679,7 @@ function renderHistory(commits, isAppending = false) {
 			document.querySelectorAll(".history-item").forEach((el) => el.classList.remove("selected"));
 			item.classList.add("selected");
 
-			activeHistoryHash = commit.Hash;
+			activeHistoryHash = commit.hash;
 			detailsCommitMessage.textContent = `Loading details...`;
 			detailsCommitStats.textContent = ``;
 			detailsContent.textContent = "";
@@ -1690,7 +1689,7 @@ function renderHistory(commits, isAppending = false) {
 
 			sendIpcMessage(IpcActions.COMMIT_DETAILS_LOAD, {
 				repoPath: currentRepoPath,
-				commitHash: commit.Hash
+				commitHash: commit.hash
 			});
 		});
 
@@ -1700,7 +1699,7 @@ function renderHistory(commits, isAppending = false) {
 			event.stopPropagation();
 			closeDropdowns();
 
-			historyItemContextMenu.dataset.targetHash = commit.Hash;
+			historyItemContextMenu.dataset.targetHash = commit.hash;
 
 			// Disable revert if not latest commit
 			const isLatestCommit = item === historyList.firstElementChild;
@@ -1753,25 +1752,25 @@ function loadCommitDetails(details) {
 	details.files.forEach((file, index) => {
 		const item = createEl("div", "dropdown-item");
 
-		const status = getStatusInfo(file.StatusCode, "U");
-		item.append(createStatusBadge(status), createEl("span", "change-path", file.Path));
+		const status = getStatusInfo(file.statusCode, "U");
+		item.append(createStatusBadge(status), createEl("span", "change-path", file.path));
 
 		// LMB
 		item.addEventListener("click", (event) => {
-			if (file.Path === activeDetailsFile) {
+			if (file.path === activeDetailsFile) {
 				closeDropdowns();
 				return;
 			}
-			activeDetailsFile = file.Path;
+			activeDetailsFile = file.path;
 
 			event.stopPropagation();
 			detailsFileList.querySelectorAll(".dropdown-item").forEach((el) => el.classList.remove("active"));
 			item.classList.add("active");
 
-			detailsBtnValue.replaceChildren(createStatusBadge(status), createEl("span", "change-path", file.Path));
+			detailsBtnValue.replaceChildren(createStatusBadge(status), createEl("span", "change-path", file.path));
 			closeDropdowns();
 
-			if (isBinaryPath(file.Path)) {
+			if (isBinaryPath(file.path)) {
 				detailsContent.innerHTML = `<span class="diff-chunk">Binary file changes (no preview available)</span>`;
 				updateCustomScrollbar(detailsBodyWrapper, detailsScrollbar);
 				return;
@@ -1782,7 +1781,7 @@ function loadCommitDetails(details) {
 			sendIpcMessage(IpcActions.COMMIT_FILE_DIFF_LOAD, {
 				repoPath: currentRepoPath,
 				commitHash: activeHistoryHash,
-				filePath: file.Path
+				filePath: file.path
 			});
 		});
 
@@ -1958,17 +1957,17 @@ function loadStashes(stashes) {
 
 	stashes.forEach((stash) => {
 		const row = createEl("div", "stash-modal-row");
-		row.dataset.selector = stash.Selector;
+		row.dataset.selector = stash.selector;
 
 		// Strip git raw message beginning (e.g. "On main: ...")
-		const separatorIndex = stash.Message.indexOf(": ");
-		const displayMessage = separatorIndex >= 0 ? stash.Message.slice(separatorIndex + 2) : stash.Message;
+		const separatorIndex = stash.message.indexOf(": ");
+		const displayMessage = separatorIndex >= 0 ? stash.message.slice(separatorIndex + 2) : stash.message;
 
 		// Create info elements
 		const info = createEl("div", "stash-info");
 		const message = createEl("div", "stash-message", displayMessage);
 		const meta = createEl("div", "stash-meta");
-		meta.append(createEl("span", "stash-branch", stash.BranchName), createEl("span", "stash-hash", stash.CommitHash.substring(0, 7)));
+		meta.append(createEl("span", "stash-branch", stash.branchName), createEl("span", "stash-hash", stash.commitHash.substring(0, 7)));
 		info.append(message, meta);
 
 		// Create action elements
@@ -2005,8 +2004,8 @@ function loadStashes(stashes) {
 const addTodoTask = () => {
 	if (todoModalInputTask.value.trim() !== "") {
 		draftTodos.push({
-			TaskLabel: todoModalInputTask.value.trim(),
-			IsCompleted: false
+			taskLabel: todoModalInputTask.value.trim(),
+			isCompleted: false
 		});
 
 		todoModalInputTask.value = "";
@@ -2025,19 +2024,20 @@ function renderTodoList() {
 	} else { 
 		// Render all existing todo items
 		draftTodos.forEach((todo, index) => {
+			console.log(todo);
 			const row = createEl("div", "todo-modal-row");
 
 			// Label
-			const label = createEl("span", "todo-modal-label", todo.TaskLabel);
-			label.classList.toggle("done", todo.IsCompleted);
+			const label = createEl("span", "todo-modal-label", todo.taskLabel);
+			label.classList.toggle("done", todo.isCompleted);
 
 			// Checkbox
 			const checkbox = createEl("input", "ui-checkbox todo-checkbox");
 			checkbox.type = "checkbox";
-			checkbox.checked = todo.IsCompleted;
+			checkbox.checked = todo.isCompleted;
 			checkbox.addEventListener("click", () => {
-				todo.IsCompleted = checkbox.checked;
-				label.classList.toggle("done", todo.IsCompleted);
+				todo.isCompleted = checkbox.checked;
+				label.classList.toggle("done", todo.isCompleted);
 			});
 
 			// Delete
@@ -2095,7 +2095,7 @@ function processGlobalConfigLoad(config) {
 
 // C# - Settings saved handler
 function processSettingsSaved(payload) {
-	applyTheme(payload.Theme);
+	applyTheme(payload.theme);
 }
 
 // C# - Themes loaded
@@ -2104,15 +2104,15 @@ function processThemesLoaded(themes) {
 	settingsModalThemeSelect.innerHTML = "";
 
 	themes.forEach((theme) => {
-		settingsModalThemeSelect.append(createOption(theme.Id, theme.Name));
+		settingsModalThemeSelect.append(createOption(theme.id, theme.name));
 	});
 
-	const themeExists = availableThemes.some(t => t.Id === currentTheme);
+	const themeExists = availableThemes.some(t => t.id === currentTheme);
 	if (!themeExists) {
 		currentTheme = defaultTheme;
 
 		sendIpcMessage(IpcActions.SETTINGS_SAVE, {
-			Theme: currentTheme
+			theme: currentTheme
 		});
 	}
 
@@ -3155,7 +3155,7 @@ settingsModalConfirmBtn.addEventListener("click", () => {
 	};
 
 	sendIpcMessage(IpcActions.SETTINGS_SAVE, {
-		Theme: settingsModalThemeSelect.value
+		theme: settingsModalThemeSelect.value
 	});
 	currentTheme = updatedSettings.Theme;
 	closeAndClearModal(settingsModal);

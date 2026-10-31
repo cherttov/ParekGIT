@@ -32,11 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _gitRunner.CheckoutCommitAsync(repoPath, commitHash);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "COMMIT_CHECKED_OUT",
-				Payload = JsonSerializer.SerializeToElement(new { success = true })
-			};
+			var response = IpcMessage.Create("COMMIT_CHECKED_OUT", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

@@ -32,20 +32,13 @@ namespace ParekGIT.Bridge.Handlers
 
 			CommitDetailsResult details = await _gitRunner.GetCommitDetailsAsync(repoPath, commitHash);
 
-			// Convert to json payload
-			var jsPayload = new
+			// Response
+			var response = IpcMessage.Create("COMMIT_DETAILS_LOADED", new
 			{
 				author = details.Author,
 				message = details.Message,
 				files = details.Files
-			};
-
-			// Response
-			var response = new IpcMessage
-			{
-				Action = "COMMIT_DETAILS_LOADED",
-				Payload = JsonSerializer.SerializeToElement(jsPayload)
-			};
+			});
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

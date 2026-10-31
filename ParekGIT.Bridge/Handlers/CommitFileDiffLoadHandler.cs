@@ -35,11 +35,7 @@ namespace ParekGIT.Bridge.Handlers
 			string diffText = await _gitRunner.GetHistoryFileDiffAsync(repoPath, commitHash, filePath);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "COMMIT_FILE_DIFF_LOADED",
-				Payload = JsonSerializer.SerializeToElement(new { diffText = diffText })
-			};
+			var response = IpcMessage.Create("COMMIT_FILE_DIFF_LOADED", new { diffText });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

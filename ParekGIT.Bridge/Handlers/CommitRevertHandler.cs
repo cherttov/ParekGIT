@@ -51,11 +51,7 @@ namespace ParekGIT.Bridge.Handlers
 			}
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "COMMIT_REVERTED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true })
-			};
+			var response = IpcMessage.Create("COMMIT_REVERTED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

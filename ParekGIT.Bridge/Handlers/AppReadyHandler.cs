@@ -50,20 +50,13 @@ namespace ParekGIT.Bridge.Handlers
 			// Themes
 			var themes = await _jsonStore.LoadThemes();
 
-			// Data, frontend ready
-			var bootData = new
-			{
-				Repositories = repos,
-				Settings = settings,
-				Themes = themes
-			};
-
 			// Response
-			var response = new IpcMessage
+			var response = IpcMessage.Create("APP_INITIALIZED", new
 			{
-				Action = "APP_INITIALIZED",
-				Payload = JsonSerializer.SerializeToElement(bootData)
-			};
+				repositories = repos,
+				settings,
+				themes
+			});
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

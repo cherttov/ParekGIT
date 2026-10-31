@@ -50,11 +50,7 @@ namespace ParekGIT.Bridge.Handlers
 			}
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "CHANGE_IGNORED",
-				Payload = JsonSerializer.SerializeToElement(new { repoPath = repoPath })
-			};
+			var response = IpcMessage.Create("CHANGE_IGNORED", new { repoPath });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

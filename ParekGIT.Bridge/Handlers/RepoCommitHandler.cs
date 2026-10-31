@@ -3,7 +3,6 @@ using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
-using ParekGIT.Data.Data;
 using ParekGIT.Data.Interfaces;
 using Photino.NET;
 using System.Text.Json;
@@ -64,11 +63,7 @@ namespace ParekGIT.Bridge.Handlers
 			}
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "REPO_COMMITTED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true })
-			};
+			var response = IpcMessage.Create("REPO_COMMITTED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

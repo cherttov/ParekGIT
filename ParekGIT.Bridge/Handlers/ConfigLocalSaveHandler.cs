@@ -35,11 +35,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _gitRunner.SaveLocalConfigAsync(repoPath, name, email);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "CONFIG_LOCAL_SAVED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true })
-			};
+			var response = IpcMessage.Create("CONFIG_LOCAL_SAVED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

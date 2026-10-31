@@ -2,7 +2,6 @@
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
-using ParekGIT.Core.Models;
 using Photino.NET;
 using System.Text.Json;
 
@@ -33,11 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _gitRunner.StashDropAsync(repoPath, selector);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "STASH_DROPPED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true })
-			};
+			var response = IpcMessage.Create("STASH_DROPPED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

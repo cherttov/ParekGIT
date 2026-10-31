@@ -15,6 +15,7 @@ namespace ParekGIT.Bridge.Handlers
 
 		public string Action => "LOGS_CLEAR";
 
+		// Constructor
 		public LogsClearHandler(PhotinoWindow window, IFileSystemService fileSystem, ILogger logger)
 		{
 			_window = window;
@@ -55,11 +56,7 @@ namespace ParekGIT.Bridge.Handlers
 			}
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "LOGS_CLEARED",
-				Payload = JsonSerializer.SerializeToElement(new { deletedCount, failedCount })
-			};
+			var response = IpcMessage.Create("LOGS_CLEARED", new { deletedCount, failedCount });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}
