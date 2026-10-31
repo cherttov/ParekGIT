@@ -33,11 +33,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _gitRunner.StashPopAsync(repoPath, selector);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "STASH_POPPED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true })
-			};
+			var response = IpcMessage.Create("STASH_POPPED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

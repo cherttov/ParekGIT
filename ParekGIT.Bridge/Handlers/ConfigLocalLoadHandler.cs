@@ -44,11 +44,13 @@ namespace ParekGIT.Bridge.Handlers
 			};
 
 			// Response
-			var response = new IpcMessage
+			var response = IpcMessage.Create("CONFIG_LOCAL_LOADED", new
 			{
-				Action = "CONFIG_LOCAL_LOADED",
-				Payload = JsonSerializer.SerializeToElement(jsPayload)
-			};
+				localName = localConfig.Name,
+				localEmail = localConfig.Email,
+				globalName = globalConfig.Name,
+				globalEmail = globalConfig.Email
+			});
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

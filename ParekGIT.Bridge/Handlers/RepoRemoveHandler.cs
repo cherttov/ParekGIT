@@ -3,7 +3,6 @@ using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
-using ParekGIT.Data.Data;
 using ParekGIT.Data.Interfaces;
 using Photino.NET;
 using System.Text.Json;
@@ -76,16 +75,12 @@ namespace ParekGIT.Bridge.Handlers
 			}
 
 			// Response
-			var response = new IpcMessage
+			var response = IpcMessage.Create("REPO_REMOVED", new
 			{
-				Action = "REPO_REMOVED",
-				Payload = JsonSerializer.SerializeToElement(new
-				{
-					absolutePath = repoPath,
-					localDeleteFailed,
-					localDeleteError
-				})
-			};
+				repoPath,
+				localDeleteFailed,
+				localDeleteError
+			});
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

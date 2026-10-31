@@ -3,7 +3,6 @@ using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
-using ParekGIT.Data.Data;
 using ParekGIT.Data.Interfaces;
 using Photino.NET;
 using System.Text.Json;
@@ -54,11 +53,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _dbStore.UpsertRepositoryAsync(clonedRepo);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "REPO_CLONED",
-				Payload = JsonSerializer.SerializeToElement(clonedRepo)
-			};
+			var response = IpcMessage.Create("REPO_CLONED", clonedRepo);
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

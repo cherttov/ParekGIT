@@ -29,10 +29,10 @@ namespace ParekGIT.Bridge.Handlers
 		// Instead of ExecuteAsync
 		private void HandleFilesChanged(object? sender, string repoPath)
 		{
-			var envelope = new
+			var envelope = new // ?
 			{
 				Action = "REPO_FILES_CHANGED",
-				Payload = new { repoPath = repoPath }
+				Payload = new { repoPath }
 			};
 			string jsonMessage = JsonSerializer.Serialize(envelope);
 			_window.SendWebMessage(jsonMessage);

@@ -29,11 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _gitRunner.PushAsync(repoPath);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "REPO_PUSHED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true })
-			};
+			var response = IpcMessage.Create("REPO_PUSHED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

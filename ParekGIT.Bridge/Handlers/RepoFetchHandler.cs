@@ -35,11 +35,7 @@ namespace ParekGIT.Bridge.Handlers
 			_syncNotifier.NotifyCommitsBehind(repoPath, commitsBehind, commitsAhead);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "REPO_FETCHED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true })
-			};
+			var response = IpcMessage.Create("REPO_FETCHED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

@@ -32,11 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _gitRunner.DiscardChangeAsync(repoPath, filePath);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "CHANGE_DISCARDED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true })
-			};
+			var response = IpcMessage.Create("CHANGE_DISCARDED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

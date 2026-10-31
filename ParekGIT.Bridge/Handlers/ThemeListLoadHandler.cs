@@ -25,11 +25,7 @@ namespace ParekGIT.Bridge.Handlers
 			var themes = await _themeStore.LoadThemes();
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "THEME_LIST_LOADED",
-				Payload = JsonSerializer.SerializeToElement(themes)
-			};
+			var response = IpcMessage.Create("THEME_LIST_LOADED", themes);
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

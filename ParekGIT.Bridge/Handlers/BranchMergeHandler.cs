@@ -35,11 +35,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _gitRunner.MergeBranchesAsync(repoPath, sourceBranch, targetBranch);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "BRANCH_MERGED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true })
-			};
+			var response = IpcMessage.Create("BRANCH_MERGED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

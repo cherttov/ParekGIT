@@ -34,19 +34,13 @@ namespace ParekGIT.Bridge.Handlers
 
 			await _gitRunner.RenameBranchAsync(repoPath, oldName, newName);
 
-			var responsePayload = new
-			{
-				repoPath = repoPath,
-				oldName = oldName,
-				newName = newName
-			};
-
 			// Response
-			var response = new IpcMessage
+			var response = IpcMessage.Create("BRANCH_RENAMED", new
 			{
-				Action = "BRANCH_RENAMED",
-				Payload = JsonSerializer.SerializeToElement(responsePayload)
-			};
+				repoPath,
+				oldName,
+				newName
+			});
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

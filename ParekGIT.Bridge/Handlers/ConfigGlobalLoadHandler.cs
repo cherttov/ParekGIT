@@ -25,18 +25,12 @@ namespace ParekGIT.Bridge.Handlers
 		{
 			GitConfigInfo globalConfig = await _gitRunner.GetGlobalConfigAsync(null);
 
-			var jsPayload = new
+			// Response
+			var response = IpcMessage.Create("CONFIG_GLOBAL_LOADED", new
 			{
 				globalName = globalConfig.Name,
 				globalEmail = globalConfig.Email
-			};
-
-			// Response
-			var response = new IpcMessage
-			{
-				Action = "CONFIG_GLOBAL_LOADED",
-				Payload = JsonSerializer.SerializeToElement(jsPayload)
-			};
+			});
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

@@ -32,11 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _gitRunner.SaveGlobalConfigAsync(null, name, email);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "CONFIG_GLOBAL_SAVED",
-				Payload = JsonSerializer.SerializeToElement(new { success = true })
-			};
+			var response = IpcMessage.Create("CONFIG_GLOBAL_SAVED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

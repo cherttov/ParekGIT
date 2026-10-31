@@ -31,18 +31,12 @@ namespace ParekGIT.Bridge.Handlers
 
 			await _gitRunner.ForceDeleteBranchAsync(repoPath, branchName);
 
-			var responsePayload = new
-			{
-				repoPath = repoPath,
-				branchName = branchName
-			};
-
 			// Response
-			var response = new IpcMessage
+			var response = IpcMessage.Create("BRANCH_DELETED", new
 			{
-				Action = "BRANCH_DELETED",
-				Payload = JsonSerializer.SerializeToElement(responsePayload)
-			};
+				repoPath,
+				branchName
+			});
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

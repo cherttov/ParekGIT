@@ -24,8 +24,8 @@ namespace ParekGIT.Bridge.Handlers
 
 		public async Task ExecuteAsync(JsonElement payload)
 		{
-			string repoPath = payload.GetProperty("absolutePath").GetString()
-							  ?? throw new IpcPayloadException("absolutePath");
+			string repoPath = payload.GetProperty("repoPath").GetString()
+							  ?? throw new IpcPayloadException("repoPath");
 
 			string branchName = payload.GetProperty("branchName").GetString()
 								?? throw new IpcPayloadException("branchName");
@@ -39,11 +39,7 @@ namespace ParekGIT.Bridge.Handlers
 			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
 
 			// Response
-			var response = new IpcMessage
-			{
-				Action = "BRANCH_LIST_LOADED",
-				Payload = JsonSerializer.SerializeToElement(branches)
-			};
+			var response = IpcMessage.Create("BRANCH_LIST_LOADED", branches);
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}
