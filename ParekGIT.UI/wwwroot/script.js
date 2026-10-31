@@ -1083,7 +1083,7 @@ function createRepoDropdownItem(repo) {
 		const isInvalid = item.classList.contains("invalid");
 		repoItemContextMenu.dataset.targetInvalid = isInvalid;
 
-		validateRepoContextMenu(repo.AbsolutePath, repoItemMenuTerminal, repoItemMenuExplorer, repoItemMenuRemove, isInvalid);
+		validateRepoContextMenu(repo.absolutePath, repoItemMenuTerminal, repoItemMenuExplorer, repoItemMenuRemove, isInvalid);
 
 		showContextMenu(event, repoItemContextMenu, item);
 	});
