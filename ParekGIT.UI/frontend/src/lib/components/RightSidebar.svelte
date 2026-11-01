@@ -1,5 +1,6 @@
 <script>
     import CustomScrollbar from "./CustomScrollbar.svelte";
+    import { layout } from "../stores/layout.svelte";
 
     let { el = $bindable() } = $props();
     let activeTab = $state("changes"); // "changes" || "history"
@@ -8,7 +9,7 @@
     let historyListEl = $state(null);
 </script>
 
-<div class="right-sidebar" id="right-sidebar" bind:this={el}>
+<div class="right-sidebar" id="right-sidebar" bind:this={el} style:width="{layout.rightSidebarWidth}px">
     <div class="tab-selector">
         <button class="tab-btn" id="tab-btn-changes"
             class:active={activeTab === "changes"}
@@ -17,7 +18,7 @@
         </button>
         <button class="tab-btn" id="tab-btn-history"
             class:active={activeTab === "history"}
-            onclick={() => activeTab = "changes"}>
+            onclick={() => activeTab = "history"}>
             History
         </button>
     </div>

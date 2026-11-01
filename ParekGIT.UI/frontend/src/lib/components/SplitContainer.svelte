@@ -1,6 +1,7 @@
 <script>
     import MainContent from "./MainContent.svelte";
     import RightSidebar from "./RightSidebar.svelte";
+    import { layout } from "../stores/layout.svelte";
 
     let splitContainerEl = $state(null);
     let rightSidebarEl = $state(null);
@@ -29,7 +30,7 @@
         if (!isResizing) return;
         const targetWidth = window.innerWidth - e.clientX;
         const newWidth = Math.max(minRightWidth, Math.min(targetWidth, maxRightWidth));
-        rightSidebarEl.style.width = `${newWidth}px`;
+        layout.rightSidebarWidth = newWidth;
     }
 
     function onMouseUp() {
@@ -46,8 +47,8 @@
             const fallbackMinRight = parseInt(getComputedStyle(rightSidebarEl).minWidth) || 192;
             const currentMaxRight = splitContainerEl.offsetWidth - minMainWidth - resizerEl.offsetWidth;
             const currentRight = parseInt(getComputedStyle(rightSidebarEl).width);
-            if (currentRight > currentMaxRight) {
-                rightSidebarEl.style.width = `${Math.max(fallbackMinRight, currentMaxRight)}px`;
+            if (layout.rightSidebarWidth > currentMaxRight) {
+                layout.rightSidebarWidth = Math.max(fallbackMinRight, currentMaxRight);
             }
         }
         window.addEventListener("resize", onWindowResize);

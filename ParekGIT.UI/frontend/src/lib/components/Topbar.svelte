@@ -1,6 +1,7 @@
 <script>
     import { branch } from "../stores/branch.svelte.js";
     import { repo } from "../stores/repo.svelte.js";
+    import { layout } from "../stores/layout.svelte.js";
     import RepoDropdown from "./RepoDropdown.svelte";
     import BranchDropdown from "./BranchDropdown.svelte";
 
@@ -41,7 +42,7 @@
         <RepoDropdown show={repoOpen} onclose={closeAll} />
     </div>
 
-    <div class="topbar-dropdown-container" id="branches-container">
+    <div class="topbar-dropdown-container" id="branches-container" style:width="{layout.rightSidebarWidth}px">
         <button class="topbar-btn" onclick={toggleBranch}>
             <div class="btn-text-group">
                 <span class="topbar-dropdown btn-label">

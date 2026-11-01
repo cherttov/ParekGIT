@@ -4,6 +4,7 @@
     import { repo } from "../stores/repo.svelte";
     import { sendIpcMessage } from "../ipc/ipc";
     import { IpcActions } from "../ipc/actions";
+    import { layout } from "../stores/layout.svelte";
 	import CustomScrollbar from "./CustomScrollbar.svelte";
 
     let { show = false, onclose, onnewbranch } = $props();
@@ -29,9 +30,8 @@
     }
 </script>
 
-<div class="dropdown-panel" 
-    class:show 
-    id="branch-dropdown-panel">
+<div class="dropdown-panel" class:show 
+    id="branch-dropdown-panel" style:width="{layout.rightSidebarWidth}px">
     <div class="filter-container" id="branches-filter">
         <div class="icon-filter"></div>
         <input id="branch-dropdown-panel-search" type="text"
