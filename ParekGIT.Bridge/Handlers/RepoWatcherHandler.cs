@@ -1,4 +1,5 @@
-﻿using ParekGIT.Bridge.Interfaces;
+﻿using ParekGIT.Bridge.Data;
+using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Interfaces;
 using Photino.NET;
 using System.Text.Json;
@@ -29,13 +30,8 @@ namespace ParekGIT.Bridge.Handlers
 		// Instead of ExecuteAsync
 		private void HandleFilesChanged(object? sender, string repoPath)
 		{
-			var envelope = new // ?
-			{
-				Action = "REPO_FILES_CHANGED",
-				Payload = new { repoPath }
-			};
-			string jsonMessage = JsonSerializer.Serialize(envelope);
-			_window.SendWebMessage(jsonMessage);
+			var envelope = IpcMessage.Create("REPO_FILES_CHANGED", new { repoPath });
+			_window.SendWebMessage(JsonSerializer.Serialize(envelope));
 		}
 	}
 }
