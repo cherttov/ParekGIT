@@ -12,22 +12,22 @@
     let listEl = $state(null);
 
     const filtered = $derived(
-        repositories.list.filter(r => r.Name.toLowerCase().includes(searchTerm.toLowerCase()))
+        repositories.list.filter(r => r.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     function selectRepo(r) {
-        if (!r.IsValid) return;
-        if (repo.path === r.AbsolutePath) { onclose?.(); return; }
+        if (!r.isValid) return;
+        if (repo.path === r.absolutePath) { onclose?.(); return; }
 
-        repo.name = r.Name;
-        repo.path = r.AbsolutePath;
-        repo.hasRemote = !!r.RemoteUrl;
+        repo.name = r.name;
+        repo.path = r.absolutePath;
+        repo.hasRemote = !!r.remoteUrl;
         repo.changes = [];
         branch.name = "";
         branches.list = [];
 
-        sendIpcMessage(IpcActions.REPO_SELECTED, { absolutePath: r.AbsolutePath });
-        sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: r.AbsolutePath });
+        sendIpcMessage(IpcActions.REPO_SELECTED, { repoPath: r.absolutePath });
+        sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: r.absolutePath });
         onclose?.();
     }
 </script>
@@ -55,13 +55,13 @@
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <div
                     class="dropdown-item"
-                    class:active={repo.path === r.AbsolutePath}
-                    class:invalid={!r.IsValid}
-                    class:remote={!!r.RemoteUrl}
-                    title={!r.IsValid ? "Repository folder not found" : ""}
+                    class:active={repo.path === r.absolutePath}
+                    class:invalid={!r.isValid}
+                    class:remote={!!r.remoteUrl}
+                    title={!r.isValid ? "Repository folder not found" : ""}
                     onclick={() => selectRepo(r)}
                 >
-                    <span class="dropdown-item-text">{r.Name}</span>
+                    <span class="dropdown-item-text">{r.name}</span>
                 </div>
             {/each}
         </div>

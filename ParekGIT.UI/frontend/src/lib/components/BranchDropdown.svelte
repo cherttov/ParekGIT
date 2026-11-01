@@ -11,19 +11,19 @@
     let listEl = $state(null);
 
     const filtered = $derived(
-        branches.list.filter(b => b.Name.toLowerCase().includes(searchTerm.toLowerCase()))
+        branches.list.filter(b => b.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     function checkoutBranch(b) {
-        if (b.IsDetached) return;
-        if (branch.name.toLowerCase() === b.Name.toLowerCase()) {
+        if (b.isDetached) return;
+        if (branch.name.toLowerCase() === b.name.toLowerCase()) {
             onclose?.();
             return;
         }
         sendIpcMessage(IpcActions.BRANCH_CHECKOUT, {
-            absolutePath: repo.path,
-            branchName: b.Name,
-            isRemote: b.IsRemote
+            repoPath: repo.path,
+            branchName: b.name,
+            isRemote: b.isRemote
         });
         onclose?.();
     }
@@ -49,11 +49,11 @@
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <div
                     class="dropdown-item"
-                    class:active={branch.name === b.Name}
+                    class:active={branch.name === b.name}
                     onclick={() => checkoutBranch(b)}
                 >
-                    <span class="dropdown-item-text">{b.Name}</span>
-                    {#if repo.hasRemote && !b.IsRemote && !b.IsDetached && !b.RemoteBranch}
+                    <span class="dropdown-item-text">{b.name}</span>
+                    {#if repo.hasRemote && !b.isRemote && !b.isDetached && !b.remoteBranch}
                         <span class="dropdown-item-unpublished-icon"></span>
                     {/if}
                 </div>

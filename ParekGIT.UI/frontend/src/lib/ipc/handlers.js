@@ -9,9 +9,9 @@ import { branches } from "../stores/branches.svelte.js";
 export function registerHandlers() {
     // App
     onIpc(IpcActions.APP_INITIALIZED, (payload) => {
-        app.theme = payload.Settings.Theme;
-        app.themes = payload.Themes;
-        repositories.list = payload.Repositories;
+        app.theme = payload.settings.theme;
+        app.themes = payload.themes;
+        repositories.list = payload.repositories;
         app.ready = true;
     });
 
@@ -24,8 +24,8 @@ export function registerHandlers() {
     onIpc(IpcActions.REPO_CREATED, addRepo);
     onIpc(IpcActions.REPO_ADDED, addRepo);
     onIpc(IpcActions.REPO_REMOVED, (payload) => {
-        repositories.list = repositories.list.filter(r => r.AbsolutePath !== payload.absolutePath);
-        if (repo.path === payload.absolutePath) {
+        repositories.list = repositories.list.filter(r => r.absolutePath !== payload.repoPath);
+        if (repo.path === payload.repoPath) {
             repo.name = "";
             repo.path = "";
             repo.hasRemote = false;
@@ -53,13 +53,13 @@ export function registerHandlers() {
     // Branch
     onIpc(IpcActions.BRANCH_LIST_LOADED, (payload) => {
         branches.list = payload;
-        const current = payload.find((b) => b.IsCurrent);
+        const current = payload.find((b) => b.isCurrent);
         if (current) {
-            branch.name = current.IsDetached ? current.TargetCommitHash : current.Name;
-            branch.revision = current.IsDetached ? current.TargetCommitHash : current.Name;
-            branch.isDetached = current.IsDetached;
-            branch.hasUpstream = !!current.RemoteBranch;
-            branch.remoteBranch = current.RemoteBranch || "";
+            branch.name = current.isDetached ? current.targetCommitHash : current.name;
+            branch.revision = current.isDetached ? current.targetCommitHash : current.name;
+            branch.isDetached = current.isDetached;
+            branch.hasUpstream = !!current.remoteBranch;
+            branch.remoteBranch = current.remoteBranch || "";
         }
     });
     // 	[IpcActions.BRANCH_DELETED]: removeBranchFromDropdown,

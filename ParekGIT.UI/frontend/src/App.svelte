@@ -9,6 +9,7 @@
 	import { app } from "./lib/stores/app.svelte.js";
 	import { repositories } from "./lib/stores/repositories.svelte";
 	import Topbar from "./lib/components/Topbar.svelte";
+	import SplitContainer from "./lib/components/SplitContainer.svelte";
 
 	// Registering handlers & starting Ipc listening
 	registerHandlers();
@@ -27,4 +28,5 @@
 <Topbar />
 <div class="app-container">
 	<LeftSidebar />
+	<SplitContainer />
 </div>
