@@ -10,7 +10,7 @@ namespace ParekGIT.Core.Git.Parsers
 		internal static IEnumerable<GitBranch> Parse(string rawOutput)
 		{
 			var branches = new List<GitBranch>();
-			if (string.IsNullOrWhiteSpace(rawOutput)) { return branches; }
+			if (string.IsNullOrWhiteSpace(rawOutput)) return branches;
 
 			var lines = rawOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
@@ -62,9 +62,7 @@ namespace ParekGIT.Core.Git.Parsers
 					string shortName = slashIndex >= 0 ? branch.Name[(slashIndex + 1)..] : branch.Name;
 
 					if (localBranchNames.Contains(shortName))
-					{
 						continue;
-					}
 				}
 
 				cleanBranchList.Add(branch);
