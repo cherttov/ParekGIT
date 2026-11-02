@@ -3,6 +3,7 @@ using CliWrap.Buffered;
 using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
+using System.Runtime.CompilerServices;
 
 namespace ParekGIT.Core.Git
 {
@@ -70,36 +71,28 @@ namespace ParekGIT.Core.Git
 		{
 			string[] args = ["branch", "--all", "--format=%(refname)|%(refname:short)|%(HEAD)|%(upstream:short)|%(objectname)"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, args);
-
-			return GitBranchParser.Parse(rawOutput);
+			return GitBranchParser.Parse(await ExecuteCommandAsync(repoPath, args));
 		}
 
 		public async Task<IEnumerable<GitFileStatus>> GetStatusAsync(string repoPath)
 		{
 			string[] args = ["status", "--porcelain", "-uall"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, args);
-
-			return GitStatusParser.Parse(rawOutput);
+			return GitStatusParser.Parse(await ExecuteCommandAsync(repoPath, args));
 		}
 
 		public async Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int skip = 0, int take = 50)
 		{
 			string[] args = ["log", branchName, $"--skip", skip.ToString(), "-n", take.ToString(), "--pretty=format:%H|%s|%an|%ar|%at"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, args);
-
-			return GitHistoryParser.Parse(rawOutput);
+			return GitHistoryParser.Parse(await ExecuteCommandAsync(repoPath, args));
 		}
 
 		public async Task<IEnumerable<GitStash>> GetStashesAsync(string repoPath)
 		{
 			string[] args = ["stash", "list", "--format=%gd|%H|%s"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, args);
-
-			return GitStashParser.Parse(rawOutput);
+			return GitStashParser.Parse(await ExecuteCommandAsync(repoPath, args));
 		}
 
 		public async Task<string> GetFileDiffAsync(string repoPath, string filePath)
@@ -128,54 +121,34 @@ namespace ParekGIT.Core.Git
 		{
 			string[] args = ["show", "--diff-merges=first-parent", "--name-status", "--format=%an%n%s", hash];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, args);
-
-			return GitCommitDetailsParser.Parse(rawOutput);
+			return GitCommitDetailsParser.Parse(await ExecuteCommandAsync(repoPath, args));
 		}
 
 		public async Task<int> GetCommitsAheadAsync(string repoPath)
 		{
-			string[] args = ["rev-list", "--count", "@{u}..HEAD"];
-
-			string rawOutput = await ExecuteCommandAsync(repoPath, args, 128);
-
-			return int.TryParse(rawOutput, out int aheadCount) ? aheadCount : 0;
+			return await GetRevListCountAsync(repoPath, "@{u}..HEAD");
 		}
 
 		public async Task<int> GetCommitsBehindAsync(string repoPath)
 		{
-			string[] args = ["rev-list", "--count", "HEAD..@{u}"];
-
-			string rawOutput = await ExecuteCommandAsync(repoPath, args, 128);
-
-			return int.TryParse(rawOutput, out int behindCount) ? behindCount : 0;
+			return await GetRevListCountAsync(repoPath, "HEAD..@{u}");
 		}
 
 		public async Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath)
 		{
 			string[] args = ["show", "--diff-merges=first-parent", "--format=", commitHash, "--", filePath];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, args);
-
-			return rawOutput;
+			return await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task<GitConfigInfo> GetGlobalConfigAsync(string? repoPath = null)
 		{
-			string[] args = ["config", "--global", "--get-regexp", @"^user\.(name|email)$"];
-
-			string rawOutput = await ExecuteCommandAsync(repoPath, args, 1);
-
-			return GitConfigParser.Parse(rawOutput);
+			return await GetConfigInternalAsync(repoPath, "--global");
 		}
 
 		public async Task<GitConfigInfo> GetLocalConfigAsync(string repoPath)
 		{
-			string[] args = ["config", "--local", "--get-regexp", @"^user\.(name|email)$"];
-
-			string rawOutput = await ExecuteCommandAsync(repoPath, args, 1);
-
-			return GitConfigParser.Parse(rawOutput);
+			return await GetConfigInternalAsync(repoPath, "--local");
 		}
 
 		public async Task<string?> GetRemoteUrlAsync(string repoPath)
@@ -348,12 +321,7 @@ namespace ParekGIT.Core.Git
 
 		public async Task CheckoutCommitAsync(string repoPath, string commitHash)
 		{
-			var status = await GetStatusAsync(repoPath);
-
-			if (status.Any())
-			{
-				throw new Exception("Uncommitted changes are present [CheckoutCommitAsync]");
-			}
+			await EnsureCleanWorkingTreeAsync(repoPath);
 
 			string[] args = ["checkout", "--detach", commitHash];
 
@@ -362,11 +330,7 @@ namespace ParekGIT.Core.Git
 
 		public async Task RevertCommitAsync(string repoPath, string commitHash)
 		{
-			var status = await GetStatusAsync(repoPath);
-			if (status.Any())
-			{
-				throw new Exception("Uncommitted changes are present [RevertCommitAsync]");
-			}
+			EnsureCleanWorkingTreeAsync(repoPath);
 
 			try
 			{
@@ -397,11 +361,7 @@ namespace ParekGIT.Core.Git
 
 		public async Task MergeBranchesAsync(string repoPath, string sourceBranch, string targetBranch)
 		{
-			var status = await GetStatusAsync(repoPath);
-			if (status.Any())
-			{
-				throw new Exception("Uncommitted changes are present [MergeBranchesAsync]");
-			}
+			await EnsureCleanWorkingTreeAsync(repoPath);
 
 			await ExecuteCommandAsync(repoPath, ["checkout", targetBranch]);
 
@@ -431,7 +391,6 @@ namespace ParekGIT.Core.Git
 		{
 			// Create & check directory
 			string fullPath = Path.Combine(request.LocalPath, request.RepoName);
-
 			if (Directory.Exists(fullPath)) { throw new Exception($"Directory {request.RepoName} already exists."); }
 
 			// Init repo
@@ -449,13 +408,11 @@ namespace ParekGIT.Core.Git
 			{
 				GitConfigInfo globalConfig = await GetGlobalConfigAsync(null);
 
-				await _templateService.WriteLicenseAsync(
-					fullPath,
-					request.License,
-					string.IsNullOrWhiteSpace(request.LicenseYear) ? DateTime.Now.Year.ToString() : request.LicenseYear,
-					string.IsNullOrWhiteSpace(request.LicenseOrganization) ? globalConfig.Name : request.LicenseOrganization,
-					string.IsNullOrWhiteSpace(request.LicenseProject) ? request.RepoName : request.LicenseProject
-				);
+				string year = string.IsNullOrWhiteSpace(request.LicenseYear) ? DateTime.Now.Year.ToString() : request.LicenseYear;
+				string org = string.IsNullOrWhiteSpace(request.LicenseOrganization) ? globalConfig.Name : request.LicenseOrganization;
+				string proj = string.IsNullOrWhiteSpace(request.LicenseProject) ? request.RepoName : request.LicenseProject;
+
+				await _templateService.WriteLicenseAsync(fullPath, request.License, year, org, proj);
 			}
 
 			await ExecuteCommandAsync(fullPath, ["add", "."]);
@@ -484,48 +441,12 @@ namespace ParekGIT.Core.Git
 
 		public async Task SaveLocalConfigAsync(string repoPath, string name, string email)
 		{
-			// Handle Name
-			if (string.IsNullOrWhiteSpace(name))
-			{
-				await ExecuteCommandAsync(repoPath, ["config", "--local", "--unset", "user.name"], successExitCodes: 5);
-			}
-			else
-			{
-				await ExecuteCommandAsync(repoPath, ["config", "--local", "user.email", email]);
-			}
-
-			// Handle Email
-			if (string.IsNullOrWhiteSpace(email))
-			{
-				await ExecuteCommandAsync(repoPath, ["config", "--global", "--unset", "user.email"], successExitCodes: 5);
-			}
-			else
-			{
-				await ExecuteCommandAsync(repoPath, ["config", "--global", "user.email", email]);
-			}
+			await SaveConfigInternalAsync(repoPath, "--local", name, email);
 		}
 
 		public async Task SaveGlobalConfigAsync(string? repoPath, string name, string email)
 		{
-			// Handle Name
-			if (string.IsNullOrWhiteSpace(name))
-			{
-				await ExecuteCommandAsync(repoPath, ["config", "--global", "--unset", "user.name"], successExitCodes: 5);
-			}
-			else
-			{
-				await ExecuteCommandAsync(repoPath, ["config", "--global", "user.name", name]);
-			}
-
-			// Handle Email
-			if (string.IsNullOrWhiteSpace(email))
-			{
-				await ExecuteCommandAsync(repoPath, ["config", "--global", "--unset", "user.email"], successExitCodes: 5);
-			}
-			else
-			{
-				await ExecuteCommandAsync(repoPath, ["config", "--global", "user.email", email]);
-			}
+			await SaveConfigInternalAsync(repoPath, "--global", name, email);
 		}
 
 		public async Task StashSaveAsync(string repoPath, string message, IEnumerable<string> files)
@@ -537,11 +458,9 @@ namespace ParekGIT.Core.Git
 				args.AddRange(["-m", message]);
 			}
 
-			var fileList = files.ToList();
-			if (fileList.Count > 0)
+			if (files.Any())
 			{
-				args.Add("--");
-				args.AddRange(fileList);
+				args.AddRange(["--", .. files]);
 			}
 
 			await ExecuteCommandAsync(repoPath, args);
@@ -559,6 +478,51 @@ namespace ParekGIT.Core.Git
 			string[] args = ["stash", "drop", stashSelector];
 
 			await ExecuteCommandAsync(repoPath, args);
+		}
+
+		// ======================== Helpers ========================
+		private async Task<GitConfigInfo> GetConfigInternalAsync(string? repoPath, string scopeFlag)
+		{
+			string[] args = ["config", scopeFlag, "--get-regexp", @"^user\.(name|email)$"];
+			return GitConfigParser.Parse(await ExecuteCommandAsync(repoPath, args, 1));
+		}
+		
+		private async Task SaveConfigInternalAsync(string? repoPath, string scopeFlag, string name, string email)
+		{
+			// Name
+			if (string.IsNullOrWhiteSpace(name))
+			{
+				await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "--unset", "user.name"], successExitCodes: 5);
+			}
+			else
+			{
+				await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "user.name", name]);
+			}
+
+			// Email
+			if (string.IsNullOrWhiteSpace(email))
+			{
+				await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "--unset", "user.email"], successExitCodes: 5);
+			}
+			else
+			{
+				await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "user.email", email]);
+			}
+		}
+
+		private async Task EnsureCleanWorkingTreeAsync(string repoPath, [CallerMemberName] string caller = "")
+		{
+			var status = await GetStatusAsync(repoPath);
+			if (status.Any())
+			{
+				throw new Exception($"Uncommitted changes are present [{caller}]");
+			}
+		}
+
+		private async Task<int> GetRevListCountAsync(string repoPath, string range)
+		{
+			string rawOutput = await ExecuteCommandAsync(repoPath, ["rev-list", "--count", range], 128);
+			return int.TryParse(rawOutput, out int count) ? count : 0;
 		}
 	}
 }
