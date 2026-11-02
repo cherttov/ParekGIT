@@ -7,17 +7,16 @@ namespace ParekGIT.Core.Git.Parsers
 		internal static IEnumerable<GitCommit> Parse(string rawOutput)
 		{
 			var commits = new List<GitCommit>();
-
-			if (string.IsNullOrWhiteSpace(rawOutput)) { return commits; }
+			if (string.IsNullOrWhiteSpace(rawOutput)) return commits;
 
 			var lines = rawOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
 			foreach (var line in lines)
 			{
 				var parts = line.Split('|');
-				if (parts.Length != 5) { continue; }
+				if (parts.Length != 5) continue;
 
-				if (!long.TryParse(parts[4], out long unixTimestamp)) { continue; }
+				if (!long.TryParse(parts[4], out long unixTimestamp)) continue;
 
 				commits.Add(new GitCommit
 				{
