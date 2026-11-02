@@ -21,7 +21,7 @@ namespace ParekGIT.Core.Git
 		}
 
 		// ======================== Command execution ========================
-		public async Task<string> ExecuteCommandAsync(string? repoPath, string arguments, params int[] successExitCodes)
+		public async Task<string> ExecuteCommandAsync(string? repoPath, IEnumerable<string> args, params int[] successExitCodes)
 		{
 			string safeWorkingDir = string.IsNullOrWhiteSpace(repoPath)
 					? Environment.CurrentDirectory
@@ -34,11 +34,12 @@ namespace ParekGIT.Core.Git
 
 			try
 			{
-				var result = await Cli.Wrap("git")
-					.WithArguments(arguments)
+				var cmd = Cli.Wrap("git")
+					.WithArguments(args)
 					.WithWorkingDirectory(safeWorkingDir)
-					.WithValidation(CommandResultValidation.None)
-					.ExecuteBufferedAsync();
+					.WithValidation(CommandResultValidation.None);
+
+				var result = await cmd.ExecuteBufferedAsync();
 
 				bool isAcceptable = result.ExitCode == 0 || successExitCodes.Contains(result.ExitCode);
 
@@ -51,7 +52,7 @@ namespace ParekGIT.Core.Git
 				if (result.ExitCode != 0)
 				{
 					await _logger.LogWarningAsync(
-						$"git {arguments} exited {result.ExitCode} (acceptable). {result.StandardError.Trim()}"
+						$"{cmd} exited {result.ExitCode} (acceptable). {result.StandardError.Trim()}"
 					);
 				}
 
@@ -67,45 +68,45 @@ namespace ParekGIT.Core.Git
 		// ======================== Parsers ========================
 		public async Task<IEnumerable<GitBranch>> GetBranchesAsync(string repoPath)
 		{
-			string arguments = "branch --all --format=\"%(refname)|%(refname:short)|%(HEAD)|%(upstream:short)|%(objectname)\"";
+			string[] args = ["branch", "--all", "--format=%(refname)|%(refname:short)|%(HEAD)|%(upstream:short)|%(objectname)"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args);
 
 			return GitBranchParser.Parse(rawOutput);
 		}
 
 		public async Task<IEnumerable<GitFileStatus>> GetStatusAsync(string repoPath)
 		{
-			string arguments = "status --porcelain -uall";
+			string[] args = ["status", "--porcelain", "-uall"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args);
 
 			return GitStatusParser.Parse(rawOutput);
 		}
 
 		public async Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int skip = 0, int take = 50)
 		{
-			string arguments = $"log \"{branchName}\" --skip {skip} -n {take} --pretty=format:\"%H|%s|%an|%ar|%at\"";
+			string[] args = ["log", branchName, $"--skip", skip.ToString(), "-n", take.ToString(), "--pretty=format:%H|%s|%an|%ar|%at"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args);
 
 			return GitHistoryParser.Parse(rawOutput);
 		}
 
 		public async Task<IEnumerable<GitStash>> GetStashesAsync(string repoPath)
 		{
-			string arguments = "stash list --format=\"%gd|%H|%s\"";
+			string[] args = ["stash", "list", "--format=%gd|%H|%s"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args);
 
 			return GitStashParser.Parse(rawOutput);
 		}
 
 		public async Task<string> GetFileDiffAsync(string repoPath, string filePath)
 		{
-			string arguments = $"diff HEAD -- \"{filePath}\"";
+			string[] args = ["diff", "HEAD", "--", filePath];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args);
 
 			// If empty, must be untracked file (read directly)
 			if (string.IsNullOrWhiteSpace(rawOutput))
@@ -125,63 +126,63 @@ namespace ParekGIT.Core.Git
 
 		public async Task<CommitDetailsResult> GetCommitDetailsAsync(string repoPath, string hash)
 		{
-			string arguments = $"show --diff-merges=first-parent --name-status --format=\"%an%n%s\" {hash}";
+			string[] args = ["show", "--diff-merges=first-parent", "--name-status", "--format=%an%n%s", hash];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args);
 
 			return GitCommitDetailsParser.Parse(rawOutput);
 		}
 
 		public async Task<int> GetCommitsAheadAsync(string repoPath)
 		{
-			string arguments = "rev-list --count @{u}..HEAD";
+			string[] args = ["rev-list", "--count", "@{u}..HEAD"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments, 128);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args, 128);
 
 			return int.TryParse(rawOutput, out int aheadCount) ? aheadCount : 0;
 		}
 
 		public async Task<int> GetCommitsBehindAsync(string repoPath)
 		{
-			string arguments = "rev-list --count HEAD..@{u}";
+			string[] args = ["rev-list", "--count", "HEAD..@{u}"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments, 128);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args, 128);
 
 			return int.TryParse(rawOutput, out int behindCount) ? behindCount : 0;
 		}
 
 		public async Task<string> GetHistoryFileDiffAsync(string repoPath, string commitHash, string filePath)
 		{
-			string arguments = $"show --diff-merges=first-parent --format= {commitHash} -- \"{filePath}\"";
+			string[] args = ["show", "--diff-merges=first-parent", "--format=", commitHash, "--", filePath];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args);
 
 			return rawOutput;
 		}
 
 		public async Task<GitConfigInfo> GetGlobalConfigAsync(string? repoPath = null)
 		{
-			string arguments = "config --global --get-regexp \"^user\\.(name|email)$\"";
+			string[] args = ["config", "--global", "--get-regexp", @"^user\.(name|email)$"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments, 1);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args, 1);
 
 			return GitConfigParser.Parse(rawOutput);
 		}
 
 		public async Task<GitConfigInfo> GetLocalConfigAsync(string repoPath)
 		{
-			string arguments = "config --local --get-regexp \"^user\\.(name|email)$\"";
+			string[] args = ["config", "--local", "--get-regexp", @"^user\.(name|email)$"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments, 1);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args, 1);
 
 			return GitConfigParser.Parse(rawOutput);
 		}
 
 		public async Task<string?> GetRemoteUrlAsync(string repoPath)
 		{
-			string arguments = "config --get remote.origin.url";
+			string[] args = ["config", "--get", "remote.origin.url"];
 
-			string rawOutput = await ExecuteCommandAsync(repoPath, arguments, 1);
+			string rawOutput = await ExecuteCommandAsync(repoPath, args, 1);
 
 			return string.IsNullOrWhiteSpace(rawOutput) ? null : rawOutput;
 		}
@@ -189,25 +190,25 @@ namespace ParekGIT.Core.Git
 		// ======================== Commands ========================
 		public async Task CheckoutBranchAsync(string repoPath, string branchName, bool isRemote)
 		{
-			string arguments = isRemote
-				? $"checkout -t \"{branchName}\""
-				: $"checkout \"{branchName}\"";
+			string[] args = isRemote
+				? ["checkout", "-t", branchName]
+				: ["checkout", branchName];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task CreateBranchAsync(string repoPath, string branchName)
 		{
-			string arguments = $"checkout -b \"{branchName}\"";
+			string[] args = ["checkout", "-b", branchName];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task CreateBranchFromCommitAsync(string repoPath, string branchName, string commitHash)
 		{
-			string arguments = $"checkout -b \"{branchName}\" {commitHash}";
+			string[] args = ["checkout", "-b", branchName, commitHash];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task CommitAsync(string repoPath, string message, string desc, IEnumerable<string> files)
@@ -215,21 +216,18 @@ namespace ParekGIT.Core.Git
 			if (files == null) { return; }
 
 			// Unstage everything
-			await ExecuteCommandAsync(repoPath, "reset");
+			await ExecuteCommandAsync(repoPath, ["reset"]);
 
 			// Stage selected files
-			string fileArgs = string.Join(" ", files.Select(file => $"\"{file}\""));
-			await ExecuteCommandAsync(repoPath, $"add -- {fileArgs}");
+			await ExecuteCommandAsync(repoPath, ["add", "--", ..files]);
 
 			// Prepare commit command
-			string safeMessage = message.Replace("\"", "\\\"");
-			string commitArgs = $"commit -m \"{safeMessage}\"";
+			List<string> commitArgs = ["commit", "-m", message];
 
 			// Add description if typed in
 			if (!string.IsNullOrWhiteSpace(desc))
 			{
-				string safeDescription = desc.Replace("\"", "\\\"");
-				commitArgs += $" -m \"{safeDescription}\"";
+				commitArgs.AddRange(["-m", desc]);
 			}
 
 			await ExecuteCommandAsync(repoPath, commitArgs);
@@ -237,79 +235,79 @@ namespace ParekGIT.Core.Git
 
 		public async Task PushAsync(string repoPath)
 		{
-			string arguments = "push -u origin HEAD";
+			string[] args = ["push", "-u", "origin", "HEAD"];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task PullAsync(string repoPath)
 		{
-			string arguments = "pull";
+			string[] args = ["pull"];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task RenameBranchAsync(string repoPath, string oldName, string newName)
 		{
-			string arguments = $"branch -m \"{oldName}\" \"{newName}\"";
+			string[] args = ["branch", "-m", oldName, newName];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task DeleteBranchAsync(string repoPath, string branchName)
 		{
-			string arguments = $"branch -d \"{branchName}\"";
+			string[] args = ["branch", "-d", branchName];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task ForceDeleteBranchAsync(string repoPath, string branchName)
 		{
-			string arguments = $"branch -D \"{branchName}\"";
+			string[] args = ["branch", "-D", branchName];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task DeleteRemoteBranchAsync(string repoPath, string remoteName, string branchName)
 		{
-			string arguments = $"push {remoteName} -d \"{branchName}\"";
+			string[] args = ["push", remoteName, "-d", branchName];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task FetchRepositoryAsync(string repoPath)
 		{
-			string arguments = "fetch --all --prune";
+			string[] args = ["fetch", "--all", "--prune"];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task DiscardChangeAsync(string repoPath, string filePath)
 		{
-			string statusArgs = $"status --porcelain -- \"{filePath}\"";
+			string[] statusArgs = ["status", "--porcelain", "--", filePath];
 			string statusOutput = await ExecuteCommandAsync(repoPath, statusArgs);
 			if (string.IsNullOrWhiteSpace(statusOutput)) { return; }
 
 			string statusCode = statusOutput.Length >= 2 ? statusOutput.Substring(0, 2) : "";
 			if (statusCode == "??")
 			{
-				await ExecuteCommandAsync(repoPath, $"clean -f -- \"{filePath}\"");
+				await ExecuteCommandAsync(repoPath, ["clean", "-f", "--", filePath]);
 			}
 			else if (statusCode.StartsWith("A"))
 			{
-				await ExecuteCommandAsync(repoPath, $"restore --staged -- \"{filePath}\"");
-				await ExecuteCommandAsync(repoPath, $"clean -f -- \"{filePath}\"");
+				await ExecuteCommandAsync(repoPath, ["restore", "--staged", "--", filePath]);
+				await ExecuteCommandAsync(repoPath, ["clean", "-f", "--", filePath]);
 			}
 			else // Modified/Deleted
 			{
-				await ExecuteCommandAsync(repoPath, $"restore --staged --worktree -- \"{filePath}\"");
+				await ExecuteCommandAsync(repoPath, ["restore", "--staged", "--worktree", "--", filePath]);
 			}
 		}
 
 		public async Task DiscardAllChangesAsync(string repoPath)
 		{
-			await ExecuteCommandAsync(repoPath, "reset --hard HEAD");
-			await ExecuteCommandAsync(repoPath, "clean -fd");
+			await ExecuteCommandAsync(repoPath, ["reset", "--hard", "HEAD"]);
+			await ExecuteCommandAsync(repoPath, ["clean", "-fd"]);
 		}
 
 		public async Task IgnoreFileAsync(string repoPath, string filePath)
@@ -333,9 +331,9 @@ namespace ParekGIT.Core.Git
 				await File.AppendAllTextAsync(gitignorePath, contentToAppend + Environment.NewLine);
 			}
 
-			string arguments = $"rm --cached --ignore-unmatch -- \"{filePath}\"";
+			string[] args = ["rm", "--cached", "--ignore-unmatch", "--", filePath];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public Task IgnoreFolderAsync(string repoPath, string filePath)
@@ -357,9 +355,9 @@ namespace ParekGIT.Core.Git
 				throw new Exception("Uncommitted changes are present [CheckoutCommitAsync]");
 			}
 
-			string arguments = $"checkout --detach {commitHash}";
+			string[] args = ["checkout", "--detach", commitHash];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task RevertCommitAsync(string repoPath, string commitHash)
@@ -373,9 +371,9 @@ namespace ParekGIT.Core.Git
 			try
 			{
 				// Revert
-				string arguments = $"revert --no-edit {commitHash}";
+				string[] args = ["revert", "--no-edit", commitHash];
 
-				await ExecuteCommandAsync(repoPath, arguments);
+				await ExecuteCommandAsync(repoPath, args);
 			}
 			catch (Exception ex)
 			{
@@ -387,7 +385,7 @@ namespace ParekGIT.Core.Git
 						$"Revert conflict on commit '{commitHash}' in '{repoPath}'. Aborting. Git message: {ex.Message}"
 					);
 
-					await ExecuteCommandAsync(repoPath, "revert --abort");
+					await ExecuteCommandAsync(repoPath, ["revert", "--abort"]);
 
 					throw new Exception("Merge conflict while reverting changes [RevertCommitAsync]");
 				}
@@ -405,11 +403,11 @@ namespace ParekGIT.Core.Git
 				throw new Exception("Uncommitted changes are present [MergeBranchesAsync]");
 			}
 
-			await ExecuteCommandAsync(repoPath, $"checkout \"{targetBranch}\"");
+			await ExecuteCommandAsync(repoPath, ["checkout", targetBranch]);
 
 			try
 			{
-				await ExecuteCommandAsync(repoPath, $"merge \"{sourceBranch}\"");
+				await ExecuteCommandAsync(repoPath, ["merge", sourceBranch]);
 			}
 			catch (Exception ex)
 			{
@@ -420,7 +418,7 @@ namespace ParekGIT.Core.Git
 						$"Merge conflict while merging '{sourceBranch}' -> '{targetBranch}'. Aborting. Git message: {ex.Message}"
 					);
 
-					await ExecuteCommandAsync(repoPath, "merge --abort");
+					await ExecuteCommandAsync(repoPath, ["merge", "--abort"]);
 
 					throw new Exception($"Merge conflict occured while merging '{sourceBranch}' -> '{targetBranch}'. Merge aborted.");
 				}
@@ -438,7 +436,7 @@ namespace ParekGIT.Core.Git
 
 			// Init repo
 			Directory.CreateDirectory(fullPath);
-			await ExecuteCommandAsync(fullPath, "init -b main");
+			await ExecuteCommandAsync(fullPath, ["init", "-b", "main"]);
 
 			// gitignore if not None
 			if (!string.Equals(request.GitIgnore, "None", StringComparison.OrdinalIgnoreCase))
@@ -460,8 +458,8 @@ namespace ParekGIT.Core.Git
 				);
 			}
 
-			await ExecuteCommandAsync(fullPath, "add .");
-			await ExecuteCommandAsync(fullPath, "commit --allow-empty -m \"Initial commit\"");
+			await ExecuteCommandAsync(fullPath, ["add", "."]);
+			await ExecuteCommandAsync(fullPath, ["commit", "--allow-empty", "-m", "Initial commit"]);
 
 			return new GitRepository
 			{
@@ -474,13 +472,13 @@ namespace ParekGIT.Core.Git
 
 		public async Task CloneRepositoryAsync(string repoUrl, bool asLocal, string localPath)
 		{
-			string arguments = $"clone \"{repoUrl}\" \"{localPath}\"";
+			string[] args = ["clone", repoUrl, localPath];
 
-			await ExecuteCommandAsync(null, arguments);
+			await ExecuteCommandAsync(null, args);
 
 			if (asLocal)
 			{
-				await ExecuteCommandAsync(localPath, "remote remove origin");
+				await ExecuteCommandAsync(localPath, ["remote", "remove", "origin"]);
 			}
 		}
 
@@ -489,23 +487,21 @@ namespace ParekGIT.Core.Git
 			// Handle Name
 			if (string.IsNullOrWhiteSpace(name))
 			{
-				await ExecuteCommandAsync(repoPath, "config --local --unset user.name", successExitCodes: 5);
+				await ExecuteCommandAsync(repoPath, ["config", "--local", "--unset", "user.name"], successExitCodes: 5);
 			}
 			else
 			{
-				string safeName = name.Replace("\"", "\\\"");
-				await ExecuteCommandAsync(repoPath, $"config --local user.name \"{safeName}\"");
+				await ExecuteCommandAsync(repoPath, ["config", "--local", "user.email", email]);
 			}
 
 			// Handle Email
 			if (string.IsNullOrWhiteSpace(email))
 			{
-				await ExecuteCommandAsync(repoPath, "config --local --unset user.email", successExitCodes: 5);
+				await ExecuteCommandAsync(repoPath, ["config", "--global", "--unset", "user.email"], successExitCodes: 5);
 			}
 			else
 			{
-				string safeEmail = email.Replace("\"", "\\\"");
-				await ExecuteCommandAsync(repoPath, $"config --local user.email \"{safeEmail}\"");
+				await ExecuteCommandAsync(repoPath, ["config", "--global", "user.email", email]);
 			}
 		}
 
@@ -514,58 +510,55 @@ namespace ParekGIT.Core.Git
 			// Handle Name
 			if (string.IsNullOrWhiteSpace(name))
 			{
-				await ExecuteCommandAsync(repoPath, "config --global --unset user.name", successExitCodes: 5);
+				await ExecuteCommandAsync(repoPath, ["config", "--global", "--unset", "user.name"], successExitCodes: 5);
 			}
 			else
 			{
-				string safeName = name.Replace("\"", "\\\"");
-				await ExecuteCommandAsync(repoPath, $"config --global user.name \"{safeName}\"");
+				await ExecuteCommandAsync(repoPath, ["config", "--global", "user.name", name]);
 			}
 
 			// Handle Email
 			if (string.IsNullOrWhiteSpace(email))
 			{
-				await ExecuteCommandAsync(repoPath, "config --global --unset user.email", successExitCodes: 5);
+				await ExecuteCommandAsync(repoPath, ["config", "--global", "--unset", "user.email"], successExitCodes: 5);
 			}
 			else
 			{
-				string safeEmail = email.Replace("\"", "\\\"");
-				await ExecuteCommandAsync(repoPath, $"config --global user.email \"{safeEmail}\"");
+				await ExecuteCommandAsync(repoPath, ["config", "--global", "user.email", email]);
 			}
 		}
 
 		public async Task StashSaveAsync(string repoPath, string message, IEnumerable<string> files)
 		{
-			string arguments = "stash push --include-untracked";
+			List<string> args = ["stash", "push", "--include-untracked"];
 
 			if (!string.IsNullOrWhiteSpace(message))
 			{
-				string safeMessage = message.Replace("\"", "\\\"");
-				arguments += $" -m \"{safeMessage}\"";
+				args.AddRange(["-m", message]);
 			}
 
 			var fileList = files.ToList();
 			if (fileList.Count > 0)
 			{
-				string pathspec = string.Join(" ", fileList.Select(f => $"\"{f}\""));
-				arguments += $" -- {pathspec}";
+				args.Add("--");
+				args.AddRange(fileList);
 			}
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task StashPopAsync(string repoPath, string stashSelector)
 		{
-			string arguments = $"stash pop {stashSelector}";
+			string[] args = ["stash", "pop", stashSelector];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 
 		public async Task StashDropAsync(string repoPath, string stashSelector)
 		{
-			string arguments = $"stash drop {stashSelector}";
+			string[] args = ["stash", "drop", stashSelector];
 
-			await ExecuteCommandAsync(repoPath, arguments);
+			await ExecuteCommandAsync(repoPath, args);
 		}
 	}
 }
