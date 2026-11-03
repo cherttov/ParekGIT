@@ -44,7 +44,7 @@ namespace ParekGIT.Bridge.Handlers
 			{
 				files.Add(file.GetString() ?? "");
 			}
-			if (files.Count == 0) { throw new IpcPayloadException("files", "must contain at least 1 file"); }
+			if (files.Count == 0) throw new IpcPayloadException("files", "must contain at least 1 file");
 
 			// Commit locally
 			await _gitRunner.CommitAsync(repoPath, message, description, files);

@@ -31,27 +31,18 @@ namespace ParekGIT.Bridge.Handlers
 				rawPath = AppDataPaths.GetLogDirectory();
 
 				if (!_fileSystem.DirectoryExists(rawPath))
-				{
 					throw new Exception("Couldn't resolve the path of ParekGIT local app data.");
-				}
 			}
 
 			string normalizedPath = Path.GetFullPath(rawPath);
 
-			if (!_fileSystem.DirectoryExists(normalizedPath)) { return Task.CompletedTask; }
+			if (!_fileSystem.DirectoryExists(normalizedPath)) return Task.CompletedTask;
 
 			if (OperatingSystem.IsLinux())
-			{
 				Process.Start("xdg-open", normalizedPath);
-			}
 			else
-			{
-				Process.Start(new ProcessStartInfo
-				{
-					FileName = normalizedPath,
-					UseShellExecute = true
-				});
-			}
+				Process.Start(new ProcessStartInfo { FileName = normalizedPath, UseShellExecute = true });
+
 			return Task.CompletedTask;
 		}
 	}

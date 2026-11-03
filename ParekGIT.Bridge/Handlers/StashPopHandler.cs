@@ -2,7 +2,6 @@
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
-using ParekGIT.Core.Models;
 using Photino.NET;
 using System.Text.Json;
 
