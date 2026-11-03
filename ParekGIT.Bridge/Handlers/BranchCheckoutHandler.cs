@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class BranchSelectedHandler : IMessageHandler
+	public class BranchCheckoutHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitRunner _gitRunner;
@@ -16,7 +16,7 @@ namespace ParekGIT.Bridge.Handlers
 		public string Action => "BRANCH_CHECKOUT";
 
 		// Constructor
-		public BranchSelectedHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public BranchCheckoutHandler(PhotinoWindow window, IGitRunner gitRunner)
 		{
 			_window = window;
 			_gitRunner = gitRunner;
@@ -37,9 +37,14 @@ namespace ParekGIT.Bridge.Handlers
 
 			// Update displayed list
 			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
+			GitBranch branch = branches.FirstOrDefault(b => b.IsCurrent == true)!;
 
 			// Response
-			var response = IpcMessage.Create("BRANCH_LIST_LOADED", branches);
+			var response = IpcMessage.Create("BRANCH_CHECKED_OUT", new
+			{
+				branch,
+				branches
+			});
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

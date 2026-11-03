@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class RepoSelectedHandler : IMessageHandler
+	public class RepoCheckoutHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly LiteDbStore _dbStore;
@@ -19,10 +19,10 @@ namespace ParekGIT.Bridge.Handlers
 		private readonly IRepoWatcher _repoWatcher;
 		private readonly IFileSystemService _fileSystem;
 
-		public string Action => "REPO_SELECTED";
+		public string Action => "REPO_CHECKOUT";
 
 		// Constructor
-		public RepoSelectedHandler(PhotinoWindow window, LiteDbStore dbStore, JsonStore jsonStore, IGitRunner gitRunner, IRepoWatcher repoWatcher, IFileSystemService fileSystem)
+		public RepoCheckoutHandler(PhotinoWindow window, LiteDbStore dbStore, JsonStore jsonStore, IGitRunner gitRunner, IRepoWatcher repoWatcher, IFileSystemService fileSystem)
 		{
 			_window = window;
 			_dbStore = dbStore;
@@ -37,8 +37,10 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 							  ?? throw new IpcPayloadException("repoPath");
 
+			var repo = await _dbStore.GetRepositoryByPathAsync(repoPath);
+
 			// Failed response
-			if (!_fileSystem.DirectoryExists(repoPath))
+			if (!_fileSystem.DirectoryExists(repoPath) || repo == null)
 			{
 				await _dbStore.UpdateRepositoryValidStateAsync(repoPath, false);
 
@@ -52,6 +54,7 @@ namespace ParekGIT.Bridge.Handlers
 
 			// Get branches
 			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
+			GitBranch branch = branches.FirstOrDefault(b => b.IsCurrent == true)!;
 			_repoWatcher.WatchRepository(repoPath);
 
 			// Update last repo path
@@ -62,7 +65,12 @@ namespace ParekGIT.Bridge.Handlers
 			}
 
 			// Response
-			var response = IpcMessage.Create("BRANCH_LIST_LOADED", branches);
+			var response = IpcMessage.Create("REPO_CHECKED_OUT", new
+			{
+				repo,
+				branch,
+				branches
+			});
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}
