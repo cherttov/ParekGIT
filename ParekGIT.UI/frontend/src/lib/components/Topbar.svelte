@@ -43,7 +43,7 @@
     </div>
 
     <div class="topbar-dropdown-container" id="branches-container" style:width="{layout.rightSidebarWidth}px">
-        <button class="topbar-btn" onclick={toggleBranch}>
+        <button class="topbar-btn" onclick={toggleBranch} disabled={!repo.path}>
             <div class="btn-text-group">
                 <span class="topbar-dropdown btn-label">
                     Current branch:
