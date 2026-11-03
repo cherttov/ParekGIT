@@ -22,10 +22,7 @@ namespace ParekGIT.Data.Data
 			_db = new LiteDatabase($"Filename={rawPath}");
 		}
 
-		public void Dispose()
-		{
-			_db.Dispose();
-		}
+		public void Dispose() => _db.Dispose();
 
 		// Repos db
 		public Task<IEnumerable<GitRepository>> GetAllRepositoriesAsync()
@@ -33,7 +30,6 @@ namespace ParekGIT.Data.Data
 			return Task.Run(() =>
 			{
 				var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
-
 				return (IEnumerable<GitRepository>)collection
 					.Query()
 					.OrderByDescending(entry => entry.LastAccessed)
@@ -114,7 +110,8 @@ namespace ParekGIT.Data.Data
 				{
 					var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
 					collection.DeleteMany(todo => todo.RepoId == repoId && todo.BranchName == branchName);
-					if (todos.Any()) { collection.InsertBulk(todos); }
+					if (todos.Any()) 
+						collection.InsertBulk(todos);
 					_db.Commit();
 				}
 				catch
