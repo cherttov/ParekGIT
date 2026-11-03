@@ -36,11 +36,11 @@ namespace ParekGIT.Bridge.Handlers
 				IEnumerable<string> bakFiles = await _fileSystem.GetFileSystemEntriesAsync(logsDirectory, "*.bak", SearchOption.TopDirectoryOnly);
 				IEnumerable<string> allFiles = logFiles.Concat(bakFiles);
 
-				string todayLogFile = Path.Combine(logsDirectory, $"parekgit-{DateTime.UtcNow:dd-MM-yyyy}.log");
+				string todayLogFile = Path.Combine(logsDirectory, $"parekgit-{DateTime.UtcNow:yyyy-MM-dd}.log");
 
 				foreach (string file in allFiles)
 				{
-					if (string.Equals(file, todayLogFile, StringComparison.OrdinalIgnoreCase)) { continue; }
+					if (string.Equals(file, todayLogFile, StringComparison.OrdinalIgnoreCase)) continue;
 
 					try
 					{
