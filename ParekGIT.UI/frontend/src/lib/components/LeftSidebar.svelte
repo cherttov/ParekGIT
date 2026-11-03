@@ -2,6 +2,7 @@
     import { repo } from "../stores/repo.svelte.js";
     import { sendIpcMessage } from "../ipc/ipc.js";
     import { IpcActions } from "../ipc/actions.js";
+    import { fetchRepo, publishBranch, pullRepo, pushRepo } from "../ipc/commands.js";
 
     const hasRepo = $derived(repo.path !== "");
 
@@ -10,7 +11,7 @@
         if (!repo.hasUpstream) return "publish";
         if (repo.commitsBehind > 0) return "pull";
         if (repo.commitsAhead > 0) return "push";
-        return "none";
+        return "up-to-date";
     });
 
     const syncTitle = $derived.by(() => {
@@ -24,20 +25,10 @@
 		}
 	});
 
-    function fetchRepo() {
-        if (!hasRepo || repo.fetching) return;
-        repo.fetching = true;
-        sendIpcMessage(IpcActions.REPO_FETCH, { repoPath: repo.path });
-    }
-
     function pushPullPublish() {
-        if (syncState === "publish") {
-            sendIpcMessage(IpcActions.REPO_PUBLISH, { repoPath: repo.path, branchName: repo.branch });
-        } else if (syncState === "pull") {
-            sendIpcMessage(IpcActions.REPO_PULL, { repoPath: repo.path });
-        } else if (syncState === "push") {
-            sendIpcMessage(IpcActions.REPO_PUSH, { repoPath: repo.path });
-        }
+        if (syncState === "publish") publishBranch();
+        else if (syncState === "pull") pullRepo();
+        else if (syncState === "push") pushRepo();
     }
 </script>
 
@@ -68,7 +59,8 @@
             class:push={syncState === "push"}
             class:pull={syncState === "pull"}
             class:publish={syncState === "publish"}
-            disabled={syncState === "none"}
+            disabled={syncState === "none" || syncState === "up-to-date"}
+            onclick={pushPullPublish}
             title={syncTitle}>
         <div class="btn-icon icon-pushpullpublish"></div>
     </button>
@@ -81,7 +73,8 @@
     </button>
 
     <!-- Fetch Btn -->
-    <button class="left-sidebar-btn btn-fetch" 
+    <button class="left-sidebar-btn btn-fetch"
+            class:fetching={repo.fetching}
             disabled={!hasRepo}
             onclick={fetchRepo}
             title="Fetch from remote">

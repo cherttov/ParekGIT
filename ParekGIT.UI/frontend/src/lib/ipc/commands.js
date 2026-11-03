@@ -25,3 +25,21 @@ export function refreshRepoState() {
         sendIpcMessage(IpcActions.TODO_LOAD, { repoPath: repo.path, branchName: branch.revision });
     }
 }
+
+export function fetchRepo() {
+    if (!repo.path || repo.fetching) return;
+    repo.fetching = true;
+    sendIpcMessage(IpcActions.REPO_FETCH, { repoPath: repo.path });
+}
+
+export function publishBranch() {
+    sendIpcMessage(IpcActions.REPO_PUBLISH, { repoPath: repo.path, branchName: branch.name });
+}
+
+export function pullRepo() {
+    sendIpcMessage(IpcActions.REPO_PULL, { repoPath: repo.path });
+}
+
+export function pushRepo() {
+    sendIpcMessage(IpcActions.REPO_PUSH, { repoPath: repo.path });
+}
