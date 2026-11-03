@@ -1,10 +1,11 @@
 import { IpcActions } from "./actions.js";
-import { onIpc } from "./ipc.js";
+import { onIpc, sendIpcMessage } from "./ipc.js";
 import { repo } from "../stores/repo.svelte.js";
 import { app } from "../stores/app.svelte.js";
 import { repositories } from "../stores/repositories.svelte.js";
 import { branch } from "../stores/branch.svelte.js";
 import { branches } from "../stores/branches.svelte.js";
+import { checkoutRepo, refreshRepoState } from "./commands.js";
 
 export function registerHandlers() {
     // App
@@ -12,6 +13,12 @@ export function registerHandlers() {
         app.theme = payload.settings.theme;
         app.themes = payload.themes;
         repositories.list = payload.repositories;
+        if (payload.settings.lastRepoPath) {
+            const lastRepo = payload.repositories.find(
+                (r) => r.absolutePath === payload.settings.lastRepoPath
+            );
+            if (lastRepo) checkoutRepo(lastRepo);
+        }
         app.ready = true;
     });
 
@@ -19,7 +26,16 @@ export function registerHandlers() {
         // showErrorModal
     });
 
-    // Repo
+	// Repo
+	onIpc(IpcActions.REPO_CHECKED_OUT, (payload) => {
+        repo.name = payload.repo.name,
+        repo.path = payload.repo.absolutePath,
+        repo.remoteUrl = payload.repo.remoteUrl
+        repo.changes = [];
+        branches.list = payload.branches;
+        applyBranch(payload.branch);
+        refreshRepoState();
+	});
     onIpc(IpcActions.REPO_CLONED, addRepo);
     onIpc(IpcActions.REPO_CREATED, addRepo);
     onIpc(IpcActions.REPO_ADDED, addRepo);
@@ -28,7 +44,7 @@ export function registerHandlers() {
         if (repo.path === payload.repoPath) {
             repo.name = "";
             repo.path = "";
-            repo.hasRemote = false;
+            repo.remoteUrl = "";
             branch.name = "";
             branches.list = [];
         }
@@ -51,16 +67,14 @@ export function registerHandlers() {
     });
 
     // Branch
+    onIpc(IpcActions.BRANCH_CHECKED_OUT, (payload) => {
+        branches.list = payload.branches;
+        applyBranch(payload.branch);
+        refreshRepoState();
+    })
     onIpc(IpcActions.BRANCH_LIST_LOADED, (payload) => {
-        branches.list = payload;
-        const current = payload.find((b) => b.isCurrent);
-        if (current) {
-            branch.name = current.isDetached ? current.targetCommitHash : current.name;
-            branch.revision = current.isDetached ? current.targetCommitHash : current.name;
-            branch.isDetached = current.isDetached;
-            branch.hasUpstream = !!current.remoteBranch;
-            branch.remoteBranch = current.remoteBranch || "";
-        }
+        applyBranch(payload.branches);
+        refreshRepoState();
     });
     // 	[IpcActions.BRANCH_DELETED]: removeBranchFromDropdown,
     // 	[IpcActions.BRANCH_FORCE_DELETE_REQUESTED]: processBranchForceDeleteRequested,
@@ -112,3 +126,13 @@ export function registerHandlers() {
 function addRepo(r) {
     repositories.list = [...repositories.list, r];
 }
+
+function applyBranch(b) {
+    if (!b) { branch.name = ""; branch.revision = ""; return; }
+    branch.name = b.name;
+    branch.revision = b.isDetached ? b.targetCommitHash : b.name;
+    branch.isDetached = b.isDetached;
+    branch.hasUpstream = !!b.remoteBranch;
+    branch.remoteBranch = b.remoteBranch || "";
+}
+

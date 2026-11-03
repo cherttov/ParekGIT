@@ -5,9 +5,7 @@
 	import { startIpc, sendIpcMessage } from "./lib/ipc/ipc.js";
 	import { registerHandlers } from "./lib/ipc/handlers.js";
 	import { IpcActions } from "./lib/ipc/actions.js";
-	import { repo } from "./lib/stores/repo.svelte.js";
 	import { app } from "./lib/stores/app.svelte.js";
-	import { repositories } from "./lib/stores/repositories.svelte";
 	import Topbar from "./lib/components/Topbar.svelte";
 	import SplitContainer from "./lib/components/SplitContainer.svelte";
 

@@ -5,6 +5,7 @@
     import { sendIpcMessage } from "../ipc/ipc";
     import { IpcActions } from "../ipc/actions";
     import { layout } from "../stores/layout.svelte";
+    import { checkoutBranch } from "../ipc/commands";
 	import CustomScrollbar from "./CustomScrollbar.svelte";
 
     let { show = false, onclose, onnewbranch } = $props();
@@ -15,17 +16,8 @@
         branches.list.filter(b => b.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
-    function checkoutBranch(b) {
-        if (b.isDetached) return;
-        if (branch.name.toLowerCase() === b.name.toLowerCase()) {
-            onclose?.();
-            return;
-        }
-        sendIpcMessage(IpcActions.BRANCH_CHECKOUT, {
-            repoPath: repo.path,
-            branchName: b.name,
-            isRemote: b.isRemote
-        });
+    function selectBranch(b) {
+        checkoutBranch(b);
         onclose?.();
     }
 </script>
@@ -50,7 +42,7 @@
                 <div
                     class="dropdown-item"
                     class:active={branch.name === b.name}
-                    onclick={() => checkoutBranch(b)}
+                    onclick={() => selectBranch(b)}
                 >
                     <span class="dropdown-item-text">{b.name}</span>
                     {#if repo.hasRemote && !b.isRemote && !b.isDetached && !b.remoteBranch}

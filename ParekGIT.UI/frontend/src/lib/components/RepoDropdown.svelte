@@ -1,10 +1,9 @@
 <script>
-    import { repositories } from "../stores/repositories.svelte";
     import { repo } from "../stores/repo.svelte";
-    import { branch } from "../stores/branch.svelte";
-    import { branches } from "../stores/branches.svelte";
     import { sendIpcMessage } from "../ipc/ipc";
     import { IpcActions } from "../ipc/actions";
+	import { repositories } from "../stores/repositories.svelte";
+    import { checkoutRepo } from "../ipc/commands";
     import CustomScrollbar from "./CustomScrollbar.svelte";
 
     let { show = false, onclose } = $props();
@@ -16,18 +15,7 @@
     );
 
     function selectRepo(r) {
-        if (!r.isValid) return;
-        if (repo.path === r.absolutePath) { onclose?.(); return; }
-
-        repo.name = r.name;
-        repo.path = r.absolutePath;
-        repo.hasRemote = !!r.remoteUrl;
-        repo.changes = [];
-        branch.name = "";
-        branches.list = [];
-
-        sendIpcMessage(IpcActions.REPO_SELECTED, { repoPath: r.absolutePath });
-        sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: r.absolutePath });
+        checkoutRepo(r);
         onclose?.();
     }
 </script>
