@@ -9,39 +9,39 @@ import { checkoutRepo, refreshRepoState } from "./commands.js";
 
 export function registerHandlers() {
     // App
-    onIpc(IpcActions.APP_INITIALIZED, (payload) => {
-        app.theme = payload.settings.theme;
-        app.themes = payload.themes;
-        repositories.list = payload.repositories;
-        if (payload.settings.lastRepoPath) {
-            const lastRepo = payload.repositories.find(
-                (r) => r.absolutePath === payload.settings.lastRepoPath
+    onIpc(IpcActions.APP_INITIALIZED, (p) => {
+        app.theme = p.settings.theme;
+        app.themes = p.themes;
+        repositories.list = p.repositories;
+        if (p.settings.lastRepoPath) {
+            const lastRepo = p.repositories.find(
+                (r) => r.absolutePath === p.settings.lastRepoPath
             );
             if (lastRepo) checkoutRepo(lastRepo);
         }
         app.ready = true;
     });
 
-    onIpc(IpcActions.APP_ERROR, (payload) => {
+    onIpc(IpcActions.APP_ERROR, (p) => {
         // showErrorModal
     });
 
 	// Repo
-	onIpc(IpcActions.REPO_CHECKED_OUT, (payload) => {
-        repo.name = payload.repo.name,
-        repo.path = payload.repo.absolutePath,
-        repo.remoteUrl = payload.repo.remoteUrl
+	onIpc(IpcActions.REPO_CHECKED_OUT, (p) => {
+        repo.name = p.repo.name,
+        repo.path = p.repo.absolutePath,
+        repo.remoteUrl = p.repo.remoteUrl
         repo.changes = [];
-        branches.list = payload.branches;
-        applyBranch(payload.branch);
+        branches.list = p.branches;
+        applyBranch(p.branch);
         refreshRepoState();
 	});
     onIpc(IpcActions.REPO_CLONED, addRepo);
     onIpc(IpcActions.REPO_CREATED, addRepo);
     onIpc(IpcActions.REPO_ADDED, addRepo);
-    onIpc(IpcActions.REPO_REMOVED, (payload) => {
-        repositories.list = repositories.list.filter(r => r.absolutePath !== payload.repoPath);
-        if (repo.path === payload.repoPath) {
+    onIpc(IpcActions.REPO_REMOVED, (p) => {
+        repositories.list = repositories.list.filter(r => r.absolutePath !== p.repoPath);
+        if (repo.path === p.repoPath) {
             repo.name = "";
             repo.path = "";
             repo.remoteUrl = "";
@@ -56,24 +56,24 @@ export function registerHandlers() {
     // 	[IpcActions.REPO_PULLED]: processRepoPulled,
     // 	[IpcActions.REPO_PUSHED]: processRepoPushed,
     // 	[IpcActions.REPO_PUBLISHED]: processRepoPublished,
-    onIpc(IpcActions.REPO_STATUS_LOADED, (payload) => {
-        repo.changes = payload;
+    onIpc(IpcActions.REPO_STATUS_LOADED, (p) => {
+        repo.changes = p;
     });
     // 	[IpcActions.REPO_FILES_CHANGED]: processFileChanges,
     // 	[IpcActions.REPO_PATH_MISSING]: processMissingRepo,
-    onIpc(IpcActions.REPO_SYNC_STATUS_CHANGED, (payload) => {
-        branch.commitsBehind = payload.commitsBehind || 0;
-        branch.commitsAhead = payload.commitsAhead || 0;
+    onIpc(IpcActions.REPO_SYNC_STATUS_CHANGED, (p) => {
+        branch.commitsBehind = p.commitsBehind || 0;
+        branch.commitsAhead = p.commitsAhead || 0;
     });
 
     // Branch
-    onIpc(IpcActions.BRANCH_CHECKED_OUT, (payload) => {
-        branches.list = payload.branches;
-        applyBranch(payload.branch);
+    onIpc(IpcActions.BRANCH_CHECKED_OUT, (p) => {
+        branches.list = p.branches;
+        applyBranch(p.branch);
         refreshRepoState();
     })
-    onIpc(IpcActions.BRANCH_LIST_LOADED, (payload) => {
-        applyBranch(payload.branches);
+    onIpc(IpcActions.BRANCH_LIST_LOADED, (p) => {
+        applyBranch(p.branches);
         refreshRepoState();
     });
     // 	[IpcActions.BRANCH_DELETED]: removeBranchFromDropdown,

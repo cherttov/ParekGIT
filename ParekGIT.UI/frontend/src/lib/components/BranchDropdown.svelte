@@ -2,7 +2,6 @@
     import { branches } from "../stores/branches.svelte";
     import { branch } from "../stores/branch.svelte";
     import { repo } from "../stores/repo.svelte";
-    import { sendIpcMessage } from "../ipc/ipc";
     import { IpcActions } from "../ipc/actions";
     import { layout } from "../stores/layout.svelte";
     import { checkoutBranch } from "../ipc/commands";

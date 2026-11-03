@@ -1,6 +1,5 @@
 <script>
     import { repo } from "../stores/repo.svelte";
-    import { sendIpcMessage } from "../ipc/ipc";
     import { IpcActions } from "../ipc/actions";
 	import { repositories } from "../stores/repositories.svelte";
     import { checkoutRepo } from "../ipc/commands";
