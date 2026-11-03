@@ -35,14 +35,6 @@ namespace ParekGIT.Bridge.Handlers
 			GitConfigInfo localConfig = localConfigTask.Result;
 			GitConfigInfo globalConfig = globalConfigTask.Result;
 
-			var jsPayload = new
-			{
-				localName = localConfig.Name,
-				localEmail = localConfig.Email,
-				globalName = globalConfig.Name,
-				globalEmail = globalConfig.Email
-			};
-
 			// Response
 			var response = IpcMessage.Create("CONFIG_LOCAL_LOADED", new
 			{

@@ -40,9 +40,7 @@ namespace ParekGIT.Bridge.Handlers
 
 			// Delete from database
 			if (repoToDelete != null)
-			{
 				await _dbStore.DeleteRepositoryAsync(repoToDelete.Id);
-			}
 
 			// Delete from drive
 			bool localDeleteFailed = false;

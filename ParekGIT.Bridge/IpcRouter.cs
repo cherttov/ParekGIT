@@ -32,7 +32,7 @@ namespace ParekGIT.Bridge.Ipc
 				var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 				var ipcMessage = JsonSerializer.Deserialize<IpcMessage>(message, options);
 
-				if (ipcMessage == null) { return; }
+				if (ipcMessage == null) return;
 
 				if (_handlers.TryGetValue(ipcMessage.Action, out var handler))
 				{

@@ -4,6 +4,7 @@ using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
+using ParekGIT.Data.Interfaces;
 using Photino.NET;
 using System.Text.Json;
 
@@ -12,14 +13,14 @@ namespace ParekGIT.Bridge.Handlers
 	public class CommitRevertHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly LiteDbStore _dbStore;
+		private readonly IRepositoryStore _dbStore;
 		private readonly IGitRunner _gitRunner;
 		private readonly IRemoteSyncNotifier _syncNotifier;
 
 		public string Action => "COMMIT_REVERT";
 
 		// Constructor
-		public CommitRevertHandler(PhotinoWindow window, LiteDbStore dbStore, IGitRunner gitRunner, IRemoteSyncNotifier syncNotifier)
+		public CommitRevertHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRunner gitRunner, IRemoteSyncNotifier syncNotifier)
 		{
 			_window = window;
 			_dbStore = dbStore;

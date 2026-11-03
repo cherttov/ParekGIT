@@ -30,10 +30,10 @@ namespace ParekGIT.Bridge.Handlers
 		public async Task ExecuteAsync(JsonElement payload)
 		{
 			// Repos
-			IEnumerable<GitRepository> repos = await _dbStore.GetAllRepositoriesAsync();
+			IEnumerable<GitRepository> repositories = await _dbStore.GetAllRepositoriesAsync();
 
 			// Check if invalid repos are still invalid
-			foreach (GitRepository repo in repos)
+			foreach (GitRepository repo in repositories)
 			{
 				bool isValidNow = _fileSystem.DirectoryExists(repo.AbsolutePath);
 
@@ -53,7 +53,7 @@ namespace ParekGIT.Bridge.Handlers
 			// Response
 			var response = IpcMessage.Create("APP_INITIALIZED", new
 			{
-				repositories = repos,
+				repositories,
 				settings,
 				themes
 			});
