@@ -84,7 +84,7 @@ namespace ParekGIT.Data.Data
 			foreach (string resourceName in assembly.GetManifestResourceNames().Where(n => n.StartsWith(prefix)))
 			{
 				string destination = Path.Combine(_themesDir, resourceName.Substring(prefix.Length));
-				if (_fileSystem.FileExists(destination)) { continue; }
+				if (_fileSystem.FileExists(destination)) continue;
 
 				using var stream = assembly.GetManifestResourceStream(resourceName)!;
 				using var reader = new StreamReader(stream);
@@ -95,20 +95,19 @@ namespace ParekGIT.Data.Data
 		public async Task<IReadOnlyList<ThemeInfo>> LoadThemes()
 		{
 			var themes = new List<ThemeInfo>();
-			if (!_fileSystem.DirectoryExists(_themesDir))
-				return themes;
+			if (!_fileSystem.DirectoryExists(_themesDir)) return themes;
 				
 			foreach (string file in Directory.EnumerateFiles(_themesDir, "*.json").OrderBy(f => f))
 			{
 				string id = Path.GetFileNameWithoutExtension(file).ToLower();
-				if (!IsValidThemeToken(id)) { continue; }
+				if (!IsValidThemeToken(id)) continue;
 
 				try
 				{
 					string json = await _fileSystem.ReadAllTextAsync(file);
 					var theme = JsonSerializer.Deserialize<ThemeInfo>(json, _options);
 
-					if (theme?.Colors == null) { continue; }
+					if (theme?.Colors == null) continue;
 					theme.Id = id;
 
 					if (string.IsNullOrWhiteSpace(theme.Name))
@@ -135,14 +134,10 @@ namespace ParekGIT.Data.Data
 		}
 
 		// Private helpers
-		private static bool IsValidThemeToken(string token)
-		{
-			return !string.IsNullOrEmpty(token) && token.All(c => char.IsAsciiLetterOrDigit(c) || c == '-');
-		}
+		private static bool IsValidThemeToken(string token) =>
+			!string.IsNullOrEmpty(token) && token.All(c => char.IsAsciiLetterOrDigit(c) || c == '-');
 
-		private static bool IsSafeThemeValue(string? value)
-		{
-			return !string.IsNullOrWhiteSpace(value) && value.Length <= 100 && value.IndexOfAny([';', '{', '}', '<', '>', '\\' ]) < 0;
-		}
+		private static bool IsSafeThemeValue(string? value) =>
+			!string.IsNullOrWhiteSpace(value) && value.Length <= 100 && value.IndexOfAny([';', '{', '}', '<', '>', '\\' ]) < 0;
 	}
 }
