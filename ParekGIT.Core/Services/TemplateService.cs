@@ -1,5 +1,4 @@
 ﻿using ParekGIT.Core.Interfaces;
-using System.Reflection.Metadata;
 
 namespace ParekGIT.Core.Services
 {
@@ -24,11 +23,7 @@ namespace ParekGIT.Core.Services
 		public async Task WriteGitIgnoreAsync(string repoPath, string templateName)
 		{
 			string templatePath = Path.Combine(_gitIgnoreTemplatesDir, $"{templateName}.txt");
-
-			if (!_fileSystem.FileExists(templatePath))
-			{
-				throw new FileNotFoundException($"GitIgnore template '{templateName}' not found.");
-			}
+			if (!_fileSystem.FileExists(templatePath)) throw new FileNotFoundException($"GitIgnore template '{templateName}' not found.");
 
 			string content = await _fileSystem.ReadAllTextAsync(templatePath);
 
@@ -39,11 +34,7 @@ namespace ParekGIT.Core.Services
 		public async Task WriteLicenseAsync(string repoPath, string templateName, string year, string organization, string project)
 		{
 			string templatePath = Path.Combine(_licenseTemplatesDir, $"{templateName}.txt");
-
-			if (!_fileSystem.FileExists(templatePath))
-			{
-				throw new FileNotFoundException($"License template '{templateName}' not found.");
-			}
+			if (!_fileSystem.FileExists(templatePath)) throw new FileNotFoundException($"License template '{templateName}' not found.");
 
 			string content = await _fileSystem.ReadAllTextAsync(templatePath);
 
@@ -55,11 +46,7 @@ namespace ParekGIT.Core.Services
 
 			// Warn about unresolved placeholders
 			if (content.Contains("{{") && content.Contains("}}"))
-			{
-				await _logger.LogWarningAsync(
-					$"Template '{templateName}' may contain unhandled placeholders after substitution."
-				);
-			}
+				await _logger.LogWarningAsync($"Template '{templateName}' may contain unhandled placeholders after substitution.");
 
 			string destinationPath = Path.Combine(repoPath, "LICENSE");
 			await _fileSystem.WriteAllTextAsync(destinationPath, content);

@@ -65,9 +65,7 @@ namespace ParekGIT.Core.Services
 			try
 			{
 				if (!Directory.Exists(_logDirectory))
-				{
 					Directory.CreateDirectory(_logDirectory);
-				}
 			}
 			catch (Exception ex)
 			{
@@ -81,9 +79,7 @@ namespace ParekGIT.Core.Services
 			string formatted = $"[{timestamp}][{level}] {message}";
 
 			if (exception != null)
-			{
 				formatted += Environment.NewLine + exception;
-			}
 
 			formatted += Environment.NewLine + new string('-', 80);
 

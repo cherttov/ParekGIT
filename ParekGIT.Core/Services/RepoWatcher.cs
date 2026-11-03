@@ -52,7 +52,7 @@ namespace ParekGIT.Core.Services
 
 		private void OnFileActivity(object sender, FileSystemEventArgs e)
 		{
-			if (e.FullPath.Contains($"{Path.DirectorySeparatorChar}.git", StringComparison.OrdinalIgnoreCase)) { return; }
+			if (e.FullPath.Contains($"{Path.DirectorySeparatorChar}.git", StringComparison.OrdinalIgnoreCase)) return;
 
 			_debounceTimer.Stop();
 			_debounceTimer.Start();
@@ -63,9 +63,7 @@ namespace ParekGIT.Core.Services
 			_logger.LogWarningAsync($"FileSystemWatcher error on '{_currentRepoPath}' (likely buffer overflow)");
 
 			if (!string.IsNullOrEmpty(_currentRepoPath))
-			{
 				WatchRepository(_currentRepoPath);
-			}
 		}
 
 		private void TimerElapsed()
