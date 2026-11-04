@@ -3,6 +3,7 @@ using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Models;
 using ParekGIT.Data.Data;
+using ParekGIT.Data.Interfaces;
 using ParekGIT.Data.Models;
 using Photino.NET;
 using System.Text.Json;
@@ -12,12 +13,12 @@ namespace ParekGIT.Bridge.Handlers
 	public class TodoLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly LiteDbStore _dbStore;
+		private readonly ITodoStore _dbStore;
 
 		public string Action => "TODO_LOAD";
 
 		// Constructor
-		public TodoLoadHandler(PhotinoWindow window, LiteDbStore dbStore)
+		public TodoLoadHandler(PhotinoWindow window, ITodoStore dbStore)
 		{
 			_window = window;
 			_dbStore = dbStore;
@@ -31,13 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 			string branchName = payload.GetProperty("branchName").GetString()
 								?? throw new IpcPayloadException("branchName");
 
-			IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
-			GitRepository? targetRepo = allRepos.FirstOrDefault(repo => repo.AbsolutePath == repoPath);
-
-			if (targetRepo == null)
-				throw new InvalidOperationException($"Repository not found for path: {repoPath}");
-
-			IEnumerable<TodoItem> todos = await _dbStore.GetBranchTodosAsync(targetRepo.Id, branchName);
+			IEnumerable<TodoItem> todos = await _dbStore.GetBranchTodosByPathAsync(repoPath, branchName);
 
 			// Response
 			var response = IpcMessage.Create("TODO_LOADED", new { todos });
