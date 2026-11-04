@@ -9,6 +9,8 @@
     let searchTerm = $state("");
     let listEl = $state(null);
 
+    $effect(() => { if (show) searchTerm = ""; });
+
     const filtered = $derived(
         repositories.list.filter(r => r.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );

@@ -11,6 +11,8 @@
     let searchTerm = $state("");
     let listEl = $state(null);
 
+    $effect(() => { if (show) searchTerm = ""; });
+
     const filtered = $derived(
         branches.list.filter(b => b.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
