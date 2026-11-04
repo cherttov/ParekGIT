@@ -5,6 +5,8 @@
     import { layout } from "../stores/layout.svelte";
     import { checkoutBranch } from "../ipc/commands";
     import { modal } from "../stores/modal.svelte";
+    import { contextMenu } from "../stores/contextMenu.svelte";
+    import { branchMenuItems } from "./contextMenus/branchContextMenu";
 	import CustomScrollbar from "./CustomScrollbar.svelte";
 
     let { show = false, onclose } = $props();
@@ -49,6 +51,7 @@
                     class="dropdown-item"
                     class:active={branch.name === b.name}
                     onclick={() => selectBranch(b)}
+                    oncontextmenu={(e) => contextMenu.open(e, branchMenuItems(b), `branch:${b.name}`)}
                 >
                     <span class="dropdown-item-text">{b.name}</span>
                     {#if repo.hasRemote && !b.isRemote && !b.isDetached && !b.remoteBranch}

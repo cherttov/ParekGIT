@@ -6,6 +6,7 @@ import { repositories } from "../stores/repositories.svelte.js";
 import { branch } from "../stores/branch.svelte.js";
 import { branches } from "../stores/branches.svelte.js";
 import { checkoutRepo, refreshRepoState } from "./commands.js";
+import { modal } from "../stores/modal.svelte.js";
 
 export function registerHandlers() {
     // App

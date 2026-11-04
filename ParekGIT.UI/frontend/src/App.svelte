@@ -6,6 +6,7 @@
 	import { registerHandlers } from "./lib/ipc/handlers.js";
 	import { IpcActions } from "./lib/ipc/actions.js";
 	import { app } from "./lib/stores/app.svelte.js";
+	import ContextMenu from "./lib/components/ContextMenu.svelte";
 	import Modals from "./lib/components/Modals.svelte";
 	import Topbar from "./lib/components/Topbar.svelte";
 	import SplitContainer from "./lib/components/SplitContainer.svelte";
@@ -30,3 +31,4 @@
 	<SplitContainer />
 </div>
 <Modals />
+<ContextMenu />

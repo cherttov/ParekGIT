@@ -15,7 +15,7 @@
         return () => clearTimeout(t);
     });
 
-    function submit() {
+    function confirm() {
         if (!isValid) return;
         createBranch(branchName.trim());
         onclose?.();
@@ -31,7 +31,7 @@
     title="Create new branch"
     confirmText="Create branch"
     confirmDisabled={!isValid}
-    onconfirm={submit}
+    onconfirm={confirm}
     {onclose}
 >
     <div class="modal-body-row">
