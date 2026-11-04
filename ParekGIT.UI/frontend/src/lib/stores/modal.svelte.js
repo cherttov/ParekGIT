@@ -6,8 +6,5 @@ export const modal = $state({
         this.active = id;
         this.data = data;
     },
-    close() {
-        this.active = null;
-        this.data = {};
-    }
+    close() { this.active = null; }
 });

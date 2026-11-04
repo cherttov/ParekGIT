@@ -34,33 +34,31 @@
     }
 </script>
 
-<svelte:window onkeydown={handleKeydown} />
+<svelte:window onkeydown={open ? handleKeydown : undefined} />
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="modal-backdrop" class:show={open} onclick={handleBackdropClick}>
-    {#if open}
-        <div class="modal-content" onclick={(e) => e.stopPropagation()}>
-            <div class="modal-header">
-                <h3>{title}</h3>
-                <button class="close-modal-icon" onclick={close}>&times;</button>
-            </div>
-
-            <div class="modal-body" style={bodyStyle}>
-                {@render children?.()}
-            </div>
-
-            <div class="modal-footer">
-                {#if footer}
-                    {@render footer()}
-                {:else}
-                    {#if confirmText}
-                        <button class="confirm-modal-btn" disabled={confirmDisabled} onclick={onconfirm}>{confirmText}</button>
-                    {/if}
-                    {#if cancelText}
-                        <button class="cancel-modal-btn" onclick={close}>{cancelText}}</button>
-                    {/if}
-                {/if}
-            </div>
+    <div class="modal-content" onclick={(e) => e.stopPropagation()}>
+        <div class="modal-header">
+            <h3>{title}</h3>
+            <button class="close-modal-icon" onclick={close}>&times;</button>
         </div>
-    {/if}
+
+        <div class="modal-body" style={bodyStyle}>
+            {@render children?.()}
+        </div>
+
+        <div class="modal-footer">
+            {#if footer}
+                {@render footer()}
+            {:else}
+                {#if confirmText}
+                    <button class="confirm-modal-btn" disabled={confirmDisabled} onclick={onconfirm}>{confirmText}</button>
+                {/if}
+                {#if cancelText}
+                    <button class="cancel-modal-btn" onclick={close}>{cancelText}</button>
+                {/if}
+            {/if}
+        </div>
+    </div>
 </div>

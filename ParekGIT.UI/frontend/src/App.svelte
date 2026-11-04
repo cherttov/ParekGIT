@@ -6,6 +6,7 @@
 	import { registerHandlers } from "./lib/ipc/handlers.js";
 	import { IpcActions } from "./lib/ipc/actions.js";
 	import { app } from "./lib/stores/app.svelte.js";
+	import Modals from "./lib/components/Modals.svelte";
 	import Topbar from "./lib/components/Topbar.svelte";
 	import SplitContainer from "./lib/components/SplitContainer.svelte";
 
@@ -13,7 +14,7 @@
 	registerHandlers();
 	startIpc();
 
-	// Keep '<body class="loading">' in sync with app stace
+	// Keep '<body class="loading">' in sync with app state
 	$effect(() => {
 		document.body.classList.toggle("loading", !app.ready);
 	});
@@ -28,3 +29,4 @@
 	<LeftSidebar />
 	<SplitContainer />
 </div>
+<Modals />
