@@ -1,5 +1,5 @@
 import { IpcActions } from "./actions.js";
-import { onIpc, sendIpcMessage } from "./ipc.js";
+import { onIpc } from "./ipc.js";
 import { repo } from "../stores/repo.svelte.js";
 import { app } from "../stores/app.svelte.js";
 import { repositories } from "../stores/repositories.svelte.js";
@@ -28,9 +28,9 @@ export function registerHandlers() {
 
 	// Repo
 	onIpc(IpcActions.REPO_CHECKED_OUT, (p) => {
-        repo.name = p.repo.name,
-        repo.path = p.repo.absolutePath,
-        repo.remoteUrl = p.repo.remoteUrl
+        repo.name = p.repo.name;
+        repo.path = p.repo.absolutePath;
+        repo.remoteUrl = p.repo.remoteUrl;
         repo.changes = [];
         branches.list = p.branches;
         applyBranch(p.branch);
@@ -73,11 +73,15 @@ export function registerHandlers() {
         refreshRepoState();
     })
     onIpc(IpcActions.BRANCH_LIST_LOADED, (p) => {
-        applyBranch(p.branches);
+        branches.list = p;
         refreshRepoState();
     });
-    // 	[IpcActions.BRANCH_DELETED]: removeBranchFromDropdown,
-    // 	[IpcActions.BRANCH_FORCE_DELETE_REQUESTED]: processBranchForceDeleteRequested,
+    onIpc(IpcActions.BRANCH_DELETED, (p) => {
+        branches.list = branches.list.filter((b) => b.name !== p.branchName);
+    });
+    onIpc(IpcActions.BRANCH_FORCE_DELETE_REQUESTED, (p) => {
+        modal.open("branch-force-delete", { branchName: p.branchName, unmergedCount: p.unmergedCount });
+    })
     // 	[IpcActions.BRANCH_RENAMED]: renameBranchInDropdown,
     // 	[IpcActions.BRANCH_MERGED]: processBranchesMerged,
     // 	[IpcActions.BRANCH_HISTORY_LOADED]: processBranchHistoryLoaded,

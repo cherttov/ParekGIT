@@ -10,11 +10,23 @@ export function checkoutRepo(r) {
 
 export function checkoutBranch(b) {
     if (b.isDetached || branch.name === b.name) return;
-    sendIpcMessage(IpcActions.BRANCH_CHECKOUT, {
-        repoPath: repo.path,
-        branchName: b.name,
-        isRemote: b.isRemote
-    });
+    sendIpcMessage(IpcActions.BRANCH_CHECKOUT, { repoPath: repo.path, branchName: b.name, isRemote: b.isRemote });
+}
+
+export function createBranch(branchName) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.BRANCH_CREATE, { repoPath: repo.path, branchName });
+}
+
+export function deleteBranch(branchName, remoteBranch = "") {
+    sendIpcMessage(IpcActions.BRANCH_DELETE, { repoPath: repo.path, branchName, isRemote: false });
+    if (remoteBranch) {
+        sendIpcMessage(IpcActions.BRANCH_DELETE, { repoPath: repo.path, branchName: remoteBranch, isRemote: true });
+    }
+}
+
+export function forceDeleteBranch(branchName) {
+    sendIpcMessage(IpcActions.BRANCH_FORCE_DELETE, { repoPath: repo.path, branchName });
 }
 
 export function refreshRepoState() {

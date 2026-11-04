@@ -4,6 +4,8 @@
     import BranchDeleteModal from "./modals/BranchDeleteModal.svelte";
 
     export const modals = {
+        "branch-new": BranchNewModal,
+        "branch-delete": BranchDeleteModal
     };
 </script>
 
