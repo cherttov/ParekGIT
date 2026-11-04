@@ -31,23 +31,11 @@ namespace ParekGIT.Bridge.Handlers
 			string branchName = payload.GetProperty("branchName").GetString()
 								?? throw new IpcPayloadException("branchName");
 
-			// Get target repo
-			IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
-			GitRepository targetRepo = allRepos.FirstOrDefault(repo => repo.AbsolutePath == repoPath)
-				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
-
-			// Serialize into list
 			JsonSerializerOptions options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 			List<TodoItem> newTodos = payload.GetProperty("todos").Deserialize<List<TodoItem>>(options)
 				?? new List<TodoItem>();
 
-			// Assing repo ids/branch names & save
-			foreach (var todo in newTodos) 
-			{ 
-				todo.RepoId = targetRepo.Id;
-				todo.BranchName = branchName;
-			}
-			await _dbStore.SaveBranchTodosAsync(targetRepo.Id, branchName, newTodos);
+			await _dbStore.SaveBranchTodosByPathAsync(repoPath, branchName, newTodos);
 
 			// Response
 			var response = IpcMessage.Create("TODO_SAVED", new { success = true });
