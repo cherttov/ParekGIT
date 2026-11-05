@@ -8,6 +8,10 @@ export function checkoutRepo(r) {
     sendIpcMessage(IpcActions.REPO_CHECKOUT, { repoPath: r.absolutePath });
 }
 
+export function removeRepo(repoPath, deleteLocal = false) {
+    sendIpcMessage(IpcActions.REPO_REMOVE, { repoPath, deleteLocal });
+}
+
 export function checkoutBranch(b) {
     if (b.isDetached || branch.name === b.name) return;
     sendIpcMessage(IpcActions.BRANCH_CHECKOUT, { repoPath: repo.path, branchName: b.name, isRemote: b.isRemote });
@@ -54,4 +58,12 @@ export function pullRepo() {
 
 export function pushRepo() {
     sendIpcMessage(IpcActions.REPO_PUSH, { repoPath: repo.path });
+}
+
+export function openTerminal(repoPath) {
+    sendIpcMessage(IpcActions.REPO_TERMINAL, { repoPath });
+}
+
+export function showInExplorer(path) {
+    sendIpcMessage(IpcActions.EXPLORER_SHOW, { path });
 }
