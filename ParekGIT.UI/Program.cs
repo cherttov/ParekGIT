@@ -48,7 +48,7 @@ namespace ParekGIT.UI
 						.SetSize(new Size(960, 660))
 						.SetMinSize(960, 660)
 						.Center()
-						.SetContextMenuEnabled(true) // later false
+						.SetContextMenuEnabled(false)
 						.SetDevToolsEnabled(true) // later false
 						.SetIconFile("wwwroot/assets/icons/icon.ico")
 						.SetJavascriptClipboardAccessEnabled(true)
