@@ -21,11 +21,7 @@ namespace ParekGIT.Bridge.Services
 		public void NotifyCommitsBehind(string repoPath, int commitsBehind, int commitsAhead)
 		{
 			// Response
-			var message = new IpcMessage
-			{
-				Action = "REPO_SYNC_STATUS_CHANGED",
-				Payload = JsonSerializer.SerializeToElement(new { repoPath, commitsBehind, commitsAhead })
-			};
+			var message = IpcMessage.Create("REPO_SYNC_STATUS_CHANGED", new { repoPath, commitsBehind, commitsAhead });
 			_window.SendWebMessage(JsonSerializer.Serialize(message));
 		}
 	}
