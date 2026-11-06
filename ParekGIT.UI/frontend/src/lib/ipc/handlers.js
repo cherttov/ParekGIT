@@ -74,7 +74,7 @@ export function registerHandlers() {
         refreshRepoState();
     })
     onIpc(IpcActions.BRANCH_LIST_LOADED, (p) => {
-        branches.list = p;
+        branches.list = p.branches;
         refreshRepoState();
     });
     onIpc(IpcActions.BRANCH_DELETED, (p) => {
