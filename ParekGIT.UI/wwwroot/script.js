@@ -990,7 +990,7 @@ const validateRepoContextMenu = (repoName, terminalBtn, explorerBtn, removeBtn, 
 function appInit(data) {
 	// Visuals
 	currentTheme = data.settings.theme;
-	processThemesLoaded(data.themes);
+	processThemesLoaded(data);
 
 	// Data
 	loadRepositoriesIntoDropdown(data.repositories);
@@ -1105,7 +1105,8 @@ function loadRepositoriesIntoDropdown(repositories) {
 }
 
 // C# - Add repository to dropdown
-function addRepositoryToDropdown(repo) {
+function addRepositoryToDropdown(payload) {
+	const repo = payload.repo;
 	const item = createRepoDropdownItem(repo);
 	repoList.appendChild(item);
 
@@ -1260,7 +1261,8 @@ function processRemoteSyncStatus(payload) {
 // Functions and handlers scoped to branch selection, BranchDropdown and branch lifecycle (create/rename/delete/merge).
 
 // C# - Load branches
-function loadBranchesIntoDropdown(branches) {
+function loadBranchesIntoDropdown(payload) {
+	const branches = payload.branches;
 	const existingItems = branchDropdown.querySelectorAll(".dropdown-item");
 	existingItems.forEach((item) => item.remove());
 
@@ -1510,7 +1512,8 @@ function requestFileDiff(filePath, showLoading = true) {
 }
 
 // C# - Load changed files to right sidebar
-function renderChangedFiles(files) {
+function renderChangedFiles(payload) {
+	const files = payload.changedFiles;
 	// Remember previous render state (unchecked files, selected file)
 	const uncheckedPaths = new Set(
 		Array.from(changesList.querySelectorAll(".change-item"))
@@ -1715,7 +1718,8 @@ function renderHistory(commits, isAppending = false) {
 }
 
 // C# - Initial branch history load
-function processBranchHistoryLoaded(commits) {
+function processBranchHistoryLoaded(payload) {
+	const commits = payload.commits;
 	currentHistorySkip = 0;
 	isFetchingHistory = false;
 	hasReachedEndOfHistory = commits.length < historyTake;
@@ -1723,7 +1727,8 @@ function processBranchHistoryLoaded(commits) {
 }
 
 // C# - Paginated branch history load (infinite scroll)
-function processBranchHistoryAppended(commits) {
+function processBranchHistoryAppended(payload) {
+	const commits = payload.commits;
 	isFetchingHistory = false;
 	if (commits.length < historyTake) {
 		hasReachedEndOfHistory = true;
@@ -1945,7 +1950,8 @@ function processStashDropped() {
 }
 
 // C# - Load stashes into stash modal
-function loadStashes(stashes) {
+function loadStashes(payload) {
+	const stashes = payload.stashes;
 	stashRowsContainer.innerHTML = "";
 
 	// Empty repo stashes
@@ -2095,11 +2101,12 @@ function processGlobalConfigLoad(config) {
 
 // C# - Settings saved handler
 function processSettingsSaved(payload) {
-	applyTheme(payload.theme);
+	applyTheme(payload.existingSettings.theme);
 }
 
 // C# - Themes loaded
-function processThemesLoaded(themes) {
+function processThemesLoaded(payload) {
+	const themes = payload.themes;
 	availableThemes = themes;
 	settingsModalThemeSelect.innerHTML = "";
 

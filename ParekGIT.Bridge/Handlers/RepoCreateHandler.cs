@@ -31,11 +31,11 @@ namespace ParekGIT.Bridge.Handlers
 				?? throw new IpcPayloadException("Invalid or missing payload (CreateRepoRequest)");
 
 			// Create repo in git
-			var repository = await _gitRunner.CreateRepositoryAsync(request);
-			await _dbStore.UpsertRepositoryAsync(repository);
+			var repo = await _gitRunner.CreateRepositoryAsync(request);
+			await _dbStore.UpsertRepositoryAsync(repo);
 
 			// Response
-			var response = IpcMessage.Create("REPO_CREATED", repository);
+			var response = IpcMessage.Create("REPO_CREATED", new { repo });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

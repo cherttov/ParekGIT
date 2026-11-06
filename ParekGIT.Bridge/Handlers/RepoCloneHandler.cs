@@ -41,7 +41,7 @@ namespace ParekGIT.Bridge.Handlers
 
 			await _gitRunner.CloneRepositoryAsync(repoUrl, asLocal, localPath);
 
-			var clonedRepo = new GitRepository
+			var repo = new GitRepository
 			{
 				Id = Guid.NewGuid(),
 				Name = repoName,
@@ -50,10 +50,10 @@ namespace ParekGIT.Bridge.Handlers
 				RemoteUrl = asLocal ? null : repoUrl
 			};
 
-			await _dbStore.UpsertRepositoryAsync(clonedRepo);
+			await _dbStore.UpsertRepositoryAsync(repo);
 
 			// Response
-			var response = IpcMessage.Create("REPO_CLONED", clonedRepo);
+			var response = IpcMessage.Create("REPO_CLONED", new { repo });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

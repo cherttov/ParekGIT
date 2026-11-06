@@ -30,7 +30,7 @@ namespace ParekGIT.Bridge.Handlers
 			IEnumerable<GitStash> stashes = await _gitRunner.GetStashesAsync(repoPath);
 
 			// Response
-			var response = IpcMessage.Create("STASH_LIST_LOADED", stashes);
+			var response = IpcMessage.Create("STASH_LIST_LOADED", new { stashes });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

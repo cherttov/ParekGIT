@@ -39,7 +39,7 @@ namespace ParekGIT.Bridge.Handlers
 			IEnumerable<GitCommit> commits = await _gitRunner.GetBranchHistoryAsync(repoPath, branchName, skip, take);
 
 			// Response
-			var response = IpcMessage.Create(skip > 0 ? "BRANCH_HISTORY_APPENDED" : "BRANCH_HISTORY_LOADED", commits);
+			var response = IpcMessage.Create(skip > 0 ? "BRANCH_HISTORY_APPENDED" : "BRANCH_HISTORY_LOADED", new { commits });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

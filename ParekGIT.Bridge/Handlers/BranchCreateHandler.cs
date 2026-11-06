@@ -37,7 +37,7 @@ namespace ParekGIT.Bridge.Handlers
 			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
 
 			// Response
-			var response = IpcMessage.Create("BRANCH_LIST_LOADED", branches); // maybe make a distinct "BRANCH_CREATED" action
+			var response = IpcMessage.Create("BRANCH_LIST_LOADED", new { branches }); // maybe make a distinct "BRANCH_CREATED" action
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

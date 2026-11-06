@@ -32,7 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 			// Invalid repoPath -> empty response
 			if (string.IsNullOrEmpty(repoPath) || !_fileSystem.DirectoryExists(repoPath))
 			{
-				var emptyResponse = IpcMessage.Create("REPO_STATUS_LOADED", new List<object>());
+				var emptyResponse = IpcMessage.Create("REPO_STATUS_LOADED", new { changedFiles = Array.Empty<GitFileStatus>() });
 				_window.SendWebMessage(JsonSerializer.Serialize(emptyResponse));
 				return;
 			}
@@ -40,7 +40,7 @@ namespace ParekGIT.Bridge.Handlers
 			IEnumerable<GitFileStatus> changedFiles = await _gitRunner.GetStatusAsync(repoPath);
 
 			// Response
-			var response = IpcMessage.Create("REPO_STATUS_LOADED", changedFiles);
+			var response = IpcMessage.Create("REPO_STATUS_LOADED", new { changedFiles });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

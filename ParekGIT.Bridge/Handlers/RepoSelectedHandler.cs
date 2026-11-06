@@ -62,7 +62,7 @@ namespace ParekGIT.Bridge.Handlers
 			}
 
 			// Response
-			var response = IpcMessage.Create("BRANCH_LIST_LOADED", branches);
+			var response = IpcMessage.Create("BRANCH_LIST_LOADED", new { branches });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

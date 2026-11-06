@@ -34,7 +34,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _jsonStore.SaveUserSettingsAsync(existingSettings);
 
 			// Response
-			var response = IpcMessage.Create("SETTINGS_SAVED", existingSettings);
+			var response = IpcMessage.Create("SETTINGS_SAVED", new { existingSettings });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}
