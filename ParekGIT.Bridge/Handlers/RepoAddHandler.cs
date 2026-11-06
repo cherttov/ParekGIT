@@ -32,12 +32,12 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 				?? throw new IpcPayloadException("repoPath");
 
-			// Normalize path if ends with .git
-			if (repoPath.EndsWith(".git", StringComparison.OrdinalIgnoreCase) ||
-				repoPath.EndsWith(".git/", StringComparison.OrdinalIgnoreCase) ||
-				repoPath.EndsWith(".git\\", StringComparison.OrdinalIgnoreCase))
+			// Normalize path
+			repoPath = Path.GetFullPath(repoPath);
+			repoPath = Path.TrimEndingDirectorySeparator(repoPath);
+			if (repoPath.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
 			{
-				repoPath = Directory.GetParent(repoPath.TrimEnd('/', '\\'))?.FullName ?? repoPath;
+				repoPath = Path.GetDirectoryName(repoPath) ?? repoPath;
 			}
 
 			// Verify if valid .git repo
@@ -62,7 +62,7 @@ namespace ParekGIT.Bridge.Handlers
 			};
 
 			IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
-			if (allRepos.Any(repo => string.Equals(repo.AbsolutePath, repo.AbsolutePath, StringComparison.OrdinalIgnoreCase)))
+			if (allRepos.Any(existing => string.Equals(existing.AbsolutePath, repoPath, StringComparison.OrdinalIgnoreCase)))
 				throw new InvalidOperationException("Repository with this path already exists in the database.");
 
 			// Save to db
