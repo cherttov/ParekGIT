@@ -20,7 +20,7 @@
     onconfirm={confirm}
     {onclose}
 >
-    <div>
+    <div class="modal-body-row">
         <p class="modal-text">Are you sure you want to delete this branch?</p>
         <span class="highlight-name">{data.branchName}</span>
     </div>

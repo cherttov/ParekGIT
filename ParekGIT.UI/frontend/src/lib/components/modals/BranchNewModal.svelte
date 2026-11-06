@@ -22,7 +22,7 @@
     }
 
     function handleKeydown(e) {
-        if (e.key === "Enter" && !e.isComposing) createBranch();
+        if (e.key === "Enter" && !e.isComposing) confirm();
     }
 </script>
 
