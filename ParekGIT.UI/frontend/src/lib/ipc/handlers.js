@@ -25,7 +25,7 @@ export function registerHandlers() {
     });
 
     onIpc(IpcActions.APP_ERROR, (p) => {
-        // showErrorModal
+        modal.open("error", { message: p.message });
     });
 
 	// Repo

@@ -6,6 +6,7 @@
     import RepoCloneModal from "./modals/RepoCloneModal.svelte";
     import RepoCreateModal from "./modals/RepoCreateModal.svelte";
     import RepoRemoveModal from "./modals/RepoRemoveModal.svelte";
+    import ErrorModal from "./modals/ErrorModal.svelte";
 
     export const modals = {
         "branch-new": BranchNewModal,
@@ -13,7 +14,8 @@
         "repo-add": RepoAddModal,
         "repo-clone": RepoCloneModal,
         "repo-create": RepoCreateModal,
-        "repo-remove": RepoRemoveModal
+        "repo-remove": RepoRemoveModal,
+        "error": ErrorModal
     };
 </script>
 
