@@ -2,10 +2,23 @@ import { sendIpcMessage } from "./ipc";
 import { IpcActions } from "./actions";
 import { repo } from "../stores/repo.svelte";
 import { branch } from "../stores/branch.svelte";
+import { app } from "../stores/app.svelte";
 
 export function checkoutRepo(r) {
     if (!r.isValid || repo.path === r.absolutePath) return;
     sendIpcMessage(IpcActions.REPO_CHECKOUT, { repoPath: r.absolutePath });
+}
+
+export function addRepo(repoPath) {
+    sendIpcMessage(IpcActions.REPO_ADD, { repoPath });
+}
+
+export function cloneRepo(p) {
+    sendIpcMessage(IpcActions.REPO_CLONE, p);
+}
+
+export function createRepo(p) {
+    sendIpcMessage(IpcActions.REPO_CREATE, p);
 }
 
 export function removeRepo(repoPath, deleteLocal = false) {
@@ -66,4 +79,18 @@ export function openTerminal(repoPath) {
 
 export function showInExplorer(path) {
     sendIpcMessage(IpcActions.EXPLORER_SHOW, { path });
+}
+
+export function loadGlobalConfig() {
+    sendIpcMessage(IpcActions.CONFIG_GLOBAL_LOAD, {});
+}
+
+export function pickFolder(onpicked) {
+    app.pendingFolderPick = onpicked;
+    sendIpcMessage(IpcActions.EXPLORER_PICK_FOLDER);
+}
+
+export function resolveFolderPick(path) {
+    app.pendingFolderPick?.(path);
+    app.pendingFolderPick = null;
 }

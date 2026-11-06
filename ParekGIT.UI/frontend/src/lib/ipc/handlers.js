@@ -5,7 +5,8 @@ import { app } from "../stores/app.svelte.js";
 import { repositories } from "../stores/repositories.svelte.js";
 import { branch } from "../stores/branch.svelte.js";
 import { branches } from "../stores/branches.svelte.js";
-import { checkoutRepo, refreshRepoState } from "./commands.js";
+import { checkoutRepo, refreshRepoState, resolveFolderPick } from "./commands.js";
+import { config } from "../stores/config.svelte.js";
 import { modal } from "../stores/modal.svelte.js";
 
 export function registerHandlers() {
@@ -37,9 +38,9 @@ export function registerHandlers() {
         applyBranch(p.branch);
         refreshRepoState();
 	});
-    onIpc(IpcActions.REPO_CLONED, addRepo);
-    onIpc(IpcActions.REPO_CREATED, addRepo);
-    onIpc(IpcActions.REPO_ADDED, addRepo);
+    onIpc(IpcActions.REPO_CLONED, (p) => { appendRepo(p.repo) });
+    onIpc(IpcActions.REPO_CREATED, (p) => { appendRepo(p.repo) });
+    onIpc(IpcActions.REPO_ADDED, (p) => { appendRepo(p.repo) });
     onIpc(IpcActions.REPO_REMOVED, (p) => {
         repositories.list = repositories.list.filter(r => r.absolutePath !== p.repoPath);
         if (repo.path === p.repoPath) {
@@ -107,7 +108,10 @@ export function registerHandlers() {
     // Config
     // 	[IpcActions.CONFIG_LOCAL_LOADED]: processLocalConfigLoad,
     // 	[IpcActions.CONFIG_LOCAL_SAVED]: noop,
-    // 	[IpcActions.CONFIG_GLOBAL_LOADED]: processGlobalConfigLoad,
+    onIpc(IpcActions.CONFIG_GLOBAL_LOADED, (p) => {
+        config.globalName = p.globalName || "";
+        config.globalEmail = p.globalEmail || "";
+    });
     // 	[IpcActions.CONFIG_GLOBAL_SAVED]: noop,
 
     // Settings / Theme
@@ -115,7 +119,7 @@ export function registerHandlers() {
     // 	[IpcActions.THEME_LIST_LOADED]: processThemesLoaded,
 
     // Explorer
-    // 	[IpcActions.EXPLORER_FOLDER_PICKED]: folderSelected,
+    onIpc(IpcActions.EXPLORER_FOLDER_PICKED, (p) => resolveFolderPick(p.path));
 
     // Stash
     // 	[IpcActions.STASH_LIST_LOADED]: loadStashes,
@@ -128,8 +132,9 @@ export function registerHandlers() {
 }
 
 // Helpers
-function addRepo(r) {
+function appendRepo(r) {
     repositories.list = [...repositories.list, r];
+    if (r.isValid) checkoutRepo(r);
 }
 
 function applyBranch(b) {
