@@ -3,6 +3,9 @@
     import { IpcActions } from "../ipc/actions";
 	import { repositories } from "../stores/repositories.svelte";
     import { checkoutRepo } from "../ipc/commands";
+    import { contextMenu } from "../stores/contextMenu.svelte";
+    import { repoMenuItems } from "./contextMenus/repoContextMenu";
+    import { addRepoItems } from "./contextMenus/repoContextMenu";
     import CustomScrollbar from "./CustomScrollbar.svelte";
 
     let { show = false, onclose } = $props();
@@ -31,7 +34,7 @@
                 class="filter-input"
                 placeholder="Search" />
 
-        <button class="topbar-filter-btn btn-add">
+        <button class="topbar-filter-btn btn-add" onclick={(e) => contextMenu.open(e, addRepoItems)}>
             Add
             <div class="btn-arrow"></div>
         </button>
@@ -49,6 +52,7 @@
                     class:remote={!!r.remoteUrl}
                     title={!r.isValid ? "Repository folder not found" : ""}
                     onclick={() => selectRepo(r)}
+                    oncontextmenu={(e) => contextMenu.open(e, repoMenuItems(r))}
                 >
                     <span class="dropdown-item-text">{r.name}</span>
                 </div>

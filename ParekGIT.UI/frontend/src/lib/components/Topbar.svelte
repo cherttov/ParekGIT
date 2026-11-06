@@ -4,6 +4,9 @@
     import { layout } from "../stores/layout.svelte.js";
     import RepoDropdown from "./RepoDropdown.svelte";
     import BranchDropdown from "./BranchDropdown.svelte";
+	import { contextMenu } from "../stores/contextMenu.svelte.js";
+	import { topbarRepoMenuItems } from "./contextMenus/repoContextMenu.js";
+	import { topbarBranchMenuItems } from "./contextMenus/branchContextMenu.js";
 
     let repoOpen = $state(false);
     let branchOpen = $state(false);
@@ -30,7 +33,7 @@
     <div class="topbar-logo">P.GIT</div>
 
     <div class="topbar-dropdown-container" id="repositories-container">
-        <button class="topbar-btn" onclick={toggleRepo}>
+        <button class="topbar-btn" onclick={toggleRepo} oncontextmenu={(e) => contextMenu.open(e, topbarRepoMenuItems(repo))}>
             <div class="btn-text-group">
                 <span class="topbar-dropdown btn-label">
                     Current repository:
@@ -43,7 +46,7 @@
     </div>
 
     <div class="topbar-dropdown-container" id="branches-container" style:width="{layout.rightSidebarWidth}px">
-        <button class="topbar-btn" onclick={toggleBranch} disabled={!repo.path}>
+        <button class="topbar-btn" onclick={toggleBranch} disabled={!repo.path} oncontextmenu={(e) => contextMenu.open(e, topbarBranchMenuItems(branch))}>
             <div class="btn-text-group">
                 <span class="topbar-dropdown btn-label">
                     Current branch:
