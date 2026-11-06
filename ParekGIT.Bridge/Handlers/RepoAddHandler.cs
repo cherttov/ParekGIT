@@ -52,7 +52,7 @@ namespace ParekGIT.Bridge.Handlers
 			// Check for remote
 			string? remoteUrl = await _gitRunner.GetRemoteUrlAsync(repoPath);
 
-			var addedRepo = new GitRepository
+			var repo = new GitRepository
 			{
 				Id = Guid.NewGuid(),
 				Name = repoName,
@@ -62,14 +62,14 @@ namespace ParekGIT.Bridge.Handlers
 			};
 
 			IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
-			if (allRepos.Any(repo => string.Equals(repo.AbsolutePath, addedRepo.AbsolutePath, StringComparison.OrdinalIgnoreCase)))
+			if (allRepos.Any(repo => string.Equals(repo.AbsolutePath, repo.AbsolutePath, StringComparison.OrdinalIgnoreCase)))
 				throw new InvalidOperationException("Repository with this path already exists in the database.");
 
 			// Save to db
-			await _dbStore.UpsertRepositoryAsync(addedRepo);
+			await _dbStore.UpsertRepositoryAsync(repo);
 
 			// Response
-			var response = IpcMessage.Create("REPO_ADDED", addedRepo);
+			var response = IpcMessage.Create("REPO_ADDED", new { repo });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}
