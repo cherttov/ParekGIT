@@ -26,7 +26,7 @@ export function removeRepo(repoPath, deleteLocal = false) {
 }
 
 export function checkoutBranch(b) {
-    if (b.isDetached || branch.name === b.name) return;
+    if (!repo.path || b.isDetached || branch.name === b.name) return;
     sendIpcMessage(IpcActions.BRANCH_CHECKOUT, { repoPath: repo.path, branchName: b.name, isRemote: b.isRemote });
 }
 
@@ -36,6 +36,7 @@ export function createBranch(branchName) {
 }
 
 export function deleteBranch(branchName, remoteBranch = "") {
+    if (!repo.path) return;
     sendIpcMessage(IpcActions.BRANCH_DELETE, { repoPath: repo.path, branchName, isRemote: false });
     if (remoteBranch) {
         sendIpcMessage(IpcActions.BRANCH_DELETE, { repoPath: repo.path, branchName: remoteBranch, isRemote: true });
@@ -43,6 +44,7 @@ export function deleteBranch(branchName, remoteBranch = "") {
 }
 
 export function forceDeleteBranch(branchName) {
+    if (!repo.path) return;
     sendIpcMessage(IpcActions.BRANCH_FORCE_DELETE, { repoPath: repo.path, branchName });
 }
 
@@ -62,14 +64,17 @@ export function fetchRepo() {
 }
 
 export function publishBranch() {
+    if (!repo.path) return;
     sendIpcMessage(IpcActions.REPO_PUBLISH, { repoPath: repo.path, branchName: branch.name });
 }
 
 export function pullRepo() {
+    if (!repo.path) return;
     sendIpcMessage(IpcActions.REPO_PULL, { repoPath: repo.path });
 }
 
 export function pushRepo() {
+    if (!repo.path) return;
     sendIpcMessage(IpcActions.REPO_PUSH, { repoPath: repo.path });
 }
 
@@ -117,12 +122,10 @@ export function saveLocalConfig(name, email) {
 }
 
 export function loadGlobalConfig() {
-    if (!repo.path) return;
     sendIpcMessage(IpcActions.CONFIG_GLOBAL_LOAD);
 }
 
 export function saveGlobalConfig(name, email) {
-    if (!repo.path) return;
     sendIpcMessage(IpcActions.CONFIG_GLOBAL_SAVE, { name, email });
 }
 

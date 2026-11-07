@@ -65,8 +65,8 @@ export function registerHandlers() {
     // 	[IpcActions.REPO_FILES_CHANGED]: processFileChanges,
     // 	[IpcActions.REPO_PATH_MISSING]: processMissingRepo,
     onIpc(IpcActions.REPO_SYNC_STATUS_CHANGED, (p) => {
-        branch.commitsBehind = p.commitsBehind || 0;
-        branch.commitsAhead = p.commitsAhead || 0;
+        branch.commitsBehind = p.commitsBehind ?? 0;
+        branch.commitsAhead = p.commitsAhead ?? 0;
     });
 
     // Branch
@@ -107,21 +107,21 @@ export function registerHandlers() {
 
     // Todo
     onIpc(IpcActions.TODO_LOADED, (p) => {
-        todos.list = p?.todos || [];
+        todos.list = p?.todos ?? [];
     });
     // 	[IpcActions.TODO_SAVED]: noop,
 
     // Config
     onIpc(IpcActions.CONFIG_LOCAL_LOADED, (p) => {
-        config.localName = p.localName || "";
-        config.localEmail = p.localEmail || "";
-        config.globalName = p.globalName || "";
-        config.globalEmail = p.globalEmail || "";
+        config.localName = p.localName ?? "";
+        config.localEmail = p.localEmail ?? "";
+        config.globalName = p.globalName ?? "";
+        config.globalEmail = p.globalEmail ?? "";
     });
     // 	[IpcActions.CONFIG_LOCAL_SAVED]: noop,
     onIpc(IpcActions.CONFIG_GLOBAL_LOADED, (p) => {
-        config.globalName = p.globalName || "";
-        config.globalEmail = p.globalEmail || "";
+        config.globalName = p.globalName ?? "";
+        config.globalEmail = p.globalEmail ?? "";
     });
     // 	[IpcActions.CONFIG_GLOBAL_SAVED]: noop,
 
@@ -162,6 +162,6 @@ function applyBranch(b) {
     branch.revision = b.isDetached ? b.targetCommitHash : b.name;
     branch.isDetached = b.isDetached;
     branch.hasUpstream = !!b.remoteBranch;
-    branch.remoteBranch = b.remoteBranch || "";
+    branch.remoteBranch = b.remoteBranch ?? "";
 }
 

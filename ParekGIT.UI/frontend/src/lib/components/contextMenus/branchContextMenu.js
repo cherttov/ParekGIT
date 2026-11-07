@@ -16,7 +16,7 @@ export function branchMenuItems(b) {
         },
         { 
             label: "Merge branch...", disabled: b.isDetached,
-            onclick: () => modal.open("branch-merge", { branchName: b.name })
+            onclick: () => modal.open("branch-merge", { targetBranch: b.name })
         },
         "divider",
         { 

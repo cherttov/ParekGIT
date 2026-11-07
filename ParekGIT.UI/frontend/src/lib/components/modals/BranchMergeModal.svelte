@@ -14,7 +14,7 @@
     $effect(() => {
         if (!open) return;
         source = "";
-        target = data.target ?? branch.name;
+        target = data.targetBranch ?? branch.name;
     });
 
     function confirm() {
