@@ -197,18 +197,20 @@ namespace ParekGIT.Core.Git
 			string statusOutput = await ExecuteCommandAsync(repoPath, statusArgs);
 			if (string.IsNullOrWhiteSpace(statusOutput)) return;
 
-			string statusCode = statusOutput.Length >= 2 ? statusOutput.Substring(0, 2) : "";
+			string statusCode = statusOutput.Length >= 2 ? statusOutput[..2] : "";
 			if (statusCode == "??")
 			{
 				await ExecuteCommandAsync(repoPath, ["clean", "-f", "--", filePath]);
 			}
-			else if (statusCode.StartsWith("A"))
+			else if (statusCode is "A " or "AM" or "AD")
 			{
+				// Staged new file
 				await ExecuteCommandAsync(repoPath, ["restore", "--staged", "--", filePath]);
 				await ExecuteCommandAsync(repoPath, ["clean", "-f", "--", filePath]);
 			}
-			else // Modified/Deleted
+			else
 			{
+				// Modified/Deleted tracked file
 				await ExecuteCommandAsync(repoPath, ["restore", "--staged", "--worktree", "--", filePath]);
 			}
 		}
