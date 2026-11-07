@@ -36,6 +36,7 @@ export function registerHandlers() {
         repo.remoteUrl = p.repo.remoteUrl;
         repo.changes = [];
         branches.list = p.branches;
+        config.localLoaded = false;
         applyBranch(p.branch);
         refreshRepoState();
 	});
@@ -115,6 +116,7 @@ export function registerHandlers() {
     onIpc(IpcActions.CONFIG_LOCAL_LOADED, (p) => {
         config.localName = p.localName ?? "";
         config.localEmail = p.localEmail ?? "";
+        config.localLoaded = true;
         config.globalName = p.globalName ?? "";
         config.globalEmail = p.globalEmail ?? "";
     });

@@ -2,6 +2,7 @@ import { sendIpcMessage } from "./ipc";
 import { IpcActions } from "./actions";
 import { repo } from "../stores/repo.svelte";
 import { branch } from "../stores/branch.svelte";
+import { config } from "../stores/config.svelte";
 import { app } from "../stores/app.svelte";
 
 export function checkoutRepo(r) {
@@ -113,6 +114,9 @@ export function saveTodos(todoList) {
 
 export function loadLocalConfig() {
     if (!repo.path) return;
+    config.localName = "";
+    config.localEmail = "";
+    config.localLoaded = false;
     sendIpcMessage(IpcActions.CONFIG_LOCAL_LOAD, { repoPath: repo.path });
 }
 

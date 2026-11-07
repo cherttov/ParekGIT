@@ -53,7 +53,8 @@
     <!-- Config Btn -->
     <button class="left-sidebar-btn btn-config" 
             disabled={!hasRepo}
-            title="Repository config (name/email)">
+            title="Repository config (name/email)"
+            onclick={() => modal.open("config")}>
         <div class="btn-icon icon-config"></div>
     </button>
 
