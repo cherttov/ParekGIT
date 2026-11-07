@@ -382,7 +382,6 @@ namespace ParekGIT.Core.Git
 		// ======================== Helpers ========================
 		private async Task<GitConfigInfo> GetConfigInternalAsync(string? repoPath, string scopeFlag)
 		{
-			string[] args = ;
 			return GitConfigParser.Parse(await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "--get-regexp", @"^user\.(name|email)$"], 1));
 		}
 		
