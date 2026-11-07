@@ -1,5 +1,4 @@
 <script>
-    import { untrack } from "svelte";
 	import Modal from "../Modal.svelte";
     import { config } from "../../stores/config.svelte";
     import { loadLocalConfig, saveLocalConfig } from "../../ipc/commands";
@@ -13,7 +12,7 @@
         if (!open) return;
         name = "";
         email = "";
-        untrack(loadLocalConfig());
+        loadLocalConfig();
         const t = setTimeout(() => input?.focus(), 100);
         return () => clearTimeout(t);
     });

@@ -132,8 +132,8 @@ export function registerHandlers() {
         app.theme = p.theme;
     });
     onIpc(IpcActions.THEME_LIST_LOADED, (p) => {
-        app.themes = themes;
-        if (!themes.some((t) => t.id === app.theme)) {
+        app.themes = p.themes;
+        if (!p.themes.some((t) => t.id === app.theme)) {
             app.theme = "catppuccin-mocha";
             saveSettings(app.theme);
         }
