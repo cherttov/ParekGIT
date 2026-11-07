@@ -60,7 +60,7 @@ namespace ParekGIT.Core.Services
 
 		private void OnWatcherError(object sender, ErrorEventArgs e)
 		{
-			_logger.LogWarningAsync($"FileSystemWatcher error on '{_currentRepoPath}' (likely buffer overflow)");
+			_ = _logger.LogWarningAsync($"FileSystemWatcher error on '{_currentRepoPath}' (likely buffer overflow)");
 
 			if (!string.IsNullOrEmpty(_currentRepoPath))
 				WatchRepository(_currentRepoPath);
