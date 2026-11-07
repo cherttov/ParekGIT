@@ -94,3 +94,50 @@ export function resolveFolderPick(path) {
     app.pendingFolderPick?.(path);
     app.pendingFolderPick = null;
 }
+
+export function mergeBranches(sourceBranch, targetBranch) {
+    if (!repo.path || !sourceBranch || !targetBranch || sourceBranch === targetBranch) return;
+    sendIpcMessage(IpcActions.BRANCH_MERGE, { repoPath: repo.path, sourceBranch, targetBranch });
+}
+
+export function loadTodos() {
+    if (!repo.path || !branch.revision) return;
+    sendIpcMessage(IpcActions.TODO_LOAD, { repoPath: repo.path, branchName: branch.revision });
+}
+
+export function saveTodos(todoList) {
+    if (!repo.path || !branch.revision) return;
+    sendIpcMessage(IpcActions.TODO_SAVE, { repoPath: repo.path, branchName: branch.revision, todos: todoList });
+}
+
+export function loadLocalConfig() {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.CONFIG_LOCAL_LOAD, { repoPath: repo.path });
+}
+
+export function saveLocalConfig(name, email) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.CONFIG_LOCAL_SAVE, { repoPath: repo.path, name, email });
+}
+
+export function loadGlobalConfig() {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.CONFIG_GLOBAL_LOAD);
+}
+
+export function saveGlobalConfig(name, email) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.CONFIG_GLOBAL_SAVE, { name, email });
+}
+
+export function loadThemes() {
+    sendIpcMessage(IpcActions.THEME_LIST_LOAD);
+}
+
+export function saveSettings(theme) {
+    sendIpcMessage(IpcActions.SETTINGS_SAVE, { theme });
+}
+
+export function clearLogs() {
+    sendIpcMessage(IpcActions.LOGS_CLEAR);
+}

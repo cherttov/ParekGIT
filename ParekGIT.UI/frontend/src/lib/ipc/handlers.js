@@ -1,11 +1,11 @@
 import { IpcActions } from "./actions.js";
-import { onIpc } from "./ipc.js";
+import { onIpc, sendIpcMessage } from "./ipc.js";
 import { repo } from "../stores/repo.svelte.js";
 import { app } from "../stores/app.svelte.js";
 import { repositories } from "../stores/repositories.svelte.js";
 import { branch } from "../stores/branch.svelte.js";
 import { branches } from "../stores/branches.svelte.js";
-import { checkoutRepo, refreshRepoState, resolveFolderPick } from "./commands.js";
+import { checkoutRepo, refreshRepoState, resolveFolderPick, saveSettings } from "./commands.js";
 import { config } from "../stores/config.svelte.js";
 import { modal } from "../stores/modal.svelte.js";
 
@@ -73,7 +73,7 @@ export function registerHandlers() {
         branches.list = p.branches;
         applyBranch(p.branch);
         refreshRepoState();
-    })
+    });
     onIpc(IpcActions.BRANCH_LIST_LOADED, (p) => {
         branches.list = p.branches;
         refreshRepoState();
@@ -83,9 +83,12 @@ export function registerHandlers() {
     });
     onIpc(IpcActions.BRANCH_FORCE_DELETE_REQUESTED, (p) => {
         modal.open("branch-force-delete", { branchName: p.branchName, unmergedCount: p.unmergedCount });
-    })
+    });
     // 	[IpcActions.BRANCH_RENAMED]: renameBranchInDropdown,
-    // 	[IpcActions.BRANCH_MERGED]: processBranchesMerged,
+    onIpc(IpcActions.BRANCH_MERGED, () => {
+        sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
+        refreshRepoState();
+    });
     // 	[IpcActions.BRANCH_HISTORY_LOADED]: processBranchHistoryLoaded,
     // 	[IpcActions.BRANCH_HISTORY_APPENDED]: processBranchHistoryAppended,
 
@@ -102,11 +105,18 @@ export function registerHandlers() {
     // 	[IpcActions.CHANGE_IGNORED]: processFileChanges, // REVISIT
 
     // Todo
-    // 	[IpcActions.TODO_LOADED]: loadTodos,
+    onIpc(IpcActions.TODO_LOADED, (p) => {
+        todos.list = p?.todos || [];
+    });
     // 	[IpcActions.TODO_SAVED]: noop,
 
     // Config
-    // 	[IpcActions.CONFIG_LOCAL_LOADED]: processLocalConfigLoad,
+    onIpc(IpcActions.CONFIG_LOCAL_LOADED, (p) => {
+        config.localName = p.localName || "";
+        config.localEmail = p.localEmail || "";
+        config.globalName = p.globalName || "";
+        config.globalEmail = p.globalEmail || "";
+    });
     // 	[IpcActions.CONFIG_LOCAL_SAVED]: noop,
     onIpc(IpcActions.CONFIG_GLOBAL_LOADED, (p) => {
         config.globalName = p.globalName || "";
@@ -115,8 +125,16 @@ export function registerHandlers() {
     // 	[IpcActions.CONFIG_GLOBAL_SAVED]: noop,
 
     // Settings / Theme
-    // 	[IpcActions.SETTINGS_SAVED]: processSettingsSaved,
-    // 	[IpcActions.THEME_LIST_LOADED]: processThemesLoaded,
+    onIpc(IpcActions.SETTINGS_SAVED, (p) => {
+        app.theme = p.theme;
+    });
+    onIpc(IpcActions.THEME_LIST_LOADED, (p) => {
+        app.themes = themes;
+        if (!themes.some((t) => t.id === app.theme)) {
+            app.theme = "catppuccin-mocha";
+            saveSettings(app.theme);
+        }
+    });
 
     // Explorer
     onIpc(IpcActions.EXPLORER_FOLDER_PICKED, (p) => resolveFolderPick(p.path));
