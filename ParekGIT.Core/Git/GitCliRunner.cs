@@ -85,9 +85,7 @@ namespace ParekGIT.Core.Git
 
 		public async Task<string> GetFileDiffAsync(string repoPath, string filePath)
 		{
-			string[] args = ["diff", "HEAD", "--", filePath];
-
-			string rawOutput = await ExecuteCommandAsync(repoPath, args);
+			string rawOutput = await ExecuteCommandAsync(repoPath, ["diff", "HEAD", "--", filePath]);
 
 			// If empty, must be untracked file (read directly)
 			if (string.IsNullOrWhiteSpace(rawOutput))
@@ -95,9 +93,9 @@ namespace ParekGIT.Core.Git
 				string fullPath = Path.Combine(repoPath, filePath);
 				if (_fileSystem.FileExists(fullPath))
 				{
-					// Add binary check here
+					// Add binary check here (use numstat)
 					string rawText = await _fileSystem.ReadAllTextAsync(fullPath);
-					var lines = rawText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+					var lines = rawText.Split(["\r\n", "\r", "\n"], StringSplitOptions.None);
 					return string.Join("\n", lines.Select(line => "+" + line));
 				}
 			}
@@ -152,7 +150,8 @@ namespace ParekGIT.Core.Git
 
 		public async Task CommitAsync(string repoPath, string message, string desc, IEnumerable<string> files)
 		{
-			if (files == null || !files.Any()) return;
+			if (files == null || !files.Any()) 
+				throw new Exception("Cannot commit without changes [CommitAsync]");
 
 			// Unstage everything
 			await ExecuteCommandAsync(repoPath, ["reset"]);
@@ -383,8 +382,8 @@ namespace ParekGIT.Core.Git
 		// ======================== Helpers ========================
 		private async Task<GitConfigInfo> GetConfigInternalAsync(string? repoPath, string scopeFlag)
 		{
-			string[] args = ["config", scopeFlag, "--get-regexp", @"^user\.(name|email)$"];
-			return GitConfigParser.Parse(await ExecuteCommandAsync(repoPath, args, 1));
+			string[] args = ;
+			return GitConfigParser.Parse(await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "--get-regexp", @"^user\.(name|email)$"], 1));
 		}
 		
 		private async Task SaveConfigInternalAsync(string? repoPath, string scopeFlag, string name, string email)
