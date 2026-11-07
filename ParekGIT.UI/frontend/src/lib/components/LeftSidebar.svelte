@@ -3,6 +3,8 @@
     import { sendIpcMessage } from "../ipc/ipc.js";
     import { IpcActions } from "../ipc/actions.js";
     import { fetchRepo, publishBranch, pullRepo, pushRepo } from "../ipc/commands.js";
+    import { modal } from "../stores/modal.svelte.js";
+	import { branch } from "../stores/branch.svelte.js";
 
     const hasRepo = $derived(repo.path !== "");
 
@@ -36,7 +38,8 @@
     <!-- Merge Btn -->
     <button class="left-sidebar-btn btn-merge" 
             disabled={!hasRepo}
-            title="Merge branch">
+            title="Merge branch"
+            onclick={() => modal.open("branch-merge", { targetBranch: branch.name })}>
         <div class="btn-icon icon-merge"></div>
     </button>
 
