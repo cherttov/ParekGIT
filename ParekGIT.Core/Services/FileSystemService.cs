@@ -15,7 +15,7 @@ namespace ParekGIT.Core.Services
 			_logger = logger;
 		}
 
-		// Exist
+		// ======================== Exist ========================
 		public bool FileExists(string path) => File.Exists(path);
 
 		public bool DirectoryExists(string path) => Directory.Exists(path);
@@ -28,16 +28,21 @@ namespace ParekGIT.Core.Services
 			return Task.CompletedTask;
 		}
 
-		// Write/read
+		// ======================== Write ========================
 		public Task<string> ReadAllTextAsync(string path) => File.ReadAllTextAsync(path);
 
+		public Task<string[]> ReadAllLinesAsync(string path) => File.ReadAllLinesAsync(path);
+
+		// ======================== Read ========================
 		public Task WriteAllTextAsync(string path, string content) => File.WriteAllTextAsync(path, content);
 
-		// Getters
+		public Task AppendAllTextAsync(string path, string content) => File.AppendAllTextAsync(path, content);
+
+		// ======================== Getters ========================
 		public async Task<IEnumerable<string>> GetFileSystemEntriesAsync(string path, string searchPattern, SearchOption searchOption) =>
 			await Task.Run(() => Directory.GetFileSystemEntries(path, searchPattern, searchOption));
 
-		// Delete/recycle-bin
+		// ======================== Delete/RecycleBin ========================
 		public async Task MoveDirectoryToRecycleBinAsync(string path)
 		{
 			var directory = new DirectoryInfo(path);
