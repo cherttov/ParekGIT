@@ -225,19 +225,19 @@ namespace ParekGIT.Core.Git
 			string normalizedFilePath = filePath.Replace("\\", "/");
 
 			bool alreadyIgnored = false;
-			if (File.Exists(gitignorePath))
+			if (_fileSystem.FileExists(gitignorePath))
 			{
-				var lines = await File.ReadAllLinesAsync(gitignorePath);
+				var lines = await _fileSystem.ReadAllLinesAsync(gitignorePath);
 				alreadyIgnored = lines.Any(line => line.Trim() == normalizedFilePath);
 			}
 
 			if (!alreadyIgnored)
 			{
-				string contentToAppend = File.Exists(gitignorePath) && new FileInfo(gitignorePath).Length > 0
+				string contentToAppend = _fileSystem.FileExists(gitignorePath) && new FileInfo(gitignorePath).Length > 0
 					? Environment.NewLine + normalizedFilePath
 					: normalizedFilePath;
 
-				await File.AppendAllTextAsync(gitignorePath, contentToAppend + Environment.NewLine);
+				await _fileSystem.AppendAllTextAsync(gitignorePath, contentToAppend + Environment.NewLine);
 			}
 
 			await ExecuteCommandAsync(repoPath, ["rm", "--cached", "--ignore-unmatch", "--", filePath]);
