@@ -81,10 +81,6 @@ export function showInExplorer(path) {
     sendIpcMessage(IpcActions.EXPLORER_SHOW, { path });
 }
 
-export function loadGlobalConfig() {
-    sendIpcMessage(IpcActions.CONFIG_GLOBAL_LOAD, {});
-}
-
 export function pickFolder(onpicked) {
     app.pendingFolderPick = onpicked;
     sendIpcMessage(IpcActions.EXPLORER_PICK_FOLDER);

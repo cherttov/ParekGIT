@@ -8,6 +8,7 @@ import { branches } from "../stores/branches.svelte.js";
 import { checkoutRepo, refreshRepoState, resolveFolderPick, saveSettings } from "./commands.js";
 import { config } from "../stores/config.svelte.js";
 import { modal } from "../stores/modal.svelte.js";
+import { todos } from "../stores/todos.svelte.js";
 
 export function registerHandlers() {
     // App
