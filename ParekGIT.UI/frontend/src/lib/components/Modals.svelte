@@ -8,6 +8,7 @@
     import RepoCreateModal from "./modals/RepoCreateModal.svelte";
     import RepoRemoveModal from "./modals/RepoRemoveModal.svelte";
     import ConfigModal from "./modals/ConfigModal.svelte";
+    import SettingsModal from "./modals/SettingsModal.svelte";
     import ErrorModal from "./modals/ErrorModal.svelte";
 
     export const modals = {
@@ -19,6 +20,7 @@
         "repo-create": RepoCreateModal,
         "repo-remove": RepoRemoveModal,
         "config": ConfigModal,
+        "settings": SettingsModal,
         "error": ErrorModal
     };
 </script>

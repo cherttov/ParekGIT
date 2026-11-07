@@ -129,7 +129,7 @@ export function registerHandlers() {
 
     // Settings / Theme
     onIpc(IpcActions.SETTINGS_SAVED, (p) => {
-        app.theme = p.theme;
+        app.theme = p.settings.theme;
     });
     onIpc(IpcActions.THEME_LIST_LOADED, (p) => {
         app.themes = p.themes;

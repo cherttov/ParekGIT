@@ -27,14 +27,14 @@ namespace ParekGIT.Bridge.Handlers
 			UserSettings incomingSettings = payload.Deserialize<UserSettings>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
 				?? throw new IpcPayloadException("settings");
 
-			UserSettings existingSettings = await _jsonStore.GetUserSettingsAsync();
+			UserSettings settings = await _jsonStore.GetUserSettingsAsync();
 
-			existingSettings.Theme = incomingSettings.Theme;
+			settings.Theme = incomingSettings.Theme;
 
-			await _jsonStore.SaveUserSettingsAsync(existingSettings);
+			await _jsonStore.SaveUserSettingsAsync(settings);
 
 			// Response
-			var response = IpcMessage.Create("SETTINGS_SAVED", new { existingSettings });
+			var response = IpcMessage.Create("SETTINGS_SAVED", new { settings });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

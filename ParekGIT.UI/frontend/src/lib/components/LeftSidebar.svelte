@@ -87,7 +87,8 @@
 
     <!-- Settings Btn -->
     <button class="left-sidebar-btn btn-settings" 
-            title="Settings">
+            title="Settings"
+            onclick={() => modal.open("settings")}>
         <div class="btn-icon icon-settings"></div>
     </button>
 
