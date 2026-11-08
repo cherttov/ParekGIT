@@ -46,7 +46,8 @@
     <!-- Todo Btn -->
     <button class="left-sidebar-btn btn-todo" 
             disabled={!hasRepo}
-            title="Todo list">
+            title="Todo list"
+            onclick={() => modal.open("todo")}>
         <div class="btn-icon icon-todo"></div>
     </button>
 

@@ -34,11 +34,7 @@
     id="branch-dropdown-panel" style:width="{layout.rightSidebarWidth}px">
     <div class="filter-container" id="branches-filter">
         <div class="icon-filter"></div>
-        <input id="branch-dropdown-panel-search" type="text"
-                bind:value={searchTerm}
-                class="filter-input"
-                placeholder="Search" />
-
+        <input id="branch-dropdown-panel-search" type="text" bind:value={searchTerm} class="filter-input" placeholder="Search" />
         <button class="topbar-filter-btn btn-new" onclick={newBranch}>New</button>
     </div>
 
