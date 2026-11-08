@@ -30,7 +30,7 @@
         
         const scrollPct = container.scrollTop / (contentH - containerH);
         thumbHeight = h;
-        thumbTop = scrollbarEdgePadding + scrollPct * maxThumbTop;
+        thumbTop = container.offsetTop + scrollbarEdgePadding + scrollPct * maxThumbTop;
     }
 
     function onMouseDown(e) {
@@ -63,12 +63,18 @@
     $effect(() => {
         if (!container) return;
         container.addEventListener("scroll", update);
+
         const ro = new ResizeObserver(update);
         ro.observe(container);
+
+        const mo = new MutationObserver(update);
+        mo.observe(container, { childList: true, subtree: true, characterData: true });
+
         update();
         return () => {
             container.removeEventListener("scroll", update);
             ro.disconnect();
+            mo.disconnect();
         };
     });
 </script>
