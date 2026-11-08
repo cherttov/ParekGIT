@@ -144,3 +144,23 @@ export function saveSettings(theme) {
 export function clearLogs() {
     sendIpcMessage(IpcActions.LOGS_CLEAR);
 }
+
+export function loadStashes() {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.STASH_LIST_LOAD, { repoPath: repo.path });
+}
+
+export function saveStash(message, files) {
+    if (!repo.path || files.length === 0) return;
+    sendIpcMessage(IpcActions.STASH_SAVE, { repoPath: repo.path, message, files });
+}
+
+export function popStash(selector) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.STASH_POP, { repoPath: repo.path, selector });
+}
+
+export function dropStash(selector) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.STASH_DROP, { repoPath: repo.path, selector });
+}

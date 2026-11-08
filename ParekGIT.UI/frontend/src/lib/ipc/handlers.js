@@ -5,10 +5,11 @@ import { app } from "../stores/app.svelte.js";
 import { repositories } from "../stores/repositories.svelte.js";
 import { branch } from "../stores/branch.svelte.js";
 import { branches } from "../stores/branches.svelte.js";
-import { checkoutRepo, refreshRepoState, resolveFolderPick, saveSettings } from "./commands.js";
+import { checkoutRepo, loadStashes, refreshRepoState, resolveFolderPick, saveSettings } from "./commands.js";
 import { config } from "../stores/config.svelte.js";
 import { modal } from "../stores/modal.svelte.js";
 import { todos } from "../stores/todos.svelte.js";
+import { stashes } from "../stores/stashes.svelte.js";
 
 export function registerHandlers() {
     // App
@@ -25,9 +26,7 @@ export function registerHandlers() {
         app.ready = true;
     });
 
-    onIpc(IpcActions.APP_ERROR, (p) => {
-        modal.open("error", { message: p.message });
-    });
+    onIpc(IpcActions.APP_ERROR, (p) => { modal.open("error", { message: p.message }); });
 
 	// Repo
 	onIpc(IpcActions.REPO_CHECKED_OUT, (p) => {
@@ -37,6 +36,8 @@ export function registerHandlers() {
         repo.changes = [];
         branches.list = p.branches;
         config.localLoaded = false;
+        stashes.list = [];
+        stashes.loaded = false;
         applyBranch(p.branch);
         refreshRepoState();
 	});
@@ -51,18 +52,16 @@ export function registerHandlers() {
             repo.remoteUrl = "";
             branch.name = "";
             branches.list = [];
+            stashes.list = [];
+            stashes.loaded = false;
         }
     });
     // 	[IpcActions.REPO_COMMITTED]: processCommit,
-    onIpc(IpcActions.REPO_FETCHED, () => {
-        repo.fetching = false;
-    });
+    onIpc(IpcActions.REPO_FETCHED, () => { repo.fetching = false; });
     // 	[IpcActions.REPO_PULLED]: processRepoPulled,
     // 	[IpcActions.REPO_PUSHED]: processRepoPushed,
     // 	[IpcActions.REPO_PUBLISHED]: processRepoPublished,
-    onIpc(IpcActions.REPO_STATUS_LOADED, (p) => {
-        repo.changes = p;
-    });
+    onIpc(IpcActions.REPO_STATUS_LOADED, (p) => { repo.changes = p; });
     // 	[IpcActions.REPO_FILES_CHANGED]: processFileChanges,
     // 	[IpcActions.REPO_PATH_MISSING]: processMissingRepo,
     onIpc(IpcActions.REPO_SYNC_STATUS_CHANGED, (p) => {
@@ -80,9 +79,7 @@ export function registerHandlers() {
         branches.list = p.branches;
         refreshRepoState();
     });
-    onIpc(IpcActions.BRANCH_DELETED, (p) => {
-        branches.list = branches.list.filter((b) => b.name !== p.branchName);
-    });
+    onIpc(IpcActions.BRANCH_DELETED, (p) => { branches.list = branches.list.filter((b) => b.name !== p.branchName); });
     onIpc(IpcActions.BRANCH_FORCE_DELETE_REQUESTED, (p) => {
         modal.open("branch-force-delete", { branchName: p.branchName, unmergedCount: p.unmergedCount });
     });
@@ -107,9 +104,7 @@ export function registerHandlers() {
     // 	[IpcActions.CHANGE_IGNORED]: processFileChanges, // REVISIT
 
     // Todo
-    onIpc(IpcActions.TODO_LOADED, (p) => {
-        todos.list = p?.todos ?? [];
-    });
+    onIpc(IpcActions.TODO_LOADED, (p) => { todos.list = p?.todos ?? []; });
     // 	[IpcActions.TODO_SAVED]: noop,
 
     // Config
@@ -128,9 +123,7 @@ export function registerHandlers() {
     // 	[IpcActions.CONFIG_GLOBAL_SAVED]: noop,
 
     // Settings / Theme
-    onIpc(IpcActions.SETTINGS_SAVED, (p) => {
-        app.theme = p.settings.theme;
-    });
+    onIpc(IpcActions.SETTINGS_SAVED, (p) => { app.theme = p.settings.theme; });
     onIpc(IpcActions.THEME_LIST_LOADED, (p) => {
         app.themes = p.themes;
         if (!p.themes.some((t) => t.id === app.theme)) {
@@ -143,10 +136,19 @@ export function registerHandlers() {
     onIpc(IpcActions.EXPLORER_FOLDER_PICKED, (p) => resolveFolderPick(p.path));
 
     // Stash
-    // 	[IpcActions.STASH_LIST_LOADED]: loadStashes,
-    // 	[IpcActions.STASH_SAVED]: processStashChange,
-    // 	[IpcActions.STASH_POPPED]: processStashChange,
-    // 	[IpcActions.STASH_DROPPED]: processStashDropped,
+    onIpc(IpcActions.STASH_LIST_LOADED, (p) => { 
+        stashes.list = p.stashes ?? []; 
+        stashes.loaded = true; 
+    });
+    onIpc(IpcActions.STASH_SAVED, () => { 
+        loadStashes(); 
+        refreshRepoState(); 
+    });
+    onIpc(IpcActions.STASH_POPPED, () => { 
+        loadStashes(); 
+        refreshRepoState(); 
+    });
+    onIpc(IpcActions.STASH_DROPPED, () => { loadStashes(); });
 
     // Logs
     // 	[IpcActions.LOGS_CLEARED]: noop,
