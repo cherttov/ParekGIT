@@ -4,14 +4,14 @@
 
     let { open = false, onclose } = $props();
     let branchName = $state("");
-    let input;
+    let inputEl;
 
     const isValid = $derived(branchName.trim().length > 0);
 
     $effect(() => {
         if (!open) return;
         branchName = "";
-        const t = setTimeout(() => input?.focus(), 100);
+        const t = setTimeout(() => inputEl?.focus(), 100);
         return () => clearTimeout(t);
     });
 
@@ -36,10 +36,8 @@
 >
     <div class="modal-body-row">
         <label for="branch-new-name">Name</label>
-        <input id="branch-new-name" type="text"
-            class="modal-input" placeholder="new branch name"
-            bind:value={branchName}  bind:this={input}
-            onkeydown={handleKeydown}
+        <input id="branch-new-name" type="text" class="modal-input" placeholder="new branch name"
+            bind:value={branchName}  bind:this={inputEl} onkeydown={handleKeydown}
         />
     </div>
 </Modal>

@@ -44,9 +44,7 @@
 >
     <div class="modal-body-row">
         <label for="repo-clone-modal-url">Repository URL</label>
-        <input id="repo-clone-modal-url" type="text"
-                class="modal-input input-url"
-                placeholder="repository url"
+        <input id="repo-clone-modal-url" type="text" class="modal-input input-url" placeholder="repository url"
                 bind:value={url} bind:this={urlInput} onkeydown={handleKeydown} />
     </div>
 
@@ -58,9 +56,7 @@
     <div class="modal-body-row">
         <label for="repo-clone-modal-path">Local path</label>
         <div class="input-button-container">
-            <input id="repo-clone-modal-path" type="text"
-                    class="modal-input input-path"
-                    placeholder="local path"
+            <input id="repo-clone-modal-path" type="text" class="modal-input input-path" placeholder="local path"
                     bind:value={path} bind:this={pathInput} onkeydown={handleKeydown} />
             <button class="browse-btn" onclick={browse}>Browse</button>
         </div>

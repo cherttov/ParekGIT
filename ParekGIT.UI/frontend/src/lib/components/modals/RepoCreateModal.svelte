@@ -81,16 +81,14 @@
 >
     <div class="modal-body-row">
         <label for="repo-create-modal-name">Name</label>
-        <input id="repo-create-modal-name" type="text"
-            class="modal-input input-name" placeholder="repository name"
+        <input id="repo-create-modal-name" type="text" class="modal-input input-name" placeholder="repository name"
             bind:value={form.name} bind:this={nameInput} onkeydown={handleKeydown} />
     </div>
 
     <div class="modal-body-row">
         <label for="repo-create-modal-path">Local path</label>
         <div class="input-button-container">
-            <input id="repo-create-modal-path" type="text"
-                class="modal-input input-path" placeholder="repository path"
+            <input id="repo-create-modal-path" type="text" class="modal-input input-path" placeholder="repository path"
                 bind:value={form.path} bind:this={pathInput} onkeydown={handleKeydown} />
             <button class="browse-btn" onclick={browse}>Browse</button>
         </div>

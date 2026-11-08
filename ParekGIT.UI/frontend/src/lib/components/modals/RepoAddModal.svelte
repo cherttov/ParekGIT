@@ -4,19 +4,19 @@
 
     let { open = false, data = {}, onclose } = $props();
     let path = $state("");
-    let input;
+    let inputEl;
 
     const isValid = $derived(path.trim() !== "");
 
     $effect(() => {
         if (!open) return;
         path = data.path ?? "";
-        const t = setTimeout(() => input?.focus(), 100);
+        const t = setTimeout(() => inputEl?.focus(), 100);
         return () => clearTimeout(t);
     });
 
     function browse() {
-        pickFolder((p) => { path = p; input?.focus(); });
+        pickFolder((p) => { path = p; inputEl?.focus(); });
     }
 
     function confirm() {
@@ -42,7 +42,7 @@
         <label for="repo-add-modal-path">Local path</label>
         <div class="input-button-container">
             <input id="repo-add-modal-path" type="text" class="modal-input" placeholder="repository path"
-                bind:value={path} bind:this={input} onkeydown={handleKeydown} />
+                bind:value={path} bind:this={inputEl} onkeydown={handleKeydown} />
             <button class="browse-btn" onclick={browse}>Browse</button>
         </div>
     </div>

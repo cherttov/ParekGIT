@@ -6,14 +6,14 @@
     let { open = false, data = {}, onclose } = $props();
     let name = $state("");
     let email = $state("");
-    let input;
+    let inputEl;
 
     $effect(() => {
         if (!open) return;
         name = "";
         email = "";
         loadLocalConfig();
-        const t = setTimeout(() => input?.focus(), 100);
+        const t = setTimeout(() => inputEl?.focus(), 100);
         return () => clearTimeout(t);
     });
 

@@ -8,7 +8,7 @@
     let { open = false, data = {}, onclose } = $props();
     let task = $state("");
     let draft = $state([]);
-    let listEl = $state("");
+    let listEl = $state(null);
     let inputEl;
 
     const canAdd = $derived(task.trim() !== "");
