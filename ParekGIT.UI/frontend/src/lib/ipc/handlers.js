@@ -38,6 +38,7 @@ export function registerHandlers() {
         config.localLoaded = false;
         stashes.list = [];
         stashes.loaded = false;
+        repo.committing = false;
         applyBranch(p.branch);
         refreshRepoState();
 	});
@@ -56,7 +57,10 @@ export function registerHandlers() {
             stashes.loaded = false;
         }
     });
-    // 	[IpcActions.REPO_COMMITTED]: processCommit,
+    onIpc(IpcActions.REPO_COMMITTED, () => {
+        repo.committing = false;
+        refreshRepoState();
+    });
     onIpc(IpcActions.REPO_FETCHED, () => { repo.fetching = false; });
     // 	[IpcActions.REPO_PULLED]: processRepoPulled,
     // 	[IpcActions.REPO_PUSHED]: processRepoPushed,
