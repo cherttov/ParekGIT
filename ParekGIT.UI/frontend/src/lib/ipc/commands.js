@@ -164,3 +164,26 @@ export function dropStash(selector) {
     if (!repo.path) return;
     sendIpcMessage(IpcActions.STASH_DROP, { repoPath: repo.path, selector });
 }
+
+export function loadStatus() {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: repo.path });
+}
+
+export function commitChanges(message, description, files) {
+    if (!repo.path || !message || files.length === 0 || repo.committing) return;
+    repo.committing = true;
+    sendIpcMessage(IpcActions.REPO_COMMIT, { repoPath: repo.path, message, description, files });
+}
+
+export function discardChange(filePath) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.CHANGE_DISCARD, { repoPath: repo.path, filePath });
+}
+
+export function discardSelected(paths) { paths.forEach(discardChange); }
+
+export function discardAll() {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.CHANGE_ALL_DISCARD, { repoPath: repo.path });
+}
