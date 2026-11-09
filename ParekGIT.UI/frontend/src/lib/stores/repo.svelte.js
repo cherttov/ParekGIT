@@ -4,5 +4,6 @@ export const repo = $state({
 	remoteUrl: "",
     changes: [],
     fetching: false,
+    committing: false,
     get hasRemote() { return !!this.remoteUrl; }
 });
