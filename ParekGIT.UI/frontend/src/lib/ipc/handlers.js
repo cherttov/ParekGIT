@@ -103,13 +103,13 @@ export function registerHandlers() {
     // 	[IpcActions.FILE_DIFF_LOADED]: processFileDiffLoaded,
 
     // Change
-    // 	[IpcActions.CHANGE_ALL_DISCARDED]: noop,
-    // 	[IpcActions.CHANGE_DISCARDED]: noop,
+    onIpc(IpcActions.CHANGE_ALL_DISCARDED, () => {});
+    onIpc(IpcActions.CHANGE_DISCARDED, () => {});
     // 	[IpcActions.CHANGE_IGNORED]: processFileChanges, // REVISIT
 
     // Todo
     onIpc(IpcActions.TODO_LOADED, (p) => { todos.list = p?.todos ?? []; });
-    // 	[IpcActions.TODO_SAVED]: noop,
+    onIpc(IpcActions.TODO_SAVED, () => {});
 
     // Config
     onIpc(IpcActions.CONFIG_LOCAL_LOADED, (p) => {
@@ -119,12 +119,12 @@ export function registerHandlers() {
         config.globalName = p.globalName ?? "";
         config.globalEmail = p.globalEmail ?? "";
     });
-    // 	[IpcActions.CONFIG_LOCAL_SAVED]: noop,
+    onIpc(IpcActions.CONFIG_LOCAL_SAVED, () => {});
     onIpc(IpcActions.CONFIG_GLOBAL_LOADED, (p) => {
         config.globalName = p.globalName ?? "";
         config.globalEmail = p.globalEmail ?? "";
     });
-    // 	[IpcActions.CONFIG_GLOBAL_SAVED]: noop,
+    onIpc(IpcActions.CONFIG_GLOBAL_SAVED, () => {});
 
     // Settings / Theme
     onIpc(IpcActions.SETTINGS_SAVED, (p) => { app.theme = p.settings.theme; });
@@ -155,7 +155,7 @@ export function registerHandlers() {
     onIpc(IpcActions.STASH_DROPPED, () => { loadStashes(); });
 
     // Logs
-    // 	[IpcActions.LOGS_CLEARED]: noop,
+    onIpc(IpcActions.LOGS_CLEARED, () => {});
 }
 
 // Helpers
