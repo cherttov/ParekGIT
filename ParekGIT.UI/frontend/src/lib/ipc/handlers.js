@@ -12,6 +12,7 @@ import { todos } from "../stores/todos.svelte.js";
 import { stashes } from "../stores/stashes.svelte.js";
 import { changes } from "../stores/changes.svelte.js";
 import { view } from "../stores/view.svelte.js";
+import { commit } from "../stores/commit.svelte.js";
 
 export function registerHandlers() {
     // App
@@ -28,11 +29,13 @@ export function registerHandlers() {
         app.ready = true;
     });
     onIpc(IpcActions.APP_ERROR, (p) => { 
+        commit.committing = false;
         modal.open("error", { message: p.message });
     });
 
 	// Repo
 	onIpc(IpcActions.REPO_CHECKED_OUT, (p) => {
+        commit.switchRepo(repo.path, p.repo.absolutePath);
         repo.name = p.repo.name;
         repo.path = p.repo.absolutePath;
         repo.remoteUrl = p.repo.remoteUrl;
@@ -40,7 +43,6 @@ export function registerHandlers() {
         config.localLoaded = false;
         stashes.list = [];
         stashes.loaded = false;
-        repo.committing = false;
         changes.reset();
         view.tab = "changes";
         applyBranch(p.branch);
@@ -58,6 +60,7 @@ export function registerHandlers() {
     onIpc(IpcActions.REPO_REMOVED, (p) => {
         repositories.list = repositories.list.filter(r => r.absolutePath !== p.repoPath);
         if (repo.path === p.repoPath) {
+            commit.clear();
             repo.name = "";
             repo.path = "";
             repo.remoteUrl = "";
@@ -69,7 +72,8 @@ export function registerHandlers() {
         }
     });
     onIpc(IpcActions.REPO_COMMITTED, () => {
-        repo.committing = false;
+        commit.committing = false;
+        commit.clear();
         refreshRepoState();
     });
     onIpc(IpcActions.REPO_FETCHED, () => { 
@@ -149,7 +153,9 @@ export function registerHandlers() {
     onIpc(IpcActions.CONFIG_GLOBAL_SAVED, () => {});
 
     // Settings / Theme
-    onIpc(IpcActions.SETTINGS_SAVED, (p) => { app.theme = p.settings.theme; });
+    onIpc(IpcActions.SETTINGS_SAVED, (p) => { 
+        app.theme = p.settings.theme;
+    });
     onIpc(IpcActions.THEME_LIST_LOADED, (p) => {
         app.themes = p.themes;
         if (!p.themes.some((t) => t.id === app.theme)) {

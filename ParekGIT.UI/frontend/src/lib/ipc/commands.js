@@ -4,6 +4,8 @@ import { repo } from "../stores/repo.svelte";
 import { branch } from "../stores/branch.svelte";
 import { config } from "../stores/config.svelte";
 import { app } from "../stores/app.svelte";
+import { commit } from "../stores/commit.svelte";
+import { changes } from "../stores/changes.svelte";
 
 export function checkoutRepo(r) {
     if (!r.isValid || repo.path === r.absolutePath) return;
@@ -170,10 +172,18 @@ export function loadStatus() {
     sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: repo.path });
 }
 
-export function commitChanges(message, description, files) {
-    if (!repo.path || !message || files.length === 0 || repo.committing) return;
-    repo.committing = true;
-    sendIpcMessage(IpcActions.REPO_COMMIT, { repoPath: repo.path, message, description, files });
+export function commitChanges() {
+    const message = commit.message.trim();
+    const files = changes.checkedPaths;
+    if (!repo.path || !message || files.length === 0 || commit.committing) return;
+
+    commit.committing = true;
+    sendIpcMessage(IpcActions.REPO_COMMIT, { 
+        repoPath: repo.path, 
+        message, 
+        description: commit.description.trim(), 
+        files 
+    });
 }
 
 export function discardChange(filePath) {
