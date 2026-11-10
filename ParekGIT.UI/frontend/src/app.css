@@ -230,8 +230,11 @@ select:focus {
 
 .dropdown-panel {
 	display: none;
-	position: fixed;
-	top: 32px;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 100%;
+	box-sizing: border-box;
 	max-height: calc(100vh - 48px);
 	background-color: var(--bg-panel);
 	z-index: 1000;
@@ -268,19 +271,22 @@ select:focus {
 	min-width: 0;
 }
 
-	#repositories-container .dropdown-panel {
-		left: 48px;
-		width: calc(100% - 256px - 48px);
-	}
+#repositories-container .dropdown-panel {
+	left: 0;
+	width: 100%;
+}
 
 #branches-container {
 	width: 256px;
+	min-width: 192px;
 	flex-shrink: 0;
 }
 
-	#branches-container .dropdown-panel {
-		right: 0;
-	}
+#branches-container .dropdown-panel {
+	left: 0;
+	right: 0;
+	width: 100%;
+}
 
 .filter-container {
 	position: relative;

@@ -2,7 +2,6 @@
     import { branches } from "../stores/branches.svelte";
     import { branch } from "../stores/branch.svelte";
     import { repo } from "../stores/repo.svelte";
-    import { layout } from "../stores/layout.svelte";
     import { checkoutBranch } from "../ipc/commands";
     import { modal } from "../stores/modal.svelte";
     import { contextMenu } from "../stores/contextMenu.svelte";
@@ -30,8 +29,7 @@
     }
 </script>
 
-<div class="dropdown-panel" class:show 
-    id="branch-dropdown-panel" style:width="{layout.rightSidebarWidth}px">
+<div class="dropdown-panel" class:show id="branch-dropdown-panel">
     <div class="filter-container" id="branches-filter">
         <div class="icon-filter"></div>
         <input id="branch-dropdown-panel-search" type="text" bind:value={searchTerm} class="filter-input" placeholder="Search" />
