@@ -1513,7 +1513,7 @@ function requestFileDiff(filePath, showLoading = true) {
 
 // C# - Load changed files to right sidebar
 function renderChangedFiles(payload) {
-	const files = payload.changedFiles;
+	const files = payload.files;
 	// Remember previous render state (unchecked files, selected file)
 	const uncheckedPaths = new Set(
 		Array.from(changesList.querySelectorAll(".change-item"))
@@ -2101,7 +2101,7 @@ function processGlobalConfigLoad(config) {
 
 // C# - Settings saved handler
 function processSettingsSaved(payload) {
-	applyTheme(payload.existingSettings.theme);
+	applyTheme(payload.settings.theme);
 }
 
 // C# - Themes loaded
