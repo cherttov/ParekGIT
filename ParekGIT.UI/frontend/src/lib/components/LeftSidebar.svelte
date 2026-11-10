@@ -73,7 +73,8 @@
     <!-- Stash Btn -->
     <button class="left-sidebar-btn btn-stash" 
             disabled={!hasRepo}
-            title="Stash">
+            title="Stash"
+            onclick={() => modal.open("stashes")}>
         <div class="btn-icon icon-stash"></div>
     </button>
 

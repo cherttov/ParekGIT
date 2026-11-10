@@ -9,6 +9,7 @@
     import RepoRemoveModal from "./modals/RepoRemoveModal.svelte";
     import TodoModal from "./modals/TodoModal.svelte";
     import ConfigModal from "./modals/ConfigModal.svelte";
+    import StashModal from "./modals/StashModal.svelte";
     import SettingsModal from "./modals/SettingsModal.svelte";
     import ErrorModal from "./modals/ErrorModal.svelte";
 
@@ -22,6 +23,7 @@
         "repo-remove": RepoRemoveModal,
         "todo": TodoModal,
         "config": ConfigModal,
+        "stashes": StashModal,
         "settings": SettingsModal,
         "error": ErrorModal
     };
