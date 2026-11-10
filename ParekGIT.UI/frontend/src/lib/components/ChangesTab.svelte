@@ -1,18 +1,22 @@
 <script>
 	import { stopPropagation } from "svelte/legacy";
-import { changes } from "../stores/changes.svelte";
+    import { changes } from "../stores/changes.svelte";
+    import { branch } from "../stores/branch.svelte";
+    import { commit } from "../stores/commit.svelte";
+    import { commitChanges } from "../ipc/commands";
     import CustomScrollbar from "./CustomScrollbar.svelte";
     import StatusBadge from "./StatusBadge.svelte";
 
     let { active = false } = $props();
     let listEl = $state(null);
 
-    const count = $derived(changes.files.length);
+    const checkedCount = $derived(changes.checkedPaths.length);
+    const canCommit = $derived(branch.name !== "" && commit.message.trim() !== "" && checkedCount > 0 && !commit.committing);
 </script>
 
 <div class="changes-tab" id="changes-tab" class:active>
     <div class="changes-header" id="changes-header">
-        <span id="changes-count-text">{count} changed file{count === 1 ? "" : "s"}</span>
+        <span id="changes-count-text">{checkedCount} changed file{checkedCount === 1 ? "" : "s"}</span>
         <input type="checkbox" class="ui-checkbox" id="changes-master-checkbox" 
             checked={changes.allChecked} onchange={(e) => changes.setAllChecked(e.currentTarget.checked)} />
     </div>
@@ -37,8 +41,16 @@ import { changes } from "../stores/changes.svelte";
     </div>
 
     <div class="right-sidebar-bottom">
-        <input type="text" class="commit-input message-input" id="commit-name-input" placeholder="Message (required)" />
-        <textarea class="commit-input description-input" id="commit-desc-input" placeholder="Description"></textarea>
-        <button class="commit-btn" id="commit-btn">Commit X files to <strong>[branch]</strong></button>
+        <input type="text" class="commit-input message-input" id="commit-name-input" placeholder="Message (required)" bind:value={commit.message} />
+        <textarea class="commit-input description-input" id="commit-desc-input" placeholder="Description" bind:value={commit.description}></textarea>
+        <button class="commit-btn" id="commit-btn" disabled={!canCommit} onclick={commitChanges}>
+            {#if !branch.name}
+                Loading...
+            {:else if checkedCount > 0}
+                Commit {checkedCount} file{checkedCount === 1 ? "" : "s"} to <strong>{branch.name}</strong>
+            {:else}
+                Commit
+            {/if}
+        </button>
     </div>
 </div>
