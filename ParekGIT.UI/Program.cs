@@ -130,11 +130,11 @@ namespace ParekGIT.UI
 				// Initialize app data directories and files
 				var fileSystem = serviceProvider.GetRequiredService<IFileSystemService>();
 				foreach (string dir in AppDataPaths.GetAllDirectories())
-				{
 					fileSystem.CreateDirectory(dir).GetAwaiter().GetResult();
-				}
+
 				var settingsStore = serviceProvider.GetRequiredService<ISettingsStore>();
 				settingsStore.EnsureSettingsFileAsync().GetAwaiter().GetResult();
+
 				var themeStore = serviceProvider.GetRequiredService<IThemeStore>();
 				themeStore.EnsureDefaultThemesAsync().GetAwaiter().GetResult();
 
@@ -144,9 +144,7 @@ namespace ParekGIT.UI
 
 				var allHandlers = serviceProvider.GetServices<IMessageHandler>();
 				foreach (var handler in allHandlers)
-				{
 					router.RegisterHandler(handler);
-				}
 
 				// ======================== Start the application ========================
 				window.RegisterWebMessageReceivedHandler(router.HandleMessage!);

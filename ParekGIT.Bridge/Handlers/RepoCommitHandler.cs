@@ -41,9 +41,7 @@ namespace ParekGIT.Bridge.Handlers
 
 			var files = new List<string>();
 			foreach (var file in payload.GetProperty("files").EnumerateArray())
-			{
 				files.Add(file.GetString() ?? "");
-			}
 			if (files.Count == 0) throw new IpcPayloadException("files", "must contain at least 1 file");
 
 			// Commit locally
