@@ -36,9 +36,7 @@ namespace ParekGIT.Bridge.Handlers
 			repoPath = Path.GetFullPath(repoPath);
 			repoPath = Path.TrimEndingDirectorySeparator(repoPath);
 			if (repoPath.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
-			{
 				repoPath = Path.GetDirectoryName(repoPath) ?? repoPath;
-			}
 
 			// Verify if valid .git repo
 			string gitFolderPath = Path.Combine(repoPath, ".git");
