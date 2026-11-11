@@ -6,6 +6,7 @@ import { config } from "../stores/config.svelte";
 import { app } from "../stores/app.svelte";
 import { commit } from "../stores/commit.svelte";
 import { changes } from "../stores/changes.svelte";
+import { history } from "../stores/history.svelte";
 
 export function checkoutRepo(r) {
     if (!r.isValid || repo.path === r.absolutePath) return;
@@ -58,6 +59,38 @@ export function refreshRepoState() {
         sendIpcMessage(IpcActions.BRANCH_HISTORY_LOAD, { repoPath: repo.path, branchName: branch.revision });
         sendIpcMessage(IpcActions.TODO_LOAD, { repoPath: repo.path, branchName: branch.revision });
     }
+}
+
+export function loadMoreHistory() {
+    if (!repo.path || !branch.revision) return;
+    const skip = history.beginNextPage();
+    if (skip === null) return;
+    sendIpcMessage(IpcActions.BRANCH_HISTORY_LOAD, {
+        repoPath: repo.path,
+        branchName: branch.revision,
+        skip,
+        take: history.take
+    });
+}
+
+export function loadCommitDetails(commitHash) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.COMMIT_DETAILS_LOAD, { repoPath: repo.path, commitHash });
+}
+
+export function checkoutCommit(commitHash) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.COMMIT_CHECKOUT, { repoPath: repo.path, commitHash });
+}
+
+export function revertCommit(commitHash) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.COMMIT_REVERT, { repoPath: repo.path, commitHash });
+}
+
+export function createBranchFromCommit(branchName, commitHash) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.BRANCH_CREATE_FROM_COMMIT, { repoPath: repo.path, branchName, commitHash });
 }
 
 export function fetchRepo() {

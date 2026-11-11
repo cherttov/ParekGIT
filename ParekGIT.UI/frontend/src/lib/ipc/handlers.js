@@ -13,6 +13,7 @@ import { stashes } from "../stores/stashes.svelte.js";
 import { changes } from "../stores/changes.svelte.js";
 import { view } from "../stores/view.svelte.js";
 import { commit } from "../stores/commit.svelte.js";
+import { history } from "../stores/history.svelte.js";
 
 export function registerHandlers() {
     // App
@@ -44,6 +45,7 @@ export function registerHandlers() {
         stashes.list = [];
         stashes.loaded = false;
         changes.reset();
+        history.reset();
         view.tab = "changes";
         applyBranch(p.branch);
         refreshRepoState();
@@ -69,6 +71,7 @@ export function registerHandlers() {
             stashes.list = [];
             stashes.loaded = false;
             changes.reset();
+            history.reset();
         }
     });
     onIpc(IpcActions.REPO_COMMITTED, () => {
@@ -98,6 +101,7 @@ export function registerHandlers() {
     onIpc(IpcActions.BRANCH_CHECKED_OUT, (p) => {
         branches.list = p.branches;
         changes.reset();
+        history.reset();
         applyBranch(p.branch);
         refreshRepoState();
     });
@@ -116,14 +120,22 @@ export function registerHandlers() {
         sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
         refreshRepoState();
     });
-    // 	[IpcActions.BRANCH_HISTORY_LOADED]: processBranchHistoryLoaded,
-    // 	[IpcActions.BRANCH_HISTORY_APPENDED]: processBranchHistoryAppended,
+    onIpc(IpcActions.BRANCH_HISTORY_LOADED, (p) => {
+        history.setCommits(p.commits);
+    });
+    onIpc(IpcActions.BRANCH_HISTORY_APPENDED, (p) => {
+        history.appendCommits(p.commits);
+    });
 
     // Commit / File
     // 	[IpcActions.COMMIT_DETAILS_LOADED]: loadCommitDetails,
     // 	[IpcActions.COMMIT_FILE_DIFF_LOADED]: processCommitFileDiffLoaded,
-    // 	[IpcActions.COMMIT_CHECKED_OUT]: processCommitCheckedOut, // FINISH
-    // 	[IpcActions.COMMIT_REVERTED]: processCommitReverted,
+    onIpc(IpcActions.COMMIT_CHECKED_OUT, () => { // FINISH
+        sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
+    });
+    onIpc(IpcActions.COMMIT_REVERTED, () => {
+        refreshRepoState();
+    });
     // 	[IpcActions.FILE_DIFF_LOADED]: processFileDiffLoaded,
 
     // Change
