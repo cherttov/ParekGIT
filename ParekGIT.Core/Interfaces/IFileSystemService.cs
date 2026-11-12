@@ -19,6 +19,7 @@
 
 		// Getters
 		Task<IEnumerable<string>> GetFileSystemEntriesAsync(string path, string searchPattern, SearchOption searchOption);
+		Task<long> GetFileSizeAsync(string path);
 
 		// Delete/RecycleBin
 		Task MoveDirectoryToRecycleBinAsync(string path);
