@@ -4,18 +4,38 @@ import { openTerminal, showInExplorer } from "../../ipc/commands";
 
 // Dropdown ADD button + top part of repo-topbar context menu
 export const addRepoItems = [
-    { label: "Clone repository...", onclick: () => modal.open("repo-clone") },
-    { label: "Create new repository...", onclick: () => modal.open("repo-create") },
-    { label: "Add existing repository...", onclick: () => modal.open("repo-add") }
+    { 
+        label: "Clone repository...", 
+        onclick: () => modal.open("repo-clone") 
+    },
+    { 
+        label: "Create new repository...", 
+        onclick: () => modal.open("repo-create") 
+    },
+    { 
+        label: "Add existing repository...", 
+        onclick: () => modal.open("repo-add") 
+    }
 ];
 
 // Tools, same for both repo context-menus
 function toolItems(path, name, isInvalid) {
     return [
-        { label: "Open in terminal", disabled: isInvalid, onclick: () => openTerminal(path) },
-        { label: "Show in explorer", disabled: isInvalid, onclick: () => showInExplorer(path) },
+        { 
+            label: "Open in terminal", 
+            disabled: isInvalid, 
+            onclick: () => openTerminal(path) 
+        },
+        { 
+            label: "Show in explorer", 
+            disabled: isInvalid, 
+            onclick: () => showInExplorer(path) 
+        },
         "divider",
-        { label: "Remove...", onclick: () => modal.open("repo-remove", { repoPath: path, repoName: name, isInvalid }) }
+        { 
+            label: "Remove...", 
+            onclick: () => modal.open("repo-remove", { repoPath: path, repoName: name, isInvalid }) 
+        }
     ]
 }
 
