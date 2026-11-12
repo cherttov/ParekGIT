@@ -28,12 +28,12 @@ namespace ParekGIT.Core.Services
 			return Task.CompletedTask;
 		}
 
-		// ======================== Write ========================
+		// ======================== Read ========================
 		public Task<string> ReadAllTextAsync(string path) => File.ReadAllTextAsync(path);
 
 		public Task<string[]> ReadAllLinesAsync(string path) => File.ReadAllLinesAsync(path);
 
-		// ======================== Read ========================
+		// ======================== Write ========================
 		public Task WriteAllTextAsync(string path, string content) => File.WriteAllTextAsync(path, content);
 
 		public Task AppendAllTextAsync(string path, string content) => File.AppendAllTextAsync(path, content);
