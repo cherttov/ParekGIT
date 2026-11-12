@@ -224,7 +224,7 @@ namespace ParekGIT.Core.Git
 
 			if (!alreadyIgnored)
 			{
-				string contentToAppend = _fileSystem.FileExists(gitignorePath) && new FileInfo(gitignorePath).Length > 0
+				string contentToAppend = _fileSystem.FileExists(gitignorePath) && await _fileSystem.GetFileSizeAsync(gitignorePath) > 0
 					? Environment.NewLine + normalizedFilePath
 					: normalizedFilePath;
 

@@ -42,6 +42,9 @@ namespace ParekGIT.Core.Services
 		public async Task<IEnumerable<string>> GetFileSystemEntriesAsync(string path, string searchPattern, SearchOption searchOption) =>
 			await Task.Run(() => Directory.GetFileSystemEntries(path, searchPattern, searchOption));
 
+		public async Task<long> GetFileSizeAsync(string path) =>
+			await Task.Run(() => new FileInfo(path).Length);
+
 		// ======================== Delete/RecycleBin ========================
 		public async Task MoveDirectoryToRecycleBinAsync(string path)
 		{
