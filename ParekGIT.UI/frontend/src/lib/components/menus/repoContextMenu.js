@@ -36,7 +36,7 @@ function toolItems(path, name, isInvalid) {
             label: "Remove...", 
             onclick: () => modal.open("repo-remove", { repoPath: path, repoName: name, isInvalid }) 
         }
-    ]
+    ];
 }
 
 // RMB on repo-dropdown item

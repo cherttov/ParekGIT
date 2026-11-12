@@ -1,8 +1,9 @@
 <script>
-	import { stopPropagation } from "svelte/legacy";
     import { changes } from "../stores/changes.svelte";
     import { branch } from "../stores/branch.svelte";
     import { commit } from "../stores/commit.svelte";
+    import { contextMenu } from "../stores/contextMenu.svelte";
+    import { changeMenuItems, changesMasterMenuItems } from "./menus/changesContextMenu";
     import { commitChanges } from "../ipc/commands";
     import CustomScrollbar from "./CustomScrollbar.svelte";
     import StatusBadge from "./StatusBadge.svelte";
@@ -15,8 +16,9 @@
 </script>
 
 <div class="changes-tab" id="changes-tab" class:active>
-    <div class="changes-header" id="changes-header">
-        <span id="changes-count-text">{checkedCount} changed file{checkedCount === 1 ? "" : "s"}</span>
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="changes-header" id="changes-header" oncontextmenu={(e) => contextMenu.open(e, changesMasterMenuItems())}>
+        <span id="changes-count-text">{checkedCount} selected file{checkedCount === 1 ? "" : "s"}</span>
         <input type="checkbox" class="ui-checkbox" id="changes-master-checkbox" 
             checked={changes.allChecked} onchange={(e) => changes.setAllChecked(e.currentTarget.checked)} />
     </div>
@@ -27,7 +29,8 @@
                 <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <div class="change-item" class:selected={changes.selectedPath === file.path}
-                    onclick={() => changes.select(file.path)}>
+                    onclick={() => changes.select(file.path)}
+                    oncontextmenu={(e) => contextMenu.open(e, changeMenuItems(file), file.path)}>
                     <div class="change-item-left">
                         <StatusBadge code={file.statusCode} />
                         <div class="change-path">{file.path}</div>

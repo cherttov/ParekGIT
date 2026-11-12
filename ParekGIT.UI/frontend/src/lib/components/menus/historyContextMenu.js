@@ -22,5 +22,5 @@ export function historyMenuItems(c, isLatest) {
             label: "Copy SHA", 
             onclick: () => navigator.clipboard.writeText(c.hash)
         }
-    ]
+    ];
 }
