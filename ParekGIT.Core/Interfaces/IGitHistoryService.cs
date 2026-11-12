@@ -8,6 +8,5 @@ namespace ParekGIT.Core.Interfaces
 		Task<CommitDetailsResult> GetCommitDetailsAsync(string repoPath, string hash);
 		Task CheckoutCommitAsync(string repoPath, string commitHash);
 		Task RevertCommitAsync(string repoPath, string commitHash);
-
 	}
 }

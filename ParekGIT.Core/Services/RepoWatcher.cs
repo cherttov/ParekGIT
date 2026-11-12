@@ -5,7 +5,7 @@ namespace ParekGIT.Core.Services
 {
 	public class RepoWatcher : IRepoWatcher
 	{
-		private ILogger _logger;
+		private readonly ILogger _logger;
 		private FileSystemWatcher? _watcher;
 		private readonly Timer _debounceTimer;
 		private string _currentRepoPath = string.Empty;

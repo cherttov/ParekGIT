@@ -11,7 +11,7 @@
 
 		// Read
 		Task<string> ReadAllTextAsync(string path);
-		public Task<string[]> ReadAllLinesAsync(string path);
+		Task<string[]> ReadAllLinesAsync(string path);
 
 		// Write
 		Task WriteAllTextAsync(string path, string content);
