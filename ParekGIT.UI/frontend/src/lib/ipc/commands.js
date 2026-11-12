@@ -224,6 +224,11 @@ export function discardChange(filePath) {
     sendIpcMessage(IpcActions.CHANGE_DISCARD, { repoPath: repo.path, filePath });
 }
 
+export function ignoreFile(filePath) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.CHANGE_IGNORE, { repoPath: repo.path, filePath, ignoreType: "file" });
+}
+
 export function discardSelected(paths) { paths.forEach(discardChange); }
 
 export function discardAll() {

@@ -4,8 +4,8 @@
 	import { repositories } from "../stores/repositories.svelte";
     import { checkoutRepo } from "../ipc/commands";
     import { contextMenu } from "../stores/contextMenu.svelte";
-    import { repoMenuItems } from "./contextMenus/repoContextMenu";
-    import { addRepoItems } from "./contextMenus/repoContextMenu";
+    import { repoMenuItems } from "./menus/repoContextMenu";
+    import { addRepoItems } from "./menus/repoContextMenu";
     import CustomScrollbar from "./CustomScrollbar.svelte";
 
     let { show = false, onclose } = $props();

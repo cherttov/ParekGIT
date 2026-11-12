@@ -5,8 +5,8 @@
     import RepoDropdown from "./RepoDropdown.svelte";
     import BranchDropdown from "./BranchDropdown.svelte";
 	import { contextMenu } from "../stores/contextMenu.svelte.js";
-	import { topbarRepoMenuItems } from "./contextMenus/repoContextMenu.js";
-	import { topbarBranchMenuItems } from "./contextMenus/branchContextMenu.js";
+	import { topbarRepoMenuItems } from "./menus/repoContextMenu.js";
+	import { topbarBranchMenuItems } from "./menus/branchContextMenu.js";
 
     let repoOpen = $state(false);
     let branchOpen = $state(false);

@@ -141,7 +141,9 @@ export function registerHandlers() {
     // Change
     onIpc(IpcActions.CHANGE_ALL_DISCARDED, () => {});
     onIpc(IpcActions.CHANGE_DISCARDED, () => {});
-    // 	[IpcActions.CHANGE_IGNORED]: processFileChanges, // REVISIT
+    onIpc(IpcActions.CHANGE_IGNORED, () => {
+        loadStatus();
+    });
 
     // Todo
     onIpc(IpcActions.TODO_LOADED, (p) => { 

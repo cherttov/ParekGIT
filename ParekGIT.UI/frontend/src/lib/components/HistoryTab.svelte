@@ -2,7 +2,7 @@
     import CustomScrollbar from "./CustomScrollbar.svelte";
     import { history } from "../stores/history.svelte";
     import { contextMenu } from "../stores/contextMenu.svelte";
-    import { historyMenuItems } from "./contextMenus/historyContextMenu";
+    import { historyMenuItems } from "./menus/historyContextMenu";
     import { loadMoreHistory, loadCommitDetails } from "../ipc/commands";
 
     let { active = false } = $props();

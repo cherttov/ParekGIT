@@ -5,7 +5,7 @@
     import { checkoutBranch } from "../ipc/commands";
     import { modal } from "../stores/modal.svelte";
     import { contextMenu } from "../stores/contextMenu.svelte";
-    import { branchMenuItems } from "./contextMenus/branchContextMenu";
+    import { branchMenuItems } from "./menus/branchContextMenu";
 	import CustomScrollbar from "./CustomScrollbar.svelte";
 
     let { show = false, onclose } = $props();
