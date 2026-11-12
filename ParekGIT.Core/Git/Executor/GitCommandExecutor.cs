@@ -1,0 +1,53 @@
+﻿using CliWrap;
+using CliWrap.Buffered;
+using ParekGIT.Core.Interfaces;
+
+namespace ParekGIT.Core.Git.Executor
+{
+	internal sealed class GitCommandExecutor
+	{
+		private readonly ILogger _logger;
+
+		// Constructor
+		public GitCommandExecutor(ILogger logger)
+		{
+			_logger = logger;
+		}
+
+		// Public methods
+		public async Task<string> ExecuteAsync(string? repoPath, IEnumerable<string> args, params int[] successExitCodes)
+		{
+			string safeWorkingDir = string.IsNullOrWhiteSpace(repoPath)
+					? Environment.CurrentDirectory
+					: repoPath;
+
+			if (!Directory.Exists(safeWorkingDir))
+				throw new Exception($"Git command failed: working directory does not exist: '{safeWorkingDir}'");
+
+			try
+			{
+				var cmd = Cli.Wrap("git")
+					.WithArguments(args)
+					.WithWorkingDirectory(safeWorkingDir)
+					.WithValidation(CommandResultValidation.None);
+
+				var result = await cmd.ExecuteBufferedAsync();
+
+				bool isAcceptable = result.ExitCode == 0 || successExitCodes.Contains(result.ExitCode);
+				if (!isAcceptable)
+					throw new Exception($"Git command failed: exit {result.ExitCode}. {result.StandardError.Trim()}");
+
+				// Just an extra log
+				if (result.ExitCode != 0)
+					await _logger.LogWarningAsync($"{cmd} exited {result.ExitCode} (acceptable). {result.StandardError.Trim()}");
+
+				return result.StandardOutput.TrimEnd();
+			}
+			catch (Exception ex) when (ex is not OperationCanceledException)
+			{
+				if (ex.Message.StartsWith("Git command failed")) throw;
+				throw new Exception($"Git command failed: {ex.Message}", ex);
+			}
+		}
+	}
+}
