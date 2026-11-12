@@ -10,6 +10,7 @@ using ParekGIT.Bridge.Services;
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Data.Interfaces;
+using ParekGIT.Core;
 
 namespace ParekGIT.UI
 {
@@ -35,6 +36,7 @@ namespace ParekGIT.UI
 
 				services.AddSingleton<ITemplateService, TemplateService>();
 				services.AddSingleton<IGitRunner, GitCliRunner>();
+				services.AddGitServices();
 				services.AddSingleton<IRepoWatcher, RepoWatcher>();
 				services.AddSingleton<IRemoteSyncNotifier, RemoteSyncNotifier>();
 				services.AddSingleton<IpcRouter>();

@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CliWrap" Version="3.10.5" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0" />
 	</ItemGroup>
 
 </Project>
