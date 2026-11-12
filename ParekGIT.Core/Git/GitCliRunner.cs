@@ -29,9 +29,7 @@ namespace ParekGIT.Core.Git
 					: repoPath;
 
 			if (!Directory.Exists(safeWorkingDir))
-			{
 				throw new Exception($"Git command failed: working directory does not exist: '{safeWorkingDir}'");
-			}
 
 			try
 			{
@@ -43,19 +41,12 @@ namespace ParekGIT.Core.Git
 				var result = await cmd.ExecuteBufferedAsync();
 
 				bool isAcceptable = result.ExitCode == 0 || successExitCodes.Contains(result.ExitCode);
-
 				if (!isAcceptable)
-				{
 					throw new Exception($"Git command failed: exit {result.ExitCode}. {result.StandardError.Trim()}");
-				}
 
 				// Just extra log
 				if (result.ExitCode != 0)
-				{
-					await _logger.LogWarningAsync(
-						$"{cmd} exited {result.ExitCode} (acceptable). {result.StandardError.Trim()}"
-					);
-				}
+					await _logger.LogWarningAsync($"{cmd} exited {result.ExitCode} (acceptable). {result.StandardError.Trim()}");
 
 				return result.StandardOutput.TrimEnd();
 			}
@@ -128,7 +119,6 @@ namespace ParekGIT.Core.Git
 		public async Task<string?> GetRemoteUrlAsync(string repoPath)
 		{
 			string rawOutput = await ExecuteCommandAsync(repoPath, ["config", "--get", "remote.origin.url"], 1);
-
 			return string.IsNullOrWhiteSpace(rawOutput) ? null : rawOutput;
 		}
 
@@ -274,9 +264,7 @@ namespace ParekGIT.Core.Git
 				ex.Message.Contains("could not revert", StringComparison.OrdinalIgnoreCase))
 			{
 				// Merge conflict
-				await _logger.LogWarningAsync(
-					$"Revert conflict on commit '{commitHash}' in '{repoPath}'. Aborting. Git message: {ex.Message}"
-				);
+				await _logger.LogWarningAsync($"Revert conflict on commit '{commitHash}' in '{repoPath}'. Aborting. Git message: {ex.Message}");
 
 				await ExecuteCommandAsync(repoPath, ["revert", "--abort"]);
 
@@ -297,9 +285,7 @@ namespace ParekGIT.Core.Git
 				ex.Message.Contains("conflict", StringComparison.OrdinalIgnoreCase) ||
 				ex.Message.Contains("merge failed", StringComparison.OrdinalIgnoreCase))
 			{
-				await _logger.LogWarningAsync(
-					$"Merge conflict while merging '{sourceBranch}' -> '{targetBranch}'. Aborting. Git message: {ex.Message}"
-				);
+				await _logger.LogWarningAsync($"Merge conflict while merging '{sourceBranch}' -> '{targetBranch}'. Aborting. Git message: {ex.Message}");
 
 				await ExecuteCommandAsync(repoPath, ["merge", "--abort"]);
 
@@ -380,41 +366,29 @@ namespace ParekGIT.Core.Git
 			await ExecuteCommandAsync(repoPath, ["stash", "drop", stashSelector]);
 
 		// ======================== Helpers ========================
-		private async Task<GitConfigInfo> GetConfigInternalAsync(string? repoPath, string scopeFlag)
-		{
-			return GitConfigParser.Parse(await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "--get-regexp", @"^user\.(name|email)$"], 1));
-		}
+		private async Task<GitConfigInfo> GetConfigInternalAsync(string? repoPath, string scopeFlag) =>
+			GitConfigParser.Parse(await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "--get-regexp", @"^user\.(name|email)$"], 1));
 		
 		private async Task SaveConfigInternalAsync(string? repoPath, string scopeFlag, string name, string email)
 		{
 			// Name
 			if (string.IsNullOrWhiteSpace(name))
-			{
 				await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "--unset", "user.name"], successExitCodes: 5);
-			}
 			else
-			{
 				await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "user.name", name]);
-			}
 
 			// Email
 			if (string.IsNullOrWhiteSpace(email))
-			{
 				await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "--unset", "user.email"], successExitCodes: 5);
-			}
 			else
-			{
 				await ExecuteCommandAsync(repoPath, ["config", scopeFlag, "user.email", email]);
-			}
 		}
 
 		private async Task EnsureCleanWorkingTreeAsync(string repoPath, [CallerMemberName] string caller = "")
 		{
 			var status = await GetStatusAsync(repoPath);
-			if (status.Any())
-			{
+			if (status.Any()) 
 				throw new Exception($"Uncommitted changes are present [{caller}]");
-			}
 		}
 
 		private async Task<int> GetRevListCountAsync(string repoPath, string range)
