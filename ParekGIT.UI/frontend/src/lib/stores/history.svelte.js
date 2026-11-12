@@ -30,5 +30,6 @@ export const history = $state({
         this.selectedHash = "";
         this.fetching = false;
         this.skip = 0;
+        this.reachedEnd = false;
     }
 });

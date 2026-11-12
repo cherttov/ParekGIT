@@ -1,6 +1,8 @@
 <script>
     import CustomScrollbar from "./CustomScrollbar.svelte";
     import { history } from "../stores/history.svelte";
+    import { contextMenu } from "../stores/contextMenu.svelte";
+    import { historyMenuItems } from "./contextMenus/historyContextMenu";
     import { loadMoreHistory, loadCommitDetails } from "../ipc/commands";
 
     let { active = false } = $props();
@@ -28,7 +30,7 @@
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <div class="history-item" class:selected={history.selectedHash === c.hash}
-                    onclick={() => onSelect(c)}>
+                    onclick={() => onSelect(c)} oncontextmenu={(e) => contextMenu.open(e, historyMenuItems(c, i === 0), c.hash)}>
                         <div class="history-message">{c.message}</div>
                         <div class="history-meta">
                             <div class="history-author">{c.author}</div>
