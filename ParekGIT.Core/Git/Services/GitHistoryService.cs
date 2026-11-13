@@ -2,7 +2,6 @@
 using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
-using System.Runtime.CompilerServices;
 
 namespace ParekGIT.Core.Git.Services
 {
@@ -33,13 +32,13 @@ namespace ParekGIT.Core.Git.Services
 
 		public async Task CheckoutCommitAsync(string repoPath, string commitHash)
 		{
-			await EnsureCleanWorkingTreeAsync(repoPath);
+			await _status.EnsureCleanWorkingTreeAsync(repoPath);
 			await _executor.ExecuteAsync(repoPath, ["checkout", "--detach", commitHash]);
 		}
 
 		public async Task RevertCommitAsync(string repoPath, string commitHash)
 		{
-			await EnsureCleanWorkingTreeAsync(repoPath);
+			await _status.EnsureCleanWorkingTreeAsync(repoPath);
 
 			try
 			{
@@ -57,14 +56,6 @@ namespace ParekGIT.Core.Git.Services
 
 				throw new Exception("Merge conflict while reverting changes [RevertCommitAsync]");
 			}
-		}
-
-		// Private helpers
-		private async Task EnsureCleanWorkingTreeAsync(string repoPath, [CallerMemberName] string caller = "")
-		{
-			var status = await _status.GetStatusAsync(repoPath);
-			if (status.Any())
-				throw new Exception($"Uncommitted changes are present [{caller}]");
 		}
 	}
 }
