@@ -11,7 +11,7 @@ namespace ParekGIT.Core.Interfaces
 		Task RenameBranchAsync(string repoPath, string oldName, string newName);
 		Task DeleteBranchAsync(string repoPath, string branchName);
 		Task ForceDeleteBranchAsync(string repoPath, string branchName);
-		Task DeleteRemoteBranchAsync(string repoPath, string remoteName, string branchName);
+		Task DeleteRemoteBranchAsync(string repoPath, string remoteName, string branchName, CancellationToken cancellationToken = default);
 		Task MergeBranchesAsync(string repoPath, string sourceBranch, string targetBranch);
 	}
 }

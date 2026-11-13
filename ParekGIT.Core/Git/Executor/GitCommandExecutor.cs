@@ -18,6 +18,10 @@ namespace ParekGIT.Core.Git.Executor
 
 		// Public methods
 		public async Task<string> ExecuteAsync(string? repoPath, IEnumerable<string> args, params int[] successExitCodes)
+			=> await ExecuteAsync(repoPath, args, CancellationToken.None, successExitCodes);
+
+		public async Task<string> ExecuteAsync(string? repoPath, IEnumerable<string> args,
+			CancellationToken cancellationToken = default, params int[] successExitCodes)
 		{
 			string safeWorkingDir = string.IsNullOrWhiteSpace(repoPath)
 					? Environment.CurrentDirectory
@@ -33,7 +37,7 @@ namespace ParekGIT.Core.Git.Executor
 					.WithWorkingDirectory(safeWorkingDir)
 					.WithValidation(CommandResultValidation.None);
 
-				var result = await cmd.ExecuteBufferedAsync();
+				var result = await cmd.ExecuteBufferedAsync(cancellationToken);
 
 				bool isAcceptable = result.ExitCode == 0 || successExitCodes.Contains(result.ExitCode);
 				if (!isAcceptable)
