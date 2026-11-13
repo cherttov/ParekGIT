@@ -10,6 +10,7 @@
 
     let { active = false } = $props();
     let listEl = $state(null);
+    const count = $derived(changes.files.length);
 
     const checkedCount = $derived(changes.checkedPaths.length);
     const canCommit = $derived(branch.name !== "" && commit.message.trim() !== "" && checkedCount > 0 && !commit.committing);
@@ -18,7 +19,7 @@
 <div class="changes-tab" id="changes-tab" class:active>
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="changes-header" id="changes-header" oncontextmenu={(e) => contextMenu.open(e, changesMasterMenuItems())}>
-        <span id="changes-count-text">{checkedCount} selected file{checkedCount === 1 ? "" : "s"}</span>
+        <span id="changes-count-text">{count} changed file{count === 1 ? "" : "s"}</span>
         <input type="checkbox" class="ui-checkbox" id="changes-master-checkbox" 
             checked={changes.allChecked} onchange={(e) => changes.setAllChecked(e.currentTarget.checked)} />
     </div>

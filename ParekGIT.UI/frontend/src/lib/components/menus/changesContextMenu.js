@@ -49,7 +49,7 @@ export function changesMasterMenuItems() {
         },
         {
             label: "Discard selected changes...", 
-            disabled: changes.files.length === 0,
+            disabled: changes.checkedPaths.length === 0,
             onclick: () => modal.open("changes-discard-selected")
         }
     ];
