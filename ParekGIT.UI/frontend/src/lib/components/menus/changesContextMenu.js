@@ -45,7 +45,7 @@ export function changesMasterMenuItems() {
         {
             label: "Discard all changes...",
             disabled: changes.files.length === 0,
-            onclick: () => modal.open("changes-dicard-all")
+            onclick: () => modal.open("changes-discard-all")
         },
         {
             label: "Discard selected changes...", 
