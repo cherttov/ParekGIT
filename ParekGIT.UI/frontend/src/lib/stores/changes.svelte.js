@@ -3,7 +3,7 @@ export const changes = $state({
     selectedPath: "",
 
     get checkedPaths() { return this.files.filter((f) => f.checked).map((f) => f.path); },
-    get allChecked() { return this.files.every((f) => f.checked); },
+    get allChecked() { return this.files.length > 0 && this.files.every((f) => f.checked); },
 
     setFiles(files) {
         const wasChecked = new Map(this.files.map((f) => [f.path, f.checked]));
