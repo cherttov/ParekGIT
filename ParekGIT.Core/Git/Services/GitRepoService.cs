@@ -8,13 +8,15 @@ namespace ParekGIT.Core.Git.Services
 	{
 		private readonly GitCommandExecutor _executor;
 		private readonly ITemplateService _templateService;
+		private readonly IFileSystemService _fileSystem;
 		private readonly IGitConfigService _config;
 
 		// Constructor
-		public GitRepoService(GitCommandExecutor executor, ITemplateService templateService, IGitConfigService config)
+		public GitRepoService(GitCommandExecutor executor, ITemplateService templateService, IFileSystemService fileSystem, IGitConfigService config)
 		{
 			_executor = executor;
 			_templateService = templateService;
+			_fileSystem = fileSystem;
 			_config = config;
 		}
 
@@ -23,11 +25,11 @@ namespace ParekGIT.Core.Git.Services
 		{
 			// Create & check directory
 			string fullPath = Path.Combine(request.LocalPath, request.RepoName);
-			if (Directory.Exists(fullPath))
+			if (_fileSystem.DirectoryExists(fullPath))
 				throw new Exception($"Directory {request.RepoName} already exists.");
 
 			// Init repo
-			Directory.CreateDirectory(fullPath);
+			await _fileSystem.CreateDirectory(fullPath);
 			await _executor.ExecuteAsync(fullPath, ["init", "-b", "main"]);
 
 			// gitignore if not None

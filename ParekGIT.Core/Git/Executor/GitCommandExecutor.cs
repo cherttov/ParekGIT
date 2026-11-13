@@ -7,11 +7,13 @@ namespace ParekGIT.Core.Git.Executor
 	internal sealed class GitCommandExecutor
 	{
 		private readonly ILogger _logger;
+		private readonly IFileSystemService _fileSystem;
 
 		// Constructor
-		public GitCommandExecutor(ILogger logger)
+		public GitCommandExecutor(ILogger logger, IFileSystemService fileSystem)
 		{
 			_logger = logger;
+			_fileSystem = fileSystem;
 		}
 
 		// Public methods
@@ -21,7 +23,7 @@ namespace ParekGIT.Core.Git.Executor
 					? Environment.CurrentDirectory
 					: repoPath;
 
-			if (!Directory.Exists(safeWorkingDir))
+			if (!_fileSystem.DirectoryExists(safeWorkingDir))
 				throw new Exception($"Git command failed: working directory does not exist: '{safeWorkingDir}'");
 
 			try
