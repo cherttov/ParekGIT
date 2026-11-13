@@ -14,13 +14,13 @@ namespace ParekGIT.Core.Git.Services
 		}
 
 		// Public methods
-		public async Task PushAsync(string repoPath) =>
-			await _executor.ExecuteAsync(repoPath, ["push", "-u", "origin", "HEAD"]);
+		public async Task PushAsync(string repoPath, CancellationToken cancellationToken = default) =>
+			await _executor.ExecuteAsync(repoPath, ["push", "-u", "origin", "HEAD"], cancellationToken);
 
-		public async Task PullAsync(string repoPath) =>
-			await _executor.ExecuteAsync(repoPath, ["pull"]);
+		public async Task PullAsync(string repoPath, CancellationToken cancellationToken = default) =>
+			await _executor.ExecuteAsync(repoPath, ["pull"], cancellationToken);
 
-		public async Task FetchRepositoryAsync(string repoPath) =>
-			await _executor.ExecuteAsync(repoPath, ["fetch", "--all", "--prune"]);
+		public async Task FetchRepositoryAsync(string repoPath, CancellationToken cancellationToken = default) =>
+			await _executor.ExecuteAsync(repoPath, ["fetch", "--all", "--prune"], cancellationToken);
 	}
 }
