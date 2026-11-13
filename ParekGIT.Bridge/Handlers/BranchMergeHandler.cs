@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class BranchMergeHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitBranchService _branchService;
 
 		public string Action => "BRANCH_MERGE";
 
 		// Constructor
-		public BranchMergeHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public BranchMergeHandler(PhotinoWindow window, IGitBranchService branchService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_branchService = branchService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -32,7 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 			string targetBranch = payload.GetProperty("targetBranch").GetString()
 							  ?? throw new IpcPayloadException("targetBranch");
 
-			await _gitRunner.MergeBranchesAsync(repoPath, sourceBranch, targetBranch);
+			await _branchService.MergeBranchesAsync(repoPath, sourceBranch, targetBranch);
 
 			// Response
 			var response = IpcMessage.Create("BRANCH_MERGED", new { success = true });

@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class BranchDeleteHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitBranchService _branchService;
 
 		public string Action => "BRANCH_DELETE";
 
 		// Constructor
-		public BranchDeleteHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public BranchDeleteHandler(PhotinoWindow window, IGitBranchService branchService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_branchService = branchService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -39,11 +39,11 @@ namespace ParekGIT.Bridge.Handlers
 					int slashIndex = branchName.IndexOf('/');
 					if (slashIndex < 0) { throw new IpcPayloadException("branchName", "expected '<remote>/<branch>' for a remote delete"); }
 
-					await _gitRunner.DeleteRemoteBranchAsync(repoPath, branchName[..slashIndex], branchName[(slashIndex + 1)..]);
+					await _branchService.DeleteRemoteBranchAsync(repoPath, branchName[..slashIndex], branchName[(slashIndex + 1)..]);
 				}
 				else
 				{
-					await _gitRunner.DeleteBranchAsync(repoPath, branchName);
+					await _branchService.DeleteBranchAsync(repoPath, branchName);
 				}
 			}
 			catch (Exception ex) when (ex.Message.Contains("not fully merged", StringComparison.OrdinalIgnoreCase))

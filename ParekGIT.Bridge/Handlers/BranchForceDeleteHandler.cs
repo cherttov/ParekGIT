@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class BranchForceDeleteHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitBranchService _branchService;
 
 		public string Action => "BRANCH_FORCE_DELETE";
 
 		// Constructor
-		public BranchForceDeleteHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public BranchForceDeleteHandler(PhotinoWindow window, IGitBranchService branchService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_branchService = branchService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -29,7 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 			string branchName = payload.GetProperty("branchName").GetString()
 							  ?? throw new IpcPayloadException("branchName");
 
-			await _gitRunner.ForceDeleteBranchAsync(repoPath, branchName);
+			await _branchService.ForceDeleteBranchAsync(repoPath, branchName);
 
 			// Response
 			var response = IpcMessage.Create("BRANCH_DELETED", new
