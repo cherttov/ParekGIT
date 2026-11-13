@@ -4,7 +4,7 @@
     import { app } from "../../stores/app.svelte";
     import { loadThemes, saveSettings, showInExplorer, clearLogs } from "../../ipc/commands";
 
-    let { open = false, data = {}, onclose } = $props();
+    let { open = false, onclose } = $props();
     let theme = $state("");
 
     $effect(() => {

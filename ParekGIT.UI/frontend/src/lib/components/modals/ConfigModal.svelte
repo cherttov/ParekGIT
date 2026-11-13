@@ -3,7 +3,7 @@
     import { config } from "../../stores/config.svelte";
     import { loadLocalConfig, saveLocalConfig } from "../../ipc/commands";
 
-    let { open = false, data = {}, onclose } = $props();
+    let { open = false, onclose } = $props();
     let name = $state("");
     let email = $state("");
     let inputEl;

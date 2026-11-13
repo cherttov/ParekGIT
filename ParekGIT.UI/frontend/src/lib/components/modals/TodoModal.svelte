@@ -5,7 +5,7 @@
     import { todos } from "../../stores/todos.svelte";
     import { saveTodos } from "../../ipc/commands";
 
-    let { open = false, data = {}, onclose } = $props();
+    let { open = false, onclose } = $props();
     let task = $state("");
     let draft = $state([]);
     let listEl = $state(null);

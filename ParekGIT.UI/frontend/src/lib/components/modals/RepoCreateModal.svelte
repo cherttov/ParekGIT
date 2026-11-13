@@ -3,7 +3,7 @@
     import { config } from "../../stores/config.svelte";
     import { createRepo, pickFolder, loadGlobalConfig } from "../../ipc/commands";
 
-    let { open = false, data = {}, onclose } = $props();
+    let { open = false, onclose } = $props();
 
     const gitIgnores = [
         ["angular", "Angular"], ["cpp", "C++"], ["c", "C"], ["cmake", "CMake"], ["dotnet", "Dotnet"],

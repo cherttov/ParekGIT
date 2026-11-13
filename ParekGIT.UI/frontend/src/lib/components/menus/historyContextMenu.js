@@ -9,15 +9,16 @@ export function historyMenuItems(c, isLatest) {
             onclick: () => checkoutCommit(c.hash)
         },
         { 
-            label: "Revert commit", 
+            label: "Revert changes in commit", 
             disabled: !isLatest, 
             onclick: () => revertCommit(c.hash)
         },
         "divider",
         { 
-            label: "Create branch...", 
+            label: "Create branch from commit...", 
             onclick: () => modal.open("branch-from-commit", { hash: c.hash })
         },
+        "divider",
         { 
             label: "Copy SHA", 
             onclick: () => navigator.clipboard.writeText(c.hash)

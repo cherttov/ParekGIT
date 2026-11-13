@@ -1,7 +1,7 @@
 import { modal } from "../../stores/modal.svelte";
 import { repo } from "../../stores/repo.svelte";
 import { changes } from "../../stores/changes.svelte";
-import { ignoreFile, showInExplorer } from "../../ipc/commands";
+import { discardChange, ignoreFile, showInExplorer } from "../../ipc/commands";
 
 // Builds an absolute path based on repo path separators (Windows/Unix)
 function toAbsolute(relPath) {
@@ -14,25 +14,26 @@ function toAbsolute(relPath) {
 export function changeMenuItems(file) {
     return [
         { 
-            label: "Discard changes...", 
-            onclick: () => modal.open("change-discard", { path: file.path }) 
+            label: "Discard changes", 
+            onclick: () => discardChange(file.path)
         },
+        "divider",
         { 
-            label: "Ignore file", 
+            label: "Ignore file (add to .gitignore)", 
             onclick: () => ignoreFile(file.path)
         },
         "divider",
         { 
-            label: "Copy absolute path", 
+            label: "Copy absolute file path", 
             onclick: () => navigator.clipboard.writeText(toAbsolute(file.path).abs)
         },
         { 
-            label: "Copy relative path", 
+            label: "Copy relative file path", 
             onclick: () => navigator.clipboard.writeText(file.path) 
         },
         "divider",
         {
-            label: "Show in Explorer",
+            label: "Show in explorer",
             onclick: () => { const { abs, sep } = toAbsolute(file.path); showInExplorer(abs.substring(0, abs.lastIndexOf(sep))); }
         }
     ];
@@ -40,18 +41,16 @@ export function changeMenuItems(file) {
 
 // RMB on the changes header
 export function changesMasterMenuItems() {
-    const total = changes.files.length;
-    const paths = changes.checkedPaths;
     return [
         {
             label: "Discard all changes...",
-            disabled: total === 0,
-            onclick: () => modal.open("changes-dicard-all", { count: total })
+            disabled: changes.files.length === 0,
+            onclick: () => modal.open("changes-dicard-all")
         },
         {
             label: "Discard selected changes...", 
-            disabled: total === 0,
-            onclick: () => modal.open("changes-discard-selected", { paths: [...paths] })
+            disabled: changes.files.length === 0,
+            onclick: () => modal.open("changes-discard-selected")
         }
     ];
 }

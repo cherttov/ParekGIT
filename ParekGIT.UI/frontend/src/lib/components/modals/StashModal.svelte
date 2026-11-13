@@ -5,7 +5,7 @@
     import { changes } from "../../stores/changes.svelte";
     import { loadStashes, saveStash, popStash, dropStash } from "../../ipc/commands";
 
-    let { open = false, data = {}, onclose } = $props();
+    let { open = false, onclose } = $props();
     let message = $state("");
     let listEl = $state(null);
     let inputEl;
