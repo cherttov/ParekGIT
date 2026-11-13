@@ -2,7 +2,6 @@
 using ParekGIT.Core.Git.Parsers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
-using System.Runtime.CompilerServices;
 
 namespace ParekGIT.Core.Git.Services
 {
@@ -55,7 +54,7 @@ namespace ParekGIT.Core.Git.Services
 
 		public async Task MergeBranchesAsync(string repoPath, string sourceBranch, string targetBranch)
 		{
-			await EnsureCleanWorkingTreeAsync(repoPath);
+			await _status.EnsureCleanWorkingTreeAsync(repoPath);
 			await _executor.ExecuteAsync(repoPath, ["checkout", targetBranch]);
 
 			try
@@ -72,14 +71,6 @@ namespace ParekGIT.Core.Git.Services
 
 				throw new Exception($"Merge conflict occurred while merging '{sourceBranch}' -> '{targetBranch}'. Merge aborted.");
 			}
-		}
-
-		// Private helpers
-		private async Task EnsureCleanWorkingTreeAsync(string repoPath, [CallerMemberName] string caller = "")
-		{
-			var status = await _status.GetStatusAsync(repoPath);
-			if (status.Any())
-				throw new Exception($"Uncommitted changes are present [{caller}]");
 		}
 	}
 }
