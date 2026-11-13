@@ -11,15 +11,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class BranchCreateHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitBranchService _branchService;
 
 		public string Action => "BRANCH_CREATE";
 
 		// Constructor
-		public BranchCreateHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public BranchCreateHandler(PhotinoWindow window, IGitBranchService branchService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_branchService = branchService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -31,10 +31,10 @@ namespace ParekGIT.Bridge.Handlers
 								?? throw new IpcPayloadException("branchName");
 
 			// Create new branch
-			await _gitRunner.CreateBranchAsync(repoPath, branchName);
+			await _branchService.CreateBranchAsync(repoPath, branchName);
 
 			// Update displayed list
-			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
+			IEnumerable<GitBranch> branches = await _branchService.GetBranchesAsync(repoPath);
 
 			// Response
 			var response = IpcMessage.Create("BRANCH_LIST_LOADED", new { branches }); // maybe make a distinct "BRANCH_CREATED" action

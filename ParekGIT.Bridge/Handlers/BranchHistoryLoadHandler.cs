@@ -11,15 +11,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class BranchHistoryLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitHistoryService _historyService;
 
 		public string Action => "BRANCH_HISTORY_LOAD";
 
 		// Constructor
-		public BranchHistoryLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public BranchHistoryLoadHandler(PhotinoWindow window, IGitHistoryService historyService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_historyService = historyService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -36,7 +36,7 @@ namespace ParekGIT.Bridge.Handlers
 			int take = payload.TryGetProperty("take", out var takeProperty) && skipProperty.TryGetInt32(out int parsedTake)
 				? parsedTake : 50;
 
-			IEnumerable<GitCommit> commits = await _gitRunner.GetBranchHistoryAsync(repoPath, branchName, skip, take);
+			IEnumerable<GitCommit> commits = await _historyService.GetBranchHistoryAsync(repoPath, branchName, skip, take);
 
 			// Response
 			var response = IpcMessage.Create(skip > 0 ? "BRANCH_HISTORY_APPENDED" : "BRANCH_HISTORY_LOADED", new { commits });

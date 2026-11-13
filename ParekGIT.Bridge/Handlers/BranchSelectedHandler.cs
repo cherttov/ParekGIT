@@ -11,15 +11,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class BranchSelectedHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitBranchService _branchService;
 
 		public string Action => "BRANCH_CHECKOUT";
 
 		// Constructor
-		public BranchSelectedHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public BranchSelectedHandler(PhotinoWindow window, IGitBranchService branchService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_branchService = branchService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -33,10 +33,10 @@ namespace ParekGIT.Bridge.Handlers
 			bool isRemote = payload.GetProperty("isRemote").GetBoolean();
 
 			// Change branch in git
-			await _gitRunner.CheckoutBranchAsync(repoPath, branchName, isRemote);
+			await _branchService.CheckoutBranchAsync(repoPath, branchName, isRemote);
 
 			// Update displayed list
-			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
+			IEnumerable<GitBranch> branches = await _branchService.GetBranchesAsync(repoPath);
 
 			// Response
 			var response = IpcMessage.Create("BRANCH_LIST_LOADED", new { branches });

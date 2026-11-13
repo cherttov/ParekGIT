@@ -11,15 +11,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class BranchListLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitBranchService _branchService;
 
 		public string Action => "BRANCH_LIST_LOAD";
 
 		// Constructor
-		public BranchListLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public BranchListLoadHandler(PhotinoWindow window, IGitBranchService branchService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_branchService = branchService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -27,7 +27,7 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 				?? throw new IpcPayloadException("repoPath");
 
-			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
+			IEnumerable<GitBranch> branches = await _branchService.GetBranchesAsync(repoPath);
 
 			// Response
 			var response = IpcMessage.Create("BRANCH_LIST_LOADED", new { branches });

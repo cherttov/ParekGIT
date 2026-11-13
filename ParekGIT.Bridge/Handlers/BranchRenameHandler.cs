@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class BranchRenameHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitBranchService _branchService;
 
 		public string Action => "BRANCH_RENAME";
 
 		// Constructor
-		public BranchRenameHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public BranchRenameHandler(PhotinoWindow window, IGitBranchService branchService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_branchService = branchService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -32,7 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 			string newName = payload.GetProperty("newName").GetString()
 							  ?? throw new IpcPayloadException("newName");
 
-			await _gitRunner.RenameBranchAsync(repoPath, oldName, newName);
+			await _branchService.RenameBranchAsync(repoPath, oldName, newName);
 
 			// Response
 			var response = IpcMessage.Create("BRANCH_RENAMED", new
