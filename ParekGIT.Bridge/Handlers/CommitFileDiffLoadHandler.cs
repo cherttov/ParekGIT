@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class CommitFileDiffLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitStatusService _statusService;
 
 		public string Action => "COMMIT_FILE_DIFF_LOAD";
 
 		// Constructor
-		public CommitFileDiffLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public CommitFileDiffLoadHandler(PhotinoWindow window, IGitStatusService statusService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_statusService = statusService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -32,7 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 			string filePath = payload.GetProperty("filePath").GetString()
 							  ?? throw new IpcPayloadException("filePath");
 
-			string diffText = await _gitRunner.GetHistoryFileDiffAsync(repoPath, commitHash, filePath);
+			string diffText = await _statusService.GetHistoryFileDiffAsync(repoPath, commitHash, filePath);
 
 			// Response
 			var response = IpcMessage.Create("COMMIT_FILE_DIFF_LOADED", new { diffText });
