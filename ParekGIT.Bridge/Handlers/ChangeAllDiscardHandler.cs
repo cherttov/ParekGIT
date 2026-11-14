@@ -29,7 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _gitRunner.DiscardAllChangesAsync(repoPath);
 
 			// Response
-			var response = IpcMessage.Create("CHANGE_DISCARDED", new { success = true });
+			var response = IpcMessage.Create("CHANGE_ALL_DISCARDED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}
