@@ -27,7 +27,7 @@ namespace ParekGIT.Bridge.Handlers
 				?? throw new IpcPayloadException("repoPath");
 
 			string message = payload.GetProperty("message").GetString()
-				?? throw new IpcPayloadException("message");
+				?? "";
 
 			List<string> files = payload.GetProperty("files")
 					.EnumerateArray()
