@@ -14,17 +14,22 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IRepositoryStore _dbStore;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitHistoryService _historyService;
+		private readonly IGitStatusService _statusService;
+		private readonly IGitSyncService _syncService;
 		private readonly IRemoteSyncNotifier _syncNotifier;
 
 		public string Action => "COMMIT_REVERT";
 
 		// Constructor
-		public CommitRevertHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRunner gitRunner, IRemoteSyncNotifier syncNotifier)
+		public CommitRevertHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitHistoryService historyService, 
+			IGitStatusService statusService, IGitSyncService syncService, IRemoteSyncNotifier syncNotifier)
 		{
 			_window = window;
 			_dbStore = dbStore;
-			_gitRunner = gitRunner;
+			_historyService = historyService;
+			_statusService = statusService;
+			_syncService = syncService;
 			_syncNotifier = syncNotifier;
 		}
 
@@ -36,7 +41,7 @@ namespace ParekGIT.Bridge.Handlers
 			string commitHash = payload.GetProperty("commitHash").GetString()
 							  ?? throw new IpcPayloadException("commitHash");
 
-			await _gitRunner.RevertCommitAsync(repoPath, commitHash);
+			await _historyService.RevertCommitAsync(repoPath, commitHash);
 
 			// Refresh remote sync status
 			GitRepository repo = await _dbStore.GetRepositoryByPathAsync(repoPath)
@@ -44,10 +49,10 @@ namespace ParekGIT.Bridge.Handlers
 
 			if (!string.IsNullOrEmpty(repo.RemoteUrl))
 			{
-				await _gitRunner.FetchRepositoryAsync(repoPath);
+				await _syncService.FetchRepositoryAsync(repoPath);
 
-				int commitsBehind = await _gitRunner.GetCommitsBehindAsync(repoPath);
-				int commitsAhead = await _gitRunner.GetCommitsAheadAsync(repoPath);
+				int commitsBehind = await _statusService.GetCommitsBehindAsync(repoPath);
+				int commitsAhead = await _statusService.GetCommitsAheadAsync(repoPath);
 				_syncNotifier.NotifyCommitsBehind(repoPath, commitsBehind, commitsAhead);
 			}
 

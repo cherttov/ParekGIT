@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class CommitCheckoutHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitHistoryService _historyService;
 
 		public string Action => "COMMIT_CHECKOUT";
 
 		// Constructor
-		public CommitCheckoutHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public CommitCheckoutHandler(PhotinoWindow window, IGitHistoryService historyService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_historyService = historyService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -29,7 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 			string commitHash = payload.GetProperty("commitHash").GetString()
 							  ?? throw new IpcPayloadException("commitHash");
 
-			await _gitRunner.CheckoutCommitAsync(repoPath, commitHash);
+			await _historyService.CheckoutCommitAsync(repoPath, commitHash);
 
 			// Response
 			var response = IpcMessage.Create("COMMIT_CHECKED_OUT", new { success = true });

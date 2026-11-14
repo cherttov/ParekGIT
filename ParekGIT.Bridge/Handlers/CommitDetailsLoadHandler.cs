@@ -11,15 +11,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class CommitDetailsLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitHistoryService _historyService;
 
 		public string Action => "COMMIT_DETAILS_LOAD";
 
 		// Constructor
-		public CommitDetailsLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public CommitDetailsLoadHandler(PhotinoWindow window, IGitHistoryService historyService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_historyService = historyService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -30,7 +30,7 @@ namespace ParekGIT.Bridge.Handlers
 			string commitHash = payload.GetProperty("commitHash").GetString()
 							  ?? throw new IpcPayloadException("commitHash");
 
-			CommitDetailsResult details = await _gitRunner.GetCommitDetailsAsync(repoPath, commitHash);
+			CommitDetailsResult details = await _historyService.GetCommitDetailsAsync(repoPath, commitHash);
 
 			// Response
 			var response = IpcMessage.Create("COMMIT_DETAILS_LOADED", new
