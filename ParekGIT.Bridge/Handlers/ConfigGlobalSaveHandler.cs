@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class ConfigGlobalSaveHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitConfigService _configService;
 
 		public string Action => "CONFIG_GLOBAL_SAVE";
 
 		// Constructor
-		public ConfigGlobalSaveHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public ConfigGlobalSaveHandler(PhotinoWindow window, IGitConfigService configService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_configService = configService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -29,7 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 			string email = payload.GetProperty("email").GetString()
 							  ?? throw new IpcPayloadException("email");
 
-			await _gitRunner.SaveGlobalConfigAsync(null, name, email);
+			await _configService.SaveGlobalConfigAsync(null, name, email);
 
 			// Response
 			var response = IpcMessage.Create("CONFIG_GLOBAL_SAVED", new { success = true });
