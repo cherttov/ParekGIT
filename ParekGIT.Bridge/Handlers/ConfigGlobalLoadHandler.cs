@@ -10,20 +10,20 @@ namespace ParekGIT.Bridge.Handlers
 	public class ConfigGlobalLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitConfigService _configService;
 
 		public string Action => "CONFIG_GLOBAL_LOAD";
 
 		// Constructor
-		public ConfigGlobalLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public ConfigGlobalLoadHandler(PhotinoWindow window, IGitConfigService configService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_configService = configService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
 		{
-			GitConfigInfo globalConfig = await _gitRunner.GetGlobalConfigAsync(null);
+			GitConfigInfo globalConfig = await _configService.GetGlobalConfigAsync(null);
 
 			// Response
 			var response = IpcMessage.Create("CONFIG_GLOBAL_LOADED", new

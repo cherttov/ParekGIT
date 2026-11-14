@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class ConfigLocalSaveHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitConfigService _configService;
 
 		public string Action => "CONFIG_LOCAL_SAVE";
 
 		// Constructor
-		public ConfigLocalSaveHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public ConfigLocalSaveHandler(PhotinoWindow window, IGitConfigService configService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_configService = configService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -32,7 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 			string email = payload.GetProperty("email").GetString()
 							  ?? throw new IpcPayloadException("email");
 
-			await _gitRunner.SaveLocalConfigAsync(repoPath, name, email);
+			await _configService.SaveLocalConfigAsync(repoPath, name, email);
 
 			// Response
 			var response = IpcMessage.Create("CONFIG_LOCAL_SAVED", new { success = true });

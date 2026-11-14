@@ -11,15 +11,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class ConfigLocalLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitConfigService _configService;
 
 		public string Action => "CONFIG_LOCAL_LOAD";
 
 		// Constructor
-		public ConfigLocalLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public ConfigLocalLoadHandler(PhotinoWindow window, IGitConfigService configService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_configService = configService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -27,8 +27,8 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 							  ?? throw new IpcPayloadException("repoPath");
 
-			Task<GitConfigInfo> localConfigTask = _gitRunner.GetLocalConfigAsync(repoPath);
-			Task<GitConfigInfo> globalConfigTask = _gitRunner.GetGlobalConfigAsync(null);
+			Task<GitConfigInfo> localConfigTask = _configService.GetLocalConfigAsync(repoPath);
+			Task<GitConfigInfo> globalConfigTask = _configService.GetGlobalConfigAsync(null);
 
 			await Task.WhenAll(localConfigTask, globalConfigTask);
 
