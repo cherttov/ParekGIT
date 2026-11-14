@@ -5,7 +5,7 @@ import { app } from "../stores/app.svelte.js";
 import { repositories } from "../stores/repositories.svelte.js";
 import { branch } from "../stores/branch.svelte.js";
 import { branches } from "../stores/branches.svelte.js";
-import { checkoutRepo, loadStashes, refreshRepoState, resolveFolderPick, saveSettings, loadStatus } from "./commands.js";
+import { checkoutRepo, loadCommitDetails, loadStashes, refreshRepoState, resolveFolderPick, saveSettings, loadStatus } from "./commands.js";
 import { config } from "../stores/config.svelte.js";
 import { modal } from "../stores/modal.svelte.js";
 import { todos } from "../stores/todos.svelte.js";
@@ -63,6 +63,7 @@ export function registerHandlers() {
         repositories.list = repositories.list.filter(r => r.absolutePath !== p.repoPath);
         if (repo.path === p.repoPath) {
             commit.clear();
+            commit.forget(p.repoPath);
             repo.name = "";
             repo.path = "";
             repo.remoteUrl = "";
@@ -81,17 +82,27 @@ export function registerHandlers() {
     });
     onIpc(IpcActions.REPO_FETCHED, () => { 
         repo.fetching = false;
+        refreshRepoState();
     });
-    // 	[IpcActions.REPO_PULLED]: processRepoPulled,
-    // 	[IpcActions.REPO_PUSHED]: processRepoPushed,
-    // 	[IpcActions.REPO_PUBLISHED]: processRepoPublished,
+    onIpc(IpcActions.REPO_PULLED, () => {
+        refreshRepoState();
+    });
+    onIpc(IpcActions.REPO_PUSHED, () => {
+        refreshRepoState();
+    });
+    onIpc(IpcActions.REPO_PUBLISHED, () => {
+        branch.hasUpstream = true;
+        refreshRepoState();
+    });
     onIpc(IpcActions.REPO_STATUS_LOADED, (p) => { 
         changes.setFiles(p.files);
     });
     onIpc(IpcActions.REPO_FILES_CHANGED, (p) => { 
         if (p.repoPath === repo.path) loadStatus();
     });
-    // 	[IpcActions.REPO_PATH_MISSING]: processMissingRepo,
+    onIpc(IpcActions.REPO_PATH_MISSING, (p) => {
+        modal.open("error", { message: `Repository not found at path: ${p.repoPath}` });
+    });
     onIpc(IpcActions.REPO_SYNC_STATUS_CHANGED, (p) => {
         branch.commitsBehind = p.commitsBehind ?? 0;
         branch.commitsAhead = p.commitsAhead ?? 0;
@@ -104,6 +115,7 @@ export function registerHandlers() {
         history.reset();
         applyBranch(p.branch);
         refreshRepoState();
+        view.tab = "changes";
     });
     onIpc(IpcActions.BRANCH_LIST_LOADED, (p) => {
         branches.list = p.branches;
@@ -115,7 +127,10 @@ export function registerHandlers() {
     onIpc(IpcActions.BRANCH_FORCE_DELETE_REQUESTED, (p) => {
         modal.open("branch-force-delete", { branchName: p.branchName, unmergedCount: p.unmergedCount });
     });
-    // 	[IpcActions.BRANCH_RENAMED]: renameBranchInDropdown,
+    onIpc(IpcActions.BRANCH_RENAMED, (p) => {
+        if (branch.name === p.oldName) branch.name = p.newName;
+        sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
+    });
     onIpc(IpcActions.BRANCH_MERGED, () => {
         sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
         refreshRepoState();
@@ -139,8 +154,12 @@ export function registerHandlers() {
     // 	[IpcActions.FILE_DIFF_LOADED]: processFileDiffLoaded,
 
     // Change
-    onIpc(IpcActions.CHANGE_ALL_DISCARDED, () => {});
-    onIpc(IpcActions.CHANGE_DISCARDED, () => {});
+    onIpc(IpcActions.CHANGE_ALL_DISCARDED, () => {
+        loadStatus();
+    });
+    onIpc(IpcActions.CHANGE_DISCARDED, () => {
+        loadStatus();
+    });
     onIpc(IpcActions.CHANGE_IGNORED, () => {
         loadStatus();
     });
