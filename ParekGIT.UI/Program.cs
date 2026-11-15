@@ -4,7 +4,6 @@ using Photino.NET;
 using System.Drawing;
 using ParekGIT.Bridge.Ipc;
 using ParekGIT.Bridge.Handlers;
-using ParekGIT.Core.Git;
 using ParekGIT.Core.Services;
 using ParekGIT.Bridge.Services;
 using ParekGIT.Bridge.Interfaces;
@@ -35,7 +34,6 @@ namespace ParekGIT.UI
 				services.AddSingleton<IThemeStore>(p => p.GetRequiredService<JsonStore>());
 
 				services.AddSingleton<ITemplateService, TemplateService>();
-				services.AddSingleton<IGitRunner, GitCliRunner>();
 				services.AddGitServices();
 				services.AddSingleton<IRepoWatcher, RepoWatcher>();
 				services.AddSingleton<IRemoteSyncNotifier, RemoteSyncNotifier>();
