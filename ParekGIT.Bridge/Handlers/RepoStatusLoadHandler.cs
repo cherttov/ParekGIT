@@ -11,16 +11,16 @@ namespace ParekGIT.Bridge.Handlers
 	public class RepoStatusLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitStatusService _statusService;
 		private readonly IFileSystemService _fileSystem;
 
 		public string Action => "REPO_STATUS_LOAD";
 
 		// Constructor
-		public RepoStatusLoadHandler(PhotinoWindow window, IGitRunner gitRunner, IFileSystemService fileSystem)
+		public RepoStatusLoadHandler(PhotinoWindow window, IGitStatusService statusService, IFileSystemService fileSystem)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_statusService = statusService;
 			_fileSystem = fileSystem;
 		}
 
@@ -37,7 +37,7 @@ namespace ParekGIT.Bridge.Handlers
 				return;
 			}
 
-			IEnumerable<GitFileStatus> files = await _gitRunner.GetStatusAsync(repoPath);
+			IEnumerable<GitFileStatus> files = await _statusService.GetStatusAsync(repoPath);
 
 			// Response
 			var response = IpcMessage.Create("REPO_STATUS_LOADED", new { files });

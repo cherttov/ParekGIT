@@ -13,16 +13,16 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IRepositoryStore _dbStore;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitRepoService _repoService;
 
 		public string Action => "REPO_CREATE";
 
 		// Constructor
-		public RepoCreateHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRunner gitRunner)
+		public RepoCreateHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRepoService repoService)
 		{
 			_window = window;
 			_dbStore = dbStore;
-			_gitRunner = gitRunner;
+			_repoService = repoService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -31,7 +31,7 @@ namespace ParekGIT.Bridge.Handlers
 				?? throw new IpcPayloadException("Invalid or missing payload (CreateRepoRequest)");
 
 			// Create repo in git
-			var repo = await _gitRunner.CreateRepositoryAsync(request);
+			var repo = await _repoService.CreateRepositoryAsync(request);
 			await _dbStore.UpsertRepositoryAsync(repo);
 
 			// Response
