@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class FileDiffLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitStatusService _statusService;
 
 		public string Action => "FILE_DIFF_LOAD";
 
 		// Constructor
-		public FileDiffLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public FileDiffLoadHandler(PhotinoWindow window, IGitStatusService statusService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_statusService = statusService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -29,7 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 			string filePath = payload.GetProperty("filePath").GetString()
 				?? throw new IpcPayloadException("filePath");
 
-			string diffText = await _gitRunner.GetFileDiffAsync(repoPath, filePath);
+			string diffText = await _statusService.GetFileDiffAsync(repoPath, filePath);
 
 			// Response
 			var response = IpcMessage.Create("FILE_DIFF_LOADED", new { diffText });

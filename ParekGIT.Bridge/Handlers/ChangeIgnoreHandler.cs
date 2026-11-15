@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class ChangeIgnoreHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitWorkingTreeService _workingTreeService;
 
 		public string Action => "CHANGE_IGNORE";
 
 		// Constructor
-		public ChangeIgnoreHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public ChangeIgnoreHandler(PhotinoWindow window, IGitWorkingTreeService workingTreeService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_workingTreeService = workingTreeService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -35,15 +35,15 @@ namespace ParekGIT.Bridge.Handlers
 			switch (ignoreType)
 			{
 				case "file":
-					await _gitRunner.IgnoreFileAsync(repoPath, filePath);
+					await _workingTreeService.IgnoreFileAsync(repoPath, filePath);
 					break;
 
 				case "folder":
-					await _gitRunner.IgnoreFolderAsync(repoPath, filePath);
+					await _workingTreeService.IgnoreFolderAsync(repoPath, filePath);
 					break;
 
 				case "extension":
-					await _gitRunner.IgnoreExtensionAsync(repoPath, filePath);
+					await _workingTreeService.IgnoreExtensionAsync(repoPath, filePath);
 					break;
 				default:
 					throw new IpcPayloadException("ignoreType", $"unrecognized value '{ignoreType}'");
