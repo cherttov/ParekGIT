@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class RepoPullHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitSyncService _syncService;
 
 		public string Action => "REPO_PULL";
 
 		// Constructor
-		public RepoPullHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public RepoPullHandler(PhotinoWindow window, IGitSyncService syncService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_syncService = syncService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -26,7 +26,7 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 				?? throw new IpcPayloadException("repoPath");
 
-			await _gitRunner.PullAsync(repoPath);
+			await _syncService.PullAsync(repoPath);
 
 			// Response
 			var response = IpcMessage.Create("REPO_PULLED", new { success = true });

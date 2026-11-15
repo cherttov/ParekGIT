@@ -13,16 +13,21 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IRepositoryStore _dbStore;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitWorkingTreeService _workingTreeService;
+		private readonly IGitSyncService _syncService;
+		private readonly IGitStatusService _statusService;
 		private readonly IRemoteSyncNotifier _syncNotifier;
 
 		public string Action => "REPO_COMMIT";
 
 		// Constructor
-		public RepoCommitHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRunner gitRunner, IRemoteSyncNotifier syncNotifier)
+		public RepoCommitHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitWorkingTreeService workingTreeService,
+			IGitSyncService syncService, IGitStatusService statusService, IRemoteSyncNotifier syncNotifier)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_workingTreeService = workingTreeService;
+			_syncService = syncService;
+			_statusService = statusService;
 			_dbStore = dbStore;
 			_syncNotifier = syncNotifier;
 		}
@@ -45,7 +50,7 @@ namespace ParekGIT.Bridge.Handlers
 			if (files.Count == 0) throw new IpcPayloadException("files", "must contain at least 1 file");
 
 			// Commit locally
-			await _gitRunner.CommitAsync(repoPath, message, description, files);
+			await _workingTreeService.CommitAsync(repoPath, message, description, files);
 
 			// Refresh remote sync status
 			GitRepository repo = await _dbStore.GetRepositoryByPathAsync(repoPath)
@@ -53,10 +58,10 @@ namespace ParekGIT.Bridge.Handlers
 
 			if (!string.IsNullOrEmpty(repo.RemoteUrl))
 			{
-				await _gitRunner.FetchRepositoryAsync(repoPath);
+				await _syncService.FetchRepositoryAsync(repoPath);
 
-				int commitsBehind = await _gitRunner.GetCommitsBehindAsync(repoPath);
-				int commitsAhead = await _gitRunner.GetCommitsAheadAsync(repoPath);
+				int commitsBehind = await _statusService.GetCommitsBehindAsync(repoPath);
+				int commitsAhead = await _statusService.GetCommitsAheadAsync(repoPath);
 				_syncNotifier.NotifyCommitsBehind(repoPath, commitsBehind, commitsAhead);
 			}
 

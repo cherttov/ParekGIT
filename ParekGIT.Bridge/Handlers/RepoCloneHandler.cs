@@ -13,16 +13,16 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IRepositoryStore _dbStore;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitRepoService _repoService;
 
 		public string Action => "REPO_CLONE";
 
 		// Constructor
-		public RepoCloneHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRunner gitRunner)
+		public RepoCloneHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRepoService repoService)
 		{
 			_window = window;
 			_dbStore = dbStore;
-			_gitRunner = gitRunner;
+			_repoService = repoService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -39,7 +39,7 @@ namespace ParekGIT.Bridge.Handlers
 			string repoName = Path.GetFileNameWithoutExtension(repoUrl.TrimEnd('/').Split('/').Last());
 			string localPath = Path.Combine(parentPath, repoName);
 
-			await _gitRunner.CloneRepositoryAsync(repoUrl, asLocal, localPath);
+			await _repoService.CloneRepositoryAsync(repoUrl, asLocal, localPath);
 
 			var repo = new GitRepository
 			{
