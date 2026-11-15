@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class StashDropHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitStashService _stashService;
 
 		public string Action => "STASH_DROP";
 
 		// Constructor
-		public StashDropHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public StashDropHandler(PhotinoWindow window, IGitStashService stashService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_stashService = stashService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -29,7 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 			string selector = payload.GetProperty("selector").GetString()
 				?? throw new IpcPayloadException("selector");
 
-			await _gitRunner.StashDropAsync(repoPath, selector);
+			await _stashService.StashDropAsync(repoPath, selector);
 
 			// Response
 			var response = IpcMessage.Create("STASH_DROPPED", new { success = true });

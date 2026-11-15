@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class StashSaveHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitStashService _stashService;
 
 		public string Action => "STASH_SAVE";
 
 		// Constructor
-		public StashSaveHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public StashSaveHandler(PhotinoWindow window, IGitStashService stashService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_stashService = stashService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -36,7 +36,7 @@ namespace ParekGIT.Bridge.Handlers
 					.ToList()
 				?? throw new IpcPayloadException("files");
 
-			await _gitRunner.StashSaveAsync(repoPath, message, files);
+			await _stashService.StashSaveAsync(repoPath, message, files);
 
 			// Response
 			var response = IpcMessage.Create("STASH_SAVED", new { success = true });

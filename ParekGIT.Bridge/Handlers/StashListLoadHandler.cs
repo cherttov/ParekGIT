@@ -11,15 +11,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class StashListLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitStashService _stashService;
 
 		public string Action => "STASH_LIST_LOAD";
 
 		// Constructor
-		public StashListLoadHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public StashListLoadHandler(PhotinoWindow window, IGitStashService stashService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_stashService = stashService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -27,7 +27,7 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 				?? throw new IpcPayloadException("repoPath");
 
-			IEnumerable<GitStash> stashes = await _gitRunner.GetStashesAsync(repoPath);
+			IEnumerable<GitStash> stashes = await _stashService.GetStashesAsync(repoPath);
 
 			// Response
 			var response = IpcMessage.Create("STASH_LIST_LOADED", new { stashes });
