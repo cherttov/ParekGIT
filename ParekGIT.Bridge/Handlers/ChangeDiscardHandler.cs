@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	public class ChangeDiscardHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitWorkingTreeService _workingTreeService;
 
 		public string Action => "CHANGE_DISCARD";
 
 		// Constructor
-		public ChangeDiscardHandler(PhotinoWindow window, IGitRunner gitRunner)
+		public ChangeDiscardHandler(PhotinoWindow window, IGitWorkingTreeService workingTreeService)
 		{
 			_window = window;
-			_gitRunner = gitRunner;
+			_workingTreeService = workingTreeService;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -29,7 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 			string filePath = payload.GetProperty("filePath").GetString()
 				?? throw new IpcPayloadException("filePath");
 
-			await _gitRunner.DiscardChangeAsync(repoPath, filePath);
+			await _workingTreeService.DiscardChangeAsync(repoPath, filePath);
 
 			// Response
 			var response = IpcMessage.Create("CHANGE_DISCARDED", new { success = true });
