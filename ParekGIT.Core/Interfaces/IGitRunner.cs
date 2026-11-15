@@ -1,5 +1,4 @@
 ﻿using ParekGIT.Core.Models;
-using System.Collections;
 
 namespace ParekGIT.Core.Interfaces
 {
