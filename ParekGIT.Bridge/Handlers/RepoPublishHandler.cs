@@ -26,7 +26,7 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 							  ?? throw new IpcPayloadException("repoPath");
 
-			// branchName not required as "IGitRunner.PushAsync()" always targets currently checked out branch
+			// branchName not required as "IGitSyncService.PushAsync()" always targets currently checked out branch
 			await _syncService.PushAsync(repoPath);
 
 			// Response

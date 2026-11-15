@@ -15,19 +15,19 @@ namespace ParekGIT.Bridge.Handlers
 		private readonly PhotinoWindow _window;
 		private readonly LiteDbStore _dbStore;
 		private readonly JsonStore _jsonStore;
-		private readonly IGitRunner _gitRunner;
+		private readonly IGitBranchService _branchService;
 		private readonly IRepoWatcher _repoWatcher;
 		private readonly IFileSystemService _fileSystem;
 
 		public string Action => "REPO_CHECKOUT";
 
 		// Constructor
-		public RepoCheckoutHandler(PhotinoWindow window, LiteDbStore dbStore, JsonStore jsonStore, IGitRunner gitRunner, IRepoWatcher repoWatcher, IFileSystemService fileSystem)
+		public RepoCheckoutHandler(PhotinoWindow window, LiteDbStore dbStore, JsonStore jsonStore, IGitBranchService branchService, IRepoWatcher repoWatcher, IFileSystemService fileSystem)
 		{
 			_window = window;
 			_dbStore = dbStore;
 			_jsonStore = jsonStore;
-			_gitRunner = gitRunner;
+			_branchService = branchService;
 			_repoWatcher = repoWatcher;
 			_fileSystem = fileSystem;
 		}
@@ -53,7 +53,7 @@ namespace ParekGIT.Bridge.Handlers
 			UserSettings currentSettings = await _jsonStore.GetUserSettingsAsync();
 
 			// Get branches
-			IEnumerable<GitBranch> branches = await _gitRunner.GetBranchesAsync(repoPath);
+			IEnumerable<GitBranch> branches = await _branchService.GetBranchesAsync(repoPath);
 			GitBranch branch = branches.FirstOrDefault(b => b.IsCurrent == true)!;
 			_repoWatcher.WatchRepository(repoPath);
 
