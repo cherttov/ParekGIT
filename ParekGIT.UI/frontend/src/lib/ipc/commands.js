@@ -161,6 +161,9 @@ export function saveLocalConfig(name, email) {
 }
 
 export function loadGlobalConfig() {
+    config.globalName = "";
+    config.globalEmail = "";
+    config.globalLoaded = false;
     sendIpcMessage(IpcActions.CONFIG_GLOBAL_LOAD);
 }
 

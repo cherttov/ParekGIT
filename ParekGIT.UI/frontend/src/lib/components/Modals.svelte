@@ -14,6 +14,7 @@
     import ConfigModal from "./modals/ConfigModal.svelte";
     import StashModal from "./modals/StashModal.svelte";
     import SettingsModal from "./modals/SettingsModal.svelte";
+    import AccountModal from "./modals/AccountModal.svelte";
     import ErrorModal from "./modals/ErrorModal.svelte";
 
     export const modals = {
@@ -31,6 +32,7 @@
         "config": ConfigModal,
         "stashes": StashModal,
         "settings": SettingsModal,
+        "account": AccountModal,
         "error": ErrorModal
     };
 </script>

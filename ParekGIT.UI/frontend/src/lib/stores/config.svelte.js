@@ -3,5 +3,6 @@ export const config = $state({
     localEmail: "",
     localLoaded: false,
     globalName: "",
-    globalEmail: ""
+    globalEmail: "",
+    globalLoaded: false
 });

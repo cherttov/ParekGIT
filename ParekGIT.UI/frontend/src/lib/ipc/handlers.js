@@ -182,6 +182,7 @@ export function registerHandlers() {
     onIpc(IpcActions.CONFIG_GLOBAL_LOADED, (p) => {
         config.globalName = p.globalName ?? "";
         config.globalEmail = p.globalEmail ?? "";
+        config.globalLoaded = true;
     });
     onIpc(IpcActions.CONFIG_GLOBAL_SAVED, () => {});
 

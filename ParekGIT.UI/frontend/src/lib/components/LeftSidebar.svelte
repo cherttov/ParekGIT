@@ -65,8 +65,8 @@
             class:pull={syncState === "pull"}
             class:publish={syncState === "publish"}
             disabled={syncState === "none" || syncState === "up-to-date"}
-            onclick={pushPullPublish}
-            title={syncTitle}>
+            title={syncTitle}
+            onclick={pushPullPublish}>
         <div class="btn-icon icon-pushpullpublish"></div>
     </button>
 
@@ -82,8 +82,8 @@
     <button class="left-sidebar-btn btn-fetch"
             class:fetching={repo.fetching}
             disabled={!hasRepo}
-            onclick={fetchRepo}
-            title="Fetch from remote">
+            title="Fetch from remote"
+            onclick={fetchRepo}>
         <div class="btn-icon icon-fetch"></div>
     </button>
 
@@ -96,7 +96,8 @@
 
     <!-- Account Btn -->
     <button class="left-sidebar-btn btn-account" 
-            title="Account (global git config)">
+            title="Account (global git config)"
+            onclick={() => modal.open("account")}>
         <div class="btn-icon icon-account"></div>
     </button>
 </div>
