@@ -580,7 +580,7 @@ select:focus {
 
 .diff-viewer,
 .details-viewer {
-	display: none;
+	display: flex;
 	flex-direction: column;
 	height: 100%;
 	background-color: var(--bg-main);
