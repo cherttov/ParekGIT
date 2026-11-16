@@ -5,7 +5,8 @@ import { app } from "../stores/app.svelte.js";
 import { repositories } from "../stores/repositories.svelte.js";
 import { branch } from "../stores/branch.svelte.js";
 import { branches } from "../stores/branches.svelte.js";
-import { checkoutRepo, loadCommitDetails, loadStashes, refreshRepoState, resolveFolderPick, saveSettings, loadStatus } from "./commands.js";
+import { checkoutRepo, loadCommitDetails, loadStashes, refreshRepoState, 
+    resolveFolderPick, saveSettings, loadStatus, loadCommitFileDiff } from "./commands.js";
 import { config } from "../stores/config.svelte.js";
 import { modal } from "../stores/modal.svelte.js";
 import { todos } from "../stores/todos.svelte.js";
@@ -14,6 +15,8 @@ import { changes } from "../stores/changes.svelte.js";
 import { view } from "../stores/view.svelte.js";
 import { commit } from "../stores/commit.svelte.js";
 import { history } from "../stores/history.svelte.js";
+import { commitDetails } from "../stores/commitDetails.svelte.js";
+import { diff } from "../stores/diff.svelte.js";
 
 export function registerHandlers() {
     // App
@@ -46,6 +49,8 @@ export function registerHandlers() {
         stashes.loaded = false;
         changes.reset();
         history.reset();
+        diff.reset();
+        commitDetails.reset();
         view.tab = "changes";
         applyBranch(p.branch);
         refreshRepoState();
@@ -113,6 +118,8 @@ export function registerHandlers() {
         branches.list = p.branches;
         changes.reset();
         history.reset();
+        diff.reset();
+        commitDetails.reset();
         applyBranch(p.branch);
         refreshRepoState();
         view.tab = "changes";
@@ -143,15 +150,33 @@ export function registerHandlers() {
     });
 
     // Commit / File
-    // 	[IpcActions.COMMIT_DETAILS_LOADED]: loadCommitDetails,
-    // 	[IpcActions.COMMIT_FILE_DIFF_LOADED]: processCommitFileDiffLoaded,
+    onIpc(IpcActions.COMMIT_DETAILS_LOADED, (p) => {
+        commitDetails.message = p.message ?? "";
+        commitDetails.author = p.author ?? "";
+        commitDetails.files = p.files ?? [];
+        commitDetails.selectedFile = "";
+        commitDetails.diffText = "";
+        commitDetails.loading = false;
+
+        // Autoselect 1st file
+        if (commitDetails.files.length > 0) {
+            loadCommitFileDiff(commitDetails.hash, commitDetails.files[0].path);
+        }
+    });
+    onIpc(IpcActions.COMMIT_FILE_DIFF_LOADED, (p) => {
+        commitDetails.diffText = p.diffText ?? "";
+        commitDetails.loadingDiff = false;
+    });
     onIpc(IpcActions.COMMIT_CHECKED_OUT, () => { // FINISH
         sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
     });
     onIpc(IpcActions.COMMIT_REVERTED, () => {
         refreshRepoState();
     });
-    // 	[IpcActions.FILE_DIFF_LOADED]: processFileDiffLoaded,
+    onIpc(IpcActions.FILE_DIFF_LOADED, (p) => {
+        diff.diffText = p.diffText ?? "";
+        diff.loading = false;
+    });
 
     // Change
     onIpc(IpcActions.CHANGE_ALL_DISCARDED, () => {

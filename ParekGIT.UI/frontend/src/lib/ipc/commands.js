@@ -238,3 +238,13 @@ export function discardAll() {
     if (!repo.path) return;
     sendIpcMessage(IpcActions.CHANGE_ALL_DISCARD, { repoPath: repo.path });
 }
+
+export function loadCommitFileDiff(commitHash, filePath) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.COMMIT_FILE_DIFF_LOAD, { repoPath: repo.path, commitHash, filePath });
+}
+
+export function loadFileDiff(filePath) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.FILE_DIFF_LOAD, { repoPath: repo.path, filePath });
+}
