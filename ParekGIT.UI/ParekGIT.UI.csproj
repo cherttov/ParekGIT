@@ -31,7 +31,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
-		<PackageReference Include="PhotinoX" Version="5.4.1" />
+		<PackageReference Include="PhotinoX" Version="5.5.0" />
 	</ItemGroup>
   
 	<ItemGroup>
