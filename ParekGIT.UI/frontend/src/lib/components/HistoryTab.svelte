@@ -4,6 +4,7 @@
     import { contextMenu } from "../stores/contextMenu.svelte";
     import { historyMenuItems } from "./menus/historyContextMenu";
     import { loadMoreHistory, loadCommitDetails } from "../ipc/commands";
+	import { commitDetails } from "../stores/commitDetails.svelte";
 
     let { active = false } = $props();
     let listEl = $state(null);
@@ -19,6 +20,7 @@
     function onSelect(c) {
         if (history.selectedHash === c.hash) return;
         history.select(c.hash);
+        commitDetails.startLoad(c.hash);
         loadCommitDetails(c.hash);
     }
 </script>

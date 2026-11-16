@@ -4,7 +4,8 @@
     import { commit } from "../stores/commit.svelte";
     import { contextMenu } from "../stores/contextMenu.svelte";
     import { changeMenuItems, changesMasterMenuItems } from "./menus/changesContextMenu";
-    import { commitChanges } from "../ipc/commands";
+    import { commitChanges, loadFileDiff } from "../ipc/commands";
+	import { diff } from "../stores/diff.svelte";
     import CustomScrollbar from "./CustomScrollbar.svelte";
     import StatusBadge from "./StatusBadge.svelte";
 
@@ -14,6 +15,14 @@
 
     const checkedCount = $derived(changes.checkedPaths.length);
     const canCommit = $derived(branch.name !== "" && commit.message.trim() !== "" && checkedCount > 0 && !commit.committing);
+
+    function onSelect(f) {
+        changes.select(f.path);
+        diff.filePath = f.path;
+        diff.loading = true;
+        diff.diffText = "";
+        loadFileDiff(f.path);
+    }
 </script>
 
 <div class="changes-tab" id="changes-tab" class:active>
@@ -30,7 +39,7 @@
                 <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <div class="change-item" class:selected={changes.selectedPath === file.path}
-                    onclick={() => changes.select(file.path)}
+                    onclick={() => onSelect(file)}
                     oncontextmenu={(e) => contextMenu.open(e, changeMenuItems(file), file.path)}>
                     <div class="change-item-left">
                         <StatusBadge code={file.statusCode} />
