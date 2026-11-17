@@ -35,7 +35,6 @@ namespace ParekGIT.UI
 				services.AddSingleton<IThemeStore>(p => p.GetRequiredService<JsonStore>());
 
 				services.AddSingleton<ITemplateService, TemplateService>();
-				services.AddSingleton<IGitRunner, GitCliRunner>();
 				services.AddGitServices();
 				services.AddSingleton<IRepoWatcher, RepoWatcher>();
 				services.AddSingleton<IRemoteSyncNotifier, RemoteSyncNotifier>();
