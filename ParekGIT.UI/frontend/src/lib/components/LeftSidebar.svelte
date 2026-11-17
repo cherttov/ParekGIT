@@ -9,7 +9,7 @@
     const hasRepo = $derived(repo.path !== "");
 
     const syncState = $derived.by(() => {
-        if (!hasRepo || !branch.name || !repo.hasRemote) return "none";
+        if (!hasRepo || !branch.name || branch.isDetached || !repo.hasRemote) return "none";
         if (!branch.hasUpstream) return "publish";
         if (branch.commitsBehind > 0) return "pull";
         if (branch.commitsAhead > 0) return "push";

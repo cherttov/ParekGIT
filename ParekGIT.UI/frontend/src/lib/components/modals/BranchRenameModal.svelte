@@ -1,23 +1,30 @@
 <script>
 	import Modal from "../Modal.svelte";
-    import { createBranch, renameBranch } from "../../ipc/commands";
+    import { renameBranch } from "../../ipc/commands";
 
     let { open = false, data = {}, onclose } = $props();
     let newName = $state("");
     let inputEl;
 
-    const isValid = $derived(newName.trim().length > 0);
+    const isValid = $derived(
+        newName.trim().length > 0 && 
+        newName.trim() !== data.branchName && 
+        !["main", "master"].includes(newName.trim().toLowerCase())
+    );
 
     $effect(() => {
         if (!open) return;
-        newName = "";
-        const t = setTimeout(() => inputEl?.focus(), 100);
+        newName = data.branchName ?? "";
+        const t = setTimeout(() => {
+            inputEl?.focus();
+            inputEl?.select();
+        }, 100);
         return () => clearTimeout(t);
     });
 
     function confirm() {
         if (!isValid) return;
-        renameBranch(data.branchName, newName);
+        renameBranch(data.branchName, newName.trim());
         onclose?.();
     }
 
