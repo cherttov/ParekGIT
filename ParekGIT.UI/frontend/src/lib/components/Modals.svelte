@@ -19,13 +19,16 @@
 
     export const modals = {
         "branch-new": BranchNewModal,
+        //"branch-rename": undefined,
         "branch-delete": BranchDeleteModal,
         "branch-merge": BranchMergeModal,
         "branch-from-commit": BranchFromCommitModal,
+        //"branch-force-delete": undefined,
         "repo-add": RepoAddModal,
         "repo-clone": RepoCloneModal,
         "repo-create": RepoCreateModal,
         "repo-remove": RepoRemoveModal,
+        //"repo-missing": undefined,
         "changes-discard-selected": ChangeDiscardSelectedModal,
         "changes-discard-all": ChangesDiscardAllModal,
         "todo": TodoModal,

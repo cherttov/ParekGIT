@@ -73,7 +73,7 @@
 
 <Modal
     {open}
-    title="Create a new repositor"
+    title="Create a new repository"
     confirmText="Create repository"
     confirmDisabled={!isValid}
     onconfirm={confirm}

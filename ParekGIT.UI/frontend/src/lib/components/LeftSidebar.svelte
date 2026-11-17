@@ -9,10 +9,10 @@
     const hasRepo = $derived(repo.path !== "");
 
     const syncState = $derived.by(() => {
-        if (!hasRepo || !repo.branch || !repo.hasRemote) return "none";
-        if (!repo.hasUpstream) return "publish";
-        if (repo.commitsBehind > 0) return "pull";
-        if (repo.commitsAhead > 0) return "push";
+        if (!hasRepo || !branch.name || !repo.hasRemote) return "none";
+        if (!branch.hasUpstream) return "publish";
+        if (branch.commitsBehind > 0) return "pull";
+        if (branch.commitsAhead > 0) return "push";
         return "up-to-date";
     });
 
@@ -20,8 +20,8 @@
 		const plural = (n) => (n === 1 ? "" : "s");
 		switch (syncState) {
 			case "publish":    return "Publish branch";
-			case "pull":       return `Pull ${repo.commitsBehind} commit${plural(repo.commitsBehind)}`;
-			case "push":       return `Push ${repo.commitsAhead} commit${plural(repo.commitsAhead)}`;
+			case "pull":       return `Pull ${branch.commitsBehind} commit${plural(branch.commitsBehind)}`;
+			case "push":       return `Push ${branch.commitsAhead} commit${plural(branch.commitsAhead)}`;
 			case "up-to-date": return "Up to date";
 			default:           return "";
 		}
@@ -37,7 +37,7 @@
 <div class="left-sidebar" id="left-sidebar">
     <!-- Merge Btn -->
     <button class="left-sidebar-btn btn-merge" 
-            disabled={!hasRepo}
+            disabled={!hasRepo || !branch.name || branch.isDetached}
             title="Merge branch"
             onclick={() => modal.open("branch-merge", { targetBranch: branch.name })}>
         <div class="btn-icon icon-merge"></div>
