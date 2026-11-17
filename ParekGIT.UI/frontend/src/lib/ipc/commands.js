@@ -57,7 +57,6 @@ export function refreshRepoState() {
     sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: repo.path });
     if (branch.revision) {
         sendIpcMessage(IpcActions.BRANCH_HISTORY_LOAD, { repoPath: repo.path, branchName: branch.revision });
-        sendIpcMessage(IpcActions.TODO_LOAD, { repoPath: repo.path, branchName: branch.revision });
     }
 }
 

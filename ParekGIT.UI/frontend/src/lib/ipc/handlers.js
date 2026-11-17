@@ -51,9 +51,11 @@ export function registerHandlers() {
         history.reset();
         diff.reset();
         commitDetails.reset();
+        todos.list = [];
         view.tab = "changes";
         applyBranch(p.branch);
         refreshRepoState();
+        loadTodos();
 	});
     onIpc(IpcActions.REPO_CLONED, (p) => { 
         appendRepo(p.repo);
@@ -78,6 +80,7 @@ export function registerHandlers() {
             stashes.loaded = false;
             changes.reset();
             history.reset();
+            todos.list = [];
         }
     });
     onIpc(IpcActions.REPO_COMMITTED, () => {
@@ -120,9 +123,11 @@ export function registerHandlers() {
         history.reset();
         diff.reset();
         commitDetails.reset();
+        todos.list = [];
+        view.tab = "changes";
         applyBranch(p.branch);
         refreshRepoState();
-        view.tab = "changes";
+        loadTodos();
     });
     onIpc(IpcActions.BRANCH_LIST_LOADED, (p) => {
         branches.list = p.branches;
