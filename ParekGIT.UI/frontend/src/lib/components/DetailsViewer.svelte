@@ -96,7 +96,7 @@
             <!-- svelte-ignore a11y_no_static_element_interactions -->
             <!-- svelte-ignore a11y_click_events_have_key_events -->
             <div class="dropdown-panel" class:show={panelOpen} id="details-footer-panel" 
-                onclick={(e) => e.stopPropagation()} onmouseleave={() => panelOpen = false}>
+                onclick={(e) => e.stopPropagation()}>
                 <div class="dropdown-list-wrapper">
                     <div class="dropdown-list-container" id="details-file-list" bind:this={fileListEl}>
                         {#each commitDetails.files as file (file.path)}
@@ -113,3 +113,6 @@
         </div>
     </div>
 </div>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="dropdown-backdrop" class:show={panelOpen} onclick={() => panelOpen = false}></div>
