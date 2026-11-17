@@ -62,7 +62,7 @@ namespace ParekGIT.Core.Git.Services
 
 		public async Task CloneRepositoryAsync(string repoUrl, bool asLocal, string localPath, CancellationToken cancellationToken = default)
 		{
-			await _executor.ExecuteAsync(null, ["clone", repoUrl, localPath], cancellationToken);
+			await _executor.ExecuteAsync(null, ["clone", "--", repoUrl, localPath], cancellationToken);
 
 			if (asLocal)
 				await _executor.ExecuteAsync(localPath, ["remote", "remove", "origin"]);

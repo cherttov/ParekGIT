@@ -22,7 +22,7 @@ namespace ParekGIT.Core.Git.Services
 		// Public methods
 		public async Task<IEnumerable<GitCommit>> GetBranchHistoryAsync(string repoPath, string branchName, int skip = 0, int take = 50) =>
 			GitHistoryParser.Parse(await _executor.ExecuteAsync(repoPath, [
-				"log", branchName, "--skip", skip.ToString(), "-n", take.ToString(), "--pretty=format:%H|%s|%an|%ar|%at"
+				"log", branchName, "--skip", skip.ToString(), "-n", take.ToString(), "--pretty=format:%H%x1f%s%x1f%an%x1f%ar%x1f%at"
 			]));
 
 		public async Task<CommitDetailsResult> GetCommitDetailsAsync(string repoPath, string hash) =>
