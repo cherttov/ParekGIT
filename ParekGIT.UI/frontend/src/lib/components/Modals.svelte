@@ -5,6 +5,7 @@
     import BranchDeleteModal from "./modals/BranchDeleteModal.svelte";
     import BranchMergeModal from "./modals/BranchMergeModal.svelte";
     import BranchFromCommitModal from "./modals/BranchFromCommitModal.svelte";
+	import BranchForceDeleteModal from "./modals/BranchForceDeleteModal.svelte";
     import RepoAddModal from "./modals/RepoAddModal.svelte";
     import RepoCloneModal from "./modals/RepoCloneModal.svelte";
     import RepoCreateModal from "./modals/RepoCreateModal.svelte";
@@ -24,7 +25,7 @@
         "branch-delete": BranchDeleteModal,
         "branch-merge": BranchMergeModal,
         "branch-from-commit": BranchFromCommitModal,
-        //"branch-force-delete": undefined,
+        "branch-force-delete": BranchForceDeleteModal,
         "repo-add": RepoAddModal,
         "repo-clone": RepoCloneModal,
         "repo-create": RepoCreateModal,
