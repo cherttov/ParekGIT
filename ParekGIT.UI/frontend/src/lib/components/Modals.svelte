@@ -1,6 +1,7 @@
 <script>
     import { modal } from "../stores/modal.svelte";
     import BranchNewModal from "./modals/BranchNewModal.svelte";
+	import BranchRenameModal from "./modals/BranchRenameModal.svelte";
     import BranchDeleteModal from "./modals/BranchDeleteModal.svelte";
     import BranchMergeModal from "./modals/BranchMergeModal.svelte";
     import BranchFromCommitModal from "./modals/BranchFromCommitModal.svelte";
@@ -19,7 +20,7 @@
 
     export const modals = {
         "branch-new": BranchNewModal,
-        //"branch-rename": undefined,
+        "branch-rename": BranchRenameModal,
         "branch-delete": BranchDeleteModal,
         "branch-merge": BranchMergeModal,
         "branch-from-commit": BranchFromCommitModal,

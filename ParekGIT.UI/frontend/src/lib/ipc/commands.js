@@ -93,6 +93,11 @@ export function createBranchFromCommit(branchName, commitHash) {
     sendIpcMessage(IpcActions.BRANCH_CREATE_FROM_COMMIT, { repoPath: repo.path, branchName, commitHash });
 }
 
+export function renameBranch(oldName, newName) {
+    if (!repo.path) return;
+    sendIpcMessage(IpcActions.BRANCH_RENAME, { repoPath: repo.path, oldName, newName });
+}
+
 export function fetchRepo() {
     if (!repo.path || repo.fetching) return;
     repo.fetching = true;

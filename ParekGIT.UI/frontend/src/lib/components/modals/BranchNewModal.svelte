@@ -37,7 +37,6 @@
     <div class="modal-body-row">
         <label for="branch-new-name">Name</label>
         <input id="branch-new-name" type="text" class="modal-input" placeholder="new branch name"
-            bind:value={branchName}  bind:this={inputEl} onkeydown={handleKeydown}
-        />
+            bind:value={branchName}  bind:this={inputEl} onkeydown={handleKeydown} />
     </div>
 </Modal>
