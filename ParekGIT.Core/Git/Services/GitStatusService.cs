@@ -19,7 +19,7 @@ namespace ParekGIT.Core.Git.Services
 
 		// Public methods
 		public async Task<IEnumerable<GitFileStatus>> GetStatusAsync(string repoPath) =>
-			GitStatusParser.Parse(await _executor.ExecuteAsync(repoPath, ["status", "--porcelain", "-uall"]));
+			GitStatusParser.Parse(await _executor.ExecuteAsync(repoPath, ["status", "--porcelain", "-z", "-uall"]));
 
 		public async Task<string> GetFileDiffAsync(string repoPath, string filePath)
 		{

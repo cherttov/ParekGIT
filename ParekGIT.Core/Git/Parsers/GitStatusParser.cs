@@ -9,15 +9,20 @@ namespace ParekGIT.Core.Git.Parsers
 			var changedFiles = new List<GitFileStatus>();
 			if (string.IsNullOrWhiteSpace(rawOutput)) return changedFiles;
 
-			var lines = rawOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-			foreach (var line in lines)
+			var tokens = rawOutput.Split('\0', StringSplitOptions.RemoveEmptyEntries);
+			bool skipNext = false;
+			foreach (var token in tokens)
 			{
-				if (line.Length < 4) continue;
+				if (skipNext) { skipNext = false; continue; }
+				if (token.Length < 4) continue;
 
-				changedFiles.Add(new GitFileStatus
-				{
-					StatusCode = line.Substring(0, 2),
-					Path = line.Substring(3).Trim()
+				string code = token[..2];
+				skipNext = code[0] is 'R' or 'C' || code[1] is 'R' or 'C';
+
+				changedFiles.Add(new GitFileStatus 
+				{ 
+					StatusCode = code, 
+					Path = token[3..] 
 				});
 			}
 

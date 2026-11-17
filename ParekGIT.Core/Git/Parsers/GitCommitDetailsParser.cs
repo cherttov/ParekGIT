@@ -18,7 +18,7 @@ namespace ParekGIT.Core.Git.Parsers
 				return new GitFileStatus
 				{
 					StatusCode = parts[0].Trim(),
-					Path = parts.Length > 1 ? parts[1].Trim() : parts[0].Trim()
+					Path = parts[^1].Trim()
 				};
 			}).ToList();
 

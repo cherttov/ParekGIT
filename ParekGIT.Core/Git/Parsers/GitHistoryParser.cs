@@ -13,7 +13,7 @@ namespace ParekGIT.Core.Git.Parsers
 
 			foreach (var line in lines)
 			{
-				var parts = line.Split('|');
+				var parts = line.Split('\x1f');
 				if (parts.Length != 5) continue;
 
 				if (!long.TryParse(parts[4], out long unixTimestamp)) continue;
