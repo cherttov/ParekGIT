@@ -47,16 +47,17 @@ export function registerHandlers() {
 		repo.path = p.repo.absolutePath;
 		repo.remoteUrl = p.repo.remoteUrl;
 		branches.list = p.branches;
-		config.localLoaded = false;
-		stashes.list = [];
-		stashes.loaded = false;
+
+		config.resetLocal();
+		stashes.reset();
 		changes.reset();
 		history.reset();
 		diff.reset();
 		commitDetails.reset();
-		todos.list = [];
-		view.tab = "changes";
+		todos.reset();
+		view.reset();
 		applyBranch(p.branch);
+
 		refreshRepoState();
 		loadTodos();
 	});
@@ -74,16 +75,18 @@ export function registerHandlers() {
 		if (repo.path === p.repoPath) {
 			commit.clear();
 			commit.forget(p.repoPath);
-			repo.name = "";
-			repo.path = "";
-			repo.remoteUrl = "";
-			branch.name = "";
-			branches.list = [];
-			stashes.list = [];
-			stashes.loaded = false;
+
+			repo.reset();
+			branch.reset();
+			branches.reset();
+			stashes.reset();
 			changes.reset();
 			history.reset();
-			todos.list = [];
+			diff.reset();
+			commitDetails.reset();
+			todos.reset();
+			view.reset();
+			config.resetLocal();
 		}
 	});
 	onIpc(IpcActions.REPO_COMMITTED, () => {
@@ -122,13 +125,15 @@ export function registerHandlers() {
 	// Branch
 	onIpc(IpcActions.BRANCH_CHECKED_OUT, (p) => {
 		branches.list = p.branches;
+
 		changes.reset();
 		history.reset();
 		diff.reset();
 		commitDetails.reset();
-		todos.list = [];
-		view.tab = "changes";
+		todos.reset();
+		view.reset();
 		applyBranch(p.branch);
+
 		refreshRepoState();
 		loadTodos();
 	});
@@ -264,7 +269,8 @@ function appendRepo(r) {
 }
 
 function applyBranch(b) {
-	if (!b) { branch.name = ""; branch.revision = ""; return; }
+	branch.reset();
+	if (!b) return;
 	branch.name = b.name;
 	branch.revision = b.isDetached ? b.targetCommitHash : b.name;
 	branch.isDetached = b.isDetached;

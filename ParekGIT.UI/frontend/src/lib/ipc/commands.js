@@ -153,9 +153,7 @@ export function saveTodos(todoList) {
 
 export function loadLocalConfig() {
 	if (!repo.path) return;
-	config.localName = "";
-	config.localEmail = "";
-	config.localLoaded = false;
+	config.resetLocal();
 	sendIpcMessage(IpcActions.CONFIG_LOCAL_LOAD, { repoPath: repo.path });
 }
 
@@ -165,9 +163,7 @@ export function saveLocalConfig(name, email) {
 }
 
 export function loadGlobalConfig() {
-	config.globalName = "";
-	config.globalEmail = "";
-	config.globalLoaded = false;
+	config.resetGlobal();
 	sendIpcMessage(IpcActions.CONFIG_GLOBAL_LOAD);
 }
 
