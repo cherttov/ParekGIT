@@ -1,3 +1,5 @@
 export const repositories = $state({
-	list: []
+	list: [],
+
+	reset() { this.list = []; }
 });

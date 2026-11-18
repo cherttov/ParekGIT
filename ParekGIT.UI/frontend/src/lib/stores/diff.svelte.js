@@ -3,9 +3,5 @@ export const diff = $state({
 	diffText: "",
 	loading: false,
 
-	reset() {
-		this.filePath = "";
-		this.diffText = "";
-		this.loading = false;
-	}
+	reset() { this.filePath = ""; this.diffText = ""; this.loading = false; }
 });

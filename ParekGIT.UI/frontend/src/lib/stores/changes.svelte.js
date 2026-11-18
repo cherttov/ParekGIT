@@ -12,5 +12,6 @@ export const changes = $state({
 	},
 	setAllChecked(value) { this.files.forEach((f) => (f.checked = value)); },
 	select(path) { this.selectedPath = path; },
+
 	reset() { this.files = []; this.selectedPath = ""; }
 });

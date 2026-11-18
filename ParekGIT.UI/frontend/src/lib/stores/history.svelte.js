@@ -25,11 +25,9 @@ export const history = $state({
 		return this.skip;
 	},
 	select(hash) { this.selectedHash = hash; },
+
 	reset() {
-		this.commits = [];
-		this.selectedHash = "";
-		this.fetching = false;
-		this.skip = 0;
-		this.reachedEnd = false;
+		this.commits = []; this.selectedHash = ""; this.fetching = false;
+		this.skip = 0; this.take = 50; this.reachedEnd = false;
 	}
 });

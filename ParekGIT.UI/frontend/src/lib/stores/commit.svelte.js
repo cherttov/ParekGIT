@@ -11,6 +11,8 @@ export const commit = $state({
 		this.description = d?.description ?? "";
 		this.committing = false;
 	},
+
 	clear() { this.message = ""; this.description = ""; },
-	forget(path) { delete drafts[path]; }
+	forget(path) { delete drafts[path]; },
+	reset() { this.message = ""; this.description = ""; this.committing = false; }
 });

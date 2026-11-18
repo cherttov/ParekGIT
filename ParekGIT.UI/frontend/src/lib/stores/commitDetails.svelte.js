@@ -18,6 +18,7 @@ export const commitDetails = $state({
 		this.loading = true;
 		this.loadingDiff = false;
 	},
+	
 	reset() {
 		this.hash = ""; this.message = ""; this.author = "";
 		this.files = []; this.selectedFile = "";

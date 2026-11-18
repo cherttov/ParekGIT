@@ -1,3 +1,5 @@
 export const todos = $state({
-	list: []
+	list: [],
+
+	reset() { this.list = []; }
 });

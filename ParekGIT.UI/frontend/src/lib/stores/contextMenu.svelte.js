@@ -8,6 +8,7 @@ export const contextMenu = $state({
 	open(event, items, key = null) {
 		event.preventDefault();
 		event.stopPropagation();
+		if (!items?.length) { this.close(); return; }
 		this.items = items;
 		this.x = event.clientX;
 		this.y = event.clientY;
@@ -17,5 +18,10 @@ export const contextMenu = $state({
 	close() {
 		this.visible = false;
 		this.key = null;
+	},
+
+	reset() {
+		this.visible = false; this.items = [];
+		this.x = 0; this.y = 0; this.key = null;
 	}
 })
