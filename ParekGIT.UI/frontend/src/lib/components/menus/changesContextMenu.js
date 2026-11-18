@@ -13,23 +13,23 @@ function toAbsolute(relPath) {
 // RMB on a changed file
 export function changeMenuItems(file) {
 	return [
-		{ 
-			label: "Discard changes", 
+		{
+			label: "Discard changes",
 			onclick: () => discardChange(file.path)
 		},
 		"divider",
-		{ 
-			label: "Ignore file (add to .gitignore)", 
+		{
+			label: "Ignore file (add to .gitignore)",
 			onclick: () => ignoreFile(file.path)
 		},
 		"divider",
-		{ 
-			label: "Copy absolute file path", 
+		{
+			label: "Copy absolute file path",
 			onclick: () => navigator.clipboard.writeText(toAbsolute(file.path).abs)
 		},
-		{ 
-			label: "Copy relative file path", 
-			onclick: () => navigator.clipboard.writeText(file.path) 
+		{
+			label: "Copy relative file path",
+			onclick: () => navigator.clipboard.writeText(file.path)
 		},
 		"divider",
 		{
@@ -48,7 +48,7 @@ export function changesMasterMenuItems() {
 			onclick: () => modal.open("changes-discard-all")
 		},
 		{
-			label: "Discard selected changes...", 
+			label: "Discard selected changes...",
 			disabled: changes.checkedPaths.length === 0,
 			onclick: () => modal.open("changes-discard-selected")
 		}

@@ -15,8 +15,7 @@
 	$effect(() => {
 		if (!open) return;
 		message = "";
-		stashes.list = [];
-		stashes.loaded = false;
+		stashes.reset();
 		loadStashes();
 		const t = setTimeout(() => inputEl.focus(), 100);
 		return () => clearTimeout(t);
