@@ -1,7 +1,7 @@
 export const repo = $state({
-    name: "",
-    path: "",
+	name: "",
+	path: "",
 	remoteUrl: "",
-    fetching: false,
-    get hasRemote() { return !!this.remoteUrl; }
+	fetching: false,
+	get hasRemote() { return !!this.remoteUrl; }
 });

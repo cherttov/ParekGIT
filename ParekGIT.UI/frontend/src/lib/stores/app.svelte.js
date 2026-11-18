@@ -1,7 +1,7 @@
 export const app = $state({
-    ready: false,
-    theme: "catppuccin-mocha",
-    themes: [],
-    error: null,
-    pendingFolderPick: null
+	ready: false,
+	theme: "catppuccin-mocha",
+	themes: [],
+	error: null,
+	pendingFolderPick: null
 });

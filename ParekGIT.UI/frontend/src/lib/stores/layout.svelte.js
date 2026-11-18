@@ -1,3 +1,3 @@
 export const layout = $state({
-    rightSidebarWidth: 256
+	rightSidebarWidth: 256
 });

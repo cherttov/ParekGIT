@@ -1,3 +1,3 @@
 export const view = $state({
-    tab: "changes" // "changes" || "history"
+	tab: "changes" // "changes" || "history"
 });

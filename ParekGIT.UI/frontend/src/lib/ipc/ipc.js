@@ -2,14 +2,14 @@ import { IpcActions } from "./actions.js";
 
 // Frontend -> C#
 export function sendIpcMessage(action, payload = {}) {
-    window.external.sendMessage(JSON.stringify({ Action: action, Payload: payload }));
+	window.external.sendMessage(JSON.stringify({ Action: action, Payload: payload }));
 }
 
 // C# -> Frontend
 const handlers = new Map();
 
 export function onIpc(action, handler) {
-    handlers.set(action, handler);
+	handlers.set(action, handler);
 }
 
 export function startIpc() {

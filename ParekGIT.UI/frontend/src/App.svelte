@@ -28,7 +28,7 @@
 			document.documentElement.style.setProperty(`--${key}`, value);
 		}
 	});
-	
+
 	onMount(() => {
 		sendIpcMessage(IpcActions.APP_READY);
 	});

@@ -1,3 +1,3 @@
 export const branches = $state({
-    list: []
+	list: []
 });

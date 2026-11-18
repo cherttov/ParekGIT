@@ -1,4 +1,4 @@
 export const stashes = $state({
-    list: [],
-    loaded: false
+	list: [],
+	loaded: false
 });
