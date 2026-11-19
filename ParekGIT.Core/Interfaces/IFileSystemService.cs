@@ -12,6 +12,7 @@
 		// Read
 		Task<string> ReadAllTextAsync(string path);
 		Task<string[]> ReadAllLinesAsync(string path);
+		Task<byte[]> ReadBytesAsync(string path, int maxCount);
 
 		// Write
 		Task WriteAllTextAsync(string path, string content);
