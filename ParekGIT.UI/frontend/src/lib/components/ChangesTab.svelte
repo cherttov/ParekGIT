@@ -29,7 +29,7 @@
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div class="changes-header" id="changes-header" oncontextmenu={(e) => contextMenu.open(e, changesMasterMenuItems())}>
 		<span id="changes-count-text">{count} changed file{count === 1 ? "" : "s"}</span>
-		<input type="checkbox" class="ui-checkbox" id="changes-master-checkbox" 
+		<input type="checkbox" class="ui-checkbox" id="changes-master-checkbox" disabled={count === 0}
 			checked={changes.allChecked} onchange={(e) => changes.setAllChecked(e.currentTarget.checked)} />
 	</div>
 

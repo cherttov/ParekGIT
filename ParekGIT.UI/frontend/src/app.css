@@ -84,7 +84,12 @@ select:focus {
 	transition: background-color 0.1s ease, border-color 0.1s ease;
 }
 
-.ui-checkbox:hover {
+ui-checkbox:disabled {
+	opacity: 0.4;
+	pointer-events: none;
+}
+
+.ui-checkbox:hover:not(:disabled) {
 	border-color: var(--border-input-hover);
 }
 
