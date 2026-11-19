@@ -69,80 +69,45 @@ namespace ParekGIT.Core.Git.Services
 
 		public async Task IgnoreFileAsync(string repoPath, string filePath)
 		{
-			string gitignorePath = Path.Combine(repoPath, ".gitignore");
-			string normalizedFilePath = filePath.Replace("\\", "/");
-
-			bool alreadyIgnored = false;
-			if (_fileSystem.FileExists(gitignorePath))
-			{
-				var lines = await _fileSystem.ReadAllLinesAsync(gitignorePath);
-				alreadyIgnored = lines.Any(line => line.Trim() == normalizedFilePath);
-			}
-
-			if (!alreadyIgnored)
-			{
-				string contentToAppend = _fileSystem.FileExists(gitignorePath) && await _fileSystem.GetFileSizeAsync(gitignorePath) > 0
-					? Environment.NewLine + normalizedFilePath
-					: normalizedFilePath;
-
-				await _fileSystem.AppendAllTextAsync(gitignorePath, contentToAppend + Environment.NewLine);
-			}
-
+			string pattern = filePath.Replace("\\", "/");
+			await AppendToGitignoreAsync(repoPath, pattern);
 			await _executor.ExecuteAsync(repoPath, ["rm", "--cached", "--ignore-unmatch", "--", filePath]);
 		}
 
 		public async Task IgnoreFolderAsync(string repoPath, string filePath)
 		{
-			string gitignorePath = Path.Combine(repoPath, ".gitignore");
-			string normalizedPath = filePath.Replace("\\", "/").TrimEnd('/') + "/";
-
-			// Check if already ignored
-			bool alreadyIgnored = false;
-			if (_fileSystem.FileExists(gitignorePath))
-			{
-				var lines = await _fileSystem.ReadAllLinesAsync(gitignorePath);
-				alreadyIgnored = lines.Any(line => line.Trim() == normalizedPath);
-			}
-
-			// Add path to .gitignore
-			if (!alreadyIgnored)
-			{
-				string contentToAppend = _fileSystem.FileExists(gitignorePath) && await _fileSystem.GetFileSizeAsync(gitignorePath) > 0
-					? Environment.NewLine + normalizedPath
-					: normalizedPath;
-				await _fileSystem.AppendAllTextAsync(gitignorePath, contentToAppend + Environment.NewLine);
-			}
-
+			string pattern = filePath.Replace("\\", "/").TrimEnd('/') + "/";
+			await AppendToGitignoreAsync(repoPath, pattern);
 			await _executor.ExecuteAsync(repoPath, ["rm", "--cached", "-r", "--ignore-unmatch", "--", filePath]);
 		}
 
 		public async Task IgnoreExtensionAsync(string repoPath, string filePath)
 		{
-			string gitignorePath = Path.Combine(repoPath, ".gitingore");
 			string ext = Path.GetExtension(filePath);
 			if (string.IsNullOrEmpty(ext))
 				throw new ArgumentException($"File '{filePath}' has no extension to ignore.");
-
 			string pattern = "*" + ext;
+			await AppendToGitignoreAsync(repoPath, pattern);
+			await _executor.ExecuteAsync(repoPath, ["rm", "--cached", "-r", "--ignore-unmatch", "--", $"*{ext}"]);
+		}
 
-			// Check if already ignored
-			bool alreadyIgnored = false;
+		// Private helpers
+		private async Task AppendToGitignoreAsync(string repoPath, string pattern)
+		{
+			string gitignorePath = Path.Combine(repoPath, ".gitingore");
+
+			// Check if pattern not already included in .gitignore
 			if (_fileSystem.FileExists(gitignorePath))
 			{
 				var lines = await _fileSystem.ReadAllLinesAsync(gitignorePath);
-				alreadyIgnored = lines.Any(line => line.Trim() == pattern);
+				if (lines.Any(line => line.Trim() == pattern)) return;
 			}
 
-			// Add extension to .gitignore
-			if (!alreadyIgnored)
-			{
-				string contentToAppend = _fileSystem.FileExists(gitignorePath) && await _fileSystem.GetFileSizeAsync(gitignorePath) > 0
-					? Environment.NewLine + pattern
-					: pattern;
-				await _fileSystem.AppendAllTextAsync(gitignorePath, contentToAppend + Environment.NewLine);
-			}
-
-			await _executor.ExecuteAsync(repoPath, ["rm", "--cached", "-r", "--ignore-unmatch", "--", $"*{ext}"]);
+			// Append pattern to the .gitignore file
+			string contentToAppend = _fileSystem.FileExists(gitignorePath) && await _fileSystem.GetFileSizeAsync(gitignorePath) > 0
+				? Environment.NewLine + pattern
+				: pattern;
+			await _fileSystem.AppendAllTextAsync(gitignorePath, contentToAppend + Environment.NewLine);
 		}
 	}
 }
