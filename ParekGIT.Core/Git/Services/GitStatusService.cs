@@ -31,7 +31,11 @@ namespace ParekGIT.Core.Git.Services
 				string fullPath = Path.Combine(repoPath, filePath);
 				if (_fileSystem.FileExists(fullPath))
 				{
-					// Add binary check here (use numstat)
+					// Binary check
+					byte[] header = await _fileSystem.ReadBytesAsync(fullPath, 8000);
+					if (Array.IndexOf(header, (byte)0) >= 0)
+						return string.Empty;
+
 					string rawText = await _fileSystem.ReadAllTextAsync(fullPath);
 					var lines = rawText.Split(["\r\n", "\r", "\n"], StringSplitOptions.None);
 					return string.Join("\n", lines.Select(line => "+" + line));
