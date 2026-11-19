@@ -33,6 +33,14 @@ namespace ParekGIT.Core.Services
 
 		public Task<string[]> ReadAllLinesAsync(string path) => File.ReadAllLinesAsync(path);
 
+		public async Task<byte[]> ReadBytesAsync(string path, int maxCount)
+		{
+			byte[] buffer = new byte[maxCount];
+			await using var fs = File.OpenRead(path);
+			int read = await fs.ReadAsync(buffer);
+			return buffer[..read];
+		}
+
 		// ======================== Write ========================
 		public Task WriteAllTextAsync(string path, string content) => File.WriteAllTextAsync(path, content);
 
