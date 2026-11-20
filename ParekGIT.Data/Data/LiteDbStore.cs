@@ -42,7 +42,7 @@ namespace ParekGIT.Data.Data
 			return Task.Run<GitRepository?>(() =>
 			{
 				var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
-				return (GitRepository)collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
+				return collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
 			});
 		}
 
@@ -104,7 +104,7 @@ namespace ParekGIT.Data.Data
 		public async Task<IEnumerable<TodoItem>> GetBranchTodosByPathAsync(string repoPath, string branchName)
 		{
 			var targetRepo = await GetRepositoryByPathAsync(repoPath)
-				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}"); ;
+				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
 
 			return await GetBranchTodosAsync(targetRepo.Id, branchName);
 		}
@@ -114,7 +114,7 @@ namespace ParekGIT.Data.Data
 			return Task.Run(() =>
 			{
 				var todosList = todos.ToList();
-				foreach (var todo in todos)
+				foreach (var todo in todosList)
 				{
 					todo.RepoId = repoId;
 					todo.BranchName = branchName;
