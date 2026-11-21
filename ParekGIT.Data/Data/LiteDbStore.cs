@@ -13,6 +13,8 @@ namespace ParekGIT.Data.Data
 		private const string ReposCollectionName = "repositories";
 		private const string TodosCollectionName = "todos";
 
+		private readonly SemaphoreSlim _writeLock = new(1, 1);
+
 		// Constructor
 		public LiteDbStore()
 		{
@@ -20,9 +22,21 @@ namespace ParekGIT.Data.Data
 			string rawPath = Path.Combine(appDataPath, "data.db");
 
 			_db = new LiteDatabase($"Filename={rawPath}");
+
+			var repos = _db.GetCollection<GitRepository>(ReposCollectionName);
+			repos.EnsureIndex(r => r.LastAccessed);
+			repos.EnsureIndex(r => r.AbsolutePath);
+
+			var todos = _db.GetCollection<TodoItem>(TodosCollectionName);
+			todos.EnsureIndex(t => t.RepoId);
+			todos.EnsureIndex(t => t.BranchName);
 		}
 
-		public void Dispose() => _db.Dispose();
+		public void Dispose()
+		{
+			_writeLock.Dispose();
+			_db.Dispose();
+		}
 
 		// Repos db
 		public Task<IEnumerable<GitRepository>> GetAllRepositoriesAsync()
@@ -64,18 +78,26 @@ namespace ParekGIT.Data.Data
 			});
 		}
 
-		public Task UpdateRepositoryValidStateAsync(string absolutePath, bool isValid)
+		public async Task UpdateRepositoryValidStateAsync(string absolutePath, bool isValid)
 		{
-			return Task.Run(() =>
+			await _writeLock.WaitAsync();
+			try
 			{
-				var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
-				var repo = collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
-				if (repo != null && repo.IsValid != isValid)
+				await Task.Run(() =>
 				{
-					repo.IsValid = isValid;
-					collection.Update(repo);
-				}
-			});
+					var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
+					var repo = collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
+					if (repo != null && repo.IsValid != isValid)
+					{
+						repo.IsValid = isValid;
+						collection.Update(repo);
+					}
+				});
+			}
+			finally
+			{
+				_writeLock.Release();
+			}
 		}
 
 		// Todos db
@@ -109,38 +131,46 @@ namespace ParekGIT.Data.Data
 			return await GetBranchTodosAsync(targetRepo.Id, branchName);
 		}
 
-		public Task SaveBranchTodosAsync(Guid repoId, string branchName, IEnumerable<TodoItem> todos)
+		public async Task SaveBranchTodosAsync(Guid repoId, string branchName, IEnumerable<TodoItem> todos)
 		{
-			return Task.Run(() =>
+			var todosList = todos.Select(t =>
 			{
-				var todosList = todos.ToList();
-				foreach (var todo in todosList)
-				{
-					todo.RepoId = repoId;
-					todo.BranchName = branchName;
-				}
+				t.RepoId = repoId;
+				t.BranchName = branchName;
+				return t;
+			}).ToList();
 
-				_db.BeginTrans();
-				try
+			await _writeLock.WaitAsync();
+			try
+			{
+				await Task.Run(() =>
 				{
-					var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
-					collection.DeleteMany(todo => todo.RepoId == repoId && todo.BranchName == branchName);
-					if (todosList.Count > 0) 
-						collection.InsertBulk(todosList);
-					_db.Commit();
-				}
-				catch
-				{
-					_db.Rollback();
-					throw;
-				}
-			});
+					_db.BeginTrans();
+					try
+					{
+						var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
+						collection.DeleteMany(todo => todo.RepoId == repoId && todo.BranchName == branchName);
+						if (todosList.Count > 0)
+							collection.InsertBulk(todosList);
+						_db.Commit();
+					}
+					catch
+					{
+						_db.Rollback();
+						throw;
+					}
+				});
+			}
+			finally
+			{
+				_writeLock.Release();
+			}
 		}
 
 		public async Task SaveBranchTodosByPathAsync(string repoPath, string branchName, IEnumerable<TodoItem> todos)
 		{
 			var targetRepo = await GetRepositoryByPathAsync(repoPath)
-				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}"); ;
+				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
 
 			await SaveBranchTodosAsync(targetRepo.Id, branchName, todos);
 		}
