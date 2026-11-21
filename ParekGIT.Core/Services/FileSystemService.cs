@@ -50,6 +50,9 @@ namespace ParekGIT.Core.Services
 		public async Task<IEnumerable<string>> GetFileSystemEntriesAsync(string path, string searchPattern, SearchOption searchOption) =>
 			await Task.Run(() => Directory.GetFileSystemEntries(path, searchPattern, searchOption));
 
+		public async Task<IEnumerable<string>> EnumerateFilesAsync(string dir, string pattern) =>
+			await Task.Run(() => Directory.EnumerateFiles(dir, pattern));
+
 		public async Task<long> GetFileSizeAsync(string path) =>
 			await Task.Run(() => new FileInfo(path).Length);
 

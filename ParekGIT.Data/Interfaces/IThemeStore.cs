@@ -5,6 +5,6 @@ namespace ParekGIT.Data.Interfaces
 	public interface IThemeStore
 	{
 		Task EnsureDefaultThemesAsync();
-		Task<IReadOnlyList<ThemeInfo>> LoadThemes();
+		Task<IReadOnlyList<ThemeInfo>> LoadThemesAsync();
 	}
 }

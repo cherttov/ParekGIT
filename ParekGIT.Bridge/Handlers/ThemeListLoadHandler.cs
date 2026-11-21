@@ -22,7 +22,7 @@ namespace ParekGIT.Bridge.Handlers
 
 		public async Task ExecuteAsync(JsonElement payload)
 		{
-			var themes = await _themeStore.LoadThemes();
+			var themes = await _themeStore.LoadThemesAsync();
 
 			// Response
 			var response = IpcMessage.Create("THEME_LIST_LOADED", new { themes });
