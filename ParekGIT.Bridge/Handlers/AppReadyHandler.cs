@@ -48,7 +48,7 @@ namespace ParekGIT.Bridge.Handlers
 			UserSettings settings = await _jsonStore.GetUserSettingsAsync();
 
 			// Themes
-			var themes = await _jsonStore.LoadThemes();
+			var themes = await _jsonStore.LoadThemesAsync();
 
 			// Response
 			var response = IpcMessage.Create("APP_INITIALIZED", new

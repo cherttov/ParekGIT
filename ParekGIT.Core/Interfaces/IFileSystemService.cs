@@ -20,6 +20,7 @@
 
 		// Getters
 		Task<IEnumerable<string>> GetFileSystemEntriesAsync(string path, string searchPattern, SearchOption searchOption);
+		Task<IEnumerable<string>> EnumerateFilesAsync(string dir, string pattern);
 		Task<long> GetFileSizeAsync(string path);
 
 		// Delete/RecycleBin

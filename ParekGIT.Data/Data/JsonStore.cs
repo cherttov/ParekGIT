@@ -14,7 +14,7 @@ namespace ParekGIT.Data.Data
 		private readonly string _settingsPath;
 		private readonly string _themesDir;
 
-		private readonly SemaphoreSlim _settingsLock = new(1, 1);
+		private readonly SemaphoreSlim _fileAccessLock = new(1, 1);
 		private readonly JsonSerializerOptions _options = new() 
 		{ 
 			PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -32,16 +32,28 @@ namespace ParekGIT.Data.Data
 			_themesDir = AppDataPaths.GetThemesDirectory();
 		}
 
+		public void Dispose() => _fileAccessLock.Dispose();
+
 		// Settings
 		public async Task EnsureSettingsFileAsync()
 		{
-			if (!_fileSystem.FileExists(_settingsPath))
-				await SaveUserSettingsAsync(new UserSettings());
+			await _fileAccessLock.WaitAsync();
+			try
+			{
+				if (_fileSystem.FileExists(_settingsPath))
+					return;
+
+				await WriteUserSettingsInternalAsync(new UserSettings());
+			}
+			finally
+			{
+				_fileAccessLock.Release();
+			}
 		}
 
 		public async Task<UserSettings> GetUserSettingsAsync()
 		{
-			await _settingsLock.WaitAsync();
+			await _fileAccessLock.WaitAsync();
 			try
 			{
 				if (!_fileSystem.FileExists(_settingsPath))
@@ -51,86 +63,102 @@ namespace ParekGIT.Data.Data
 			}
 			finally
 			{
-				_settingsLock.Release();
+				_fileAccessLock.Release();
 			}
 		}
 
 		public async Task SaveUserSettingsAsync(UserSettings settings)
 		{
-			await _settingsLock.WaitAsync();
+			await _fileAccessLock.WaitAsync();
 			try
 			{
-				if (!_fileSystem.DirectoryExists(_settingsDir))
-					await _fileSystem.CreateDirectory(_settingsDir);
-
-				string json = JsonSerializer.Serialize<UserSettings>(settings, _options);
-				await _fileSystem.WriteAllTextAsync(_settingsPath, json);
+				await WriteUserSettingsInternalAsync(settings);
 			}
 			finally
 			{
-				_settingsLock.Release();
+				_fileAccessLock.Release();
 			}
 		}
 
 		// Themes
 		public async Task EnsureDefaultThemesAsync()
 		{
-			if (!_fileSystem.DirectoryExists(_themesDir))
-				await _fileSystem.CreateDirectory(_themesDir);
-
-			var assembly = typeof(JsonStore).Assembly;
-			const string prefix = "DefaultThemes/";
-
-			foreach (string resourceName in assembly.GetManifestResourceNames().Where(n => n.StartsWith(prefix)))
+			await _fileAccessLock.WaitAsync();
+			try
 			{
-				string destination = Path.Combine(_themesDir, resourceName.Substring(prefix.Length));
-				if (_fileSystem.FileExists(destination)) continue;
+				if (!_fileSystem.DirectoryExists(_themesDir))
+					await _fileSystem.CreateDirectory(_themesDir);
 
-				using var stream = assembly.GetManifestResourceStream(resourceName)!;
-				using var reader = new StreamReader(stream);
-				await _fileSystem.WriteAllTextAsync(destination, await reader.ReadToEndAsync());
+				var assembly = typeof(JsonStore).Assembly;
+				const string prefix = "DefaultThemes/";
+
+				foreach (string resourceName in assembly.GetManifestResourceNames().Where(n => n.StartsWith(prefix, StringComparison.Ordinal)))
+				{
+					string destination = Path.Combine(_themesDir, resourceName[prefix.Length..]);
+					if (_fileSystem.FileExists(destination))
+						continue;
+
+					using var stream = assembly.GetManifestResourceStream(resourceName)!;
+					using var reader = new StreamReader(stream);
+					string content = await reader.ReadToEndAsync();
+					await _fileSystem.WriteAllTextAsync(destination, content);
+				}
+			}
+			finally
+			{
+				_fileAccessLock.Release();
 			}
 		}
 
-		public async Task<IReadOnlyList<ThemeInfo>> LoadThemes()
+		public async Task<IReadOnlyList<ThemeInfo>> LoadThemesAsync()
 		{
-			var themes = new List<ThemeInfo>();
-			if (!_fileSystem.DirectoryExists(_themesDir)) return themes;
-				
-			foreach (string file in Directory.EnumerateFiles(_themesDir, "*.json").OrderBy(f => f))
+			await _fileAccessLock.WaitAsync();
+			try
 			{
-				string id = Path.GetFileNameWithoutExtension(file).ToLower();
-				if (!IsValidThemeToken(id)) continue;
+				var themes = new List<ThemeInfo>();
+				if (!_fileSystem.DirectoryExists(_themesDir))
+					return themes;
 
-				try
+				var files = await _fileSystem.EnumerateFilesAsync(_themesDir, "*.json");
+				foreach (string file in files.OrderBy(f => f))
 				{
-					string json = await _fileSystem.ReadAllTextAsync(file);
-					var theme = JsonSerializer.Deserialize<ThemeInfo>(json, _options);
+					string id = Path.GetFileNameWithoutExtension(file).ToLower();
+					if (!IsValidThemeToken(id)) continue;
 
-					if (theme?.Colors == null) continue;
-					theme.Id = id;
+					try
+					{
+						string json = await _fileSystem.ReadAllTextAsync(file);
+						var theme = JsonSerializer.Deserialize<ThemeInfo>(json, _options);
 
-					if (string.IsNullOrWhiteSpace(theme.Name))
-						theme.Name = id;
+						if (theme?.Colors == null) continue;
+						theme.Id = id;
 
-					var badKeys = theme.Colors
-						.Where(kv => !IsValidThemeToken(kv.Key) || !IsSafeThemeValue(kv.Value))
-						.Select(kv => kv.Key)
-						.ToList();
+						if (string.IsNullOrWhiteSpace(theme.Name))
+							theme.Name = id;
 
-					foreach (var key in badKeys)
-						theme.Colors.Remove(key);
+						var badKeys = theme.Colors
+							.Where(kv => !IsValidThemeToken(kv.Key) || !IsSafeThemeValue(kv.Value))
+							.Select(kv => kv.Key)
+							.ToList();
 
-					if (theme.Colors.Count > 0)
-						themes.Add(theme);
+						foreach (var key in badKeys)
+							theme.Colors.Remove(key);
+
+						if (theme.Colors.Count > 0)
+							themes.Add(theme);
+					}
+					catch (Exception ex) when (ex is JsonException or IOException)
+					{
+						// Unreadable/malformed files -> skip
+					}
 				}
-				catch (Exception ex) when (ex is JsonException or IOException)
-				{
-					// Unreadable/malformed files -> skip
-				}
+
+				return themes;
 			}
-
-			return themes;
+			finally
+			{
+				_fileAccessLock.Release();
+			}
 		}
 
 		// Private helpers
@@ -139,5 +167,13 @@ namespace ParekGIT.Data.Data
 
 		private static bool IsSafeThemeValue(string? value) =>
 			!string.IsNullOrWhiteSpace(value) && value.Length <= 100 && value.IndexOfAny([';', '{', '}', '<', '>', '\\' ]) < 0;
+
+		private async Task WriteUserSettingsInternalAsync(UserSettings settings)
+		{
+			if (!_fileSystem.DirectoryExists(_settingsDir))
+				await _fileSystem.CreateDirectory(_settingsDir);
+			string json = JsonSerializer.Serialize<UserSettings>(settings, _options);
+			await _fileSystem.WriteAllTextAsync(_settingsPath, json);
+		}
 	}
 }
