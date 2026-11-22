@@ -19,6 +19,8 @@ Git GUI Client that's focused on simplicity
 ## Credits ##
 ### Framework & Core ###
 - [PhotinoX](https://github.com/ivanvoyager/PhotinoX) - Lightweight .NET wrapper for building cross-platform desktop apps with native OS WebViews.
+- [Svelte5](https://github.com/sveltejs/svelte) - Compiler-first Javascript framework,
+- [Vite](https://github.com/vitejs/vite) - Frontend build tool and development server.
 - [.NET 10](https://dotnet.microsoft.com) - Cross-platform runtime and framework for C#.
 - [CliWrap](https://github.com/Tyrrrz/CliWrap) - Library for interacting with command-line interfaces.
 - [LiteDB](https://github.com/litedb-org/litedb) - NoSQL single document database.
