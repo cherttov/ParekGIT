@@ -4,7 +4,6 @@ using Photino.NET;
 using System.Drawing;
 using ParekGIT.Bridge.Ipc;
 using ParekGIT.Bridge.Handlers;
-using ParekGIT.Core.Git;
 using ParekGIT.Core.Services;
 using ParekGIT.Bridge.Services;
 using ParekGIT.Bridge.Interfaces;
@@ -61,7 +60,7 @@ namespace ParekGIT.UI
 				services.AddSingleton<IMessageHandler, AppReadyHandler>();
 
 				// Repo
-				services.AddSingleton<IMessageHandler, RepoSelectedHandler>();
+				services.AddSingleton<IMessageHandler, RepoCheckoutHandler>();
 				services.AddSingleton<IMessageHandler, RepoCloneHandler>();
 				services.AddSingleton<IMessageHandler, RepoAddHandler>();
 				services.AddSingleton<IMessageHandler, RepoCreateHandler>();
@@ -76,7 +75,7 @@ namespace ParekGIT.UI
 				services.AddSingleton<IMessageHandler, RepoWatcherHandler>();
 
 				// Branch
-				services.AddSingleton<IMessageHandler, BranchSelectedHandler>();
+				services.AddSingleton<IMessageHandler, BranchCheckoutHandler>();
 				services.AddSingleton<IMessageHandler, BranchListLoadHandler>();
 				services.AddSingleton<IMessageHandler, BranchCreateHandler>();
 				services.AddSingleton<IMessageHandler, BranchCreateFromCommitHandler>();
