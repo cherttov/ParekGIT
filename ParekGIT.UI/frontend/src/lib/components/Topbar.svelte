@@ -7,9 +7,17 @@
 	import { contextMenu } from "../stores/contextMenu.svelte.js";
 	import { topbarRepoMenuItems } from "./menus/repoContextMenu.js";
 	import { topbarBranchMenuItems } from "./menus/branchContextMenu.js";
+	import { modal } from "../stores/modal.svelte.js";
 
 	let repoOpen = $state(false);
 	let branchOpen = $state(false);
+
+	$effect(() => {
+		if (modal.active) { 
+			repoOpen = false;
+			branchOpen = false;
+		}
+	});
 
 	function toggleRepo(e) {
 		e.stopPropagation();
