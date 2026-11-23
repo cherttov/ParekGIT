@@ -106,6 +106,7 @@ export function registerHandlers() {
 	});
 	onIpc(IpcActions.REPO_PUBLISHED, () => {
 		branch.hasUpstream = true;
+		sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
 		refreshRepoState();
 	});
 	onIpc(IpcActions.REPO_STATUS_LOADED, (p) => {
