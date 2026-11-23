@@ -14,8 +14,8 @@ function toAbsolute(relPath) {
 export function changeMenuItems(file) {
 	return [
 		{
-			label: "Discard changes",
-			onclick: () => discardChange(file.path)
+			label: "Discard change...",
+			onclick: () => modal.open("change-discard", { path: file.path })
 		},
 		"divider",
 		{

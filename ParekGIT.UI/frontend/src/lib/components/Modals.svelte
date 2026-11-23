@@ -10,6 +10,7 @@
 	import RepoCloneModal from "./modals/RepoCloneModal.svelte";
 	import RepoCreateModal from "./modals/RepoCreateModal.svelte";
 	import RepoRemoveModal from "./modals/RepoRemoveModal.svelte";
+	import ChangeDiscardModal from "./modals/ChangeDiscardModal.svelte";
 	import ChangeDiscardSelectedModal from "./modals/ChangeDiscardSelectedModal.svelte";
 	import ChangesDiscardAllModal from "./modals/ChangesDiscardAllModal.svelte";
 	import TodoModal from "./modals/TodoModal.svelte";
@@ -31,7 +32,7 @@
 		"repo-create": RepoCreateModal,
 		"repo-remove": RepoRemoveModal,
 		//"repo-missing": RepoMissingModal,
-		//"change-discard": ChangeDiscardModal,
+		"change-discard": ChangeDiscardModal,
 		"changes-discard-selected": ChangeDiscardSelectedModal,
 		"changes-discard-all": ChangesDiscardAllModal,
 		"todo": TodoModal,
