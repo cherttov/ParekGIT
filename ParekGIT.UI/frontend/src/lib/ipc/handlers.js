@@ -8,7 +8,7 @@ import { branches } from "../stores/branches.svelte.js";
 import {
 	checkoutRepo, loadCommitDetails, loadStashes, refreshRepoState,
 	resolveFolderPick, saveSettings, loadStatus, loadCommitFileDiff,
-	loadTodos
+	loadTodos, fetchRepo
 } from "./commands.js";
 import { config } from "../stores/config.svelte.js";
 import { modal } from "../stores/modal.svelte.js";
@@ -99,10 +99,10 @@ export function registerHandlers() {
 		refreshRepoState();
 	});
 	onIpc(IpcActions.REPO_PULLED, () => {
-		refreshRepoState();
+		fetchRepo();
 	});
 	onIpc(IpcActions.REPO_PUSHED, () => {
-		refreshRepoState();
+		fetchRepo();
 	});
 	onIpc(IpcActions.BRANCH_PUBLISHED, () => {
 		branch.hasUpstream = true;
