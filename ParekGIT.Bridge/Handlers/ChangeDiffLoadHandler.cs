@@ -7,15 +7,15 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class FileDiffLoadHandler : IMessageHandler
+	public class ChangeDiffLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitStatusService _statusService;
 
-		public string Action => "FILE_DIFF_LOAD";
+		public string Action => "CHANGE_DIFF_LOAD";
 
 		// Constructor
-		public FileDiffLoadHandler(PhotinoWindow window, IGitStatusService statusService)
+		public ChangeDiffLoadHandler(PhotinoWindow window, IGitStatusService statusService)
 		{
 			_window = window;
 			_statusService = statusService;
@@ -32,7 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 			string diffText = await _statusService.GetFileDiffAsync(repoPath, filePath);
 
 			// Response
-			var response = IpcMessage.Create("FILE_DIFF_LOADED", new { diffText });
+			var response = IpcMessage.Create("CHANGE_DIFF_LOADED", new { diffText });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

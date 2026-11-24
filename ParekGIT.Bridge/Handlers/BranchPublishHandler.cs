@@ -7,15 +7,15 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class RepoPublishHandler : IMessageHandler
+	public class BranchPublishHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitSyncService _syncService;
 
-		public string Action => "REPO_PUBLISH";
+		public string Action => "BRANCH_PUBLISH";
 		
 		// Constructor
-		public RepoPublishHandler(PhotinoWindow window, IGitSyncService syncService)
+		public BranchPublishHandler(PhotinoWindow window, IGitSyncService syncService)
 		{
 			_window = window;
 			_syncService = syncService;
@@ -30,7 +30,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _syncService.PushAsync(repoPath);
 
 			// Response
-			var response = IpcMessage.Create("REPO_PUBLISHED", new { success = true });
+			var response = IpcMessage.Create("BRANCH_PUBLISHED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

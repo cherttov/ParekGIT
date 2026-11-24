@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class RepoCommitHandler : IMessageHandler
+	public class ChangesCommitHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IRepositoryStore _dbStore;
@@ -18,10 +18,10 @@ namespace ParekGIT.Bridge.Handlers
 		private readonly IGitStatusService _statusService;
 		private readonly IRemoteSyncNotifier _syncNotifier;
 
-		public string Action => "REPO_COMMIT";
+		public string Action => "CHANGES_COMMIT";
 
 		// Constructor
-		public RepoCommitHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitWorkingTreeService workingTreeService,
+		public ChangesCommitHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitWorkingTreeService workingTreeService,
 			IGitSyncService syncService, IGitStatusService statusService, IRemoteSyncNotifier syncNotifier)
 		{
 			_window = window;
@@ -66,7 +66,7 @@ namespace ParekGIT.Bridge.Handlers
 			}
 
 			// Response
-			var response = IpcMessage.Create("REPO_COMMITTED", new { success = true });
+			var response = IpcMessage.Create("CHANGES_COMMITTED", new { success = true });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}

@@ -60,17 +60,15 @@ namespace ParekGIT.UI
 				services.AddSingleton<IMessageHandler, AppReadyHandler>();
 
 				// Repo
-				services.AddSingleton<IMessageHandler, RepoCheckoutHandler>();
+				services.AddSingleton<IMessageHandler, RepoOpenHandler>();
 				services.AddSingleton<IMessageHandler, RepoCloneHandler>();
 				services.AddSingleton<IMessageHandler, RepoAddHandler>();
 				services.AddSingleton<IMessageHandler, RepoCreateHandler>();
 				services.AddSingleton<IMessageHandler, RepoRemoveHandler>();
 				services.AddSingleton<IMessageHandler, RepoPullHandler>();
 				services.AddSingleton<IMessageHandler, RepoPushHandler>();
-				services.AddSingleton<IMessageHandler, RepoPublishHandler>();
 				services.AddSingleton<IMessageHandler, RepoStatusLoadHandler>();
 				services.AddSingleton<IMessageHandler, RepoTerminalHandler>();
-				services.AddSingleton<IMessageHandler, RepoCommitHandler>();
 				services.AddSingleton<IMessageHandler, RepoFetchHandler>();
 				services.AddSingleton<IMessageHandler, RepoWatcherHandler>();
 
@@ -84,18 +82,20 @@ namespace ParekGIT.UI
 				services.AddSingleton<IMessageHandler, BranchForceDeleteHandler>();
 				services.AddSingleton<IMessageHandler, BranchHistoryLoadHandler>();
 				services.AddSingleton<IMessageHandler, BranchMergeHandler>();
+				services.AddSingleton<IMessageHandler, BranchPublishHandler>();
 
-				// Commit/File/History
-				services.AddSingleton<IMessageHandler, FileDiffLoadHandler>();
+				// Commit
 				services.AddSingleton<IMessageHandler, CommitFileDiffLoadHandler>();
 				services.AddSingleton<IMessageHandler, CommitCheckoutHandler>();
 				services.AddSingleton<IMessageHandler, CommitRevertHandler>();
 				services.AddSingleton<IMessageHandler, CommitDetailsLoadHandler>();
 
 				// Change
+				services.AddSingleton<IMessageHandler, ChangeDiffLoadHandler>();
 				services.AddSingleton<IMessageHandler, ChangeAllDiscardHandler>();
 				services.AddSingleton<IMessageHandler, ChangeDiscardHandler>();
 				services.AddSingleton<IMessageHandler, ChangeIgnoreHandler>();
+				services.AddSingleton<IMessageHandler, ChangesCommitHandler>();
 
 				// Explorer
 				services.AddSingleton<IMessageHandler, ExplorerPickFolderHandler>();

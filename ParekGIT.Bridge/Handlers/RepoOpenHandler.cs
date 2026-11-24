@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class RepoCheckoutHandler : IMessageHandler
+	public class RepoOpenHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly LiteDbStore _dbStore;
@@ -19,10 +19,10 @@ namespace ParekGIT.Bridge.Handlers
 		private readonly IRepoWatcher _repoWatcher;
 		private readonly IFileSystemService _fileSystem;
 
-		public string Action => "REPO_CHECKOUT";
+		public string Action => "REPO_OPEN";
 
 		// Constructor
-		public RepoCheckoutHandler(PhotinoWindow window, LiteDbStore dbStore, JsonStore jsonStore, IGitBranchService branchService, IRepoWatcher repoWatcher, IFileSystemService fileSystem)
+		public RepoOpenHandler(PhotinoWindow window, LiteDbStore dbStore, JsonStore jsonStore, IGitBranchService branchService, IRepoWatcher repoWatcher, IFileSystemService fileSystem)
 		{
 			_window = window;
 			_dbStore = dbStore;
@@ -65,7 +65,7 @@ namespace ParekGIT.Bridge.Handlers
 			}
 
 			// Response
-			var response = IpcMessage.Create("REPO_CHECKED_OUT", new
+			var response = IpcMessage.Create("REPO_OPENED", new
 			{
 				repo,
 				branch,

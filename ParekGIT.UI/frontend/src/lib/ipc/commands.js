@@ -10,7 +10,7 @@ import { history } from "../stores/history.svelte";
 
 export function checkoutRepo(r) {
 	if (!r.isValid || repo.path === r.absolutePath) return;
-	sendIpcMessage(IpcActions.REPO_CHECKOUT, { repoPath: r.absolutePath });
+	sendIpcMessage(IpcActions.REPO_OPEN, { repoPath: r.absolutePath });
 }
 
 export function addRepo(repoPath) {
@@ -105,7 +105,7 @@ export function fetchRepo() {
 
 export function publishBranch() {
 	if (!repo.path) return;
-	sendIpcMessage(IpcActions.REPO_PUBLISH, { repoPath: repo.path, branchName: branch.name });
+	sendIpcMessage(IpcActions.BRANCH_PUBLISH, { repoPath: repo.path, branchName: branch.name });
 }
 
 export function pullRepo() {
@@ -214,7 +214,7 @@ export function commitChanges() {
 	if (!repo.path || !message || files.length === 0 || commit.committing) return;
 
 	commit.committing = true;
-	sendIpcMessage(IpcActions.REPO_COMMIT, {
+	sendIpcMessage(IpcActions.CHANGES_COMMIT, {
 		repoPath: repo.path,
 		message,
 		description: commit.description.trim(),
@@ -246,5 +246,5 @@ export function loadCommitFileDiff(commitHash, filePath) {
 
 export function loadFileDiff(filePath) {
 	if (!repo.path) return;
-	sendIpcMessage(IpcActions.FILE_DIFF_LOAD, { repoPath: repo.path, filePath });
+	sendIpcMessage(IpcActions.CHANGE_DIFF_LOAD, { repoPath: repo.path, filePath });
 }

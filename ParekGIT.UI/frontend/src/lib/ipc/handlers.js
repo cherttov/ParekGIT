@@ -41,7 +41,7 @@ export function registerHandlers() {
 	});
 
 	// Repo
-	onIpc(IpcActions.REPO_CHECKED_OUT, (p) => {
+	onIpc(IpcActions.REPO_OPENED, (p) => {
 		commit.switchRepo(repo.path, p.repo.absolutePath);
 		repo.name = p.repo.name;
 		repo.path = p.repo.absolutePath;
@@ -89,7 +89,7 @@ export function registerHandlers() {
 			config.resetLocal();
 		}
 	});
-	onIpc(IpcActions.REPO_COMMITTED, () => {
+	onIpc(IpcActions.CHANGES_COMMITTED, () => {
 		commit.committing = false;
 		commit.clear();
 		refreshRepoState();
@@ -104,7 +104,7 @@ export function registerHandlers() {
 	onIpc(IpcActions.REPO_PUSHED, () => {
 		refreshRepoState();
 	});
-	onIpc(IpcActions.REPO_PUBLISHED, () => {
+	onIpc(IpcActions.BRANCH_PUBLISHED, () => {
 		branch.hasUpstream = true;
 		sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
 		refreshRepoState();
@@ -187,7 +187,7 @@ export function registerHandlers() {
 	onIpc(IpcActions.COMMIT_REVERTED, () => {
 		refreshRepoState();
 	});
-	onIpc(IpcActions.FILE_DIFF_LOADED, (p) => {
+	onIpc(IpcActions.CHANGE_DIFF_LOADED, (p) => {
 		diff.diffText = p.diffText ?? "";
 		diff.loading = false;
 	});
