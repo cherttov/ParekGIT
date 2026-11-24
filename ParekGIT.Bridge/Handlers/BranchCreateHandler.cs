@@ -33,11 +33,15 @@ namespace ParekGIT.Bridge.Handlers
 			// Create new branch
 			await _branchService.CreateBranchAsync(repoPath, branchName);
 
+			// Checkout new branch
+			await _branchService.CheckoutBranchAsync(repoPath, branchName, isRemote: false);
+
 			// Update displayed list
 			IEnumerable<GitBranch> branches = await _branchService.GetBranchesAsync(repoPath);
+			GitBranch branch = branches.FirstOrDefault(b => b.IsCurrent == true)!;
 
 			// Response
-			var response = IpcMessage.Create("BRANCH_LIST_LOADED", new { branches }); // maybe make a distinct "BRANCH_CREATED" action
+			var response = IpcMessage.Create("BRANCH_CHECKED_OUT", new { branch, branches });
 			_window.SendWebMessage(JsonSerializer.Serialize(response));
 		}
 	}
