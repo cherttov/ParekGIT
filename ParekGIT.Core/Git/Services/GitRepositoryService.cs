@@ -4,7 +4,7 @@ using ParekGIT.Core.Models;
 
 namespace ParekGIT.Core.Git.Services
 {
-	internal sealed class GitRepoService : IGitRepoService
+	internal sealed class GitRepositoryService : IGitRepositoryService
 	{
 		private readonly GitCommandExecutor _executor;
 		private readonly ITemplateService _templateService;
@@ -12,7 +12,7 @@ namespace ParekGIT.Core.Git.Services
 		private readonly IGitConfigService _config;
 
 		// Constructor
-		public GitRepoService(GitCommandExecutor executor, ITemplateService templateService, IFileSystemService fileSystem, IGitConfigService config)
+		public GitRepositoryService(GitCommandExecutor executor, ITemplateService templateService, IFileSystemService fileSystem, IGitConfigService config)
 		{
 			_executor = executor;
 			_templateService = templateService;

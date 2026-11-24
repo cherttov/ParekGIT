@@ -35,7 +35,7 @@ namespace ParekGIT.UI
 
 				services.AddSingleton<ITemplateService, TemplateService>();
 				services.AddGitServices();
-				services.AddSingleton<IRepoWatcher, RepoWatcher>();
+				services.AddSingleton<IRepositoryWatcher, RepositoryWatcher>();
 				services.AddSingleton<IRemoteSyncNotifier, RemoteSyncNotifier>();
 				services.AddSingleton<IpcRouter>();
 

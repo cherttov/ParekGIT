@@ -13,12 +13,12 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IRepositoryStore _dbStore;
-		private readonly IGitRepoService _repoService;
+		private readonly IGitRepositoryService _repoService;
 
 		public string Action => "REPO_CREATE";
 
 		// Constructor
-		public RepoCreateHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRepoService repoService)
+		public RepoCreateHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRepositoryService repoService)
 		{
 			_window = window;
 			_dbStore = dbStore;

@@ -16,13 +16,13 @@ namespace ParekGIT.Bridge.Handlers
 		private readonly LiteDbStore _dbStore;
 		private readonly JsonStore _jsonStore;
 		private readonly IGitBranchService _branchService;
-		private readonly IRepoWatcher _repoWatcher;
+		private readonly IRepositoryWatcher _repoWatcher;
 		private readonly IFileSystemService _fileSystem;
 
 		public string Action => "REPO_OPEN";
 
 		// Constructor
-		public RepoOpenHandler(PhotinoWindow window, LiteDbStore dbStore, JsonStore jsonStore, IGitBranchService branchService, IRepoWatcher repoWatcher, IFileSystemService fileSystem)
+		public RepoOpenHandler(PhotinoWindow window, LiteDbStore dbStore, JsonStore jsonStore, IGitBranchService branchService, IRepositoryWatcher repoWatcher, IFileSystemService fileSystem)
 		{
 			_window = window;
 			_dbStore = dbStore;

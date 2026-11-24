@@ -9,12 +9,12 @@ namespace ParekGIT.Bridge.Handlers
 	public class RepoWatcherHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IRepoWatcher _repoWatcher;
+		private readonly IRepositoryWatcher _repoWatcher;
 
 		public string Action => "INTERNAL_WATCHER_EVENTS";
 
 		// Constructor
-		public RepoWatcherHandler(PhotinoWindow window, IRepoWatcher repoWatcher)
+		public RepoWatcherHandler(PhotinoWindow window, IRepositoryWatcher repoWatcher)
 		{
 			_window = window;
 			_repoWatcher = repoWatcher;

@@ -17,7 +17,7 @@ namespace ParekGIT.Core
 			services.AddSingleton<IGitSyncService, GitSyncService>();
 			services.AddSingleton<IGitConfigService, GitConfigService>();
 			services.AddSingleton<IGitStashService, GitStashService>();
-			services.AddSingleton<IGitRepoService, GitRepoService>();
+			services.AddSingleton<IGitRepositoryService, GitRepositoryService>();
 			return services;
 		}
 	}

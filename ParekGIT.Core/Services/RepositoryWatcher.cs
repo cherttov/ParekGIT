@@ -3,7 +3,7 @@ using Timer = System.Timers.Timer;
 
 namespace ParekGIT.Core.Services
 {
-	public class RepoWatcher : IRepoWatcher
+	public class RepositoryWatcher : IRepositoryWatcher
 	{
 		private readonly ILogger _logger;
 		private FileSystemWatcher? _watcher;
@@ -13,7 +13,7 @@ namespace ParekGIT.Core.Services
 		public event EventHandler<string>? OnFilesChanged;
 
 		// Constructor
-		public RepoWatcher(ILogger logger)
+		public RepositoryWatcher(ILogger logger)
 		{
 			_logger = logger;
 			_debounceTimer = new Timer(500);
