@@ -35,22 +35,22 @@
 	<div class="modal-body-row">
 		<p class="modal-text">
 			Are you sure you want to merge
-			<span class="highlight-name merge-branch-inline" id="merge-modal-source-branch">{source || "{ none }"}</span>
+			<span class="highlight-name merge-branch-inline">{source || "{ none }"}</span>
 			into 
-			<span class="highlight-name merge-branch-inline" id="merge-modal-target-branch">{target}</span>
+			<span class="highlight-name merge-branch-inline">{target}</span>
 		</p>
 	</div>
 
 	<div class="modal-body-row">
 		<div class="merge-branch-selector">
-			<select class="modal-input modal-select" id="merge-modal-select-source" bind:value={source}>
+			<select class="modal-input modal-select" bind:value={source}>
 				<option value="" disabled selected>Select source...</option>
 				{#each validBranches as b (b.name)}
 					<option value={b.name}>{b.name}</option>
 				{/each}
 			</select>
 			<div class="merge-arrow-icon"></div>
-			<select class="modal-input modal-select" id="merge-modal-select-target" bind:value={target}>
+			<select class="modal-input modal-select" bind:value={target}>
 				{#each validBranches as b (b.name)}
 					<option value={b.name}>{b.name}</option>
 				{/each}

@@ -40,10 +40,10 @@
 	<div class="modal-body-row">
 		<p class="modal-text">Logs</p>
 		<div class="button-button-container">
-			<button class="browse-btn view-logs" id="settings-logs-view" onclick={() => showInExplorer("%APP_DATA%")}>
+			<button class="browse-btn view-logs" onclick={() => showInExplorer("%APP_DATA%")}>
 				View logs
 			</button>
-			<button class="browse-btn clear-logs" id="settings-logs-clear" onclick={clearLogs}>
+			<button class="browse-btn clear-logs" onclick={clearLogs}>
 				Clear logs
 			</button>
 		</div>

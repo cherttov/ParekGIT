@@ -54,12 +54,12 @@
 >
 	<div class="modal-list-wrapper">
 		<div class="stash-new-row">
-			<input type="text" class="modal-input" id="todo-modal-input-task" placeholder="Add new task (press enter or +)"
+			<input type="text" class="modal-input" placeholder="Add new task (press enter or +)"
 				bind:value={task} bind:this={inputEl} onkeydown={handleKeydown} />
-			<button class="stash-action-btn stash-save-btn" id="todo-modal-add-btn" disabled={!canAdd} onclick={addTask}>+</button>
+			<button class="stash-action-btn stash-save-btn" disabled={!canAdd} onclick={addTask}>+</button>
 		</div>
 
-		<div class="modal-list-rows" id="todo-rows-container" bind:this={listEl}>
+		<div class="modal-list-rows" bind:this={listEl}>
 			{#if draft.length === 0}
 				<div class="stash-empty">No todos in this repository</div>
 			{:else}

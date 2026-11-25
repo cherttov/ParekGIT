@@ -22,7 +22,7 @@
 >
 	<div class="modal-body-row">
 		<p class="modal-text">Are you sure you want to remove this repository from ParekGIT?</p>
-		<span class="highlight-name" id="remove-modal-repo-name">{data.repoName}</span>
+		<span class="highlight-name">{data.repoName}</span>
 	</div>
 
 	{#if !data.isInvalid}

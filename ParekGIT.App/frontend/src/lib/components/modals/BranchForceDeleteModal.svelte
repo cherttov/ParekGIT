@@ -27,6 +27,6 @@
 
 	<div class="modal-body-row">
 		<p class="modal-text">Are you sure you want to permanently delete it?</p>
-		<span class="highlight-name" id="delete-unmerged-modal-branch-name">{data.branchName}</span>
+		<span class="highlight-name">{data.branchName}</span>
 	</div>
 </Modal>

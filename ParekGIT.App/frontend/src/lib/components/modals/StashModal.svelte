@@ -47,12 +47,12 @@
 >
 	<div class="modal-list-wrapper">
 		<div class="stash-new-row">
-			<input type="text" class="modal-input" id="stash-modal-input-message" placeholder="Stash message (optional)"
+			<input type="text" class="modal-input" placeholder="Stash message (optional)"
 				bind:value={message} bind:this={inputEl} onkeydown={handleKeydown} />
-			<button class="stash-action-btn stash-save-btn" id="stash-modal-save-btn" disabled={!canSave} onclick={save}>Stash</button>
+			<button class="stash-action-btn stash-save-btn" disabled={!canSave} onclick={save}>Stash</button>
 		</div>
 
-		<div class="modal-list-rows" id="stash-rows-container" bind:this={listEl}>
+		<div class="modal-list-rows" bind:this={listEl}>
 			{#if stashes.loaded && stashes.list.length === 0}
 				<div class="stash-empty">No stashes in this repository</div>
 			{:else}

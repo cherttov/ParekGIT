@@ -115,12 +115,11 @@
 			</select>
 
 			<div class="license-edit-anchor" bind:this={anchorEl}>
-				<button class="browse-btn disabled" class:disabled={noLicense} class:active={licenseOpen} 
-					id="license-edit-btn" disabled={noLicense} onclick={toggleLicense}>
+				<button class="browse-btn disabled" class:disabled={noLicense} class:active={licenseOpen} disabled={noLicense} onclick={toggleLicense}>
 					Edit
 				</button>
 
-				<div class="license-edit-panel" id="license-edit-panel" class:open={licenseOpen}>
+				<div class="license-edit-panel" class:open={licenseOpen}>
 					<div class="license-field-row">
 						<label for="license-field-year">Year</label>
 						<input type="text" class="modal-input" id="license-field-year" placeholder={new Date().getFullYear()} bind:value={form.year} />

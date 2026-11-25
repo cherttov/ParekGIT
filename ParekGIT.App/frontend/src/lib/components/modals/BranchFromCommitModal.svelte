@@ -37,7 +37,7 @@
 >
 	<div class="modal-body-row">
 			<p class="modal-text">Create a branch from commit:</p>
-			<span class="highlight-name" id="branch-history-modal-commit-name">{hash.substring(0, 7)}</span>
+			<span class="highlight-name">{hash.substring(0, 7)}</span>
 	</div>
 
 	<div class="modal-body-row">

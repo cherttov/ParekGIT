@@ -34,69 +34,56 @@
 	}
 </script>
 
-<div class="left-sidebar" id="left-sidebar">
+<div class="left-sidebar">
 	<!-- Merge Btn -->
-	<button class="left-sidebar-btn btn-merge" 
+	<button class="left-sidebar-btn btn-merge" title="Merge branch"
 			disabled={!hasRepo || !branch.name || branch.isDetached}
-			title="Merge branch"
 			onclick={() => modal.open("branch-merge", { targetBranch: branch.name })}>
 		<div class="btn-icon icon-merge"></div>
 	</button>
 
 	<!-- Todo Btn -->
-	<button class="left-sidebar-btn btn-todo" 
-			disabled={!hasRepo}
-			title="Todo list"
-			onclick={() => modal.open("todo")}>
+	<button class="left-sidebar-btn btn-todo" title="Todo list"
+			disabled={!hasRepo} onclick={() => modal.open("todo")}>
 		<div class="btn-icon icon-todo"></div>
 	</button>
 
 	<!-- Config Btn -->
-	<button class="left-sidebar-btn btn-config" 
-			disabled={!hasRepo}
-			title="Repository config (name/email)"
-			onclick={() => modal.open("config")}>
+	<button class="left-sidebar-btn btn-config" title="Repository config (name/email)"
+			disabled={!hasRepo} onclick={() => modal.open("config")}>
 		<div class="btn-icon icon-config"></div>
 	</button>
 
 	<!-- Push/Pull/Publish Btn -->
-	<button class="left-sidebar-btn btn-pushpullpublish" 
+	<button class="left-sidebar-btn btn-pushpullpublish" title={syncTitle}
 			class:push={syncState === "push"}
 			class:pull={syncState === "pull"}
 			class:publish={syncState === "publish"}
 			disabled={syncState === "none" || syncState === "up-to-date"}
-			title={syncTitle}
 			onclick={pushPullPublish}>
 		<div class="btn-icon icon-pushpullpublish"></div>
 	</button>
 
 	<!-- Stash Btn -->
-	<button class="left-sidebar-btn btn-stash" 
-			disabled={!hasRepo}
-			title="Stash"
-			onclick={() => modal.open("stashes")}>
+	<button class="left-sidebar-btn btn-stash" title="Stash"
+			disabled={!hasRepo} onclick={() => modal.open("stashes")}>
 		<div class="btn-icon icon-stash"></div>
 	</button>
 
 	<!-- Fetch Btn -->
-	<button class="left-sidebar-btn btn-fetch"
-			class:fetching={repo.fetching}
-			disabled={!hasRepo}
-			title="Fetch from remote"
-			onclick={fetchRepo}>
+	<button class="left-sidebar-btn btn-fetch" title="Fetch from remote"
+			class:fetching={repo.fetching} disabled={!hasRepo} onclick={fetchRepo}>
 		<div class="btn-icon icon-fetch"></div>
 	</button>
 
 	<!-- Settings Btn -->
-	<button class="left-sidebar-btn btn-settings" 
-			title="Settings"
+	<button class="left-sidebar-btn btn-settings" title="Settings"
 			onclick={() => modal.open("settings")}>
 		<div class="btn-icon icon-settings"></div>
 	</button>
 
 	<!-- Account Btn -->
-	<button class="left-sidebar-btn btn-account" 
-			title="Account (global git config)"
+	<button class="left-sidebar-btn btn-account" title="Account (global git config)"
 			onclick={() => modal.open("account")}>
 		<div class="btn-icon icon-account"></div>
 	</button>

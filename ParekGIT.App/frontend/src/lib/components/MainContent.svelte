@@ -6,7 +6,7 @@
 	let { el = $bindable() } = $props();
 </script>
 
-<div class="main-content" id="main-content" bind:this={el}>
+<div class="main-content" bind:this={el}>
 	{#if view.tab === "changes"}
 		<DiffViewer />
 	{:else if view.tab === "history"}

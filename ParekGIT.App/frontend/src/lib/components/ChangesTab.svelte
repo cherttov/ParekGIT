@@ -25,21 +25,20 @@
 	}
 </script>
 
-<div class="changes-tab" id="changes-tab" class:active>
+<div class="changes-tab" class:active>
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="changes-header" id="changes-header" oncontextmenu={(e) => contextMenu.open(e, changesMasterMenuItems())}>
-		<span id="changes-count-text">{count} changed file{count === 1 ? "" : "s"}</span>
-		<input type="checkbox" class="ui-checkbox" id="changes-master-checkbox" disabled={count === 0}
-			checked={changes.allChecked} onchange={(e) => changes.setAllChecked(e.currentTarget.checked)} />
+	<div class="changes-header" oncontextmenu={(e) => contextMenu.open(e, changesMasterMenuItems())}>
+		<span>{count} changed file{count === 1 ? "" : "s"}</span>
+		<input type="checkbox" class="ui-checkbox" disabled={count === 0} checked={changes.allChecked}
+			onchange={(e) => changes.setAllChecked(e.currentTarget.checked)} />
 	</div>
 
 	<div class="changes-list-wrapper">
-		<div class="changes-list-container" id="changes-list" bind:this={listEl}>
+		<div class="changes-list-container" bind:this={listEl}>
 			{#each changes.files as file (file.path)}
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<div class="change-item" class:selected={changes.selectedPath === file.path}
-					onclick={() => onSelect(file)}
+				<div class="change-item" class:selected={changes.selectedPath === file.path} onclick={() => onSelect(file)}
 					oncontextmenu={(e) => contextMenu.open(e, changeMenuItems(file), file.path)}>
 					<div class="change-item-left">
 						<StatusBadge code={file.statusCode} />
@@ -54,9 +53,9 @@
 	</div>
 
 	<div class="right-sidebar-bottom">
-		<input type="text" class="commit-input message-input" id="commit-name-input" placeholder="Message (required)" bind:value={commit.message} />
-		<textarea class="commit-input description-input" id="commit-desc-input" placeholder="Description" bind:value={commit.description}></textarea>
-		<button class="commit-btn" id="commit-btn" disabled={!canCommit} onclick={commitChanges}>
+		<input type="text" class="commit-input message-input" placeholder="Message (required)" bind:value={commit.message} />
+		<textarea class="commit-input description-input" placeholder="Description" bind:value={commit.description}></textarea>
+		<button class="commit-btn" disabled={!canCommit} onclick={commitChanges}>
 			{#if !branch.name}
 				Loading...
 			{:else if checkedCount > 0}

@@ -17,16 +17,16 @@
 	});
 </script>
 
-<div class="diff-viewer" id="diff-viewer">
-	<div class="diff-header" id="diff-header">
+<div class="diff-viewer">
+	<div class="diff-header">
 		<span id="diff-filename">{diff.filePath || "Select a file to view changes"}</span>
 	</div>
 
-	<div class="diff-body-wrapper" id="diff-body-wrapper" bind:this={wrapperEl}>
-		<pre class="diff-content" id="diff-content">{#if message
+	<div class="diff-body-wrapper"bind:this={wrapperEl}>
+		<pre class="diff-content">{#if message
 			}<span class="diff-chunk">{message}</span>{:else if Array.isArray(lines)
 			}{#each lines as line}<span class="diff-{line.type}">{line.text}</span>{/each
 			}{/if}</pre>
-		<CustomScrollbar container={wrapperEl} id="diff-scrollbar" />
+		<CustomScrollbar container={wrapperEl} />
 	</div>
 </div>

@@ -55,8 +55,8 @@
 
 <svelte:window onclick={() => panelOpen = false} />
 
-<div class="details-viewer" id="details-viewer">
-	<div class="details-header" id="details-header">
+<div class="details-viewer">
+	<div class="details-header">
 		<div class="details-header-left">
 			<span id="details-commit-message">{headerMessage}</span>
 		</div>
@@ -66,17 +66,16 @@
 		</div>
 	</div>
 
-	<div class="details-body-wrapper" id="details-body-wrapper" bind:this={wrapperEl}>
-		<pre class="diff-content" id="details-content">{#if message
+	<div class="details-body-wrapper" bind:this={wrapperEl}>
+		<pre class="diff-content">{#if message
 			}<span class="diff-chunk">{message}</span>{:else if Array.isArray(lines) && commitDetails.selectedFile && !commitDetails.loading
 			}{#each lines as line}<span class="diff-{line.type}">{line.text}</span>{/each}{/if}</pre>
-		<CustomScrollbar id="details-scrollbar" container={wrapperEl} />
+		<CustomScrollbar container={wrapperEl} />
 	</div>
 
-	<div class="details-footer" id="details-footer">
-		<div class="details-footer-container" id="details-footer-container">
-			<button class="topbar-btn details-footer-btn" 
-				disabled={commitDetails.loading || fileCount === 0}
+	<div class="details-footer">
+		<div class="details-footer-container">
+			<button class="topbar-btn details-footer-btn" disabled={commitDetails.loading || fileCount === 0}
 				onclick={(e) => { e.stopPropagation(); panelOpen = !panelOpen; }}>
 				<div class="btn-text-group">
 					<span class="topbar-dropdown btn-value">
@@ -95,10 +94,9 @@
 
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
-			<div class="dropdown-panel" class:show={panelOpen} id="details-footer-panel" 
-				onclick={(e) => e.stopPropagation()}>
+			<div class="dropdown-panel" class:show={panelOpen} id="details-footer-panel" onclick={(e) => e.stopPropagation()}>
 				<div class="dropdown-list-wrapper">
-					<div class="dropdown-list-container" id="details-file-list" bind:this={fileListEl}>
+					<div class="dropdown-list-container" bind:this={fileListEl}>
 						{#each commitDetails.files as file (file.path)}
 							<!-- svelte-ignore a11y_click_events_have_key_events -->
 							<div class="dropdown-item" class:active={commitDetails.selectedFile === file.path} onclick={() => selectFile(file)}>

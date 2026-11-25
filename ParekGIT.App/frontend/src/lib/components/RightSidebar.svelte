@@ -7,14 +7,12 @@
 	let { el = $bindable() } = $props();
 </script>
 
-<div class="right-sidebar" id="right-sidebar" bind:this={el} style:width="{layout.rightSidebarWidth}px">
+<div class="right-sidebar" bind:this={el} style:width="{layout.rightSidebarWidth}px">
 	<div class="tab-selector">
-		<button class="tab-btn" id="tab-btn-changes"
-			class:active={view.tab === "changes"} onclick={() => view.tab = "changes"}>
+		<button class="tab-btn" class:active={view.tab === "changes"} onclick={() => view.tab = "changes"}>
 			Changes
 		</button>
-		<button class="tab-btn" id="tab-btn-history"
-			class:active={view.tab === "history"} onclick={() => view.tab = "history"}>
+		<button class="tab-btn" class:active={view.tab === "history"} onclick={() => view.tab = "history"}>
 			History
 		</button>
 	</div>

@@ -22,6 +22,6 @@
 >
 	<div class="modal-body-row">
 		<p class="modal-text">Are you sure you want to discard</p>
-		<span class="highlight-name" id="discard-selected-modal-count">{path}</span>
+		<span class="highlight-name">{path}</span>
 	</div>
 </Modal>

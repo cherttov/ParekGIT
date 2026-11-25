@@ -59,6 +59,6 @@
 <div class="split-container" bind:this={splitContainerEl}>
 	<MainContent bind:el={mainContentEl}/>
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="resizer" id="resizer" bind:this={resizerEl} onmousedown={onResizerMouseDown}></div>
+	<div class="resizer" bind:this={resizerEl} onmousedown={onResizerMouseDown}></div>
 	<RightSidebar bind:el={rightSidebarEl}/>
 </div>

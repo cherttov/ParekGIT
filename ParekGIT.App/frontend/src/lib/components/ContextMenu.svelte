@@ -22,10 +22,8 @@
 	oncontextmenu={(e) => e.preventDefault()}
 />
 
-<div class="context-menu" class:show={contextMenu.visible} bind:this={el}
-	bind:offsetWidth={w} bind:offsetHeight={h}
-	style:left="{place(contextMenu.x, w, vw)}px" style:top="{place(contextMenu.y, h, vh)}px"
->
+<div class="context-menu" class:show={contextMenu.visible} bind:this={el} bind:offsetWidth={w} bind:offsetHeight={h}
+	style:left="{place(contextMenu.x, w, vw)}px" style:top="{place(contextMenu.y, h, vh)}px">
 	{#each contextMenu.items as item}
 		{#if item === "divider"}
 			<div class="context-menu-divider"></div>

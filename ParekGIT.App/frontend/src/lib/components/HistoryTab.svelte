@@ -25,9 +25,9 @@
 	}
 </script>
 
-<div class="history-tab" id="history-tab" class:active>
+<div class="history-tab" class:active>
 	<div class="history-list-wrapper">
-		<div class="history-list-container" id="history-list" bind:this={listEl} onscroll={onScroll}>
+		<div class="history-list-container" bind:this={listEl} onscroll={onScroll}>
 			{#each history.commits as c, i (c.hash)}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->

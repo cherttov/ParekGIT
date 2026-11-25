@@ -24,15 +24,10 @@
 	}
 </script>
 
-<div class="dropdown-panel" 
-	class:show
-	id="repository-dropdown-panel">
-	<div class="filter-container" id="repositories-filter">
+<div class="dropdown-panel" class:show>
+	<div class="filter-container">
 		<div class="icon-filter"></div>
-		<input id="repo-search-input" type="text"
-				bind:value={searchTerm}
-				class="filter-input"
-				placeholder="Search" />
+		<input class="filter-input" type="text" bind:value={searchTerm} placeholder="Search" />
 
 		<button class="topbar-filter-btn btn-add" onclick={(e) => contextMenu.open(e, addRepoItems)}>
 			Add
@@ -41,7 +36,7 @@
 	</div>
 
 	<div class="dropdown-list-wrapper">
-		<div class="dropdown-list-container" id="repo-topbar-list" bind:this={listEl}>
+		<div class="dropdown-list-container" bind:this={listEl}>
 			{#each filtered as r}
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<!-- svelte-ignore a11y_click_events_have_key_events -->

@@ -625,10 +625,6 @@ ui-checkbox:disabled {
 	scrollbar-width: none;
 }
 
-#diff-scrollbar {
-	top: 33px;
-}
-
 .diff-content {
 	flex: 1;
 	margin: 0;
@@ -778,10 +774,6 @@ ui-checkbox:disabled {
 	font-size: 12px;
 	white-space: nowrap;
 	flex-shrink: 0;
-}
-
-#details-scrollbar {
-	top: 33px;
 }
 
 /* RIGHT SIDEBAR */

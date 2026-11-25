@@ -37,7 +37,7 @@
 	}
 </script>
 
-<div class="topbar" id="topbar">
+<div class="topbar">
 	<div class="topbar-logo">P.GIT</div>
 
 	<div class="topbar-dropdown-container" id="repositories-container">
