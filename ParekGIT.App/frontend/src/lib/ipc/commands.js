@@ -69,7 +69,7 @@ export function checkoutBranch(b) {
 	sendIpcMessage(IpcActions.BRANCH_CHECKOUT, { repoPath: repo.path, branchName: b.name, isRemote: b.isRemote });
 }
 
-export function loadBranches() {
+export function loadBranches(repoPath) {
 	if (!repo.path) return;
 	sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
 }
