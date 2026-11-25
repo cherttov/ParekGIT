@@ -14,7 +14,7 @@ namespace ParekGIT.Data
 		{
 			services.AddSingleton<IRepositoryWatcher, RepositoryWatcher>();
 			services.AddSingleton<IRemoteSyncNotifier, RemoteSyncNotifier>();
-			services.AddSingleton<IpcRouter>();
+			services.AddSingleton<IIpcRouter, IpcRouter>();
 
 			services.AddIpcHandlers();
 

@@ -1,4 +1,4 @@
-﻿using ParekGIT.Bridge.Data;
+﻿using ParekGIT.Bridge.Models;
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;

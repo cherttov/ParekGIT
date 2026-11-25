@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 
-namespace ParekGIT.Bridge.Data
+namespace ParekGIT.Bridge.Models
 {
-	internal class IpcMessage
+	internal sealed class IpcMessage
 	{
 		public string Action { get; set; } = string.Empty;
 		public JsonElement Payload { get; set; }

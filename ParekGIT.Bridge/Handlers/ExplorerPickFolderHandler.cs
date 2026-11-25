@@ -1,4 +1,4 @@
-﻿using ParekGIT.Bridge.Data;
+﻿using ParekGIT.Bridge.Models;
 using ParekGIT.Bridge.Interfaces;
 using Photino.NET;
 using System.Text.Json;

@@ -1,9 +1,9 @@
 ﻿namespace ParekGIT.Bridge.Models
 {
-	public class IpcPayloadException : Exception
+	internal sealed class IpcPayloadException : Exception
 	{
 		public IpcPayloadException(string fieldName)
-			: base($"Missing or invalid required filed: '{fieldName}'") { }
+			: base($"Missing or invalid required field: '{fieldName}'") { }
 
 		public IpcPayloadException(string fieldName, string reason)
 			: base($"Invalid field '{fieldName}': {reason}") { }
