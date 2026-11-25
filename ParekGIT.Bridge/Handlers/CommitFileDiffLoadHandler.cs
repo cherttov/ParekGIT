@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class CommitFileDiffLoadHandler : IMessageHandler
+	internal sealed class CommitFileDiffLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitStatusService _statusService;

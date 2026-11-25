@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class RepoRemoveHandler : IMessageHandler
+	internal sealed class RepoRemoveHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IRepositoryStore _dbStore;

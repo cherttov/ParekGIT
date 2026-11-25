@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class BranchListLoadHandler : IMessageHandler
+	internal sealed class BranchListLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitBranchService _branchService;

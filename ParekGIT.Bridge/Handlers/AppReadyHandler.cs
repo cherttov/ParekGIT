@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class AppReadyHandler : IMessageHandler
+	internal sealed class AppReadyHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly LiteDbStore _dbStore;

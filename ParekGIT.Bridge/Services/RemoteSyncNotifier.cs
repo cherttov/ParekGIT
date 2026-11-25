@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Services
 {
-	public class RemoteSyncNotifier : IRemoteSyncNotifier
+	internal sealed class RemoteSyncNotifier : IRemoteSyncNotifier
 	{
 		private readonly PhotinoWindow _window;
 

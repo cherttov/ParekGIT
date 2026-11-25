@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class ChangeDiscardHandler : IMessageHandler
+	internal sealed class ChangeDiscardHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitWorkingTreeService _workingTreeService;

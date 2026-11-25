@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class TodoSaveHandler : IMessageHandler
+	internal sealed class TodoSaveHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly LiteDbStore _dbStore;

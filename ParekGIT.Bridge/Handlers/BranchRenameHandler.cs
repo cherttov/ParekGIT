@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class BranchRenameHandler : IMessageHandler
+	internal sealed class BranchRenameHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitBranchService _branchService;

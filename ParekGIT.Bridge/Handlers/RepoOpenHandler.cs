@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class RepoOpenHandler : IMessageHandler
+	internal sealed class RepoOpenHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly LiteDbStore _dbStore;

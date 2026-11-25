@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class CommitCheckoutHandler : IMessageHandler
+	internal sealed class CommitCheckoutHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitHistoryService _historyService;

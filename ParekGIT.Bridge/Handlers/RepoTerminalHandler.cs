@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class RepoTerminalHandler : IMessageHandler
+	internal sealed class RepoTerminalHandler : IMessageHandler
 	{
 		private readonly IFileSystemService _fileSystem;
 

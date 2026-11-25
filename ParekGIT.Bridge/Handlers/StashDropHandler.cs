@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class StashDropHandler : IMessageHandler
+	internal sealed class StashDropHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitStashService _stashService;

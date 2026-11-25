@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class SettingsSaveHandler : IMessageHandler
+	internal sealed class SettingsSaveHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly ISettingsStore _jsonStore;

@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class ChangeIgnoreHandler : IMessageHandler
+	internal sealed class ChangeIgnoreHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitWorkingTreeService _workingTreeService;

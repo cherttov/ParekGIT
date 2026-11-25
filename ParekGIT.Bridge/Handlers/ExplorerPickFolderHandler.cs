@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class ExplorerPickFolderHandler : IMessageHandler
+	internal sealed class ExplorerPickFolderHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 

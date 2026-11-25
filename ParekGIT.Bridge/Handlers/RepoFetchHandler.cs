@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class RepoFetchHandler : IMessageHandler
+	internal sealed class RepoFetchHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitSyncService _syncStatus;

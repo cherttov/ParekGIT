@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class ExplorerShowHandler : IMessageHandler
+	internal sealed class ExplorerShowHandler : IMessageHandler
 	{
 		private readonly IFileSystemService _fileSystem;
 

@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class ConfigGlobalSaveHandler : IMessageHandler
+	internal sealed class ConfigGlobalSaveHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitConfigService _configService;

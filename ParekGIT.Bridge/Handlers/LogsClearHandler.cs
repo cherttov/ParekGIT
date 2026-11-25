@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class LogsClearHandler : IMessageHandler
+	internal sealed class LogsClearHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IFileSystemService _fileSystem;

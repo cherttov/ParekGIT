@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Handlers
 {
-	public class ThemeListLoadHandler : IMessageHandler
+	internal sealed class ThemeListLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IThemeStore _themeStore;
