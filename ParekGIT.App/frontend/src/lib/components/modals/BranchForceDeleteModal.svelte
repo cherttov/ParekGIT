@@ -20,7 +20,7 @@
 	<div class="modal-body-row">
 		<p class="modal-text">
 			This branch has
-			<span class="highlight-name merge-branch-inline" id="unmerged-changes-count">{data.unmergedCount}</span>
+			<span class="highlight-name merge-branch-inline">{data.unmergedCount}</span>
 			changes that have not been merged.
 		</p>
 	</div>
