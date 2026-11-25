@@ -5,7 +5,7 @@ using ParekGIT.Data;
 using ParekGIT.Bridge;
 using ParekGIT.Bridge.Interfaces;
 
-namespace ParekGIT.UI
+namespace ParekGIT.App
 {
 	internal class Program
 	{

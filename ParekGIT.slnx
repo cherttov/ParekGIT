@@ -2,5 +2,5 @@
   <Project Path="ParekGIT.Bridge/ParekGIT.Bridge.csproj" />
   <Project Path="ParekGIT.Core/ParekGIT.Core.csproj" />
   <Project Path="ParekGIT.Data/ParekGIT.Data.csproj" />
-  <Project Path="ParekGIT.UI/ParekGIT.UI.csproj" />
+  <Project Path="ParekGIT.App/ParekGIT.App.csproj" />
 </Solution>

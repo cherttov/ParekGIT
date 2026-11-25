@@ -5,7 +5,7 @@ using ParekGIT.Data.Interfaces;
 using Photino.NET;
 using System.Drawing;
 
-namespace ParekGIT.UI
+namespace ParekGIT.App
 {
 	internal static class AppBootstrapper
 	{
