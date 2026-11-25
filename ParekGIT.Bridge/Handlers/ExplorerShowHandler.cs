@@ -1,7 +1,6 @@
 ﻿using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Models;
 using ParekGIT.Core.Interfaces;
-using ParekGIT.Core.Services;
 using System.Diagnostics;
 using System.Text.Json;
 
@@ -10,13 +9,15 @@ namespace ParekGIT.Bridge.Handlers
 	internal sealed class ExplorerShowHandler : IMessageHandler
 	{
 		private readonly IFileSystemService _fileSystem;
+		private readonly IAppDataPaths _appDataPaths;
 
 		public string Action => "EXPLORER_SHOW";
 
 		// Constructor
-		public ExplorerShowHandler(IFileSystemService fileSystem)
+		public ExplorerShowHandler(IFileSystemService fileSystem, IAppDataPaths appDataPaths)
 		{
 			_fileSystem = fileSystem;
+			_appDataPaths = appDataPaths;
 		}
 
 		public Task ExecuteAsync(JsonElement payload)
@@ -28,7 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 
 			if (rawPath == "%APP_DATA%")
 			{
-				rawPath = AppDataPaths.GetLogDirectory();
+				rawPath = _appDataPaths.GetLogDirectory();
 
 				if (!_fileSystem.DirectoryExists(rawPath))
 					throw new Exception("Couldn't resolve the path of ParekGIT local app data.");

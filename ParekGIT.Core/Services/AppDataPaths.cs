@@ -1,15 +1,17 @@
-﻿namespace ParekGIT.Core.Services
+﻿using ParekGIT.Core.Interfaces;
+
+namespace ParekGIT.Core.Services
 {
-	public static class AppDataPaths
+	public class AppDataPaths : IAppDataPaths
 	{
 		private const string AppName = "ParekGIT";
 
-		private static readonly string _configDir; // themes/, settings.json
-		private static readonly string _dataDir; // data.db
-		private static readonly string _stateDir; // logs/
+		private readonly string _configDir; // themes/, settings.json
+		private readonly string _dataDir; // data.db
+		private readonly string _stateDir; // logs/
 
 		// Constructor
-		static AppDataPaths()
+		public AppDataPaths()
 		{
 			if (OperatingSystem.IsWindows())
 			{
@@ -38,12 +40,12 @@
 			}
 		}
 
-		public static string GetConfigDirectory() => _configDir;
-		public static string GetDatabaseDirectory() => _dataDir;
-		public static string GetSettingsDirectory() => _configDir;
-		public static string GetLogDirectory() => Path.Combine(_stateDir, "logs");
-		public static string GetThemesDirectory() => Path.Combine(_configDir, "themes");
-		public static IEnumerable<string> GetAllDirectories() => new[] { _configDir, _dataDir, GetLogDirectory(), GetThemesDirectory() }.Distinct(); 
+		public string GetConfigDirectory() => _configDir;
+		public string GetDatabaseDirectory() => _dataDir;
+		public string GetSettingsDirectory() => _configDir;
+		public string GetLogDirectory() => Path.Combine(_stateDir, "logs");
+		public string GetThemesDirectory() => Path.Combine(_configDir, "themes");
+		public IEnumerable<string> GetAllDirectories() => new[] { _configDir, _dataDir, GetLogDirectory(), GetThemesDirectory() }.Distinct(); 
 
 		// Private helpers
 		private static string XdgDir(string envVar, string fallbackRelativeToHome)

@@ -3,6 +3,7 @@ using ParekGIT.Data.Interfaces;
 using LiteDB;
 using ParekGIT.Data.Models;
 using ParekGIT.Core.Services;
+using ParekGIT.Core.Interfaces;
 
 namespace ParekGIT.Data.Data
 {
@@ -16,9 +17,9 @@ namespace ParekGIT.Data.Data
 		private readonly SemaphoreSlim _writeLock = new(1, 1);
 
 		// Constructor
-		public LiteDbStore()
+		public LiteDbStore(IAppDataPaths appDataPaths)
 		{
-			string appDataPath = AppDataPaths.GetDatabaseDirectory();
+			string appDataPath = appDataPaths.GetDatabaseDirectory();
 			string rawPath = Path.Combine(appDataPath, "data.db");
 
 			_db = new LiteDatabase($"Filename={rawPath}");

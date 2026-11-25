@@ -31,7 +31,8 @@ namespace ParekGIT.UI
 		public static void InitializeAppData(IServiceProvider serviceProvider)
 		{
 			var fileSystem = serviceProvider.GetRequiredService<IFileSystemService>();
-			foreach (string dir in AppDataPaths.GetAllDirectories())
+			var appDataPaths = serviceProvider.GetRequiredService<IAppDataPaths>();
+			foreach (string dir in appDataPaths.GetAllDirectories())
 				fileSystem.CreateDirectory(dir).GetAwaiter().GetResult();
 
 			var settingsStore = serviceProvider.GetRequiredService<ISettingsStore>();

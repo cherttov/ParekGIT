@@ -23,13 +23,13 @@ namespace ParekGIT.Data.Data
 		};
 
 		// Constructor
-		public JsonStore(IFileSystemService fileSystem)
+		public JsonStore(IFileSystemService fileSystem, IAppDataPaths appDataPaths)
 		{
 			_fileSystem = fileSystem;
 
-			_settingsDir = AppDataPaths.GetSettingsDirectory();
+			_settingsDir = appDataPaths.GetSettingsDirectory();
 			_settingsPath = Path.Combine(_settingsDir, "settings.json");
-			_themesDir = AppDataPaths.GetThemesDirectory();
+			_themesDir = appDataPaths.GetThemesDirectory();
 		}
 
 		public void Dispose() => _fileAccessLock.Dispose();

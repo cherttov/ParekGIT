@@ -11,6 +11,7 @@ namespace ParekGIT.Core
 		public static IServiceCollection AddCoreServices(this IServiceCollection services)
 		{
 			services.AddSingleton<GitCommandExecutor>();
+			services.AddSingleton<IAppDataPaths, AppDataPaths>();
 			services.AddSingleton<ILogger, FileLogger>();
 			services.AddSingleton<IFileSystemService, FileSystemService>();
 			services.AddSingleton<IRepositoryWatcher, RepositoryWatcher>();

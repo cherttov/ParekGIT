@@ -8,9 +8,9 @@ namespace ParekGIT.Core.Services
 		private static readonly SemaphoreSlim _writeLock = new SemaphoreSlim(1, 1);
 		private const int MaxLogFileSizeBytes = 5 * 1024 * 1024; // 5 MB
 
-		public FileLogger()
+		public FileLogger(IAppDataPaths appDataPaths)
 		{
-			_logDirectory = AppDataPaths.GetLogDirectory();
+			_logDirectory = appDataPaths.GetLogDirectory();
 			EnsureLogDirectoryExists();
 		}
 

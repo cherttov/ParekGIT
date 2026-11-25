@@ -1,7 +1,6 @@
 ﻿using ParekGIT.Bridge.Models;
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Interfaces;
-using ParekGIT.Core.Services;
 using Photino.NET;
 using System.Text.Json;
 
@@ -11,21 +10,23 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IFileSystemService _fileSystem;
+		private readonly IAppDataPaths _appDataPaths;
 		private readonly ILogger _logger;
 
 		public string Action => "LOGS_CLEAR";
 
 		// Constructor
-		public LogsClearHandler(PhotinoWindow window, IFileSystemService fileSystem, ILogger logger)
+		public LogsClearHandler(PhotinoWindow window, IFileSystemService fileSystem, IAppDataPaths appDataPaths, ILogger logger)
 		{
 			_window = window;
 			_fileSystem = fileSystem;
+			_appDataPaths = appDataPaths;
 			_logger = logger;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
 		{
-			string logsDirectory = AppDataPaths.GetLogDirectory();
+			string logsDirectory = _appDataPaths.GetLogDirectory();
 
 			int deletedCount = 0;
 			int failedCount = 0;
