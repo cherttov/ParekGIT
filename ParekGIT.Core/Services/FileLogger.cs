@@ -2,7 +2,7 @@
 
 namespace ParekGIT.Core.Services
 {
-	public sealed class FileLogger : ILogger
+	internal sealed class FileLogger : ILogger
 	{
 		private readonly string _logDirectory;
 		private static readonly SemaphoreSlim _writeLock = new SemaphoreSlim(1, 1);

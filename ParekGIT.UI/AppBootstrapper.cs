@@ -51,15 +51,7 @@ namespace ParekGIT.UI
 			Console.WriteLine($"- Message: {ex.Message}");
 
 			// Try logging startup error
-			try
-			{
-				var logger = new FileLogger();
-				logger.LogErrorAsync(errorMessage, ex).GetAwaiter().GetResult();
-			}
-			catch 
-			{
-				// Failed to log during startup crash
-			}
+			StartupLogger.LogFatal(errorMessage, ex);
 		}
 	}
 }
