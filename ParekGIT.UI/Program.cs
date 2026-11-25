@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Photino.NET;
-using ParekGIT.Bridge.Ipc;
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core;
 using ParekGIT.Data;
@@ -29,7 +28,7 @@ namespace ParekGIT.UI
 				
 				// Registering handlers to IpcRouter
 				var window = serviceProvider.GetRequiredService<PhotinoWindow>();
-				var router = serviceProvider.GetRequiredService<IpcRouter>();
+				var router = serviceProvider.GetRequiredService<IIpcRouter>();
 				_ = serviceProvider.GetRequiredService<IRemoteSyncNotifier>();
 
 				foreach (var handler in serviceProvider.GetServices<IMessageHandler>())

@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Bridge.Ipc
 {
-	public class IpcRouter
+	public class IpcRouter : IIpcRouter
 	{
 		private readonly Dictionary<string, IMessageHandler> _handlers = new();
 		private readonly ILogger _logger;
