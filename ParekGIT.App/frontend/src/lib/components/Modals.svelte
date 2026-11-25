@@ -1,46 +1,61 @@
 <script>
 	import { modal } from "../stores/modal.svelte";
-	import BranchNewModal from "./modals/BranchNewModal.svelte";
-	import BranchRenameModal from "./modals/BranchRenameModal.svelte";
-	import BranchDeleteModal from "./modals/BranchDeleteModal.svelte";
-	import BranchMergeModal from "./modals/BranchMergeModal.svelte";
-	import BranchFromCommitModal from "./modals/BranchFromCommitModal.svelte";
-	import BranchForceDeleteModal from "./modals/BranchForceDeleteModal.svelte";
-	import RepoAddModal from "./modals/RepoAddModal.svelte";
+	import ErrorModal from "./modals/ErrorModal.svelte";
 	import RepoCloneModal from "./modals/RepoCloneModal.svelte";
 	import RepoCreateModal from "./modals/RepoCreateModal.svelte";
+	import RepoAddModal from "./modals/RepoAddModal.svelte";
 	import RepoRemoveModal from "./modals/RepoRemoveModal.svelte";
+	import BranchNewModal from "./modals/BranchNewModal.svelte";
+	import BranchFromCommitModal from "./modals/BranchFromCommitModal.svelte";
+	import BranchRenameModal from "./modals/BranchRenameModal.svelte";
+	import BranchDeleteModal from "./modals/BranchDeleteModal.svelte";
+	import BranchForceDeleteModal from "./modals/BranchForceDeleteModal.svelte";
+	import BranchMergeModal from "./modals/BranchMergeModal.svelte";
 	import ChangeDiscardModal from "./modals/ChangeDiscardModal.svelte";
 	import ChangeDiscardSelectedModal from "./modals/ChangeDiscardSelectedModal.svelte";
 	import ChangesDiscardAllModal from "./modals/ChangesDiscardAllModal.svelte";
 	import TodoModal from "./modals/TodoModal.svelte";
 	import ConfigModal from "./modals/ConfigModal.svelte";
-	import StashModal from "./modals/StashModal.svelte";
-	import SettingsModal from "./modals/SettingsModal.svelte";
 	import AccountModal from "./modals/AccountModal.svelte";
-	import ErrorModal from "./modals/ErrorModal.svelte";
+	import SettingsModal from "./modals/SettingsModal.svelte";
+	import StashModal from "./modals/StashModal.svelte";
 
 	export const modals = {
-		"branch-new": BranchNewModal,
-		"branch-rename": BranchRenameModal,
-		"branch-delete": BranchDeleteModal,
-		"branch-merge": BranchMergeModal,
-		"branch-from-commit": BranchFromCommitModal,
-		"branch-force-delete": BranchForceDeleteModal,
-		"repo-add": RepoAddModal,
+		// App
+		"error": ErrorModal,
+
+		// Repo
 		"repo-clone": RepoCloneModal,
 		"repo-create": RepoCreateModal,
+		"repo-add": RepoAddModal,
 		"repo-remove": RepoRemoveModal,
 		//"repo-missing": RepoMissingModal,
+
+		// Branch
+		"branch-new": BranchNewModal,
+		"branch-from-commit": BranchFromCommitModal,
+		"branch-rename": BranchRenameModal,
+		"branch-delete": BranchDeleteModal,
+		"branch-force-delete": BranchForceDeleteModal,
+		"branch-merge": BranchMergeModal,
+
+		// Change
 		"change-discard": ChangeDiscardModal,
 		"changes-discard-selected": ChangeDiscardSelectedModal,
 		"changes-discard-all": ChangesDiscardAllModal,
+
+		// Todo
 		"todo": TodoModal,
+
+		// Config / Account
 		"config": ConfigModal,
-		"stashes": StashModal,
-		"settings": SettingsModal,
 		"account": AccountModal,
-		"error": ErrorModal
+
+		// Settings
+		"settings": SettingsModal,
+
+		// Stash
+		"stashes": StashModal,
 	};
 </script>
 

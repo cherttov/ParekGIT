@@ -89,11 +89,6 @@ export function registerHandlers() {
 			config.resetLocal();
 		}
 	});
-	onIpc(IpcActions.CHANGES_COMMITTED, () => {
-		commit.committing = false;
-		commit.clear();
-		refreshRepoState();
-	});
 	onIpc(IpcActions.REPO_FETCHED, () => {
 		repo.fetching = false;
 		refreshRepoState();
@@ -103,11 +98,6 @@ export function registerHandlers() {
 	});
 	onIpc(IpcActions.REPO_PUSHED, () => {
 		fetchRepo();
-	});
-	onIpc(IpcActions.BRANCH_PUBLISHED, () => {
-		branch.hasUpstream = true;
-		sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
-		refreshRepoState();
 	});
 	onIpc(IpcActions.REPO_STATUS_LOADED, (p) => {
 		changes.setFiles(p.files);
@@ -162,6 +152,11 @@ export function registerHandlers() {
 	onIpc(IpcActions.BRANCH_HISTORY_APPENDED, (p) => {
 		history.appendCommits(p.commits);
 	});
+	onIpc(IpcActions.BRANCH_PUBLISHED, () => {
+		branch.hasUpstream = true;
+		sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
+		refreshRepoState();
+	});
 
 	// Commit / File
 	onIpc(IpcActions.COMMIT_DETAILS_LOADED, (p) => {
@@ -187,12 +182,12 @@ export function registerHandlers() {
 	onIpc(IpcActions.COMMIT_REVERTED, () => {
 		refreshRepoState();
 	});
+
+	// Change
 	onIpc(IpcActions.CHANGE_DIFF_LOADED, (p) => {
 		diff.diffText = p.diffText ?? "";
 		diff.loading = false;
 	});
-
-	// Change
 	onIpc(IpcActions.CHANGE_ALL_DISCARDED, () => {
 		loadStatus();
 	});
@@ -201,6 +196,11 @@ export function registerHandlers() {
 	});
 	onIpc(IpcActions.CHANGE_IGNORED, () => {
 		loadStatus();
+	});
+	onIpc(IpcActions.CHANGES_COMMITTED, () => {
+		commit.committing = false;
+		commit.clear();
+		refreshRepoState();
 	});
 
 	// Todo
