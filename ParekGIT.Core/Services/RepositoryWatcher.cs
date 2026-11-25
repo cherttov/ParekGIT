@@ -3,7 +3,7 @@ using Timer = System.Timers.Timer;
 
 namespace ParekGIT.Core.Services
 {
-	public class RepositoryWatcher : IRepositoryWatcher
+	internal sealed class RepositoryWatcher : IRepositoryWatcher
 	{
 		private readonly ILogger _logger;
 		private FileSystemWatcher? _watcher;

@@ -13,6 +13,7 @@ namespace ParekGIT.Core
 			services.AddSingleton<GitCommandExecutor>();
 			services.AddSingleton<ILogger, FileLogger>();
 			services.AddSingleton<IFileSystemService, FileSystemService>();
+			services.AddSingleton<IRepositoryWatcher, RepositoryWatcher>();
 			services.AddSingleton<ITemplateService, TemplateService>();
 
 			services.AddGitServices();

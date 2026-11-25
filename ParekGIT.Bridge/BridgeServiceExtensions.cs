@@ -6,13 +6,12 @@ using ParekGIT.Bridge.Services;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Services;
 
-namespace ParekGIT.Data
+namespace ParekGIT.Bridge
 {
 	public static class BridgeServiceExtensions
 	{
 		public static IServiceCollection AddBridgeServices(this IServiceCollection services)
 		{
-			services.AddSingleton<IRepositoryWatcher, RepositoryWatcher>();
 			services.AddSingleton<IRemoteSyncNotifier, RemoteSyncNotifier>();
 			services.AddSingleton<IIpcRouter, IpcRouter>();
 

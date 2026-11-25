@@ -5,7 +5,7 @@ using ParekGIT.Core.Interfaces;
 
 namespace ParekGIT.Core.Services
 {
-	public class FileSystemService : IFileSystemService
+	internal sealed class FileSystemService : IFileSystemService
 	{
 		private readonly ILogger _logger;
 
@@ -98,7 +98,7 @@ namespace ParekGIT.Core.Services
 				catch (Exception ex)
 				{
 					await _logger.LogWarningAsync(
-						$"'gio trash' unavailable when deleting '{path}'. Falling back to permanent delete. ({ex.Message})"
+						$"'gio trash' unavailable when deleting '{path}'. ({ex.Message})"
 					);
 					throw new InvalidOperationException($"Failed to move directory to a recycle bin. 'gio trash' might be missing.", ex);
 				}

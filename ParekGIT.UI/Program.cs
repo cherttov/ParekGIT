@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Photino.NET;
-using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core;
 using ParekGIT.Data;
+using ParekGIT.Bridge;
+using ParekGIT.Bridge.Interfaces;
 
 namespace ParekGIT.UI
 {
