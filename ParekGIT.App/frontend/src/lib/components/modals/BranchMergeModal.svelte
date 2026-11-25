@@ -2,7 +2,7 @@
 	import Modal from "../Modal.svelte";
 	import { branches } from "../../stores/branches.svelte";
 	import { branch } from "../../stores/branch.svelte";
-	import { mergeBranches } from "../../ipc/commands";
+	import { mergeBranch } from "../../ipc/commands";
 
 	let { open = false, data = {}, onclose } = $props();
 	let source = $state("");
@@ -19,7 +19,7 @@
 
 	function confirm() {
 		if (!isValid) return;
-		mergeBranches(source, target);
+		mergeBranch(source, target);
 		onclose?.();
 	}
 </script>

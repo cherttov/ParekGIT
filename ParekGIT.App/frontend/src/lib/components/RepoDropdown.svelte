@@ -2,7 +2,7 @@
 	import { repo } from "../stores/repo.svelte";
 	import { IpcActions } from "../ipc/actions";
 	import { repositories } from "../stores/repositories.svelte";
-	import { checkoutRepo } from "../ipc/commands";
+	import { openRepo } from "../ipc/commands";
 	import { contextMenu } from "../stores/contextMenu.svelte";
 	import { repoMenuItems } from "./menus/repoContextMenu";
 	import { addRepoItems } from "./menus/repoContextMenu";
@@ -19,7 +19,7 @@
 	);
 
 	function selectRepo(r) {
-		checkoutRepo(r);
+		openRepo(r);
 		onclose?.();
 	}
 </script>

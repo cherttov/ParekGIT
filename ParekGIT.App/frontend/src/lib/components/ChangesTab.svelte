@@ -4,7 +4,7 @@
 	import { commit } from "../stores/commit.svelte";
 	import { contextMenu } from "../stores/contextMenu.svelte";
 	import { changeMenuItems, changesMasterMenuItems } from "./menus/changesContextMenu";
-	import { commitChanges, loadFileDiff } from "../ipc/commands";
+	import { commitChanges, loadChangeDiff } from "../ipc/commands";
 	import { diff } from "../stores/diff.svelte";
 	import CustomScrollbar from "./CustomScrollbar.svelte";
 	import StatusBadge from "./StatusBadge.svelte";
@@ -21,7 +21,7 @@
 		diff.filePath = f.path;
 		diff.loading = true;
 		diff.diffText = "";
-		loadFileDiff(f.path);
+		loadChangeDiff(f.path);
 	}
 </script>
 

@@ -9,12 +9,12 @@ import { changes } from "../stores/changes.svelte";
 import { history } from "../stores/history.svelte";
 
 // Repo
-export function checkoutRepo(r) {
+export function openRepo(r) {
 	if (!r.isValid || repo.path === r.absolutePath) return;
 	sendIpcMessage(IpcActions.REPO_OPEN, { repoPath: r.absolutePath });
 }
 
-export function loadStatus() {
+export function loadRepoStatus() {
 	if (!repo.path) return;
 	sendIpcMessage(IpcActions.REPO_STATUS_LOAD, { repoPath: repo.path });
 }
@@ -59,7 +59,7 @@ export function removeRepo(repoPath, deleteLocal = false) {
 	sendIpcMessage(IpcActions.REPO_REMOVE, { repoPath, deleteLocal });
 }
 
-export function openTerminal(repoPath) {
+export function openRepoTerminal(repoPath) {
 	sendIpcMessage(IpcActions.REPO_TERMINAL, { repoPath });
 }
 
@@ -74,7 +74,7 @@ export function loadBranches() {
 	sendIpcMessage(IpcActions.BRANCH_LIST_LOAD, { repoPath: repo.path });
 }
 
-export function loadMoreHistory() {
+export function loadMoreBranchHistory() {
 	if (!repo.path || !branch.revision) return;
 	const skip = history.beginNextPage();
 	if (skip === null) return;
@@ -114,7 +114,7 @@ export function forceDeleteBranch(branchName) {
 	sendIpcMessage(IpcActions.BRANCH_FORCE_DELETE, { repoPath: repo.path, branchName });
 }
 
-export function mergeBranches(sourceBranch, targetBranch) {
+export function mergeBranch(sourceBranch, targetBranch) {
 	if (!repo.path || !sourceBranch || !targetBranch || sourceBranch === targetBranch) return;
 	sendIpcMessage(IpcActions.BRANCH_MERGE, { repoPath: repo.path, sourceBranch, targetBranch });
 }
@@ -146,12 +146,12 @@ export function revertCommit(commitHash) {
 }
 
 // Change
-export function loadFileDiff(filePath) {
+export function loadChangeDiff(filePath) {
 	if (!repo.path) return;
 	sendIpcMessage(IpcActions.CHANGE_DIFF_LOAD, { repoPath: repo.path, filePath });
 }
 
-export function discardAll() {
+export function discardAllChanges() {
 	if (!repo.path) return;
 	sendIpcMessage(IpcActions.CHANGE_ALL_DISCARD, { repoPath: repo.path });
 }
@@ -161,9 +161,9 @@ export function discardChange(filePath) {
 	sendIpcMessage(IpcActions.CHANGE_DISCARD, { repoPath: repo.path, filePath });
 }
 
-export function discardSelected(paths) { paths.forEach(discardChange); }
+export function discardSelectedChanges(paths) { paths.forEach(discardChange); }
 
-export function ignoreFile(filePath) {
+export function ignoreFileChange(filePath) {
 	if (!repo.path) return;
 	sendIpcMessage(IpcActions.CHANGE_IGNORE, { repoPath: repo.path, filePath, ignoreType: "file" });
 }

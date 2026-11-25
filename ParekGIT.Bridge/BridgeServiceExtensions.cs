@@ -25,34 +25,34 @@ namespace ParekGIT.Bridge
 
 			// Repo
 			services.AddSingleton<IMessageHandler, RepoOpenHandler>();
-			services.AddSingleton<IMessageHandler, RepoCloneHandler>();
-			services.AddSingleton<IMessageHandler, RepoAddHandler>();
-			services.AddSingleton<IMessageHandler, RepoCreateHandler>();
-			services.AddSingleton<IMessageHandler, RepoRemoveHandler>();
+			services.AddSingleton<IMessageHandler, RepoStatusLoadHandler>();
+			services.AddSingleton<IMessageHandler, RepoFetchHandler>();
 			services.AddSingleton<IMessageHandler, RepoPullHandler>();
 			services.AddSingleton<IMessageHandler, RepoPushHandler>();
-			services.AddSingleton<IMessageHandler, RepoStatusLoadHandler>();
+			services.AddSingleton<IMessageHandler, RepoCloneHandler>();
+			services.AddSingleton<IMessageHandler, RepoCreateHandler>();
+			services.AddSingleton<IMessageHandler, RepoAddHandler>();
+			services.AddSingleton<IMessageHandler, RepoRemoveHandler>();
 			services.AddSingleton<IMessageHandler, RepoTerminalHandler>();
-			services.AddSingleton<IMessageHandler, RepoFetchHandler>();
 			services.AddSingleton<IMessageHandler, RepoWatcherHandler>();
 
 			// Branch
 			services.AddSingleton<IMessageHandler, BranchCheckoutHandler>();
 			services.AddSingleton<IMessageHandler, BranchListLoadHandler>();
+			services.AddSingleton<IMessageHandler, BranchHistoryLoadHandler>();
 			services.AddSingleton<IMessageHandler, BranchCreateHandler>();
 			services.AddSingleton<IMessageHandler, BranchCreateFromCommitHandler>();
 			services.AddSingleton<IMessageHandler, BranchRenameHandler>();
 			services.AddSingleton<IMessageHandler, BranchDeleteHandler>();
 			services.AddSingleton<IMessageHandler, BranchForceDeleteHandler>();
-			services.AddSingleton<IMessageHandler, BranchHistoryLoadHandler>();
 			services.AddSingleton<IMessageHandler, BranchMergeHandler>();
 			services.AddSingleton<IMessageHandler, BranchPublishHandler>();
 
 			// Commit
+			services.AddSingleton<IMessageHandler, CommitDetailsLoadHandler>();
 			services.AddSingleton<IMessageHandler, CommitFileDiffLoadHandler>();
 			services.AddSingleton<IMessageHandler, CommitCheckoutHandler>();
 			services.AddSingleton<IMessageHandler, CommitRevertHandler>();
-			services.AddSingleton<IMessageHandler, CommitDetailsLoadHandler>();
 
 			// Change
 			services.AddSingleton<IMessageHandler, ChangeDiffLoadHandler>();
@@ -60,14 +60,6 @@ namespace ParekGIT.Bridge
 			services.AddSingleton<IMessageHandler, ChangeDiscardHandler>();
 			services.AddSingleton<IMessageHandler, ChangeIgnoreHandler>();
 			services.AddSingleton<IMessageHandler, ChangesCommitHandler>();
-
-			// Explorer
-			services.AddSingleton<IMessageHandler, ExplorerPickFolderHandler>();
-			services.AddSingleton<IMessageHandler, ExplorerShowHandler>();
-
-			// Settings / Themes
-			services.AddSingleton<IMessageHandler, SettingsSaveHandler>();
-			services.AddSingleton<IMessageHandler, ThemeListLoadHandler>();
 
 			// Todo
 			services.AddSingleton<IMessageHandler, TodoLoadHandler>();
@@ -78,6 +70,14 @@ namespace ParekGIT.Bridge
 			services.AddSingleton<IMessageHandler, ConfigLocalSaveHandler>();
 			services.AddSingleton<IMessageHandler, ConfigGlobalLoadHandler>();
 			services.AddSingleton<IMessageHandler, ConfigGlobalSaveHandler>();
+
+			// Settings / Themes
+			services.AddSingleton<IMessageHandler, SettingsSaveHandler>();
+			services.AddSingleton<IMessageHandler, ThemeListLoadHandler>();
+
+			// Explorer
+			services.AddSingleton<IMessageHandler, ExplorerShowHandler>();
+			services.AddSingleton<IMessageHandler, ExplorerPickFolderHandler>();
 
 			// Stash
 			services.AddSingleton<IMessageHandler, StashListLoadHandler>();

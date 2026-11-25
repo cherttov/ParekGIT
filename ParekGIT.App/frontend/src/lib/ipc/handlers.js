@@ -6,8 +6,8 @@ import { repositories } from "../stores/repositories.svelte.js";
 import { branch } from "../stores/branch.svelte.js";
 import { branches } from "../stores/branches.svelte.js";
 import {
-	checkoutRepo, loadStashes, refreshRepoState,
-	resolveFolderPick, saveSettings, loadStatus, loadCommitFileDiff,
+	openRepo, loadStashes, refreshRepoState,
+	resolveFolderPick, saveSettings, loadRepoStatus, loadCommitFileDiff,
 	loadTodos, fetchRepo, loadBranches
 } from "./commands.js";
 import { config } from "../stores/config.svelte.js";
@@ -31,7 +31,7 @@ export function registerHandlers() {
 			const lastRepo = p.repositories.find(
 				(r) => r.absolutePath === p.settings.lastRepoPath
 			);
-			if (lastRepo) checkoutRepo(lastRepo);
+			if (lastRepo) openRepo(lastRepo);
 		}
 		app.ready = true;
 	});
@@ -103,7 +103,7 @@ export function registerHandlers() {
 		changes.setFiles(p.files);
 	});
 	onIpc(IpcActions.REPO_FILES_CHANGED, (p) => {
-		if (p.repoPath === repo.path) loadStatus();
+		if (p.repoPath === repo.path) loadRepoStatus();
 	});
 	onIpc(IpcActions.REPO_PATH_MISSING, (p) => {
 		modal.open("error", { message: `Repository not found at path: ${p.repoPath}` });
@@ -189,13 +189,13 @@ export function registerHandlers() {
 		diff.loading = false;
 	});
 	onIpc(IpcActions.CHANGE_ALL_DISCARDED, () => {
-		loadStatus();
+		loadRepoStatus();
 	});
 	onIpc(IpcActions.CHANGE_DISCARDED, () => {
-		loadStatus();
+		loadRepoStatus();
 	});
 	onIpc(IpcActions.CHANGE_IGNORED, () => {
-		loadStatus();
+		loadRepoStatus();
 	});
 	onIpc(IpcActions.CHANGES_COMMITTED, () => {
 		commit.committing = false;
@@ -266,7 +266,7 @@ export function registerHandlers() {
 // Helpers
 function appendRepo(r) {
 	repositories.list = [...repositories.list, r];
-	if (r.isValid) checkoutRepo(r);
+	if (r.isValid) openRepo(r);
 }
 
 function applyBranch(b) {

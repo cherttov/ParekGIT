@@ -3,7 +3,7 @@
 	import { history } from "../stores/history.svelte";
 	import { contextMenu } from "../stores/contextMenu.svelte";
 	import { historyMenuItems } from "./menus/historyContextMenu";
-	import { loadMoreHistory, loadCommitDetails } from "../ipc/commands";
+	import { loadMoreBranchHistory, loadCommitDetails } from "../ipc/commands";
 	import { commitDetails } from "../stores/commitDetails.svelte";
 
 	let { active = false } = $props();
@@ -14,7 +14,7 @@
 	function onScroll() {
 		if (!listEl) return;
 		const nearBottom = listEl.scrollTop + listEl.clientHeight >= listEl.scrollHeight - NEAR_BOTTOM_PX;
-		if (nearBottom) loadMoreHistory();
+		if (nearBottom) loadMoreBranchHistory();
 	}
 
 	function onSelect(c) {

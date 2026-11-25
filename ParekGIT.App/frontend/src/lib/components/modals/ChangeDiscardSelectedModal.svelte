@@ -1,7 +1,7 @@
 <script>
 	import Modal from "../Modal.svelte";
 	import { changes } from "../../stores/changes.svelte";
-	import { discardSelected } from "../../ipc/commands";
+	import { discardSelectedChanges } from "../../ipc/commands";
 
 	let { open = false, onclose } = $props();
 	const count = $derived(changes.checkedPaths.length);
@@ -9,7 +9,7 @@
 	function confirm() {
 		const paths = changes.checkedPaths;
 		if (paths.length === 0) return;
-		discardSelected(paths);
+		discardSelectedChanges(paths);
 		onclose?.();
 	}
 </script>

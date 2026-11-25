@@ -1,6 +1,6 @@
 import { modal } from "../../stores/modal.svelte";
 import { repo } from "../../stores/repo.svelte";
-import { openTerminal, showInExplorer } from "../../ipc/commands";
+import { openRepoTerminal, showInExplorer } from "../../ipc/commands";
 
 // Dropdown ADD button + top part of repo-topbar context menu
 export const addRepoItems = [
@@ -24,7 +24,7 @@ function toolItems(path, name, isInvalid) {
 		{ 
 			label: "Open in terminal", 
 			disabled: isInvalid, 
-			onclick: () => openTerminal(path) 
+			onclick: () => openRepoTerminal(path) 
 		},
 		{ 
 			label: "Show in explorer", 

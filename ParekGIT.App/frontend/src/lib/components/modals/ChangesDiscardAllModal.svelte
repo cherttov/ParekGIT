@@ -1,14 +1,14 @@
 <script>
 	import Modal from "../Modal.svelte";
 	import { changes } from "../../stores/changes.svelte";
-	import { discardAll } from "../../ipc/commands";
+	import { discardAllChanges } from "../../ipc/commands";
 
 	let { open = false, onclose } = $props();
 	const count = $derived(changes.files.length);
 
 	function confirm() {
 		if (count === 0) return;
-		discardAll();
+		discardAllChanges();
 		onclose?.();
 	}
 </script>

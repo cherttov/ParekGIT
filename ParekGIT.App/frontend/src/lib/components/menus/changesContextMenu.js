@@ -1,7 +1,7 @@
 import { modal } from "../../stores/modal.svelte";
 import { repo } from "../../stores/repo.svelte";
 import { changes } from "../../stores/changes.svelte";
-import { discardChange, ignoreFile, showInExplorer } from "../../ipc/commands";
+import { discardChange, ignoreFileChange, showInExplorer } from "../../ipc/commands";
 
 // Builds an absolute path based on repo path separators (Windows/Unix)
 function toAbsolute(relPath) {
@@ -20,7 +20,7 @@ export function changeMenuItems(file) {
 		"divider",
 		{
 			label: "Ignore file (add to .gitignore)",
-			onclick: () => ignoreFile(file.path)
+			onclick: () => ignoreFileChange(file.path)
 		},
 		"divider",
 		{
