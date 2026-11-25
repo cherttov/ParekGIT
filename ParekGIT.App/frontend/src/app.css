@@ -1609,6 +1609,7 @@ ui-checkbox:disabled {
 	pointer-events: none;
 	z-index: 3000;
 	background-color: var(--bg-deep);
+	border: 1px solid var(--border-color);
 	padding: 4px 0;
 	min-width: 164px;
 	border-radius: 6px;
@@ -1643,11 +1644,6 @@ ui-checkbox:disabled {
 	margin: 4px 0;
 	flex-shrink: 0;
 	pointer-events: none;
-}
-
-#topbar-branch-context-menu,
-#topbar-repo-context-menu {
-	border: 1px solid var(--border-color);
 }
 
 .context-menu-item:disabled {
