@@ -24,7 +24,7 @@ namespace ParekGIT.UI
 				// Building ServiceProvider
 				using var serviceProvider = services.BuildServiceProvider();
 
-				// Initializizing APP_DATA (directories/files)
+				// Initializing APP_DATA (directories/files)
 				AppBootstrapper.InitializeAppData(serviceProvider);
 				
 				// Registering handlers to IpcRouter

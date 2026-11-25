@@ -3,8 +3,6 @@ using ParekGIT.Bridge.Handlers;
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Bridge.Ipc;
 using ParekGIT.Bridge.Services;
-using ParekGIT.Core.Interfaces;
-using ParekGIT.Core.Services;
 
 namespace ParekGIT.Bridge
 {
