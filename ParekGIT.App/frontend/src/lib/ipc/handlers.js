@@ -1,5 +1,5 @@
 import { IpcActions } from "./actions.js";
-import { onIpc, sendIpcMessage } from "./ipc.js";
+import { onIpc } from "./ipc.js";
 import { repo } from "../stores/repo.svelte.js";
 import { app } from "../stores/app.svelte.js";
 import { repositories } from "../stores/repositories.svelte.js";
@@ -140,10 +140,15 @@ export function registerHandlers() {
 	});
 	onIpc(IpcActions.BRANCH_RENAMED, (p) => {
 		if (branch.name === p.oldName) branch.name = p.newName;
-		loadBranches(repo.path);
+		loadBranches();
 	});
 	onIpc(IpcActions.BRANCH_MERGED, () => {
-		loadBranches(repo.path);
+		loadBranches();
+		refreshRepoState();
+	});
+	onIpc(IpcActions.BRANCH_PUBLISHED, () => {
+		branch.hasUpstream = true;
+		loadBranches();
 		refreshRepoState();
 	});
 	onIpc(IpcActions.BRANCH_HISTORY_LOADED, (p) => {
@@ -152,13 +157,8 @@ export function registerHandlers() {
 	onIpc(IpcActions.BRANCH_HISTORY_APPENDED, (p) => {
 		history.appendCommits(p.commits);
 	});
-	onIpc(IpcActions.BRANCH_PUBLISHED, () => {
-		branch.hasUpstream = true;
-		loadBranches(repo.path);
-		refreshRepoState();
-	});
 
-	// Commit / File
+	// Commit
 	onIpc(IpcActions.COMMIT_DETAILS_LOADED, (p) => {
 		commitDetails.message = p.message ?? "";
 		commitDetails.author = p.author ?? "";
@@ -177,7 +177,7 @@ export function registerHandlers() {
 		commitDetails.loadingDiff = false;
 	});
 	onIpc(IpcActions.COMMIT_CHECKED_OUT, () => { // FINISH
-		loadBranches(repo.path);
+		loadBranches();
 	});
 	onIpc(IpcActions.COMMIT_REVERTED, () => {
 		refreshRepoState();
