@@ -1,4 +1,5 @@
-﻿using ParekGIT.Core.Interfaces;
+﻿using ParekGIT.Core.Helpers;
+using ParekGIT.Core.Interfaces;
 using Timer = System.Timers.Timer;
 
 namespace ParekGIT.Core.Services
@@ -52,7 +53,7 @@ namespace ParekGIT.Core.Services
 
 		private void OnFileActivity(object sender, FileSystemEventArgs e)
 		{
-			if (e.FullPath.Contains($"{Path.DirectorySeparatorChar}.git", StringComparison.OrdinalIgnoreCase)) return;
+			if (e.FullPath.Contains($"{Path.DirectorySeparatorChar}.git", PathHelper.Comparison)) return;
 
 			_debounceTimer.Stop();
 			_debounceTimer.Start();

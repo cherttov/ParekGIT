@@ -6,6 +6,7 @@ using ParekGIT.Data.Data;
 using ParekGIT.Data.Models;
 using Photino.NET;
 using System.Text.Json;
+using ParekGIT.Core.Helpers;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -57,7 +58,7 @@ namespace ParekGIT.Bridge.Handlers
 			_repoWatcher.WatchRepository(repoPath);
 
 			// Update last repo path
-			if (currentSettings.LastRepoPath != repoPath)
+			if (!PathHelper.AreEqual(currentSettings.LastRepoPath, repoPath))
 			{
 				currentSettings.LastRepoPath = repoPath;
 				await _jsonStore.SaveUserSettingsAsync(currentSettings);

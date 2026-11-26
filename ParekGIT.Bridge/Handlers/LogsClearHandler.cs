@@ -3,6 +3,7 @@ using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Interfaces;
 using Photino.NET;
 using System.Text.Json;
+using ParekGIT.Core.Helpers;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -41,7 +42,7 @@ namespace ParekGIT.Bridge.Handlers
 
 				foreach (string file in allFiles)
 				{
-					if (string.Equals(file, todayLogFile, StringComparison.OrdinalIgnoreCase)) continue;
+					if (PathHelper.AreEqual(file, todayLogFile)) continue;
 
 					try
 					{

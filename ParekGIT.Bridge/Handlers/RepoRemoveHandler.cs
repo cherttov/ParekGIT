@@ -5,6 +5,7 @@ using ParekGIT.Core.Models;
 using ParekGIT.Data.Interfaces;
 using Photino.NET;
 using System.Text.Json;
+using ParekGIT.Core.Helpers;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -34,8 +35,7 @@ namespace ParekGIT.Bridge.Handlers
 			bool deleteLocal = payload.GetProperty("deleteLocal").GetBoolean();
 
 			IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
-			GitRepository? repoToDelete = allRepos.FirstOrDefault(repo =>
-				string.Equals(repo.AbsolutePath, repoPath, StringComparison.OrdinalIgnoreCase));
+			GitRepository? repoToDelete = allRepos.FirstOrDefault(repo => PathHelper.AreEqual(repo.AbsolutePath, repoPath));
 
 			// Delete from database
 			if (repoToDelete != null)
