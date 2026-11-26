@@ -12,17 +12,17 @@ namespace ParekGIT.Bridge.Handlers
 	internal sealed class RepoAddHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IRepositoryStore _dbStore;
+		private readonly IRepositoryStore _repoStore;
 		private readonly IGitStatusService _statusService;
 		private readonly IFileSystemService _fileSystem;
 
 		public string Action => "REPO_ADD";
 
 		// Constructor
-		public RepoAddHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitStatusService statusService, IFileSystemService fileSystem)
+		public RepoAddHandler(PhotinoWindow window, IRepositoryStore repoStore, IGitStatusService statusService, IFileSystemService fileSystem)
 		{
 			_window = window;
-			_dbStore = dbStore;
+			_repoStore = repoStore;
 			_statusService = statusService;
 			_fileSystem = fileSystem;
 		}
@@ -57,12 +57,12 @@ namespace ParekGIT.Bridge.Handlers
 				RemoteUrl = remoteUrl
 			};
 
-			IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
+			IEnumerable<GitRepository> allRepos = await _repoStore.GetAllRepositoriesAsync();
 			if (allRepos.Any(existing => PathHelper.AreEqual(existing.AbsolutePath, repoPath)))
 				throw new InvalidOperationException("Repository with this path already exists in the database.");
 
 			// Save to db
-			await _dbStore.UpsertRepositoryAsync(repo);
+			await _repoStore.UpsertRepositoryAsync(repo);
 
 			// Response
 			var response = IpcMessage.Create("REPO_ADDED", new { repo });

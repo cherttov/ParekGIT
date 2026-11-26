@@ -11,16 +11,16 @@ namespace ParekGIT.Bridge.Handlers
 	internal sealed class RepoCloneHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IRepositoryStore _dbStore;
+		private readonly IRepositoryStore _repoStore;
 		private readonly IGitRepositoryService _repoService;
 
 		public string Action => "REPO_CLONE";
 
 		// Constructor
-		public RepoCloneHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRepositoryService repoService)
+		public RepoCloneHandler(PhotinoWindow window, IRepositoryStore repoStore, IGitRepositoryService repoService)
 		{
 			_window = window;
-			_dbStore = dbStore;
+			_repoStore = repoStore;
 			_repoService = repoService;
 		}
 
@@ -49,7 +49,7 @@ namespace ParekGIT.Bridge.Handlers
 				RemoteUrl = asLocal ? null : repoUrl
 			};
 
-			await _dbStore.UpsertRepositoryAsync(repo);
+			await _repoStore.UpsertRepositoryAsync(repo);
 
 			// Response
 			var response = IpcMessage.Create("REPO_CLONED", new { repo });

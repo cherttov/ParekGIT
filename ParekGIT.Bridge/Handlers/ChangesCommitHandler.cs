@@ -11,7 +11,7 @@ namespace ParekGIT.Bridge.Handlers
 	internal sealed class ChangesCommitHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IRepositoryStore _dbStore;
+		private readonly IRepositoryStore _repoStore;
 		private readonly IGitWorkingTreeService _workingTreeService;
 		private readonly IGitSyncService _syncService;
 		private readonly IGitStatusService _statusService;
@@ -20,14 +20,14 @@ namespace ParekGIT.Bridge.Handlers
 		public string Action => "CHANGES_COMMIT";
 
 		// Constructor
-		public ChangesCommitHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitWorkingTreeService workingTreeService,
+		public ChangesCommitHandler(PhotinoWindow window, IRepositoryStore repoStore, IGitWorkingTreeService workingTreeService,
 			IGitSyncService syncService, IGitStatusService statusService, IRemoteSyncNotifier syncNotifier)
 		{
 			_window = window;
 			_workingTreeService = workingTreeService;
 			_syncService = syncService;
 			_statusService = statusService;
-			_dbStore = dbStore;
+			_repoStore = repoStore;
 			_syncNotifier = syncNotifier;
 		}
 
@@ -52,7 +52,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _workingTreeService.CommitAsync(repoPath, message, description, files);
 
 			// Refresh remote sync status
-			GitRepository repo = await _dbStore.GetRepositoryByPathAsync(repoPath)
+			GitRepository repo = await _repoStore.GetRepositoryByPathAsync(repoPath)
 				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
 
 			if (!string.IsNullOrEmpty(repo.RemoteUrl))

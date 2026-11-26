@@ -12,17 +12,17 @@ namespace ParekGIT.Bridge.Handlers
 	internal sealed class RepoRemoveHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IRepositoryStore _dbStore;
+		private readonly IRepositoryStore _repoStore;
 		private readonly IFileSystemService _fileSystem;
 		private readonly ILogger _logger;
 
 		public string Action => "REPO_REMOVE";
 
 		// Constructor
-		public RepoRemoveHandler(PhotinoWindow window, IRepositoryStore dbStore, IFileSystemService fileSystem, ILogger logger)
+		public RepoRemoveHandler(PhotinoWindow window, IRepositoryStore repoStore, IFileSystemService fileSystem, ILogger logger)
 		{
 			_window = window;
-			_dbStore = dbStore;
+			_repoStore = repoStore;
 			_fileSystem = fileSystem;
 			_logger = logger;
 		}
@@ -34,12 +34,12 @@ namespace ParekGIT.Bridge.Handlers
 
 			bool deleteLocal = payload.GetProperty("deleteLocal").GetBoolean();
 
-			IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
+			IEnumerable<GitRepository> allRepos = await _repoStore.GetAllRepositoriesAsync();
 			GitRepository? repoToDelete = allRepos.FirstOrDefault(repo => PathHelper.AreEqual(repo.AbsolutePath, repoPath));
 
 			// Delete from database
 			if (repoToDelete != null)
-				await _dbStore.DeleteRepositoryAsync(repoToDelete.Id);
+				await _repoStore.DeleteRepositoryAsync(repoToDelete.Id);
 
 			// Delete from drive
 			bool localDeleteFailed = false;

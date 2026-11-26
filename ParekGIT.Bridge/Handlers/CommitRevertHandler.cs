@@ -11,7 +11,7 @@ namespace ParekGIT.Bridge.Handlers
 	internal sealed class CommitRevertHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IRepositoryStore _dbStore;
+		private readonly IRepositoryStore _repoStore;
 		private readonly IGitHistoryService _historyService;
 		private readonly IGitStatusService _statusService;
 		private readonly IGitSyncService _syncService;
@@ -20,11 +20,11 @@ namespace ParekGIT.Bridge.Handlers
 		public string Action => "COMMIT_REVERT";
 
 		// Constructor
-		public CommitRevertHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitHistoryService historyService, 
+		public CommitRevertHandler(PhotinoWindow window, IRepositoryStore repoStore, IGitHistoryService historyService,
 			IGitStatusService statusService, IGitSyncService syncService, IRemoteSyncNotifier syncNotifier)
 		{
 			_window = window;
-			_dbStore = dbStore;
+			_repoStore = repoStore;
 			_historyService = historyService;
 			_statusService = statusService;
 			_syncService = syncService;
@@ -42,7 +42,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _historyService.RevertCommitAsync(repoPath, commitHash);
 
 			// Refresh remote sync status
-			GitRepository repo = await _dbStore.GetRepositoryByPathAsync(repoPath)
+			GitRepository repo = await _repoStore.GetRepositoryByPathAsync(repoPath)
 				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
 
 			if (!string.IsNullOrEmpty(repo.RemoteUrl))

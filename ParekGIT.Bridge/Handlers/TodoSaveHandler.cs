@@ -1,24 +1,24 @@
 ﻿using ParekGIT.Bridge.Models;
 using ParekGIT.Bridge.Interfaces;
-using ParekGIT.Data.Data;
 using ParekGIT.Data.Models;
 using Photino.NET;
 using System.Text.Json;
+using ParekGIT.Data.Interfaces;
 
 namespace ParekGIT.Bridge.Handlers
 {
 	internal sealed class TodoSaveHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly LiteDbStore _dbStore;
+		private readonly ITodoStore _todoStore;
 
 		public string Action => "TODO_SAVE";
 
 		// Constructor
-		public TodoSaveHandler(PhotinoWindow window, LiteDbStore dbStore)
+		public TodoSaveHandler(PhotinoWindow window, ITodoStore todoStore)
 		{
 			_window = window;
-			_dbStore = dbStore;
+			_todoStore = todoStore;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -33,7 +33,7 @@ namespace ParekGIT.Bridge.Handlers
 			List<TodoItem> newTodos = payload.GetProperty("todos").Deserialize<List<TodoItem>>(options)
 				?? new List<TodoItem>();
 
-			await _dbStore.SaveBranchTodosByPathAsync(repoPath, branchName, newTodos);
+			await _todoStore.SaveBranchTodosByPathAsync(repoPath, branchName, newTodos);
 
 			// Response
 			var response = IpcMessage.Create("TODO_SAVED", new { success = true });

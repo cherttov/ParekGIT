@@ -2,19 +2,19 @@
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
-using ParekGIT.Data.Data;
 using ParekGIT.Data.Models;
 using Photino.NET;
 using System.Text.Json;
 using ParekGIT.Core.Helpers;
+using ParekGIT.Data.Interfaces;
 
 namespace ParekGIT.Bridge.Handlers
 {
 	internal sealed class RepoOpenHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly LiteDbStore _dbStore;
-		private readonly JsonStore _jsonStore;
+		private readonly IRepositoryStore _repoStore;
+		private readonly ISettingsStore _settingsStore;
 		private readonly IGitBranchService _branchService;
 		private readonly IRepositoryWatcher _repoWatcher;
 		private readonly IFileSystemService _fileSystem;
@@ -22,11 +22,12 @@ namespace ParekGIT.Bridge.Handlers
 		public string Action => "REPO_OPEN";
 
 		// Constructor
-		public RepoOpenHandler(PhotinoWindow window, LiteDbStore dbStore, JsonStore jsonStore, IGitBranchService branchService, IRepositoryWatcher repoWatcher, IFileSystemService fileSystem)
+		public RepoOpenHandler(PhotinoWindow window, IRepositoryStore repoStore, ISettingsStore settingsStore,
+			IGitBranchService branchService, IRepositoryWatcher repoWatcher, IFileSystemService fileSystem)
 		{
 			_window = window;
-			_dbStore = dbStore;
-			_jsonStore = jsonStore;
+			_repoStore = repoStore;
+			_settingsStore = settingsStore;
 			_branchService = branchService;
 			_repoWatcher = repoWatcher;
 			_fileSystem = fileSystem;
@@ -37,12 +38,12 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 							  ?? throw new IpcPayloadException("repoPath");
 
-			var repo = await _dbStore.GetRepositoryByPathAsync(repoPath);
+			var repo = await _repoStore.GetRepositoryByPathAsync(repoPath);
 
 			// Failed response
 			if (!_fileSystem.DirectoryExists(repoPath) || repo == null)
 			{
-				await _dbStore.UpdateRepositoryValidStateAsync(repoPath, false);
+				await _repoStore.UpdateRepositoryValidStateAsync(repoPath, false);
 
 				// Make an IPC message that path is missing to resolve
 				var missingResponse = IpcMessage.Create("REPO_PATH_MISSING", new { repoPath });
@@ -50,7 +51,7 @@ namespace ParekGIT.Bridge.Handlers
 				return;
 			}
 
-			UserSettings currentSettings = await _jsonStore.GetUserSettingsAsync();
+			UserSettings currentSettings = await _settingsStore.GetUserSettingsAsync();
 
 			// Get branches
 			IEnumerable<GitBranch> branches = await _branchService.GetBranchesAsync(repoPath);
@@ -61,7 +62,7 @@ namespace ParekGIT.Bridge.Handlers
 			if (!PathHelper.AreEqual(currentSettings.LastRepoPath, repoPath))
 			{
 				currentSettings.LastRepoPath = repoPath;
-				await _jsonStore.SaveUserSettingsAsync(currentSettings);
+				await _settingsStore.SaveUserSettingsAsync(currentSettings);
 			}
 
 			// Response

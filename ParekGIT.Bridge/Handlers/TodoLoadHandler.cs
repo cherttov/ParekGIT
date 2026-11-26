@@ -10,15 +10,15 @@ namespace ParekGIT.Bridge.Handlers
 	internal sealed class TodoLoadHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly ITodoStore _dbStore;
+		private readonly ITodoStore _todoStore;
 
 		public string Action => "TODO_LOAD";
 
 		// Constructor
-		public TodoLoadHandler(PhotinoWindow window, ITodoStore dbStore)
+		public TodoLoadHandler(PhotinoWindow window, ITodoStore todoStore)
 		{
 			_window = window;
-			_dbStore = dbStore;
+			_todoStore = todoStore;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -29,7 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 			string branchName = payload.GetProperty("branchName").GetString()
 								?? throw new IpcPayloadException("branchName");
 
-			IEnumerable<TodoItem> todos = await _dbStore.GetBranchTodosByPathAsync(repoPath, branchName);
+			IEnumerable<TodoItem> todos = await _todoStore.GetBranchTodosByPathAsync(repoPath, branchName);
 
 			// Response
 			var response = IpcMessage.Create("TODO_LOADED", new { todos });

@@ -11,16 +11,16 @@ namespace ParekGIT.Bridge.Handlers
 	internal sealed class RepoCreateHandler : IMessageHandler
 	{
 		private readonly PhotinoWindow _window;
-		private readonly IRepositoryStore _dbStore;
+		private readonly IRepositoryStore _repoStore;
 		private readonly IGitRepositoryService _repoService;
 
 		public string Action => "REPO_CREATE";
 
 		// Constructor
-		public RepoCreateHandler(PhotinoWindow window, IRepositoryStore dbStore, IGitRepositoryService repoService)
+		public RepoCreateHandler(PhotinoWindow window, IRepositoryStore repoStore, IGitRepositoryService repoService)
 		{
 			_window = window;
-			_dbStore = dbStore;
+			_repoStore = repoStore;
 			_repoService = repoService;
 		}
 
@@ -31,7 +31,7 @@ namespace ParekGIT.Bridge.Handlers
 
 			// Create repo in git
 			var repo = await _repoService.CreateRepositoryAsync(request);
-			await _dbStore.UpsertRepositoryAsync(repo);
+			await _repoStore.UpsertRepositoryAsync(repo);
 
 			// Response
 			var response = IpcMessage.Create("REPO_CREATED", new { repo });
