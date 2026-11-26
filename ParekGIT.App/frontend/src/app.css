@@ -547,15 +547,12 @@ ui-checkbox:disabled {
 
 .left-sidebar-btn.fetching {
 	background-color: var(--bg-active);
+	pointer-events: none;
 }
 
 .left-sidebar-btn.fetching .icon-fetch {
 	animation: spin-fetch 1s linear infinite;
 	background-color: var(--accent);
-}
-
-.left-sidebar-btn.fetching {
-	pointer-events: none;
 }
 
 /* SPLIT CONTAINER */
@@ -1503,10 +1500,6 @@ ui-checkbox:disabled {
 	font-weight: 500;
 	white-space: nowrap;
 	transition: background-color 0.1s ease;
-}
-
-.browse-btn:hover {
-	background-color: var(--bg-hover);
 }
 
 .stash-new-row {
