@@ -1,4 +1,8 @@
 <script>
+	import { modal } from "../stores/modal.svelte";
+
+	const instant = $derived(modal.active !== null && modal.previous !== null);
+
 	let {
 		open = false,
 		title = "", // Modal header title
@@ -41,7 +45,7 @@
 <svelte:window onkeydown={open ? handleKeydown : undefined} />
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="modal-backdrop" class:show={open} onclick={handleBackdropClick}>
+<div class="modal-backdrop" class:show={open} class:instant onclick={handleBackdropClick}>
 	<div class="modal-content" onclick={(e) => e.stopPropagation()}>
 		<div class="modal-header">
 			<h3>{title}</h3>

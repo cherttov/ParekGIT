@@ -1084,6 +1084,11 @@ ui-checkbox:disabled {
 	opacity: 1;
 }
 
+.modal-backdrop.instant,
+.modal-backdrop.instant .modal-content {
+	transition: none;
+}
+
 .modal-content {
 	background-color: var(--bg-panel);
 	border-radius: 4px;
