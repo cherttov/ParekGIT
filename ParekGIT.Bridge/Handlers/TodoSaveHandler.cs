@@ -33,7 +33,7 @@ namespace ParekGIT.Bridge.Handlers
 			List<TodoItem> newTodos = payload.GetProperty("todos").Deserialize<List<TodoItem>>(options)
 				?? new List<TodoItem>();
 
-			await _todoStore.SaveBranchTodosByPathAsync(repoPath, branchName, newTodos);
+			await _todoStore.SaveBranchTodosAsync(repoPath, branchName, newTodos);
 
 			// Response
 			var response = IpcMessage.Create("TODO_SAVED", new { success = true });

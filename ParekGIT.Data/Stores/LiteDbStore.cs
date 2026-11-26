@@ -5,7 +5,7 @@ using ParekGIT.Data.Models;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Helpers;
 
-namespace ParekGIT.Data.Data
+namespace ParekGIT.Data.Stores
 {
 	public class LiteDbStore : IRepositoryStore, ITodoStore, IDisposable
 	{
@@ -22,7 +22,7 @@ namespace ParekGIT.Data.Data
 			string appDataPath = appDataPaths.GetDatabaseDirectory();
 			string rawPath = Path.Combine(appDataPath, "data.db");
 
-			_db = new LiteDatabase($"Filename={rawPath}");
+			_db = new LiteDatabase(new ConnectionString { Filename = rawPath });
 
 			var repos = _db.GetCollection<GitRepository>(ReposCollectionName);
 			repos.EnsureIndex(r => r.LastAccessed);
@@ -35,8 +35,8 @@ namespace ParekGIT.Data.Data
 
 		public void Dispose()
 		{
-			_writeLock.Dispose();
 			_db.Dispose();
+			_writeLock.Dispose();
 		}
 
 		// Repos db
@@ -52,7 +52,7 @@ namespace ParekGIT.Data.Data
 			});
 		}
 
-		public Task<GitRepository?> GetRepositoryByPathAsync(string absolutePath)
+		public Task<GitRepository?> GetRepositoryAsync(string absolutePath)
 		{
 			return Task.Run<GitRepository?>(() =>
 			{
@@ -70,12 +70,15 @@ namespace ParekGIT.Data.Data
 			});
 		}
 
-		public Task DeleteRepositoryAsync(Guid id)
+		public Task DeleteRepositoryAsync(string absolutePath)
 		{
 			return Task.Run(() =>
 			{
 				var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
-				collection.Delete(id);
+				var repo = FindRepositoryByPath(collection, absolutePath)
+					?? throw new InvalidOperationException($"Repository not found for path: {absolutePath}");
+
+				collection.Delete(repo.Id);
 			});
 		}
 
@@ -113,44 +116,45 @@ namespace ParekGIT.Data.Data
 			});
 		}
 
-		public Task<IEnumerable<TodoItem>> GetBranchTodosAsync(Guid repoId, string branchName)
+		public Task<IEnumerable<TodoItem>> GetBranchTodosAsync(string repoPath, string branchName)
 		{
 			return Task.Run(() =>
 			{
-				var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
-				return (IEnumerable<TodoItem>)collection
-					.Find(todo => todo.RepoId == repoId && todo.BranchName == branchName)
+				var repoCollection = _db.GetCollection<GitRepository>(ReposCollectionName);
+				var repo = FindRepositoryByPath(repoCollection, repoPath)
+					?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
+
+				var todoCollection = _db.GetCollection<TodoItem>(TodosCollectionName);
+				return (IEnumerable<TodoItem>)todoCollection
+					.Find(todo => todo.RepoId == repo.Id && todo.BranchName == branchName)
 					.ToList();
 			});
 		}
 
-		public async Task<IEnumerable<TodoItem>> GetBranchTodosByPathAsync(string repoPath, string branchName)
+		public async Task SaveBranchTodosAsync(string repoPath, string branchName, IEnumerable<TodoItem> todos)
 		{
-			var targetRepo = await GetRepositoryByPathAsync(repoPath)
-				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
-
-			return await GetBranchTodosAsync(targetRepo.Id, branchName);
-		}
-
-		public async Task SaveBranchTodosAsync(Guid repoId, string branchName, IEnumerable<TodoItem> todos)
-		{
-			var todosList = todos.Select(t =>
-			{
-				t.RepoId = repoId;
-				t.BranchName = branchName;
-				return t;
-			}).ToList();
+			var todosList = todos.ToList();
 
 			await _writeLock.WaitAsync();
 			try
 			{
 				await Task.Run(() =>
 				{
+					var repoCollection = _db.GetCollection<GitRepository>(ReposCollectionName);
+					var repo = FindRepositoryByPath(repoCollection, repoPath)
+						?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
+
+					foreach (var todo in todosList)
+					{
+						todo.RepoId = repo.Id;
+						todo.BranchName = branchName;
+					}
+
 					_db.BeginTrans();
 					try
 					{
 						var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
-						collection.DeleteMany(todo => todo.RepoId == repoId && todo.BranchName == branchName);
+						collection.DeleteMany(todo => todo.RepoId == repo.Id && todo.BranchName == branchName);
 						if (todosList.Count > 0)
 							collection.InsertBulk(todosList);
 						_db.Commit();
@@ -166,14 +170,6 @@ namespace ParekGIT.Data.Data
 			{
 				_writeLock.Release();
 			}
-		}
-
-		public async Task SaveBranchTodosByPathAsync(string repoPath, string branchName, IEnumerable<TodoItem> todos)
-		{
-			var targetRepo = await GetRepositoryByPathAsync(repoPath)
-				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
-
-			await SaveBranchTodosAsync(targetRepo.Id, branchName, todos);
 		}
 
 		public Task UpsertTodoAsync(TodoItem todo)

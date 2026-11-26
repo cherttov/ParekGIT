@@ -34,13 +34,6 @@ namespace ParekGIT.Bridge.Handlers
 
 			bool deleteLocal = payload.GetProperty("deleteLocal").GetBoolean();
 
-			IEnumerable<GitRepository> allRepos = await _repoStore.GetAllRepositoriesAsync();
-			GitRepository? repoToDelete = allRepos.FirstOrDefault(repo => PathHelper.AreEqual(repo.AbsolutePath, repoPath));
-
-			// Delete from database
-			if (repoToDelete != null)
-				await _repoStore.DeleteRepositoryAsync(repoToDelete.Id);
-
 			// Delete from drive
 			bool localDeleteFailed = false;
 			string? localDeleteError = null;

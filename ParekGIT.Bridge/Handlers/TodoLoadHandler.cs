@@ -29,7 +29,7 @@ namespace ParekGIT.Bridge.Handlers
 			string branchName = payload.GetProperty("branchName").GetString()
 								?? throw new IpcPayloadException("branchName");
 
-			IEnumerable<TodoItem> todos = await _todoStore.GetBranchTodosByPathAsync(repoPath, branchName);
+			IEnumerable<TodoItem> todos = await _todoStore.GetBranchTodosAsync(repoPath, branchName);
 
 			// Response
 			var response = IpcMessage.Create("TODO_LOADED", new { todos });

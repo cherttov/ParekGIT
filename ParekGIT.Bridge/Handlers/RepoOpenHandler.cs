@@ -38,7 +38,7 @@ namespace ParekGIT.Bridge.Handlers
 			string repoPath = payload.GetProperty("repoPath").GetString()
 							  ?? throw new IpcPayloadException("repoPath");
 
-			var repo = await _repoStore.GetRepositoryByPathAsync(repoPath);
+			var repo = await _repoStore.GetRepositoryAsync(repoPath);
 
 			// Failed response
 			if (!_fileSystem.DirectoryExists(repoPath) || repo == null)

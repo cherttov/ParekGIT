@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ParekGIT.Data.Data;
+using ParekGIT.Data.Stores;
 using ParekGIT.Data.Interfaces;
 
 namespace ParekGIT.Data

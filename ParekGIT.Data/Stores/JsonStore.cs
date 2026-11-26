@@ -3,7 +3,7 @@ using ParekGIT.Data.Interfaces;
 using ParekGIT.Data.Models;
 using System.Text.Json;
 
-namespace ParekGIT.Data.Data
+namespace ParekGIT.Data.Stores
 {
 	public class JsonStore : ISettingsStore, IThemeStore
 	{

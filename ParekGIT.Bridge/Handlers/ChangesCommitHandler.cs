@@ -52,7 +52,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _workingTreeService.CommitAsync(repoPath, message, description, files);
 
 			// Refresh remote sync status
-			GitRepository repo = await _repoStore.GetRepositoryByPathAsync(repoPath)
+			GitRepository repo = await _repoStore.GetRepositoryAsync(repoPath)
 				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
 
 			if (!string.IsNullOrEmpty(repo.RemoteUrl))

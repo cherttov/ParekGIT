@@ -5,9 +5,9 @@ namespace ParekGIT.Data.Interfaces
 	public interface IRepositoryStore
 	{
 		Task<IEnumerable<GitRepository>> GetAllRepositoriesAsync();
-		Task<GitRepository?> GetRepositoryByPathAsync(string absolutePath);
+		Task<GitRepository?> GetRepositoryAsync(string absolutePath);
 		Task UpsertRepositoryAsync(GitRepository repository); // Update || Insert
-		Task DeleteRepositoryAsync(Guid id);
+		Task DeleteRepositoryAsync(string absolutePath);
 		Task UpdateRepositoryValidStateAsync(string absolutePath, bool isValid);
 	}
 }

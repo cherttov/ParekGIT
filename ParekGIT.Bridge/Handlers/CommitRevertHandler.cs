@@ -42,7 +42,7 @@ namespace ParekGIT.Bridge.Handlers
 			await _historyService.RevertCommitAsync(repoPath, commitHash);
 
 			// Refresh remote sync status
-			GitRepository repo = await _repoStore.GetRepositoryByPathAsync(repoPath)
+			GitRepository repo = await _repoStore.GetRepositoryAsync(repoPath)
 				?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
 
 			if (!string.IsNullOrEmpty(repo.RemoteUrl))
