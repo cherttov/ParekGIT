@@ -2,8 +2,8 @@
 using ParekGIT.Data.Interfaces;
 using LiteDB;
 using ParekGIT.Data.Models;
-using ParekGIT.Core.Services;
 using ParekGIT.Core.Interfaces;
+using ParekGIT.Core.Helpers;
 
 namespace ParekGIT.Data.Data
 {
@@ -57,7 +57,7 @@ namespace ParekGIT.Data.Data
 			return Task.Run<GitRepository?>(() =>
 			{
 				var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
-				return collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
+				return FindRepositoryByPath(collection, absolutePath);
 			});
 		}
 
@@ -87,7 +87,7 @@ namespace ParekGIT.Data.Data
 				await Task.Run(() =>
 				{
 					var collection = _db.GetCollection<GitRepository>(ReposCollectionName);
-					var repo = collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
+					var repo = FindRepositoryByPath(collection, absolutePath);
 					if (repo != null && repo.IsValid != isValid)
 					{
 						repo.IsValid = isValid;
@@ -192,6 +192,14 @@ namespace ParekGIT.Data.Data
 				var collection = _db.GetCollection<TodoItem>(TodosCollectionName);
 				collection.Delete(id);
 			});
+		}
+
+		// Private helpers
+		private static GitRepository? FindRepositoryByPath(ILiteCollection<GitRepository> collection, string absolutePath)
+		{
+			return PathHelper.IsCaseSensitive
+				? collection.FindOne(r => r.AbsolutePath == absolutePath)
+				: collection.FindOne(r => r.AbsolutePath.ToLower() == absolutePath.ToLower());
 		}
 	}
 }

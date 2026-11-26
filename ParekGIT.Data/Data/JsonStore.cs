@@ -1,5 +1,4 @@
 ﻿using ParekGIT.Core.Interfaces;
-using ParekGIT.Core.Services;
 using ParekGIT.Data.Interfaces;
 using ParekGIT.Data.Models;
 using System.Text.Json;

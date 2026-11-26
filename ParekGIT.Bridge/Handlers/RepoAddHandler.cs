@@ -5,6 +5,7 @@ using ParekGIT.Core.Models;
 using ParekGIT.Data.Interfaces;
 using Photino.NET;
 using System.Text.Json;
+using ParekGIT.Core.Helpers;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -34,7 +35,7 @@ namespace ParekGIT.Bridge.Handlers
 			// Normalize path
 			repoPath = Path.GetFullPath(repoPath);
 			repoPath = Path.TrimEndingDirectorySeparator(repoPath);
-			if (repoPath.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
+			if (repoPath.EndsWith(".git", PathHelper.Comparison))
 				repoPath = Path.GetDirectoryName(repoPath) ?? repoPath;
 
 			// Verify if valid .git repo
@@ -42,11 +43,9 @@ namespace ParekGIT.Bridge.Handlers
 			if (!_fileSystem.DirectoryExists(gitFolderPath))
 				throw new DirectoryNotFoundException("Selected folder is not a valid Git repository.");
 
-			// Create repo object
+			// Create repo object & check for remote
 			string repoName = new DirectoryInfo(repoPath).Name;
 			DateTime lastAccessed = new DirectoryInfo(repoPath).LastAccessTime;
-
-			// Check for remote
 			string? remoteUrl = await _statusService.GetRemoteUrlAsync(repoPath);
 
 			var repo = new GitRepository
@@ -59,7 +58,7 @@ namespace ParekGIT.Bridge.Handlers
 			};
 
 			IEnumerable<GitRepository> allRepos = await _dbStore.GetAllRepositoriesAsync();
-			if (allRepos.Any(existing => string.Equals(existing.AbsolutePath, repoPath, StringComparison.OrdinalIgnoreCase)))
+			if (allRepos.Any(existing => PathHelper.AreEqual(existing.AbsolutePath, repoPath)))
 				throw new InvalidOperationException("Repository with this path already exists in the database.");
 
 			// Save to db
