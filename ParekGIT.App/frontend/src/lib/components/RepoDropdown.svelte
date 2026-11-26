@@ -1,5 +1,6 @@
 <script>
 	import { repo } from "../stores/repo.svelte";
+	import { modal } from "../stores/modal.svelte";
 	import { IpcActions } from "../ipc/actions";
 	import { repositories } from "../stores/repositories.svelte";
 	import { openRepo } from "../ipc/commands";
@@ -19,6 +20,11 @@
 	);
 
 	function selectRepo(r) {
+		if (!r.isValid) {
+			modal.open("repo-missing", { repoPath: r.absolutePath });
+			onclose?.();
+			return;
+		}
 		openRepo(r);
 		onclose?.();
 	}

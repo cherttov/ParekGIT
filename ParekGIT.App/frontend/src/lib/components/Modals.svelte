@@ -5,6 +5,8 @@
 	import RepoCreateModal from "./modals/RepoCreateModal.svelte";
 	import RepoAddModal from "./modals/RepoAddModal.svelte";
 	import RepoRemoveModal from "./modals/RepoRemoveModal.svelte";
+	import RepoMissingModal from "./modals/RepoMissingModal.svelte";
+	import RepoMissingAddModal from "./modals/RepoMissingAddModal.svelte";
 	import BranchNewModal from "./modals/BranchNewModal.svelte";
 	import BranchFromCommitModal from "./modals/BranchFromCommitModal.svelte";
 	import BranchRenameModal from "./modals/BranchRenameModal.svelte";
@@ -29,7 +31,8 @@
 		"repo-create": RepoCreateModal,
 		"repo-add": RepoAddModal,
 		"repo-remove": RepoRemoveModal,
-		//"repo-missing": RepoMissingModal,
+		"repo-missing": RepoMissingModal,
+		"repo-missing-add": RepoMissingAddModal,
 
 		// Branch
 		"branch-new": BranchNewModal,

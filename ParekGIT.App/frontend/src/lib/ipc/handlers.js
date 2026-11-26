@@ -72,22 +72,7 @@ export function registerHandlers() {
 	});
 	onIpc(IpcActions.REPO_REMOVED, (p) => {
 		repositories.list = repositories.list.filter(r => r.absolutePath !== p.repoPath);
-		if (repo.path === p.repoPath) {
-			commit.clear();
-			commit.forget(p.repoPath);
-
-			repo.reset();
-			branch.reset();
-			branches.reset();
-			stashes.reset();
-			changes.reset();
-			history.reset();
-			diff.reset();
-			commitDetails.reset();
-			todos.reset();
-			view.reset();
-			config.resetLocal();
-		}
+		if (repo.path === p.repoPath) clearActiveRepo(p.repoPath);
 	});
 	onIpc(IpcActions.REPO_FETCHED, () => {
 		repo.fetching = false;
@@ -106,7 +91,11 @@ export function registerHandlers() {
 		if (p.repoPath === repo.path) loadRepoStatus();
 	});
 	onIpc(IpcActions.REPO_PATH_MISSING, (p) => {
-		modal.open("error", { message: `Repository not found at path: ${p.repoPath}` });
+		repositories.list = repositories.list.map((r) =>
+			r.absolutePath === p.repoPath ? { ...r, isValid: false } : r
+		);
+		if (repo.path === p.repoPath) clearActiveRepo(p.repoPath);
+		modal.open("repo-missing", { repoPath: p.repoPath });
 	});
 	onIpc(IpcActions.REPO_SYNC_STATUS_CHANGED, (p) => {
 		branch.commitsBehind = p.commitsBehind ?? 0;
@@ -279,3 +268,19 @@ function applyBranch(b) {
 	branch.remoteBranch = b.remoteBranch ?? "";
 }
 
+function clearActiveRepo(repoPath) {
+	commit.clear();
+	commit.forget(repoPath);
+
+	repo.reset();
+	branch.reset();
+	branches.reset();
+	stashes.reset();
+	changes.reset();
+	history.reset();
+	diff.reset();
+	commitDetails.reset();
+	todos.reset();
+	view.reset();
+	config.resetLocal();
+}

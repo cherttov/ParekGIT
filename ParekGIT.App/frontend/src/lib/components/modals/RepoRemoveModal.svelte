@@ -8,7 +8,7 @@
 	$effect(() => { if (open) deleteLocal = false; });
 
 	function confirm() {
-		removeRepo(data.repoPath, deleteLocal)
+		removeRepo(data.repoPath, deleteLocal);
 		onclose?.();
 	}
 </script>

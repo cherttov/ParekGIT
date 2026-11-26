@@ -15,21 +15,25 @@
 		footer // Custom footer
 	} = $props();
 
-	function close() {
+	function cancel() {
 		oncancel?.();
+		onclose?.();
+	}
+
+	function dismiss() {
 		onclose?.();
 	}
 
 	function handleBackdropClick(event) { 
 		if (closeOnBackdrop && event.target === event.currentTarget) {
-			close();
+			dismiss();
 		}
 	}
 
 	function handleKeydown(event) {
 		if (open && closeOnEscape && event.key === "Escape") {
 			event.stopPropagation();
-			close();
+			dismiss();
 		}
 	}
 </script>
@@ -41,7 +45,7 @@
 	<div class="modal-content" onclick={(e) => e.stopPropagation()}>
 		<div class="modal-header">
 			<h3>{title}</h3>
-			<button class="close-modal-icon" onclick={close}>&times;</button>
+			<button class="close-modal-icon" onclick={dismiss}>&times;</button>
 		</div>
 
 		<div class="modal-body" style={bodyStyle}>
@@ -56,7 +60,7 @@
 					<button class="confirm-modal-btn" disabled={confirmDisabled} onclick={onconfirm}>{confirmText}</button>
 				{/if}
 				{#if cancelText}
-					<button class="cancel-modal-btn" onclick={close}>{cancelText}</button>
+					<button class="cancel-modal-btn" onclick={cancel}>{cancelText}</button>
 				{/if}
 			{/if}
 		</div>
