@@ -18,14 +18,15 @@ namespace ParekGIT.Core.Git.Services
 		// Public methods
 		public async Task CommitAsync(string repoPath, string message, string desc, IEnumerable<string> files)
 		{
-			if (files == null || !files.Any())
-				throw new Exception("Cannot commit without changes [CommitAsync]");
+			var fileList = files?.ToList();
+			if (fileList == null || fileList.Count == 0)
+				throw new Exception("Cannot commit without changes.");
 
 			// Unstage everything
 			await _executor.ExecuteAsync(repoPath, ["reset"]);
 
 			// Stage selected files
-			await _executor.ExecuteAsync(repoPath, ["add", "--", .. files]);
+			await _executor.ExecuteAsync(repoPath, ["add", "--", ..fileList]);
 
 			// Prepare commit command
 			List<string> commitArgs = ["commit", "-m", message];
