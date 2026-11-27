@@ -49,10 +49,6 @@ namespace ParekGIT.Core.Git.Executor
 			if (!isAcceptable)
 				throw new Exception($"Git command failed: exit {result.ExitCode}. {result.StandardError.Trim()}");
 
-			// Just an extra log
-			if (result.ExitCode != 0)
-				await _logger.LogWarningAsync($"{cmd} exited {result.ExitCode} (acceptable). {result.StandardError.Trim()}");
-
 			return result.StandardOutput.TrimEnd('\r', '\n');
 		}
 	}
