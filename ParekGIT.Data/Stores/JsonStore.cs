@@ -23,6 +23,7 @@ namespace ParekGIT.Data.Stores
 		};
 
 		private bool _disposed;
+
 		// Constructor
 		public JsonStore(IFileSystemService fileSystem, ILogger logger, IAppDataPaths appDataPaths)
 		{
@@ -34,9 +35,7 @@ namespace ParekGIT.Data.Stores
 			_themesDir = appDataPaths.GetThemesDirectory();
 		}
 
-
-		// Settings
-		public async Task EnsureSettingsFileAsync()
+		public void Dispose()
 		{
 			if (_disposed)
 				return;
@@ -48,131 +47,116 @@ namespace ParekGIT.Data.Stores
 			_fileAccessLock.Dispose();
 		}
 
-		public async Task<UserSettings> GetUserSettingsAsync()
+		// Settings
+		public Task EnsureSettingsFileAsync() => ExecuteLockedAsync(async () =>
 		{
-			await _fileAccessLock.WaitAsync();
-			try
-			{
-				return await ReadUserSettingsInternalAsync();
-			}
-			finally
-			{
-				_fileAccessLock.Release();
-			}
-		}
+			if (_fileSystem.FileExists(_settingsPath))
+				return;
 
-		public async Task SaveUserSettingsAsync(UserSettings settings)
+			await WriteUserSettingsInternalAsync(new UserSettings());
+		});
+
+		public Task<UserSettings> GetUserSettingsAsync() =>
+			ExecuteLockedAsync(ReadUserSettingsInternalAsync);
+
+		public Task SaveUserSettingsAsync(UserSettings settings) =>
+			ExecuteLockedAsync(() => WriteUserSettingsInternalAsync(settings));
+
+		public Task<UserSettings> UpdateUserSettingsAsync(Func<UserSettings, bool> update) => ExecuteLockedAsync(async () =>
 		{
-			await _fileAccessLock.WaitAsync();
-			try
-			{
+			UserSettings settings = await ReadUserSettingsInternalAsync();
+			if (update(settings))
 				await WriteUserSettingsInternalAsync(settings);
-			}
-			finally
-			{
-				_fileAccessLock.Release();
-			}
-		}
 
-		public async Task<UserSettings> UpdateUserSettingsAsync(Func<UserSettings, bool> update)
-		{
-			await _fileAccessLock.WaitAsync();
-			try
-			{
-				UserSettings settings = await ReadUserSettingsInternalAsync();
-				if (update(settings))
-					await WriteUserSettingsInternalAsync(settings);
-
-				return settings;
-			}
-			finally
-			{
-				_fileAccessLock.Release();
-			}
-		}
+			return settings;
+		});
 
 		// Themes
-		public async Task EnsureDefaultThemesAsync()
+		public Task EnsureDefaultThemesAsync() => ExecuteLockedAsync(async () =>
 		{
-			await _fileAccessLock.WaitAsync();
-			try
+			if (!_fileSystem.DirectoryExists(_themesDir))
+				await _fileSystem.CreateDirectory(_themesDir);
+
+			var assembly = typeof(JsonStore).Assembly;
+			const string prefix = "DefaultThemes/";
+
+			foreach (string resourceName in assembly.GetManifestResourceNames().Where(n => n.StartsWith(prefix, StringComparison.Ordinal)))
 			{
-				if (!_fileSystem.DirectoryExists(_themesDir))
-					await _fileSystem.CreateDirectory(_themesDir);
+				string destination = Path.Combine(_themesDir, resourceName[prefix.Length..]);
+				if (_fileSystem.FileExists(destination))
+					continue;
 
-				var assembly = typeof(JsonStore).Assembly;
-				const string prefix = "DefaultThemes/";
-
-				foreach (string resourceName in assembly.GetManifestResourceNames().Where(n => n.StartsWith(prefix, StringComparison.Ordinal)))
-				{
-					string destination = Path.Combine(_themesDir, resourceName[prefix.Length..]);
-					if (_fileSystem.FileExists(destination))
-						continue;
-
-					using var stream = assembly.GetManifestResourceStream(resourceName)!;
-					using var reader = new StreamReader(stream);
-					string content = await reader.ReadToEndAsync();
-					await _fileSystem.WriteAllTextAsync(destination, content);
-				}
+				using var stream = assembly.GetManifestResourceStream(resourceName)!;
+				using var reader = new StreamReader(stream);
+				string content = await reader.ReadToEndAsync();
+				await _fileSystem.WriteAllTextAtomicAsync(destination, content);
 			}
-			finally
-			{
-				_fileAccessLock.Release();
-			}
-		}
+		});
 
-		public async Task<IReadOnlyList<ThemeInfo>> LoadThemesAsync()
+		public Task<IReadOnlyList<ThemeInfo>> LoadThemesAsync() => ExecuteLockedAsync<IReadOnlyList<ThemeInfo>>(async () =>
 		{
-			await _fileAccessLock.WaitAsync();
-			try
-			{
-				var themes = new List<ThemeInfo>();
-				if (!_fileSystem.DirectoryExists(_themesDir))
-					return themes;
-
-				var files = await _fileSystem.EnumerateFilesAsync(_themesDir, "*.json");
-				foreach (string file in files.OrderBy(f => f))
-				{
-					string id = Path.GetFileNameWithoutExtension(file).ToLower();
-					if (!IsValidThemeToken(id)) continue;
-
-					try
-					{
-						string json = await _fileSystem.ReadAllTextAsync(file);
-						var theme = JsonSerializer.Deserialize<ThemeInfo>(json, _options);
-
-						if (theme?.Colors == null) continue;
-						theme.Id = id;
-
-						if (string.IsNullOrWhiteSpace(theme.Name))
-							theme.Name = id;
-
-						var badKeys = theme.Colors
-							.Where(kv => !IsValidThemeToken(kv.Key) || !IsSafeThemeValue(kv.Value))
-							.Select(kv => kv.Key)
-							.ToList();
-
-						foreach (var key in badKeys)
-							theme.Colors.Remove(key);
-
-						if (theme.Colors.Count > 0)
-							themes.Add(theme);
-					}
-					catch (Exception ex) when (ex is JsonException or IOException)
-					{
-						// Unreadable/malformed files -> skip
-					}
-				}
-
+			var themes = new List<ThemeInfo>();
+			if (!_fileSystem.DirectoryExists(_themesDir))
 				return themes;
-			}
-			finally
+
+			var files = await _fileSystem.EnumerateFilesAsync(_themesDir, "*.json");
+			foreach (string file in files.OrderBy(f => f))
 			{
-				_fileAccessLock.Release();
+				string id = Path.GetFileNameWithoutExtension(file).ToLower();
+				if (!IsValidThemeToken(id)) continue;
+
+				try
+				{
+					string json = await _fileSystem.ReadAllTextAsync(file);
+					var theme = JsonSerializer.Deserialize<ThemeInfo>(json, _options);
+
+					if (theme?.Colors == null) continue;
+					theme.Id = id;
+
+					if (string.IsNullOrWhiteSpace(theme.Name))
+						theme.Name = id;
+
+					var badKeys = theme.Colors
+						.Where(kv => !IsValidThemeToken(kv.Key) || !IsSafeThemeValue(kv.Value))
+						.Select(kv => kv.Key)
+						.ToList();
+
+					foreach (var key in badKeys)
+						theme.Colors.Remove(key);
+
+					if (theme.Colors.Count > 0)
+						themes.Add(theme);
+				}
+				catch (Exception ex) when (ex is JsonException or IOException)
+				{
+					await _logger.LogWarningAsync($"Failed to load theme '{file}': {ex.Message}"); // Unreadable/malformed files -> log & skip
+				}
 			}
-		}
+
+			return themes;
+		});
 
 		// Private helpers
+		private Task ExecuteLockedAsync(Func<Task> action) =>
+			ExecuteLockedAsync<object?>(async () =>
+			{
+				await action();
+				return null;
+			});
+
+		private async Task<T> ExecuteLockedAsync<T>(Func<Task<T>> action)
+		{
+			await _fileAccessLock.WaitAsync();
+			try
+			{
+				return await action();
+			}
+			finally
+			{
+				_fileAccessLock.Release();
+			}
+		}
+
 		private async Task<UserSettings> ReadUserSettingsInternalAsync()
 		{
 			if (!_fileSystem.FileExists(_settingsPath))
