@@ -67,31 +67,40 @@ namespace ParekGIT.Core.Git.Services
 			await _executor.ExecuteAsync(repoPath, ["clean", "-fd"]);
 		}
 
-		public async Task IgnoreFileAsync(string repoPath, string filePath)
+		public Task IgnoreFileAsync(string repoPath, string filePath)
 		{
 			string pattern = filePath.Replace("\\", "/");
-			await AppendToGitignoreAsync(repoPath, pattern);
-			await _executor.ExecuteAsync(repoPath, ["rm", "--cached", "--ignore-unmatch", "--", filePath]);
+			return IgnorePatternAsync(repoPath, pattern, filePath, false);
 		}
 
-		public async Task IgnoreFolderAsync(string repoPath, string filePath)
+		public Task IgnoreFolderAsync(string repoPath, string filePath)
 		{
 			string pattern = filePath.Replace("\\", "/").TrimEnd('/') + "/";
-			await AppendToGitignoreAsync(repoPath, pattern);
-			await _executor.ExecuteAsync(repoPath, ["rm", "--cached", "-r", "--ignore-unmatch", "--", filePath]);
+			return IgnorePatternAsync(repoPath, pattern, filePath, true);
 		}
 
-		public async Task IgnoreExtensionAsync(string repoPath, string filePath)
+		public Task IgnoreExtensionAsync(string repoPath, string filePath)
 		{
 			string ext = Path.GetExtension(filePath);
 			if (string.IsNullOrEmpty(ext))
 				throw new ArgumentException($"File '{filePath}' has no extension to ignore.");
 			string pattern = "*" + ext;
-			await AppendToGitignoreAsync(repoPath, pattern);
-			await _executor.ExecuteAsync(repoPath, ["rm", "--cached", "-r", "--ignore-unmatch", "--", $"*{ext}"]);
+			return IgnorePatternAsync(repoPath, pattern, pattern, true);
 		}
 
 		// Private helpers
+		private async Task IgnorePatternAsync(string repoPath, string gitignorePattern, string rmPattern, bool recursive)
+		{
+			await AppendToGitignoreAsync(repoPath, gitignorePattern);
+
+			List<string> args = ["rm", "--cached"];
+			if (recursive)
+				args.Add("-r");
+			args.AddRange(["--ignore-unmatch", "--", rmPattern]);
+
+			await _executor.ExecuteAsync(repoPath, args);
+		}
+
 		private async Task AppendToGitignoreAsync(string repoPath, string pattern)
 		{
 			string gitignorePath = Path.Combine(repoPath, ".gitignore");
