@@ -1,4 +1,5 @@
-﻿using ParekGIT.Core.Models;
+﻿using ParekGIT.Core.Git.Helpers;
+using ParekGIT.Core.Models;
 
 namespace ParekGIT.Core.Git.Parsers
 {
@@ -12,7 +13,7 @@ namespace ParekGIT.Core.Git.Parsers
 			var branches = new List<GitBranch>();
 			if (string.IsNullOrWhiteSpace(rawOutput)) return branches;
 
-			var lines = rawOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+			var lines = GitParserHelper.SplitLines(rawOutput);
 
 			foreach (var line in lines)
 			{

@@ -1,12 +1,13 @@
-﻿using ParekGIT.Core.Models;
+﻿using ParekGIT.Core.Git.Helpers;
+using ParekGIT.Core.Models;
 
 namespace ParekGIT.Core.Git.Parsers
 {
-	internal class GitCommitDetailsParser
+	internal static class GitCommitDetailsParser
 	{
 		internal static CommitDetailsResult Parse(string rawOutput)
 		{
-			var lines = rawOutput.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+			var lines = GitParserHelper.SplitLines(rawOutput);
 			if (lines.Length == 0) 
 				return new CommitDetailsResult { Author = "Unknown", Message = string.Empty, Files = new List<GitFileStatus>() };
 

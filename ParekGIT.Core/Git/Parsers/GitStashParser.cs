@@ -1,4 +1,5 @@
-﻿using ParekGIT.Core.Models;
+﻿using ParekGIT.Core.Git.Helpers;
+using ParekGIT.Core.Models;
 using System.Text.RegularExpressions;
 
 namespace ParekGIT.Core.Git.Parsers
@@ -12,7 +13,7 @@ namespace ParekGIT.Core.Git.Parsers
 			var stashes = new List<GitStash>();
 			if (string.IsNullOrWhiteSpace(rawOutput)) return stashes;
 
-			var lines = rawOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+			var lines = GitParserHelper.SplitLines(rawOutput);
 			foreach (var line in lines)
 			{
 				var parts = line.Split('|', 3);
