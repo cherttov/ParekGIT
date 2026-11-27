@@ -16,7 +16,7 @@ namespace ParekGIT.Core.Git.Parsers
 			var lines = GitParserHelper.SplitLines(rawOutput);
 			foreach (var line in lines)
 			{
-				var parts = line.Split('|', 3);
+				var parts = line.Split('\x1f', 3);
 				if (parts.Length < 3) continue;
 
 				string selector = parts[0].Trim();

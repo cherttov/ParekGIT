@@ -17,7 +17,7 @@ namespace ParekGIT.Core.Git.Services
 
 		// Public methods
 		public async Task<IEnumerable<GitStash>> GetStashesAsync(string repoPath) =>
-			GitStashParser.Parse(await _executor.ExecuteAsync(repoPath, ["stash", "list", "--format=%gd|%H|%s"]));
+			GitStashParser.Parse(await _executor.ExecuteAsync(repoPath, ["stash", "list", "--format=%gd%x1f%H%x1f%s"]));
 
 		public async Task StashSaveAsync(string repoPath, string message, IEnumerable<string> files)
 		{

@@ -17,7 +17,7 @@ namespace ParekGIT.Core.Git.Parsers
 
 			foreach (var line in lines)
 			{
-				var parts = line.Split('|');
+				var parts = line.Split('\x1f');
 				if (parts.Length != 5) { continue; }
 
 				string fullRefName = parts[0].Trim();

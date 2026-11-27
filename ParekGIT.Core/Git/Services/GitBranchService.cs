@@ -22,7 +22,7 @@ namespace ParekGIT.Core.Git.Services
 		// Public methods
 		public async Task<IEnumerable<GitBranch>> GetBranchesAsync(string repoPath) =>
 			GitBranchParser.Parse(await _executor.ExecuteAsync(repoPath, [
-				"branch", "--all", "--format=%(refname)|%(refname:short)|%(HEAD)|%(upstream:short)|%(objectname)"
+				"branch", "--all", "--format=%(refname)%1f%(refname:short)%1f%(HEAD)%1f%(upstream:short)%1f%(objectname)"
 			]));
 
 		public async Task CheckoutBranchAsync(string repoPath, string branchName, bool isRemote)
