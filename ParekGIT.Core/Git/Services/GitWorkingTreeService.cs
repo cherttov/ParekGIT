@@ -94,7 +94,7 @@ namespace ParekGIT.Core.Git.Services
 		// Private helpers
 		private async Task AppendToGitignoreAsync(string repoPath, string pattern)
 		{
-			string gitignorePath = Path.Combine(repoPath, ".gitingore");
+			string gitignorePath = Path.Combine(repoPath, ".gitignore");
 
 			// Check if pattern not already included in .gitignore
 			if (_fileSystem.FileExists(gitignorePath))
