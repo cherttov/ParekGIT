@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace ParekGIT.Data.Stores
 {
-	public class JsonStore : ISettingsStore, IThemeStore
+	public class JsonStore : ISettingsStore, IThemeStore, IDisposable
 	{
 		private readonly IFileSystemService _fileSystem;
 
