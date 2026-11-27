@@ -9,19 +9,24 @@ namespace ParekGIT.Core.Git.Parsers
 		{
 			var lines = GitParserHelper.SplitLines(rawOutput);
 			if (lines.Length == 0) 
-				return new CommitDetailsResult { Author = "Unknown", Message = string.Empty, Files = new List<GitFileStatus>() };
+				return new CommitDetailsResult { Author = "Unknown", Message = string.Empty, Files = [] };
 
-			string author = lines[0].Trim();
-			string message = lines.Length > 1 ? lines[1].Trim() : "";
-			List<GitFileStatus> files = lines.Skip(2).Select(f =>
+			var headerParts = lines[0].Split('\x1f', 2);
+			string author = headerParts[0].Trim();
+			string message = headerParts.Length > 1 ? headerParts[1].Trim() : string.Empty;
+
+			var files = new List<GitFileStatus>();
+			foreach (var line in lines.Skip(1))
 			{
-				var parts = f.Split('\t');
-				return new GitFileStatus
+				var parts = line.Split('\t');
+				if (parts.Length < 2) continue;
+
+				files.Add(new GitFileStatus
 				{
 					StatusCode = parts[0].Trim(),
 					Path = parts[^1].Trim()
-				};
-			}).ToList();
+				});
+			}
 
 			return new CommitDetailsResult
 			{

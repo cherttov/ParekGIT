@@ -27,7 +27,7 @@ namespace ParekGIT.Core.Git.Services
 
 		public async Task<CommitDetailsResult> GetCommitDetailsAsync(string repoPath, string hash) =>
 			GitCommitDetailsParser.Parse(await _executor.ExecuteAsync(repoPath, [
-				"show", "--diff-merges=first-parent", "--name-status", "--format=%an%n%s", hash
+				"show", "--diff-merges=first-parent", "--name-status", "--format=%an%x1f%s", hash
 			]));
 
 		public async Task CheckoutCommitAsync(string repoPath, string commitHash)
@@ -54,7 +54,7 @@ namespace ParekGIT.Core.Git.Services
 
 				await _executor.ExecuteAsync(repoPath, ["revert", "--abort"]);
 
-				throw new Exception("Merge conflict while reverting changes [RevertCommitAsync]");
+				throw new Exception("Merge conflict while reverting changes.");
 			}
 		}
 	}
