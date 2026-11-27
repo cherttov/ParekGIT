@@ -6,13 +6,11 @@ namespace ParekGIT.Core.Git.Executor
 {
 	internal sealed class GitCommandExecutor
 	{
-		private readonly ILogger _logger;
 		private readonly IFileSystemService _fileSystem;
 
 		// Constructor
-		public GitCommandExecutor(ILogger logger, IFileSystemService fileSystem)
+		public GitCommandExecutor(IFileSystemService fileSystem)
 		{
-			_logger = logger;
 			_fileSystem = fileSystem;
 		}
 
@@ -47,7 +45,7 @@ namespace ParekGIT.Core.Git.Executor
 
 			bool isAcceptable = result.ExitCode == 0 || successExitCodes.Contains(result.ExitCode);
 			if (!isAcceptable)
-				throw new Exception($"Git command failed: exit {result.ExitCode}. {result.StandardError.Trim()}");
+				throw new InvalidOperationException($"Git command failed: exit {result.ExitCode}. {result.StandardError.Trim()}");
 
 			return result.StandardOutput.TrimEnd('\r', '\n');
 		}
