@@ -8,6 +8,7 @@ namespace ParekGIT.Data.Stores
 	public class JsonStore : ISettingsStore, IThemeStore, IDisposable
 	{
 		private readonly IFileSystemService _fileSystem;
+		private readonly ILogger _logger;
 
 		private readonly string _settingsDir;
 		private readonly string _settingsPath;
@@ -22,9 +23,10 @@ namespace ParekGIT.Data.Stores
 		};
 
 		// Constructor
-		public JsonStore(IFileSystemService fileSystem, IAppDataPaths appDataPaths)
+		public JsonStore(IFileSystemService fileSystem, ILogger logger, IAppDataPaths appDataPaths)
 		{
 			_fileSystem = fileSystem;
+			_logger = logger;
 
 			_settingsDir = appDataPaths.GetSettingsDirectory();
 			_settingsPath = Path.Combine(_settingsDir, "settings.json");
@@ -55,10 +57,7 @@ namespace ParekGIT.Data.Stores
 			await _fileAccessLock.WaitAsync();
 			try
 			{
-				if (!_fileSystem.FileExists(_settingsPath))
-					return new UserSettings();
-				string json = await _fileSystem.ReadAllTextAsync(_settingsPath);
-				return JsonSerializer.Deserialize<UserSettings>(json, _options) ?? new UserSettings();
+				return await ReadUserSettingsInternalAsync();
 			}
 			finally
 			{
@@ -72,6 +71,23 @@ namespace ParekGIT.Data.Stores
 			try
 			{
 				await WriteUserSettingsInternalAsync(settings);
+			}
+			finally
+			{
+				_fileAccessLock.Release();
+			}
+		}
+
+		public async Task<UserSettings> UpdateUserSettingsAsync(Func<UserSettings, bool> update)
+		{
+			await _fileAccessLock.WaitAsync();
+			try
+			{
+				UserSettings settings = await ReadUserSettingsInternalAsync();
+				if (update(settings))
+					await WriteUserSettingsInternalAsync(settings);
+
+				return settings;
 			}
 			finally
 			{
@@ -161,18 +177,35 @@ namespace ParekGIT.Data.Stores
 		}
 
 		// Private helpers
-		private static bool IsValidThemeToken(string token) =>
-			!string.IsNullOrEmpty(token) && token.All(c => char.IsAsciiLetterOrDigit(c) || c == '-');
+		private async Task<UserSettings> ReadUserSettingsInternalAsync()
+		{
+			if (!_fileSystem.FileExists(_settingsPath))
+				return new UserSettings();
 
-		private static bool IsSafeThemeValue(string? value) =>
-			!string.IsNullOrWhiteSpace(value) && value.Length <= 100 && value.IndexOfAny([';', '{', '}', '<', '>', '\\' ]) < 0;
+			try
+			{
+				string json = await _fileSystem.ReadAllTextAsync(_settingsPath);
+				return JsonSerializer.Deserialize<UserSettings>(json, _options) ?? new UserSettings();
+			}
+			catch (Exception ex) when (ex is JsonException or IOException)
+			{
+				await _logger.LogWarningAsync($"Failed to read '{_settingsPath}', falling back to defaults: {ex.Message}");
+				return new UserSettings();
+			}
+		}
 
 		private async Task WriteUserSettingsInternalAsync(UserSettings settings)
 		{
 			if (!_fileSystem.DirectoryExists(_settingsDir))
 				await _fileSystem.CreateDirectory(_settingsDir);
 			string json = JsonSerializer.Serialize<UserSettings>(settings, _options);
-			await _fileSystem.WriteAllTextAsync(_settingsPath, json);
+			await _fileSystem.WriteAllTextAtomicAsync(_settingsPath, json);
 		}
+
+		private static bool IsValidThemeToken(string token) =>
+			!string.IsNullOrEmpty(token) && token.All(c => char.IsAsciiLetterOrDigit(c) || c == '-');
+
+		private static bool IsSafeThemeValue(string? value) =>
+			!string.IsNullOrWhiteSpace(value) && value.Length <= 100 && value.IndexOfAny([';', '{', '}', '<', '>', '\\' ]) < 0;
 	}
 }

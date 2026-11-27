@@ -7,5 +7,6 @@ namespace ParekGIT.Data.Interfaces
 		Task EnsureSettingsFileAsync();
 		Task<UserSettings> GetUserSettingsAsync();
 		Task SaveUserSettingsAsync(UserSettings settings);
+		Task<UserSettings> UpdateUserSettingsAsync(Func<UserSettings, bool> update);
 	}
 }
