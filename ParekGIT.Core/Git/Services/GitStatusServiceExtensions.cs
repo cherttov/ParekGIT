@@ -1,14 +1,13 @@
 ﻿using ParekGIT.Core.Interfaces;
-using System.Runtime.CompilerServices;
 
 namespace ParekGIT.Core.Git.Services
 {
 	internal static class GitStatusServiceExtensions
 	{
-		internal static async Task EnsureCleanWorkingTreeAsync(this IGitStatusService status, string repoPath, [CallerMemberName] string caller = "")
+		internal static async Task EnsureCleanWorkingTreeAsync(this IGitStatusService status, string repoPath)
 		{
 			if ((await status.GetStatusAsync(repoPath)).Any())
-				throw new Exception($"Uncommitted changes are present [{caller}]");
+				throw new Exception($"Uncommitted changes are present. Please commit, stash or discard them first.");
 		}
 	}
 }
