@@ -9,7 +9,7 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 
-		public string Action => "EXPLORER_PICK_FOLDER";
+		public string Action => "EXPLORER_FOLDER_PICK";
 
 		// Constructor
 		public ExplorerPickFolderHandler(PhotinoWindow window)

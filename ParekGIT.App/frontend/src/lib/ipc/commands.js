@@ -230,7 +230,7 @@ export function showInExplorer(path) {
 
 export function pickFolder(onpicked) {
 	app.pendingFolderPick = onpicked;
-	sendIpcMessage(IpcActions.EXPLORER_PICK_FOLDER);
+	sendIpcMessage(IpcActions.EXPLORER_FOLDER_PICK);
 }
 
 export function resolveFolderPick(path) {
