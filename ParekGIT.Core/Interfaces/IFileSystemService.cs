@@ -16,6 +16,7 @@
 
 		// Write
 		Task WriteAllTextAsync(string path, string content);
+		Task WriteAllTextAtomicAsync(string path, string content);
 		Task AppendAllTextAsync(string path, string content);
 
 		// Getters

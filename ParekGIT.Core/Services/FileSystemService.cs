@@ -44,6 +44,26 @@ namespace ParekGIT.Core.Services
 		// ======================== Write ========================
 		public Task WriteAllTextAsync(string path, string content) => File.WriteAllTextAsync(path, content);
 
+		public async Task WriteAllTextAtomicAsync(string path, string content)
+		{
+			string? dir = Path.GetDirectoryName(path);
+			if (!string.IsNullOrEmpty(dir))
+				Directory.CreateDirectory(dir);
+
+			string tempPath = Path.Combine(dir ?? ".", $"{Path.GetFileName(path)}.{Guid.NewGuid():N}.tmp");
+			try
+			{
+				await File.WriteAllTextAsync(tempPath, content);
+				File.Move(tempPath, path, overwrite: true);
+			}
+			catch
+			{
+				if (File.Exists(tempPath))
+					File.Delete(tempPath);
+				throw;
+			}
+		}
+
 		public Task AppendAllTextAsync(string path, string content) => File.AppendAllTextAsync(path, content);
 
 		// ======================== Getters ========================
