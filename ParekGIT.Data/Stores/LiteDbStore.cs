@@ -7,7 +7,7 @@ using ParekGIT.Core.Helpers;
 
 namespace ParekGIT.Data.Stores
 {
-	public class LiteDbStore : IRepositoryStore, ITodoStore, IDisposable
+	internal sealed class LiteDbStore : IRepositoryStore, ITodoStore, IDisposable
 	{
 		private readonly LiteDatabase _db;
 
