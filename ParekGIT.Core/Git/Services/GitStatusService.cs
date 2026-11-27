@@ -23,7 +23,12 @@ namespace ParekGIT.Core.Git.Services
 
 		public async Task<string> GetFileDiffAsync(string repoPath, string filePath)
 		{
-			string rawOutput = await _executor.ExecuteAsync(repoPath, ["diff", "HEAD", "--", filePath]);
+			bool hasHead = await HasHeadCommitAsync(repoPath);
+			string[] diffArgs = hasHead
+				? ["diff", "HEAD", "--", filePath]
+				: ["diff", "--cached", "--", filePath];
+
+			string rawOutput = await _executor.ExecuteAsync(repoPath, diffArgs);
 
 			// If empty, must be untracked file (read directly)
 			if (string.IsNullOrWhiteSpace(rawOutput))
@@ -37,6 +42,14 @@ namespace ParekGIT.Core.Git.Services
 						return string.Empty;
 
 					string rawText = await _fileSystem.ReadAllTextAsync(fullPath);
+					if (rawText.Length == 0)
+						return string.Empty;
+
+					if (rawText.EndsWith("\r\n", StringComparison.Ordinal))
+						rawText = rawText[..^2];
+					else if (rawText.EndsWith('\n') || rawText.EndsWith('\r'))
+						rawText = rawText[..^1];
+
 					var lines = rawText.Split(["\r\n", "\r", "\n"], StringSplitOptions.None);
 					return string.Join("\n", lines.Select(line => "+" + line));
 				}
@@ -65,6 +78,12 @@ namespace ParekGIT.Core.Git.Services
 		{
 			string rawOutput = await _executor.ExecuteAsync(repoPath, ["rev-list", "--count", range], 128);
 			return int.TryParse(rawOutput, out int count) ? count : 0;
+		}
+
+		private async Task<bool> HasHeadCommitAsync(string repoPath)
+		{
+			string output = await _executor.ExecuteAsync(repoPath, ["rev-parse", "--verify", "--quiet", "HEAD"], 1);
+			return !string.IsNullOrWhiteSpace(output);
 		}
 	}
 }
