@@ -6,5 +6,7 @@ namespace ParekGIT.Data.Interfaces
 	{
 		Task<IEnumerable<TodoItem>> GetBranchTodosAsync(string repoPath, string branchName);
 		Task SaveBranchTodosAsync(string repoPath, string branchName, IEnumerable<TodoItem> todos);
+		Task RenameBranchTodosAsync(string repoPath, string oldBranchName, string newBranchName);
+		Task DeleteBranchTodosAsync(string repoPath, string branchName);
 	}
 }

@@ -9,5 +9,6 @@ namespace ParekGIT.Data.Interfaces
 		Task UpsertRepositoryAsync(GitRepository repository); // Update || Insert
 		Task DeleteRepositoryAsync(string absolutePath);
 		Task UpdateRepositoryValidStateAsync(string absolutePath, bool isValid);
+		Task TouchRepositoryAsync(string absolutePath);
 	}
 }

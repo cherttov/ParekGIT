@@ -28,14 +28,13 @@ namespace ParekGIT.Data.Stores
 			var repos = _db.GetCollection<GitRepository>(ReposCollectionName);
 			repos.EnsureIndex(r => r.LastAccessed);
 			if (PathHelper.IsCaseSensitive)
-				repos.EnsureIndex(r => r.AbsolutePath);
+				repos.EnsureIndex(r => r.AbsolutePath, unique: true);
 			else
-				repos.EnsureIndex(r => r.AbsolutePath.ToLower());
+				repos.EnsureIndex(r => r.AbsolutePath.ToLower(), unique: true);
 
 			// Indexing todos in DB
 			var todos = _db.GetCollection<TodoItem>(TodosCollectionName);
 			todos.EnsureIndex(t => t.RepoId);
-			todos.EnsureIndex(t => t.BranchName);
 		}
 
 		public void Dispose()
@@ -59,29 +58,39 @@ namespace ParekGIT.Data.Stores
 
 		public Task<GitRepository?> GetRepositoryAsync(string absolutePath)
 		{
+			string normalizedPath = PathHelper.Normalize(absolutePath);
+
 			return Task.Run(() =>
 			{
 				var repoCollection = _db.GetCollection<GitRepository>(ReposCollectionName);
-				return FindRepositoryByPath(repoCollection, absolutePath);
+				return FindRepositoryByPath(repoCollection, normalizedPath);
 			});
 		}
 
 		public Task UpsertRepositoryAsync(GitRepository repository)
 		{
+			repository.AbsolutePath = PathHelper.Normalize(repository.AbsolutePath);
+
 			return ExecuteWriteAsync(() =>
 			{
 				var repoCollection = _db.GetCollection<GitRepository>(ReposCollectionName);
+				var existing = FindRepositoryByPath(repoCollection, repository.AbsolutePath);
+				if (existing != null)
+					repository.Id = existing.Id;
+
 				repoCollection.Upsert(repository);
 			});
 		}
 
 		public Task DeleteRepositoryAsync(string absolutePath)
 		{
+			string normalizedPath = PathHelper.Normalize(absolutePath);
+
 			return ExecuteWriteAsync(() =>
 			{
 				var repoCollection = _db.GetCollection<GitRepository>(ReposCollectionName);
-				var repo = FindRepositoryByPath(repoCollection, absolutePath)
-					?? throw new InvalidOperationException($"Repository not found for path: {absolutePath}");
+				var repo = FindRepositoryByPath(repoCollection, normalizedPath)
+					?? throw new InvalidOperationException($"Repository not found for path: {normalizedPath}");
 
 				RunInTransaction(() =>
 				{
@@ -94,10 +103,12 @@ namespace ParekGIT.Data.Stores
 
 		public Task UpdateRepositoryValidStateAsync(string absolutePath, bool isValid)
 		{
+			string normalizedPath = PathHelper.Normalize(absolutePath);
+
 			return ExecuteWriteAsync(() =>
 			{
 				var repoCollection = _db.GetCollection<GitRepository>(ReposCollectionName);
-				var repo = FindRepositoryByPath(repoCollection, absolutePath);
+				var repo = FindRepositoryByPath(repoCollection, normalizedPath);
 				if (repo != null && repo.IsValid != isValid)
 				{
 					repo.IsValid = isValid;
@@ -106,14 +117,32 @@ namespace ParekGIT.Data.Stores
 			});
 		}
 
+		public Task TouchRepositoryAsync(string absolutePath)
+		{
+			string normalizedPath = PathHelper.Normalize(absolutePath);
+
+			return ExecuteWriteAsync(() =>
+			{
+				var repoCollection = _db.GetCollection<GitRepository>(ReposCollectionName);
+				var repo = FindRepositoryByPath(repoCollection, normalizedPath);
+				if (repo != null)
+				{
+					repo.LastAccessed = DateTime.UtcNow;
+					repoCollection.Update(repo);
+				}
+			});
+		}
+
 		// Todos db
 		public Task<IEnumerable<TodoItem>> GetBranchTodosAsync(string repoPath, string branchName)
 		{
+			string normalizedPath = PathHelper.Normalize(repoPath);
+
 			return Task.Run(() =>
 			{
 				var repoCollection = _db.GetCollection<GitRepository>(ReposCollectionName);
-				var repo = FindRepositoryByPath(repoCollection, repoPath)
-					?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
+				var repo = FindRepositoryByPath(repoCollection, normalizedPath)
+					?? throw new InvalidOperationException($"Repository not found for path: {normalizedPath}");
 
 				var todoCollection = _db.GetCollection<TodoItem>(TodosCollectionName);
 				return (IEnumerable<TodoItem>)todoCollection
@@ -124,14 +153,14 @@ namespace ParekGIT.Data.Stores
 
 		public Task SaveBranchTodosAsync(string repoPath, string branchName, IEnumerable<TodoItem> todos)
 		{
+			string normalizedPath = PathHelper.Normalize(repoPath);
 			var todosList = todos.ToList();
-
 			
 			return ExecuteWriteAsync(() =>
 			{
 				var repoCollection = _db.GetCollection<GitRepository>(ReposCollectionName);
-				var repo = FindRepositoryByPath(repoCollection, repoPath)
-					?? throw new InvalidOperationException($"Repository not found for path: {repoPath}");
+				var repo = FindRepositoryByPath(repoCollection, normalizedPath)
+					?? throw new InvalidOperationException($"Repository not found for path: {normalizedPath}");
 
 				foreach (var todo in todosList)
 				{
@@ -146,6 +175,49 @@ namespace ParekGIT.Data.Stores
 					if (todosList.Count > 0)
 						todoCollection.InsertBulk(todosList);
 				});
+			});
+		}
+
+		public Task RenameBranchTodosAsync(string repoPath, string oldBranchName, string newBranchName)
+		{
+			string normalizedPath = PathHelper.Normalize(repoPath);
+
+			return ExecuteWriteAsync(() =>
+			{
+				var repoCollection = _db.GetCollection<GitRepository>(ReposCollectionName);
+				var repo = FindRepositoryByPath(repoCollection, normalizedPath)
+					?? throw new InvalidOperationException($"Repository not found for path: {normalizedPath}");
+
+				RunInTransaction(() =>
+				{
+					var todoCollection = _db.GetCollection<TodoItem>(TodosCollectionName);
+					var branchTodos = todoCollection
+						.Find(todo => todo.RepoId == repo.Id && todo.BranchName == oldBranchName)
+						.ToList();
+
+					if (branchTodos.Count == 0)
+						return;
+
+					foreach (var todo in branchTodos)
+						todo.BranchName = newBranchName;
+
+					todoCollection.Update(branchTodos);
+				});
+			});
+		}
+
+		public Task DeleteBranchTodosAsync(string repoPath, string branchName)
+		{
+			string normalizedPath = PathHelper.Normalize(repoPath);
+
+			return ExecuteWriteAsync(() =>
+			{
+				var repoCollection = _db.GetCollection<GitRepository>(ReposCollectionName);
+				var repo = FindRepositoryByPath(repoCollection, normalizedPath)
+					?? throw new InvalidOperationException($"Repository not found for path: {normalizedPath}");
+
+				var todoCollection = _db.GetCollection<TodoItem>(TodosCollectionName);
+				todoCollection.DeleteMany(todo => todo.RepoId == repo.Id && todo.BranchName == branchName);
 			});
 		}
 
