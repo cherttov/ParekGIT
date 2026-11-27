@@ -9,5 +9,8 @@
 
 		public static bool AreEqual(string? pathA, string? pathB) =>
 			string.Equals(pathA, pathB, Comparison);
+
+		public static string Normalize(string path) =>
+			Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
 	}
 }
