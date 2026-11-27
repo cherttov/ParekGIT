@@ -230,6 +230,7 @@ export function registerHandlers() {
 	onIpc(IpcActions.EXPLORER_FOLDER_PICKED, (p) => {
 		resolveFolderPick(p.path);
 	});
+	onIpc(IpcActions.EXPLORER_FOLDER_CANCELED, () => { });
 
 	// Stash
 	onIpc(IpcActions.STASH_LIST_LOADED, (p) => {

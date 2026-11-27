@@ -30,7 +30,7 @@ namespace ParekGIT.Bridge.Handlers
 			else
 			{
 				// Response (cancel)
-				var response = IpcMessage.Create("FOLDER_CANCELED", new { });
+				var response = IpcMessage.Create("EXPLORER_FOLDER_CANCELED", new { });
 				_window.SendWebMessage(JsonSerializer.Serialize(response));
 			}
 			return Task.CompletedTask;
