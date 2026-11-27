@@ -16,6 +16,8 @@ namespace ParekGIT.Data.Stores
 
 		private readonly SemaphoreSlim _writeLock = new(1, 1);
 
+		private bool _disposed;
+
 		// Constructor
 		public LiteDbStore(IAppDataPaths appDataPaths)
 		{
@@ -39,8 +41,21 @@ namespace ParekGIT.Data.Stores
 
 		public void Dispose()
 		{
-			_db.Dispose();
-			_writeLock.Dispose();
+			if (_disposed)
+				return;
+			_disposed = true;
+
+			bool locked = _writeLock.Wait(TimeSpan.FromSeconds(2));
+			try
+			{
+				_db.Dispose();
+			}
+			finally
+			{
+				if (locked)
+					_writeLock.Release();
+				_writeLock.Dispose();
+			}
 		}
 
 		// Repos db
