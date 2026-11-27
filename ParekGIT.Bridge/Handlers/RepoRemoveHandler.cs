@@ -1,11 +1,9 @@
 ﻿using ParekGIT.Bridge.Models;
 using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Interfaces;
-using ParekGIT.Core.Models;
 using ParekGIT.Data.Interfaces;
 using Photino.NET;
 using System.Text.Json;
-using ParekGIT.Core.Helpers;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -33,6 +31,9 @@ namespace ParekGIT.Bridge.Handlers
 				?? throw new IpcPayloadException("repoPath");
 
 			bool deleteLocal = payload.GetProperty("deleteLocal").GetBoolean();
+
+			// Delete from database
+			await _repoStore.DeleteRepositoryAsync(repoPath);
 
 			// Delete from drive
 			bool localDeleteFailed = false;

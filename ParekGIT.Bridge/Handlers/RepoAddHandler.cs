@@ -57,8 +57,7 @@ namespace ParekGIT.Bridge.Handlers
 				RemoteUrl = remoteUrl
 			};
 
-			IEnumerable<GitRepository> allRepos = await _repoStore.GetAllRepositoriesAsync();
-			if (allRepos.Any(existing => PathHelper.AreEqual(existing.AbsolutePath, repoPath)))
+			if (await _repoStore.GetRepositoryAsync(repoPath) != null)
 				throw new InvalidOperationException("Repository with this path already exists in the database.");
 
 			// Save to db

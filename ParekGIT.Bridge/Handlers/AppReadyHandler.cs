@@ -43,7 +43,7 @@ namespace ParekGIT.Bridge.Handlers
 				if (repo.IsValid != isValidNow)
 				{
 					repo.IsValid = isValidNow;
-					await _repoStore.UpsertRepositoryAsync(repo);
+					await _repoStore.UpdateRepositoryValidStateAsync(repo.AbsolutePath, isValidNow);
 				}
 			}
 
