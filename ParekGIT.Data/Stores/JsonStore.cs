@@ -22,6 +22,7 @@ namespace ParekGIT.Data.Stores
 			PropertyNameCaseInsensitive = true 
 		};
 
+		private bool _disposed;
 		// Constructor
 		public JsonStore(IFileSystemService fileSystem, ILogger logger, IAppDataPaths appDataPaths)
 		{
@@ -33,23 +34,18 @@ namespace ParekGIT.Data.Stores
 			_themesDir = appDataPaths.GetThemesDirectory();
 		}
 
-		public void Dispose() => _fileAccessLock.Dispose();
 
 		// Settings
 		public async Task EnsureSettingsFileAsync()
 		{
-			await _fileAccessLock.WaitAsync();
-			try
-			{
-				if (_fileSystem.FileExists(_settingsPath))
-					return;
+			if (_disposed)
+				return;
+			_disposed = true;
 
-				await WriteUserSettingsInternalAsync(new UserSettings());
-			}
-			finally
-			{
+			bool locked = _fileAccessLock.Wait(TimeSpan.FromSeconds(2));
+			if (locked)
 				_fileAccessLock.Release();
-			}
+			_fileAccessLock.Dispose();
 		}
 
 		public async Task<UserSettings> GetUserSettingsAsync()
