@@ -26,8 +26,9 @@ namespace ParekGIT.Core.Git.Services
 			if (!string.IsNullOrWhiteSpace(message))
 				args.AddRange(["-m", message]);
 
-			if (files?.Any() == true)
-				args.AddRange(["--", .. files]);
+			var fileList = files?.ToList();
+			if (fileList != null && fileList.Count > 0)
+				args.AddRange(["--", ..fileList]);
 
 			await _executor.ExecuteAsync(repoPath, args);
 		}

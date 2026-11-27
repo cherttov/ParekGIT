@@ -50,7 +50,7 @@ namespace ParekGIT.Core.Git.Services
 			await _executor.ExecuteAsync(repoPath, ["branch", "-D", branchName]);
 
 		public async Task DeleteRemoteBranchAsync(string repoPath, string remoteName, string branchName, CancellationToken cancellationToken = default) =>
-			await _executor.ExecuteAsync(repoPath, ["push", remoteName, "-d", branchName]);
+			await _executor.ExecuteAsync(repoPath, ["push", remoteName, "-d", branchName], cancellationToken);
 
 		public async Task MergeBranchesAsync(string repoPath, string sourceBranch, string targetBranch)
 		{

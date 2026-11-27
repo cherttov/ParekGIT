@@ -27,7 +27,7 @@ namespace ParekGIT.Core.Git.Services
 			// Create & check directory
 			string fullPath = PathHelper.Normalize(Path.Combine(request.LocalPath, request.RepoName));
 			if (_fileSystem.DirectoryExists(fullPath))
-				throw new Exception($"Directory {request.RepoName} already exists.");
+				throw new Exception($"Directory '{request.RepoName}' already exists.");
 
 			// Init repo
 			await _fileSystem.CreateDirectory(fullPath);
