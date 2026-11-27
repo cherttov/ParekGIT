@@ -3,6 +3,7 @@ using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Interfaces;
 using Photino.NET;
 using System.Text.Json;
+using ParekGIT.Data.Interfaces;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -10,14 +11,16 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitBranchService _branchService;
+		private readonly ITodoStore _todoStore;
 
 		public string Action => "BRANCH_RENAME";
 
 		// Constructor
-		public BranchRenameHandler(PhotinoWindow window, IGitBranchService branchService)
+		public BranchRenameHandler(PhotinoWindow window, IGitBranchService branchService, ITodoStore todoStore)
 		{
 			_window = window;
 			_branchService = branchService;
+			_todoStore = todoStore;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -32,6 +35,7 @@ namespace ParekGIT.Bridge.Handlers
 							  ?? throw new IpcPayloadException("newName");
 
 			await _branchService.RenameBranchAsync(repoPath, oldName, newName);
+			await _todoStore.RenameBranchTodosAsync(repoPath, oldName, newName);
 
 			// Response
 			var response = IpcMessage.Create("BRANCH_RENAMED", new

@@ -51,7 +51,8 @@ namespace ParekGIT.Bridge.Handlers
 				return;
 			}
 
-			UserSettings currentSettings = await _settingsStore.GetUserSettingsAsync();
+			// Update last accessed timestamp
+			await _repoStore.TouchRepositoryAsync(repoPath);
 
 			// Get branches
 			IEnumerable<GitBranch> branches = await _branchService.GetBranchesAsync(repoPath);
@@ -59,11 +60,14 @@ namespace ParekGIT.Bridge.Handlers
 			_repoWatcher.WatchRepository(repoPath);
 
 			// Update last repo path
-			if (!PathHelper.AreEqual(currentSettings.LastRepoPath, repoPath))
+			await _settingsStore.UpdateUserSettingsAsync(settings =>
 			{
-				currentSettings.LastRepoPath = repoPath;
-				await _settingsStore.SaveUserSettingsAsync(currentSettings);
-			}
+				if (PathHelper.AreEqual(settings.LastRepoPath, repoPath))
+					return false;
+
+				settings.LastRepoPath = repoPath;
+				return true;
+			});
 
 			// Response
 			var response = IpcMessage.Create("REPO_OPENED", new

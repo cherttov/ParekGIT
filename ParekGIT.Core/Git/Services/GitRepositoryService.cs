@@ -1,4 +1,5 @@
 ﻿using ParekGIT.Core.Git.Executor;
+using ParekGIT.Core.Helpers;
 using ParekGIT.Core.Interfaces;
 using ParekGIT.Core.Models;
 
@@ -24,7 +25,7 @@ namespace ParekGIT.Core.Git.Services
 		public async Task<GitRepository> CreateRepositoryAsync(CreateRepoRequest request)
 		{
 			// Create & check directory
-			string fullPath = Path.Combine(request.LocalPath, request.RepoName);
+			string fullPath = PathHelper.Normalize(Path.Combine(request.LocalPath, request.RepoName));
 			if (_fileSystem.DirectoryExists(fullPath))
 				throw new Exception($"Directory {request.RepoName} already exists.");
 

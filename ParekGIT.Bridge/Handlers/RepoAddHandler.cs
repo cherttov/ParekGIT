@@ -33,10 +33,9 @@ namespace ParekGIT.Bridge.Handlers
 				?? throw new IpcPayloadException("repoPath");
 
 			// Normalize path
-			repoPath = Path.GetFullPath(repoPath);
-			repoPath = Path.TrimEndingDirectorySeparator(repoPath);
+			repoPath = PathHelper.Normalize(repoPath);
 			if (repoPath.EndsWith(".git", PathHelper.Comparison))
-				repoPath = Path.GetDirectoryName(repoPath) ?? repoPath;
+				repoPath = PathHelper.Normalize(Path.GetDirectoryName(repoPath) ?? repoPath);
 
 			// Verify if valid .git repo
 			string gitFolderPath = Path.Combine(repoPath, ".git");
@@ -45,7 +44,7 @@ namespace ParekGIT.Bridge.Handlers
 
 			// Create repo object & check for remote
 			string repoName = new DirectoryInfo(repoPath).Name;
-			DateTime lastAccessed = new DirectoryInfo(repoPath).LastAccessTime;
+			DateTime lastAccessed = new DirectoryInfo(repoPath).LastAccessTimeUtc;
 			string? remoteUrl = await _statusService.GetRemoteUrlAsync(repoPath);
 
 			var repo = new GitRepository

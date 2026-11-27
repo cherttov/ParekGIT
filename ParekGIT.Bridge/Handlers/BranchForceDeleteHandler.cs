@@ -3,6 +3,7 @@ using ParekGIT.Bridge.Interfaces;
 using ParekGIT.Core.Interfaces;
 using Photino.NET;
 using System.Text.Json;
+using ParekGIT.Data.Interfaces;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -10,14 +11,16 @@ namespace ParekGIT.Bridge.Handlers
 	{
 		private readonly PhotinoWindow _window;
 		private readonly IGitBranchService _branchService;
+		private readonly ITodoStore _todoStore;
 
 		public string Action => "BRANCH_FORCE_DELETE";
 
 		// Constructor
-		public BranchForceDeleteHandler(PhotinoWindow window, IGitBranchService branchService)
+		public BranchForceDeleteHandler(PhotinoWindow window, IGitBranchService branchService, ITodoStore todoStore)
 		{
 			_window = window;
 			_branchService = branchService;
+			_todoStore = todoStore;
 		}
 
 		public async Task ExecuteAsync(JsonElement payload)
@@ -29,6 +32,7 @@ namespace ParekGIT.Bridge.Handlers
 							  ?? throw new IpcPayloadException("branchName");
 
 			await _branchService.ForceDeleteBranchAsync(repoPath, branchName);
+			await _todoStore.DeleteBranchTodosAsync(repoPath, branchName);
 
 			// Response
 			var response = IpcMessage.Create("BRANCH_DELETED", new

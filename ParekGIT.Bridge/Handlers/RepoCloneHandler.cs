@@ -5,6 +5,7 @@ using ParekGIT.Core.Models;
 using ParekGIT.Data.Interfaces;
 using Photino.NET;
 using System.Text.Json;
+using ParekGIT.Core.Helpers;
 
 namespace ParekGIT.Bridge.Handlers
 {
@@ -36,7 +37,7 @@ namespace ParekGIT.Bridge.Handlers
 
 			// Get repo name & combine with passed path
 			string repoName = Path.GetFileNameWithoutExtension(repoUrl.TrimEnd('/').Split('/').Last());
-			string localPath = Path.Combine(parentPath, repoName);
+			string localPath = PathHelper.Normalize(Path.Combine(parentPath, repoName));
 
 			await _repoService.CloneRepositoryAsync(repoUrl, asLocal, localPath);
 
@@ -45,7 +46,7 @@ namespace ParekGIT.Bridge.Handlers
 				Id = Guid.NewGuid(),
 				Name = repoName,
 				AbsolutePath = localPath,
-				LastAccessed = DateTime.Now,
+				LastAccessed = DateTime.UtcNow,
 				RemoteUrl = asLocal ? null : repoUrl
 			};
 
